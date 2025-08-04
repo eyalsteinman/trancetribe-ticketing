@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { User } from '@supabase/supabase-js';
 import { Badge } from '@/components/ui/badge';
+import { Camera, List, Plus } from 'lucide-react';
+import CreateParty from './CreateParty';
 
 interface AdminDashboardProps {
   user: User;
@@ -24,6 +26,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [qrInput, setQrInput] = useState('');
   const [scannedUsers, setScannedUsers] = useState<ScannedUser[]>([]);
   const [loading, setLoading] = useState(false);
+  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party'>('dashboard');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -132,20 +135,23 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     await supabase.auth.signOut();
   };
 
-  return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-          <Button variant="outline" onClick={handleSignOut}>
-            Sign Out
-          </Button>
-        </div>
+  if (currentView === 'create-party') {
+    return <CreateParty onBack={() => setCurrentView('dashboard')} />;
+  }
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  if (currentView === 'scanner') {
+    return (
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-md mx-auto space-y-6">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold">Scan QR Code</h1>
+            <Button variant="outline" onClick={() => setCurrentView('dashboard')}>
+              Back
+            </Button>
+          </div>
           <Card>
             <CardHeader>
-              <CardTitle>Scan QR Code</CardTitle>
+              <CardTitle>Manual QR Code Entry</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <Input
@@ -166,23 +172,37 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
               </p>
             </CardContent>
           </Card>
+        </div>
+      </div>
+    );
+  }
 
+  if (currentView === 'guests') {
+    return (
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-md mx-auto space-y-6">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold">Scanned Guests</h1>
+            <Button variant="outline" onClick={() => setCurrentView('dashboard')}>
+              Back
+            </Button>
+          </div>
           <Card>
             <CardHeader>
-              <CardTitle>Scanned Users</CardTitle>
-              <Badge variant="secondary">{scannedUsers.length} users scanned</Badge>
+              <CardTitle>Guest List</CardTitle>
+              <Badge variant="secondary">{scannedUsers.length} guests scanned</Badge>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2 max-h-60 overflow-y-auto">
+              <div className="space-y-2 max-h-96 overflow-y-auto">
                 {scannedUsers.length === 0 ? (
                   <p className="text-muted-foreground text-center py-4">
-                    No users scanned yet
+                    No guests scanned yet
                   </p>
                 ) : (
                   scannedUsers.map((user) => (
                     <div
                       key={user.id}
-                      className="flex justify-between items-center p-2 border rounded"
+                      className="flex justify-between items-center p-3 border rounded-lg"
                     >
                       <span className="font-medium">
                         {user.profiles?.display_name || 'Unknown User'}
@@ -197,6 +217,54 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             </CardContent>
           </Card>
         </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background p-4">
+      <div className="max-w-md mx-auto space-y-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+          <Button variant="outline" onClick={handleSignOut}>
+            Sign Out
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4">
+          <Card className="cursor-pointer hover:bg-accent" onClick={() => setCurrentView('scanner')}>
+            <CardContent className="flex flex-col items-center justify-center p-6">
+              <Camera className="h-8 w-8 mb-2" />
+              <span className="text-sm font-medium">Scan QR</span>
+            </CardContent>
+          </Card>
+
+          <Card className="cursor-pointer hover:bg-accent" onClick={() => setCurrentView('guests')}>
+            <CardContent className="flex flex-col items-center justify-center p-6">
+              <List className="h-8 w-8 mb-2" />
+              <span className="text-sm font-medium">Guest List</span>
+            </CardContent>
+          </Card>
+
+          <Card className="cursor-pointer hover:bg-accent" onClick={() => setCurrentView('create-party')}>
+            <CardContent className="flex flex-col items-center justify-center p-6">
+              <Plus className="h-8 w-8 mb-2" />
+              <span className="text-sm font-medium">Create Party</span>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Stats</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center">
+              <div className="text-2xl font-bold">{scannedUsers.length}</div>
+              <div className="text-sm text-muted-foreground">Guests Scanned</div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

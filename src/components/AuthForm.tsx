@@ -5,11 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import AdminPasswordForm from './AdminPasswordForm';
 
 const AuthForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showAdminPassword, setShowAdminPassword] = useState(false);
   const { toast } = useToast();
 
   const handleFacebookLogin = async () => {
@@ -84,9 +86,20 @@ const AuthForm = () => {
           variant: "destructive"
         });
       } else {
+        // Add user to admin role
+        const { data: user } = await supabase.auth.getUser();
+        if (user.user) {
+          await (supabase as any)
+            .from('user_roles')
+            .insert({
+              user_id: user.user.id,
+              role: 'admin'
+            });
+        }
+        
         toast({
           title: "Success",
-          description: "Please check your email to confirm your account",
+          description: "Admin account created successfully!",
         });
       }
     } catch (error) {
@@ -99,6 +112,27 @@ const AuthForm = () => {
       setLoading(false);
     }
   };
+
+  const handleCreateAdminClick = () => {
+    setShowAdminPassword(true);
+  };
+
+  const handleAdminPasswordSuccess = () => {
+    setShowAdminPassword(false);
+  };
+
+  const handleAdminPasswordBack = () => {
+    setShowAdminPassword(false);
+  };
+
+  if (showAdminPassword) {
+    return (
+      <AdminPasswordForm 
+        onSuccess={handleAdminPasswordSuccess}
+        onBack={handleAdminPasswordBack}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -160,12 +194,11 @@ const AuthForm = () => {
                     {loading ? "Signing in..." : "Sign In"}
                   </Button>
                   <Button 
-                    onClick={handleAdminSignup}
-                    disabled={loading || !email || !password}
+                    onClick={handleCreateAdminClick}
                     variant="outline"
                     className="w-full"
                   >
-                    {loading ? "Creating account..." : "Create Admin Account"}
+                    Create Admin Account
                   </Button>
                 </div>
               </CardContent>
