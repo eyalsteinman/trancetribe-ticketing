@@ -25,15 +25,46 @@ interface ScannedUser {
 const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [qrInput, setQrInput] = useState('');
   const [scannedUsers, setScannedUsers] = useState<ScannedUser[]>([]);
+  const [parties, setParties] = useState<any[]>([]);
+  const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party'>('dashboard');
   const { toast } = useToast();
 
   useEffect(() => {
-    loadScannedUsers();
+    loadParties();
   }, []);
 
+  useEffect(() => {
+    if (selectedParty) {
+      loadScannedUsers();
+    }
+  }, [selectedParty]);
+
+  const loadParties = async () => {
+    try {
+      const { data, error } = await (supabase as any)
+        .from('parties')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading parties:', error);
+      } else {
+        setParties(data || []);
+        // Set the first party as selected by default
+        if (data && data.length > 0 && !selectedParty) {
+          setSelectedParty(data[0].id);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading parties:', error);
+    }
+  };
+
   const loadScannedUsers = async () => {
+    if (!selectedParty) return;
+    
     try {
       const { data, error } = await (supabase as any)
         .from('qr_codes')
@@ -41,10 +72,12 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           id,
           user_id,
           scanned_at,
+          party_id,
           profiles!inner(display_name)
         `)
         .eq('is_scanned', true)
         .eq('scanned_by', user.id)
+        .eq('party_id', selectedParty)
         .order('scanned_at', { ascending: false });
 
       if (error) {
@@ -187,10 +220,31 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
               Back
             </Button>
           </div>
+          {parties.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Select Party</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <select 
+                  className="w-full p-2 border rounded-md"
+                  value={selectedParty || ''}
+                  onChange={(e) => setSelectedParty(e.target.value)}
+                >
+                  {parties.map((party) => (
+                    <option key={party.id} value={party.id}>
+                      {party.name} - {new Date(party.date).toLocaleDateString()}
+                    </option>
+                  ))}
+                </select>
+              </CardContent>
+            </Card>
+          )}
+
           <Card>
             <CardHeader>
               <CardTitle>Guest List</CardTitle>
-              <Badge variant="secondary">{scannedUsers.length} guests scanned</Badge>
+              <Badge variant="secondary">{scannedUsers.length} guests scanned for selected party</Badge>
             </CardHeader>
             <CardContent>
               <div className="space-y-2 max-h-96 overflow-y-auto">
