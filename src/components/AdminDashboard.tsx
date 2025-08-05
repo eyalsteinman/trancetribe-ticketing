@@ -100,13 +100,23 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
       return;
     }
 
+    if (!selectedParty) {
+      toast({
+        title: "Error",
+        description: "Please select a party first",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       // First check if QR code exists and is not already scanned
       const { data: qrData, error: qrError } = await (supabase as any)
         .from('qr_codes')
-        .select('id, user_id, is_scanned')
+        .select('id, user_id, is_scanned, party_id')
         .eq('code', qrInput.trim())
+        .eq('party_id', selectedParty)
         .single();
 
       if (qrError || !qrData) {
@@ -182,9 +192,31 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
               Back
             </Button>
           </div>
+          
+          {parties.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Select Party to Scan For</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <select 
+                  className="w-full p-2 border rounded-md"
+                  value={selectedParty || ''}
+                  onChange={(e) => setSelectedParty(e.target.value)}
+                >
+                  {parties.map((party) => (
+                    <option key={party.id} value={party.id}>
+                      {party.name} - {new Date(party.date).toLocaleDateString()}
+                    </option>
+                  ))}
+                </select>
+              </CardContent>
+            </Card>
+          )}
+
           <Card>
             <CardHeader>
-              <CardTitle>Manual QR Code Entry</CardTitle>
+              <CardTitle>Scan Guest QR Code</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <Input
@@ -195,7 +227,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
               />
               <Button 
                 onClick={scanQRCode}
-                disabled={loading || !qrInput.trim()}
+                disabled={loading || !qrInput.trim() || !selectedParty}
                 className="w-full"
               >
                 {loading ? "Scanning..." : "Scan QR Code"}
@@ -308,17 +340,26 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           </Card>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Stats</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center">
-              <div className="text-2xl font-bold">{scannedUsers.length}</div>
-              <div className="text-sm text-muted-foreground">Guests Scanned</div>
-            </div>
-          </CardContent>
-        </Card>
+        {selectedParty && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Current Party</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center">
+                <div className="text-lg font-semibold">
+                  {parties.find(p => p.id === selectedParty)?.name}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {parties.find(p => p.id === selectedParty)?.date && 
+                    new Date(parties.find(p => p.id === selectedParty)?.date).toLocaleDateString()}
+                </div>
+                <div className="text-2xl font-bold mt-2">{scannedUsers.length}</div>
+                <div className="text-sm text-muted-foreground">Guests Scanned</div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
