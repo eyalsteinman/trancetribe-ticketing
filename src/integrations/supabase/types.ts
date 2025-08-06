@@ -122,6 +122,13 @@ export type Database = {
             referencedRelation: "parties"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "qr_codes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       user_roles: {

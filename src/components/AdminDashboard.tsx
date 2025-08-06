@@ -73,30 +73,49 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     if (!selectedParty) return;
     
     try {
-      const { data, error } = await supabase
+      // First get QR codes for scanned users
+      const { data: qrData, error: qrError } = await supabase
         .from('qr_codes')
-        .select(`
-          id,
-          user_id,
-          scanned_at,
-          party_id,
-          profiles (
-            display_name, 
-            first_name, 
-            last_name, 
-            email
-          )
-        `)
+        .select('id, user_id, scanned_at, party_id')
         .eq('is_scanned', true)
         .eq('scanned_by', user.id)
         .eq('party_id', selectedParty)
         .order('scanned_at', { ascending: true });
 
-      if (error) {
-        console.error('Error loading scanned users:', error);
-      } else {
-        setScannedUsers(data || []);
+      if (qrError) {
+        console.error('Error loading QR codes:', qrError);
+        return;
       }
+
+      if (!qrData || qrData.length === 0) {
+        setScannedUsers([]);
+        return;
+      }
+
+      // Get user IDs
+      const userIds = qrData.map(qr => qr.user_id);
+
+      // Get profiles for these users
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('user_id, display_name, first_name, last_name, email')
+        .in('user_id', userIds);
+
+      if (profilesError) {
+        console.error('Error loading profiles:', profilesError);
+        return;
+      }
+
+      // Combine the data
+      const combinedData = qrData.map(qr => {
+        const profile = profilesData?.find(p => p.user_id === qr.user_id);
+        return {
+          ...qr,
+          profiles: profile || null
+        };
+      });
+
+      setScannedUsers(combinedData);
     } catch (error) {
       console.error('Error loading scanned users:', error);
     }
