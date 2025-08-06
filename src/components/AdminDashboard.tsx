@@ -34,6 +34,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [parties, setParties] = useState<any[]>([]);
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
   const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins'>('dashboard');
   
   const { toast } = useToast();
@@ -41,6 +42,10 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   useEffect(() => {
     loadParties();
   }, []);
+
+  useEffect(() => {
+    loadParties();
+  }, [sortAscending]);
 
   useEffect(() => {
     if (selectedParty) {
@@ -53,7 +58,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
       const { data, error } = await (supabase as any)
         .from('parties')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('date', { ascending: sortAscending });
 
       if (error) {
         console.error('Error loading parties:', error);
@@ -263,7 +268,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
                 >
                   {parties.map((party) => (
                     <option key={party.id} value={party.id}>
-                      {party.name} - {new Date(party.date).toLocaleDateString()}
+                      {party.name} - {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </option>
                   ))}
                 </select>
@@ -313,7 +318,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
                 >
                   {parties.map((party) => (
                     <option key={party.id} value={party.id}>
-                      {party.name} - {new Date(party.date).toLocaleDateString()}
+                      {party.name} - {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </option>
                   ))}
                 </select>
@@ -357,7 +362,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
                             {user.profiles?.email || 'No email'}
                           </td>
                           <td className="p-2 text-sm text-muted-foreground">
-                            {new Date(user.scanned_at).toLocaleDateString()}
+                            {new Date(user.scanned_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                           </td>
                         </tr>
                       ))}
@@ -422,18 +427,37 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         {selectedParty && (
           <Card>
             <CardHeader>
-              <CardTitle>Current Party</CardTitle>
+              <div className="flex justify-between items-center">
+                <CardTitle>Coming Up</CardTitle>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSortAscending(!sortAscending)}
+                  className="flex items-center gap-2"
+                >
+                  {sortAscending ? "Latest First" : "Soonest First"}
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-center">
+              <div className="text-center space-y-4">
                 <div className="text-lg font-semibold">
                   {parties.find(p => p.id === selectedParty)?.name}
                 </div>
                 <div className="text-sm text-muted-foreground">
                   {parties.find(p => p.id === selectedParty)?.date && 
-                    new Date(parties.find(p => p.id === selectedParty)?.date).toLocaleDateString()}
+                    new Date(parties.find(p => p.id === selectedParty)?.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </div>
-                <div className="text-2xl font-bold mt-2">{scannedUsers.length}</div>
+                {parties.find(p => p.id === selectedParty)?.photo_url && (
+                  <div className="w-full">
+                    <img 
+                      src={parties.find(p => p.id === selectedParty)?.photo_url} 
+                      alt={parties.find(p => p.id === selectedParty)?.name}
+                      className="w-full h-48 object-cover rounded-md mx-auto"
+                    />
+                  </div>
+                )}
+                <div className="text-2xl font-bold">{scannedUsers.length}</div>
                 <div className="text-sm text-muted-foreground">Guests Scanned</div>
               </div>
             </CardContent>

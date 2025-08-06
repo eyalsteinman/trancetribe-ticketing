@@ -198,7 +198,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
               <div className="text-center space-y-1">
                 <div className="text-lg font-semibold">{selectedParty.name}</div>
                 <div className="text-sm text-muted-foreground">
-                  {new Date(selectedParty.date).toLocaleDateString()}
+                  {new Date(selectedParty.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </div>
               </div>
             </CardHeader>
@@ -285,7 +285,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                   <div className="w-full text-center space-y-1">
                     <div className="font-semibold">{party.name}</div>
                     <div className="text-sm text-muted-foreground">
-                      {new Date(party.date).toLocaleDateString()}
+                      {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </div>
                     {party.is_active && (
                       <div className="text-xs text-green-600 font-medium">Active</div>

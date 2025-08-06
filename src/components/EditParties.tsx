@@ -28,11 +28,16 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingParties, setLoadingParties] = useState(true);
+  const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
   const { toast } = useToast();
 
   useEffect(() => {
     loadParties();
   }, []);
+
+  useEffect(() => {
+    loadParties();
+  }, [sortAscending]);
 
   const loadParties = async () => {
     setLoadingParties(true);
@@ -40,7 +45,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
       const { data, error } = await (supabase as any)
         .from('parties')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('date', { ascending: sortAscending });
 
       if (error) {
         console.error('Error loading parties:', error);
@@ -367,7 +372,17 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
 
         <Card>
           <CardHeader>
-            <CardTitle>All Parties</CardTitle>
+            <div className="flex justify-between items-center">
+              <CardTitle>All Parties</CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSortAscending(!sortAscending)}
+                className="flex items-center gap-2"
+              >
+                {sortAscending ? "Latest First" : "Soonest First"}
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             {loadingParties ? (
@@ -386,7 +401,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                     <div className="flex-1">
                       <div className="font-semibold">{party.name}</div>
                       <div className="text-sm text-muted-foreground">
-                        {new Date(party.date).toLocaleDateString()}
+                        {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                       </div>
                       {party.is_active && (
                         <div className="text-xs text-green-600 font-medium mt-1">Active</div>
