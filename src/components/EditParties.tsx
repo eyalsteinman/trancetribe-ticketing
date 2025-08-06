@@ -1,0 +1,456 @@
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
+import { ArrowLeft, Edit, Trash2, Upload, X } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+
+interface EditPartiesProps {
+  onBack: () => void;
+}
+
+interface Party {
+  id: string;
+  name: string;
+  date: string;
+  is_active: boolean;
+  photo_url: string | null;
+  created_at: string;
+}
+
+const EditParties = ({ onBack }: EditPartiesProps) => {
+  const [parties, setParties] = useState<Party[]>([]);
+  const [editingParty, setEditingParty] = useState<Party | null>(null);
+  const [editName, setEditName] = useState('');
+  const [editDate, setEditDate] = useState('');
+  const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [loadingParties, setLoadingParties] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    loadParties();
+  }, []);
+
+  const loadParties = async () => {
+    setLoadingParties(true);
+    try {
+      const { data, error } = await (supabase as any)
+        .from('parties')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error loading parties:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load parties",
+          variant: "destructive"
+        });
+      } else {
+        setParties(data || []);
+      }
+    } catch (error) {
+      console.error('Error loading parties:', error);
+    } finally {
+      setLoadingParties(false);
+    }
+  };
+
+  const handleEditParty = (party: Party) => {
+    setEditingParty(party);
+    setEditName(party.name);
+    setEditDate(party.date);
+    setSelectedPhoto(null);
+  };
+
+  const handlePhotoSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedPhoto(file);
+    }
+  };
+
+  const uploadPhoto = async (): Promise<string | null> => {
+    if (!selectedPhoto) return null;
+
+    const fileExt = selectedPhoto.name.split('.').pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
+    
+    const { data, error } = await supabase.storage
+      .from('party-photos')
+      .upload(fileName, selectedPhoto);
+
+    if (error) {
+      console.error('Photo upload error:', error);
+      throw error;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('party-photos')
+      .getPublicUrl(fileName);
+
+    return publicUrl;
+  };
+
+  const removePhoto = async (photoUrl: string) => {
+    try {
+      const fileName = photoUrl.split('/').pop();
+      if (fileName) {
+        await supabase.storage
+          .from('party-photos')
+          .remove([fileName]);
+      }
+    } catch (error) {
+      console.error('Error removing photo:', error);
+    }
+  };
+
+  const savePartyChanges = async () => {
+    if (!editingParty || !editName.trim() || !editDate) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      let photoUrl = editingParty.photo_url;
+
+      // Upload new photo if selected
+      if (selectedPhoto) {
+        // Remove old photo if exists
+        if (editingParty.photo_url) {
+          await removePhoto(editingParty.photo_url);
+        }
+        photoUrl = await uploadPhoto();
+      }
+
+      const { error } = await (supabase as any)
+        .from('parties')
+        .update({
+          name: editName.trim(),
+          date: editDate,
+          photo_url: photoUrl
+        })
+        .eq('id', editingParty.id);
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Party updated successfully!",
+        });
+        setEditingParty(null);
+        setSelectedPhoto(null);
+        loadParties();
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update party",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const removePartyPhoto = async (party: Party) => {
+    if (!party.photo_url) return;
+
+    setLoading(true);
+    try {
+      // Remove photo from storage
+      await removePhoto(party.photo_url);
+
+      // Update party record to remove photo_url
+      const { error } = await (supabase as any)
+        .from('parties')
+        .update({ photo_url: null })
+        .eq('id', party.id);
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Photo removed successfully!",
+        });
+        loadParties();
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to remove photo",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteParty = async (partyId: string) => {
+    setLoading(true);
+    try {
+      const party = parties.find(p => p.id === partyId);
+      
+      // Remove photo if exists
+      if (party?.photo_url) {
+        await removePhoto(party.photo_url);
+      }
+
+      const { error } = await (supabase as any)
+        .from('parties')
+        .delete()
+        .eq('id', partyId);
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Party deleted successfully!",
+        });
+        loadParties();
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete party",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const cancelEdit = () => {
+    setEditingParty(null);
+    setSelectedPhoto(null);
+    setEditName('');
+    setEditDate('');
+  };
+
+  if (editingParty) {
+    return (
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-md mx-auto space-y-6">
+          <div className="flex justify-between items-center">
+            <Button variant="outline" onClick={cancelEdit} className="flex items-center gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Cancel
+            </Button>
+            <h1 className="text-xl font-bold">Edit Party</h1>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Party Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Party Name</label>
+                <Input
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  placeholder="Enter party name"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Party Date</label>
+                <Input
+                  type="date"
+                  value={editDate}
+                  onChange={(e) => setEditDate(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Current Photo</label>
+                {editingParty.photo_url ? (
+                  <div className="space-y-2">
+                    <img 
+                      src={editingParty.photo_url} 
+                      alt={editingParty.name}
+                      className="w-full h-32 object-cover rounded-md"
+                    />
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => removePartyPhoto(editingParty)}
+                      disabled={loading}
+                    >
+                      Remove Current Photo
+                    </Button>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No photo uploaded</p>
+                )}
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Upload New Photo</label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="editPhoto"
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoSelect}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => document.getElementById('editPhoto')?.click()}
+                    className="flex items-center gap-2"
+                  >
+                    <Upload className="h-4 w-4" />
+                    {selectedPhoto ? selectedPhoto.name : 'Choose New Photo'}
+                  </Button>
+                  {selectedPhoto && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => setSelectedPhoto(null)}
+                      size="sm"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              <Button 
+                onClick={savePartyChanges}
+                disabled={loading || !editName.trim() || !editDate}
+                className="w-full"
+              >
+                {loading ? "Saving..." : "Save Changes"}
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background p-4">
+      <div className="max-w-md mx-auto space-y-6">
+        <div className="flex justify-between items-center">
+          <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <h1 className="text-xl font-bold">Edit Parties</h1>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>All Parties</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {loadingParties ? (
+              <p className="text-center text-muted-foreground">Loading parties...</p>
+            ) : parties.length === 0 ? (
+              <p className="text-center text-muted-foreground">
+                No parties found.
+              </p>
+            ) : (
+              parties.map((party) => (
+                <div
+                  key={party.id}
+                  className="border rounded-lg p-4 space-y-3"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="font-semibold">{party.name}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {new Date(party.date).toLocaleDateString()}
+                      </div>
+                      {party.is_active && (
+                        <div className="text-xs text-green-600 font-medium mt-1">Active</div>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditParty(party)}
+                        className="flex items-center gap-1"
+                      >
+                        <Edit className="h-3 w-3" />
+                        Edit
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="flex items-center gap-1"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                            Delete
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Party</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete "{party.name}"? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => deleteParty(party.id)}
+                              disabled={loading}
+                            >
+                              {loading ? "Deleting..." : "Delete"}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </div>
+                  
+                  {party.photo_url && (
+                    <div className="w-full">
+                      <img 
+                        src={party.photo_url} 
+                        alt={party.name}
+                        className="w-full h-32 object-cover rounded-md"
+                      />
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default EditParties;

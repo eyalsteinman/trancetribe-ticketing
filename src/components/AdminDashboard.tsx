@@ -6,8 +6,9 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { User } from '@supabase/supabase-js';
 import { Badge } from '@/components/ui/badge';
-import { Camera, List, Plus } from 'lucide-react';
+import { Camera, List, Plus, Edit } from 'lucide-react';
 import CreateParty from './CreateParty';
+import EditParties from './EditParties';
 import QRScanner from './QRScanner';
 
 interface AdminDashboardProps {
@@ -29,7 +30,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [parties, setParties] = useState<any[]>([]);
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties'>('dashboard');
   
   const { toast } = useToast();
 
@@ -202,6 +203,10 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     return <CreateParty onBack={() => setCurrentView('dashboard')} />;
   }
 
+  if (currentView === 'edit-parties') {
+    return <EditParties onBack={() => setCurrentView('dashboard')} />;
+  }
+
   if (currentView === 'scanner') {
     return (
       <div className="min-h-screen bg-background p-4">
@@ -328,7 +333,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           </Button>
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <Card className="cursor-pointer hover:bg-accent" onClick={() => setCurrentView('scanner')}>
             <CardContent className="flex flex-col items-center justify-center p-6">
               <Camera className="h-8 w-8 mb-2" />
@@ -347,6 +352,13 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             <CardContent className="flex flex-col items-center justify-center p-6">
               <Plus className="h-8 w-8 mb-2" />
               <span className="text-sm font-medium">Create Party</span>
+            </CardContent>
+          </Card>
+
+          <Card className="cursor-pointer hover:bg-accent" onClick={() => setCurrentView('edit-parties')}>
+            <CardContent className="flex flex-col items-center justify-center p-6">
+              <Edit className="h-8 w-8 mb-2" />
+              <span className="text-sm font-medium">Edit Parties</span>
             </CardContent>
           </Card>
         </div>
