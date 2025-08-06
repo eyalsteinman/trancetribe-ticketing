@@ -180,7 +180,22 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to sign out",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error", 
+        description: "Failed to sign out",
+        variant: "destructive"
+      });
+    }
   };
 
   if (currentView === 'create-party') {
@@ -240,7 +255,10 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
                   {loading ? "Scanning..." : "Manual Scan"}
                 </Button>
                 <Button 
-                  onClick={() => setShowCameraScanner(true)}
+                  onClick={() => {
+                    setCurrentView('dashboard');
+                    setShowCameraScanner(true);
+                  }}
                   disabled={loading || !selectedParty}
                   className="flex-1"
                 >

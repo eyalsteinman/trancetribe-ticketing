@@ -10,17 +10,34 @@ import AdminPasswordForm from './AdminPasswordForm';
 const AuthForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [loading, setLoading] = useState(false);
   const [showAdminPassword, setShowAdminPassword] = useState(false);
   const { toast } = useToast();
 
-  const handleFacebookLogin = async () => {
+  const handleUserSignup = async () => {
+    if (!email || !password || !firstName || !lastName) {
+      toast({
+        title: "Error",
+        description: "Please fill in all fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'facebook',
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
         options: {
-          redirectTo: `${window.location.origin}/`
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            display_name: `${firstName} ${lastName}`,
+            first_name: firstName,
+            last_name: lastName
+          }
         }
       });
       
@@ -30,11 +47,16 @@ const AuthForm = () => {
           description: error.message,
           variant: "destructive"
         });
+      } else {
+        toast({
+          title: "Success",
+          description: "Please check your email to confirm your account",
+        });
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to sign in with Facebook",
+        description: "Failed to sign up",
         variant: "destructive"
       });
     } finally {
@@ -110,6 +132,8 @@ const AuthForm = () => {
         // Clear the form
         setEmail('');
         setPassword('');
+        setFirstName('');
+        setLastName('');
       }
     } catch (error) {
       toast({
@@ -162,16 +186,42 @@ const AuthForm = () => {
           <TabsContent value="user">
             <Card>
               <CardHeader>
-                <CardTitle>User Access</CardTitle>
-                <CardDescription>Sign in with your Facebook account</CardDescription>
+                <CardTitle>User Registration</CardTitle>
+                <CardDescription>Create your account to get a unique QR code</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-2">
+                  <Input
+                    type="text"
+                    placeholder="First Name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
+                  <Input
+                    type="text"
+                    placeholder="Last Name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                </div>
+                <Input
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
                 <Button 
-                  onClick={handleFacebookLogin}
-                  disabled={loading}
-                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  onClick={handleUserSignup}
+                  disabled={loading || !email || !password || !firstName || !lastName}
+                  className="w-full"
                 >
-                  {loading ? "Signing in..." : "Continue with Facebook"}
+                  {loading ? "Creating Account..." : "Create Account"}
                 </Button>
               </CardContent>
             </Card>
