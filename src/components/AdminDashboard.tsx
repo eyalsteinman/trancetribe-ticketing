@@ -453,7 +453,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
                     <img 
                       src={parties.find(p => p.id === selectedParty)?.photo_url} 
                       alt={parties.find(p => p.id === selectedParty)?.name}
-                      className="w-full h-48 object-cover rounded-md mx-auto"
+                      className="w-full h-auto object-contain rounded-md mx-auto"
                     />
                   </div>
                 )}

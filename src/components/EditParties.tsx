@@ -392,21 +392,40 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                 No parties found.
               </p>
             ) : (
-              parties.map((party) => (
-                <div
-                  key={party.id}
-                  className="border rounded-lg p-4 space-y-3"
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="font-semibold">{party.name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+              parties.map((party) => {
+                const partyDate = new Date(party.date);
+                const now = new Date();
+                const isToday = partyDate.toDateString() === now.toDateString();
+                const isWithin24Hours = partyDate.getTime() > now.getTime() - 24 * 60 * 60 * 1000 && partyDate.getTime() <= now.getTime();
+                const hasEnded = partyDate.getTime() < now.getTime() - 24 * 60 * 60 * 1000;
+                
+                // Find the soonest party that hasn't ended
+                const upcomingParties = parties.filter(p => new Date(p.date).getTime() >= now.getTime() - 24 * 60 * 60 * 1000);
+                const soonestParty = upcomingParties.length > 0 ? upcomingParties.reduce((earliest, current) => 
+                  new Date(current.date) < new Date(earliest.date) ? current : earliest
+                ) : null;
+                
+                const showActive = soonestParty?.id === party.id && (isToday || isWithin24Hours);
+                const showEnded = hasEnded;
+
+                return (
+                  <div
+                    key={party.id}
+                    className="border rounded-lg p-4 space-y-3"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="font-semibold">{party.name}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        </div>
+                        {showActive && (
+                          <div className="text-xs text-green-600 font-medium mt-1">Active</div>
+                        )}
+                        {showEnded && (
+                          <div className="text-xs text-red-600 font-medium mt-1">Ended</div>
+                        )}
                       </div>
-                      {party.is_active && (
-                        <div className="text-xs text-green-600 font-medium mt-1">Active</div>
-                      )}
-                    </div>
                     <div className="flex gap-2">
                       <Button
                         variant="outline"
@@ -447,19 +466,20 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                         </AlertDialogContent>
                       </AlertDialog>
                     </div>
-                  </div>
-                  
-                  {party.photo_url && (
-                    <div className="w-full">
-                      <img 
-                        src={party.photo_url} 
-                        alt={party.name}
-                        className="w-full h-32 object-cover rounded-md"
-                      />
                     </div>
-                  )}
-                </div>
-              ))
+                    
+                    {party.photo_url && (
+                      <div className="w-full">
+                        <img 
+                          src={party.photo_url} 
+                          alt={party.name}
+                          className="w-full h-32 object-cover rounded-md"
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })
             )}
           </CardContent>
         </Card>

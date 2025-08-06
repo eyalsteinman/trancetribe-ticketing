@@ -266,33 +266,53 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 No parties found. Please wait for an admin to create a party.
               </p>
             ) : (
-              parties.map((party) => (
-                <Button
-                  key={party.id}
-                  variant="outline"
-                  className="w-full p-4 h-auto flex-col space-y-3"
-                  onClick={() => selectParty(party)}
-                >
-                  {party.photo_url && (
-                    <div className="w-full">
-                      <img 
-                        src={party.photo_url} 
-                        alt={party.name}
-                        className="w-full h-auto object-contain rounded-md"
-                      />
-                    </div>
-                  )}
-                  <div className="w-full text-center space-y-1">
-                    <div className="font-semibold">{party.name}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                    </div>
-                    {party.is_active && (
-                      <div className="text-xs text-green-600 font-medium">Active</div>
+              parties.map((party) => {
+                const partyDate = new Date(party.date);
+                const now = new Date();
+                const isToday = partyDate.toDateString() === now.toDateString();
+                const isWithin24Hours = partyDate.getTime() > now.getTime() - 24 * 60 * 60 * 1000 && partyDate.getTime() <= now.getTime();
+                const hasEnded = partyDate.getTime() < now.getTime() - 24 * 60 * 60 * 1000;
+                
+                // Find the soonest party that hasn't ended
+                const upcomingParties = parties.filter(p => new Date(p.date).getTime() >= now.getTime() - 24 * 60 * 60 * 1000);
+                const soonestParty = upcomingParties.length > 0 ? upcomingParties.reduce((earliest, current) => 
+                  new Date(current.date) < new Date(earliest.date) ? current : earliest
+                ) : null;
+                
+                const showActive = soonestParty?.id === party.id && (isToday || isWithin24Hours);
+                const showEnded = hasEnded;
+
+                return (
+                  <Button
+                    key={party.id}
+                    variant="outline"
+                    className="w-full p-4 h-auto flex-col space-y-3"
+                    onClick={() => selectParty(party)}
+                  >
+                    {party.photo_url && (
+                      <div className="w-full">
+                        <img 
+                          src={party.photo_url} 
+                          alt={party.name}
+                          className="w-full h-auto object-contain rounded-md"
+                        />
+                      </div>
                     )}
-                  </div>
-                </Button>
-              ))
+                    <div className="w-full text-center space-y-1">
+                      <div className="font-semibold">{party.name}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                      </div>
+                      {showActive && (
+                        <div className="text-xs text-green-600 font-medium">Active</div>
+                      )}
+                      {showEnded && (
+                        <div className="text-xs text-red-600 font-medium">Ended</div>
+                      )}
+                    </div>
+                  </Button>
+                );
+              })
             )}
           </CardContent>
         </Card>
