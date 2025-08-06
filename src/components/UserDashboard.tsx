@@ -12,6 +12,7 @@ interface Party {
   name: string;
   date: string;
   is_active: boolean;
+  photo_url: string | null;
 }
 
 interface UserDashboardProps {
@@ -253,13 +254,22 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 <Button
                   key={party.id}
                   variant="outline"
-                  className="w-full p-4 h-auto flex-col"
+                  className="w-full p-4 h-auto flex-col space-y-2"
                   onClick={() => selectParty(party)}
                 >
                   <div className="font-semibold">{party.name}</div>
                   <div className="text-sm text-muted-foreground">
                     {new Date(party.date).toLocaleDateString()}
                   </div>
+                  {party.photo_url && (
+                    <div className="w-full max-w-xs">
+                      <img 
+                        src={party.photo_url} 
+                        alt={party.name}
+                        className="w-full h-32 object-cover rounded-md"
+                      />
+                    </div>
+                  )}
                   {party.is_active && (
                     <div className="text-xs text-green-600 font-medium">Active</div>
                   )}
