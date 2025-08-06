@@ -254,25 +254,27 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 <Button
                   key={party.id}
                   variant="outline"
-                  className="w-full p-4 h-auto flex-col space-y-2"
+                  className="w-full p-4 h-auto flex-col space-y-3"
                   onClick={() => selectParty(party)}
                 >
-                  <div className="font-semibold">{party.name}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {new Date(party.date).toLocaleDateString()}
-                  </div>
                   {party.photo_url && (
-                    <div className="w-full max-w-xs">
+                    <div className="w-full">
                       <img 
                         src={party.photo_url} 
                         alt={party.name}
-                        className="w-full h-32 object-cover rounded-md"
+                        className="w-full h-auto object-contain rounded-md"
                       />
                     </div>
                   )}
-                  {party.is_active && (
-                    <div className="text-xs text-green-600 font-medium">Active</div>
-                  )}
+                  <div className="w-full text-center space-y-1">
+                    <div className="font-semibold">{party.name}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {new Date(party.date).toLocaleDateString()}
+                    </div>
+                    {party.is_active && (
+                      <div className="text-xs text-green-600 font-medium">Active</div>
+                    )}
+                  </div>
                 </Button>
               ))
             )}
