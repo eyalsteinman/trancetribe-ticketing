@@ -109,71 +109,54 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
     try {
       console.log('Creating admin user with email:', newAdminEmail);
       
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: newAdminEmail,
-        password: newAdminPassword,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            display_name: newAdminEmail.split('@')[0]
-          }
-        }
-      });
-
-      console.log('Signup result:', { authData, authError });
-
-      if (authError) {
+      // Get current session token for authorization
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
         toast({
           title: "Error",
-          description: authError.message,
+          description: "You must be logged in to create admins",
           variant: "destructive"
         });
         return;
       }
 
-      if (authData.user) {
-        console.log('User created successfully, assigning admin role to user ID:', authData.user.id);
-        
-        // Wait a moment to ensure user is fully created
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Add admin role to the new user
-        const { error: roleError } = await supabase
-          .from('user_roles')
-          .insert({
-            user_id: authData.user.id,
-            role: 'admin'
-          });
-
-        console.log('Role assignment result:', { roleError });
-
-        if (roleError) {
-          console.error('Error assigning admin role:', roleError);
-          toast({
-            title: "Warning",
-            description: `User created but failed to assign admin role: ${roleError.message}`,
-            variant: "destructive"
-          });
-        } else {
-          console.log('Admin role assigned successfully');
-          
-          // Verify the role was assigned
-          const { data: verifyRole, error: verifyError } = await supabase
-            .from('user_roles')
-            .select('*')
-            .eq('user_id', authData.user.id)
-            .eq('role', 'admin');
-          
-          console.log('Role verification:', { verifyRole, verifyError });
-          
-          toast({
-            title: "Success",
-            description: "New admin created successfully! They can now access the admin panel.",
-          });
-          setNewAdminEmail('');
-          setNewAdminPassword('');
-          loadAdmins();
+      // Call edge function to create admin with email verification bypassed
+      const { data, error } = await supabase.functions.invoke('create-admin', {
+        body: {
+          email: newAdminEmail,
+          password: newAdminPassword
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
         }
+      });
+
+      console.log('Create admin result:', { data, error });
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to create admin",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (data.success) {
+        toast({
+          title: "Success",
+          description: "New admin created successfully! They can login immediately without email verification.",
+        });
+        setNewAdminEmail('');
+        setNewAdminPassword('');
+        loadAdmins();
+      } else {
+        toast({
+          title: "Error",
+          description: data.error || "Failed to create admin",
+          variant: "destructive"
+        });
       }
     } catch (error) {
       console.error('Error creating admin:', error);
