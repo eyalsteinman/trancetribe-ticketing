@@ -255,10 +255,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
                   {loading ? "Scanning..." : "Manual Scan"}
                 </Button>
                 <Button 
-                  onClick={() => {
-                    setCurrentView('dashboard');
-                    setShowCameraScanner(true);
-                  }}
+                  onClick={() => setShowCameraScanner(true)}
                   disabled={loading || !selectedParty}
                   className="flex-1"
                 >
