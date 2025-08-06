@@ -22,6 +22,9 @@ interface ScannedUser {
   scanned_at: string;
   profiles: {
     display_name: string;
+    first_name: string;
+    last_name: string;
+    email: string;
   } | null;
 }
 
@@ -70,19 +73,24 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     if (!selectedParty) return;
     
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('qr_codes')
         .select(`
           id,
           user_id,
           scanned_at,
           party_id,
-          profiles!inner(display_name)
+          profiles (
+            display_name, 
+            first_name, 
+            last_name, 
+            email
+          )
         `)
         .eq('is_scanned', true)
         .eq('scanned_by', user.id)
         .eq('party_id', selectedParty)
-        .order('scanned_at', { ascending: false });
+        .order('scanned_at', { ascending: true });
 
       if (error) {
         console.error('Error loading scanned users:', error);
@@ -300,27 +308,44 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
               <Badge variant="secondary">{scannedUsers.length} guests scanned for selected party</Badge>
             </CardHeader>
             <CardContent>
-              <div className="space-y-2 max-h-96 overflow-y-auto">
-                {scannedUsers.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-4">
-                    No guests scanned yet
-                  </p>
-                ) : (
-                  scannedUsers.map((user) => (
-                    <div
-                      key={user.id}
-                      className="flex justify-between items-center p-3 border rounded-lg"
-                    >
-                      <span className="font-medium">
-                        {user.profiles?.display_name || 'Unknown User'}
-                      </span>
-                      <span className="text-sm text-muted-foreground">
-                        {new Date(user.scanned_at).toLocaleDateString()}
-                      </span>
-                    </div>
-                  ))
-                )}
-              </div>
+              {scannedUsers.length === 0 ? (
+                <p className="text-muted-foreground text-center py-4">
+                  No guests scanned yet
+                </p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left p-2 font-medium">#</th>
+                        <th className="text-left p-2 font-medium">First Name</th>
+                        <th className="text-left p-2 font-medium">Last Name</th>
+                        <th className="text-left p-2 font-medium">Email</th>
+                        <th className="text-left p-2 font-medium">Scanned At</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {scannedUsers.map((user, index) => (
+                        <tr key={user.id} className="border-b hover:bg-muted/50">
+                          <td className="p-2 font-medium">{index + 1}</td>
+                          <td className="p-2">
+                            {user.profiles?.first_name || 'Unknown'}
+                          </td>
+                          <td className="p-2">
+                            {user.profiles?.last_name || 'Unknown'}
+                          </td>
+                          <td className="p-2 text-sm">
+                            {user.profiles?.email || 'No email'}
+                          </td>
+                          <td className="p-2 text-sm text-muted-foreground">
+                            {new Date(user.scanned_at).toLocaleDateString()}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
