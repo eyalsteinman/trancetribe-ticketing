@@ -121,6 +121,8 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
         return;
       }
 
+      console.log('Calling create-admin edge function...');
+      
       // Call edge function to create admin with email verification bypassed
       const { data, error } = await supabase.functions.invoke('create-admin', {
         body: {
@@ -128,13 +130,15 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
           password: newAdminPassword
         },
         headers: {
-          Authorization: `Bearer ${session.access_token}`
+          Authorization: `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
         }
       });
 
-      console.log('Create admin result:', { data, error });
+      console.log('Edge function response:', { data, error });
 
       if (error) {
+        console.error('Edge function error:', error);
         toast({
           title: "Error",
           description: error.message || "Failed to create admin",
@@ -143,7 +147,7 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
         return;
       }
 
-      if (data.success) {
+      if (data && data.success) {
         toast({
           title: "Success",
           description: "New admin created successfully! They can login immediately without email verification.",
@@ -152,9 +156,11 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
         setNewAdminPassword('');
         loadAdmins();
       } else {
+        const errorMsg = data?.error || "Unknown error occurred";
+        console.error('Admin creation failed:', errorMsg);
         toast({
           title: "Error",
-          description: data.error || "Failed to create admin",
+          description: errorMsg,
           variant: "destructive"
         });
       }
@@ -162,7 +168,7 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
       console.error('Error creating admin:', error);
       toast({
         title: "Error",
-        description: "Failed to create new admin",
+        description: "Failed to create new admin. Please try again.",
         variant: "destructive"
       });
     } finally {
