@@ -30,7 +30,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party'>('dashboard');
-  const [showCameraScanner, setShowCameraScanner] = useState(false);
+  
   const { toast } = useToast();
 
   useEffect(() => {
@@ -165,7 +165,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           description: "QR code scanned successfully!",
         });
         setQrInput('');
-        setShowCameraScanner(false);
+        setCurrentView('dashboard');
         loadScannedUsers(); // Refresh the list
       }
     } catch (error) {
@@ -207,7 +207,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
       <div className="min-h-screen bg-background p-4">
         <div className="max-w-md mx-auto space-y-6">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold">Scan QR Code</h1>
+            <h1 className="text-2xl font-bold">QR Scanner</h1>
             <Button variant="outline" onClick={() => setCurrentView('dashboard')}>
               Back
             </Button>
@@ -234,40 +234,20 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             </Card>
           )}
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Scan Guest QR Code</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Input
-                placeholder="Enter QR code manually"
-                value={qrInput}
-                onChange={(e) => setQrInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && scanQRCode()}
-              />
-              <div className="flex gap-2">
-                <Button 
-                  onClick={() => scanQRCode()}
-                  disabled={loading || !qrInput.trim() || !selectedParty}
-                  variant="outline"
-                  className="flex-1"
-                >
-                  {loading ? "Scanning..." : "Manual Scan"}
-                </Button>
-                <Button 
-                  onClick={() => setShowCameraScanner(true)}
-                  disabled={loading || !selectedParty}
-                  className="flex-1"
-                >
-                  <Camera className="h-4 w-4 mr-2" />
-                  Camera
-                </Button>
-              </div>
-              <p className="text-sm text-muted-foreground text-center">
-                Use the camera to scan QR codes or enter them manually
-              </p>
-            </CardContent>
-          </Card>
+          {selectedParty && (
+            <QRScanner 
+              onScan={(result) => scanQRCode(result)}
+              onClose={() => setCurrentView('dashboard')}
+            />
+          )}
+
+          {!selectedParty && (
+            <Card>
+              <CardContent className="p-6 text-center">
+                <p className="text-muted-foreground">Please select a party to start scanning</p>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     );
@@ -352,7 +332,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           <Card className="cursor-pointer hover:bg-accent" onClick={() => setCurrentView('scanner')}>
             <CardContent className="flex flex-col items-center justify-center p-6">
               <Camera className="h-8 w-8 mb-2" />
-              <span className="text-sm font-medium">Scan QR</span>
+              <span className="text-sm font-medium">Camera Scan</span>
             </CardContent>
           </Card>
 
@@ -393,12 +373,6 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         )}
       </div>
       
-      {showCameraScanner && (
-        <QRScanner 
-          onScan={(result) => scanQRCode(result)}
-          onClose={() => setShowCameraScanner(false)}
-        />
-      )}
     </div>
   );
 };
