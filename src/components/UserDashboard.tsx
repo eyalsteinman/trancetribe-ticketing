@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { QRCodeSVG } from 'qrcode.react';
 import { User } from '@supabase/supabase-js';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ArrowUpDown } from 'lucide-react';
 
 interface Party {
   id: string;
@@ -25,11 +25,16 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingParties, setLoadingParties] = useState(true);
+  const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
   const { toast } = useToast();
 
   useEffect(() => {
     loadParties();
   }, []);
+
+  useEffect(() => {
+    loadParties();
+  }, [sortAscending]);
 
   useEffect(() => {
     if (selectedParty) {
@@ -45,7 +50,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
       const { data, error } = await (supabase as any)
         .from('parties')
         .select('*')
-        .order('date', { ascending: false });
+        .order('date', { ascending: sortAscending });
 
       if (data && !error) {
         setParties(data);
@@ -240,7 +245,18 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Select a Party</CardTitle>
+            <div className="flex justify-between items-center">
+              <CardTitle>Select a Party</CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSortAscending(!sortAscending)}
+                className="flex items-center gap-2"
+              >
+                <ArrowUpDown className="h-4 w-4" />
+                {sortAscending ? "Oldest First" : "Newest First"}
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             {loadingParties ? (
