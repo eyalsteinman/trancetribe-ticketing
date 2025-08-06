@@ -8,6 +8,7 @@ import { User } from '@supabase/supabase-js';
 import { Badge } from '@/components/ui/badge';
 import { Camera, List, Plus } from 'lucide-react';
 import CreateParty from './CreateParty';
+import QRScanner from './QRScanner';
 
 interface AdminDashboardProps {
   user: User;
@@ -29,6 +30,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party'>('dashboard');
+  const [showCameraScanner, setShowCameraScanner] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -90,8 +92,10 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     }
   };
 
-  const scanQRCode = async () => {
-    if (!qrInput.trim()) {
+  const scanQRCode = async (qrCode?: string) => {
+    const codeToScan = qrCode || qrInput.trim();
+    
+    if (!codeToScan) {
       toast({
         title: "Error",
         description: "Please enter a QR code",
@@ -115,7 +119,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
       const { data: qrData, error: qrError } = await (supabase as any)
         .from('qr_codes')
         .select('id, user_id, is_scanned, party_id')
-        .eq('code', qrInput.trim())
+        .eq('code', codeToScan)
         .eq('party_id', selectedParty)
         .single();
 
@@ -161,6 +165,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           description: "QR code scanned successfully!",
         });
         setQrInput('');
+        setShowCameraScanner(false);
         loadScannedUsers(); // Refresh the list
       }
     } catch (error) {
@@ -220,20 +225,31 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             </CardHeader>
             <CardContent className="space-y-4">
               <Input
-                placeholder="Enter QR code or scan with camera"
+                placeholder="Enter QR code manually"
                 value={qrInput}
                 onChange={(e) => setQrInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && scanQRCode()}
               />
-              <Button 
-                onClick={scanQRCode}
-                disabled={loading || !qrInput.trim() || !selectedParty}
-                className="w-full"
-              >
-                {loading ? "Scanning..." : "Scan QR Code"}
-              </Button>
-              <p className="text-sm text-muted-foreground">
-                For now, manually enter the QR code. Camera scanning will be added later.
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => scanQRCode()}
+                  disabled={loading || !qrInput.trim() || !selectedParty}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  {loading ? "Scanning..." : "Manual Scan"}
+                </Button>
+                <Button 
+                  onClick={() => setShowCameraScanner(true)}
+                  disabled={loading || !selectedParty}
+                  className="flex-1"
+                >
+                  <Camera className="h-4 w-4 mr-2" />
+                  Camera
+                </Button>
+              </div>
+              <p className="text-sm text-muted-foreground text-center">
+                Use the camera to scan QR codes or enter them manually
               </p>
             </CardContent>
           </Card>
@@ -361,6 +377,13 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           </Card>
         )}
       </div>
+      
+      {showCameraScanner && (
+        <QRScanner 
+          onScan={(result) => scanQRCode(result)}
+          onClose={() => setShowCameraScanner(false)}
+        />
+      )}
     </div>
   );
 };
