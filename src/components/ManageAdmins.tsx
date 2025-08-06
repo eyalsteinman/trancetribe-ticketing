@@ -107,68 +107,37 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
 
     setLoading(true);
     try {
-      // Create new user without email verification by using admin credentials
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      console.log('Creating admin user with email:', newAdminEmail);
+      
+      // First, try regular signup since we don't have service role access
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: newAdminEmail,
         password: newAdminPassword,
-        email_confirm: true, // Skip email verification
-        user_metadata: {
-          display_name: newAdminEmail.split('@')[0]
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            display_name: newAdminEmail.split('@')[0]
+          }
         }
       });
 
+      console.log('Signup result:', { authData, authError });
+
       if (authError) {
-        // If admin.createUser fails (requires service role), fall back to regular signup
-        console.warn('Admin createUser failed, falling back to regular signup:', authError);
-        
-        const { data: fallbackData, error: fallbackError } = await supabase.auth.signUp({
-          email: newAdminEmail,
-          password: newAdminPassword,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`,
-            data: {
-              display_name: newAdminEmail.split('@')[0]
-            }
-          }
+        toast({
+          title: "Error",
+          description: authError.message,
+          variant: "destructive"
         });
+        return;
+      }
 
-        if (fallbackError) {
-          toast({
-            title: "Error",
-            description: fallbackError.message,
-            variant: "destructive"
-          });
-          return;
-        }
-
-        if (fallbackData.user) {
-          // Add admin role to the new user
-          const { error: roleError } = await supabase
-            .from('user_roles')
-            .insert({
-              user_id: fallbackData.user.id,
-              role: 'admin'
-            });
-
-          if (roleError) {
-            console.error('Error assigning admin role:', roleError);
-            toast({
-              title: "Warning",
-              description: "User created but failed to assign admin role. Please check console.",
-              variant: "destructive"
-            });
-          } else {
-            toast({
-              title: "Success",
-              description: "New admin created successfully! Note: Email verification may be required.",
-            });
-            setNewAdminEmail('');
-            setNewAdminPassword('');
-            loadAdmins();
-          }
-        }
-      } else if (authData.user) {
-        // Admin createUser succeeded
+      if (authData.user) {
+        console.log('User created successfully, assigning admin role to user ID:', authData.user.id);
+        
+        // Wait a moment to ensure user is fully created
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
         // Add admin role to the new user
         const { error: roleError } = await supabase
           .from('user_roles')
@@ -177,17 +146,30 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
             role: 'admin'
           });
 
+        console.log('Role assignment result:', { roleError });
+
         if (roleError) {
           console.error('Error assigning admin role:', roleError);
           toast({
             title: "Warning",
-            description: "User created but failed to assign admin role",
+            description: `User created but failed to assign admin role: ${roleError.message}`,
             variant: "destructive"
           });
         } else {
+          console.log('Admin role assigned successfully');
+          
+          // Verify the role was assigned
+          const { data: verifyRole, error: verifyError } = await supabase
+            .from('user_roles')
+            .select('*')
+            .eq('user_id', authData.user.id)
+            .eq('role', 'admin');
+          
+          console.log('Role verification:', { verifyRole, verifyError });
+          
           toast({
             title: "Success",
-            description: "New admin created successfully without email verification!",
+            description: "New admin created successfully! Check email for verification if required.",
           });
           setNewAdminEmail('');
           setNewAdminPassword('');
