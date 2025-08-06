@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
@@ -64,7 +65,7 @@ const AuthForm = () => {
 
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -86,8 +87,13 @@ const AuthForm = () => {
       } else {
         toast({
           title: "Success",
-          description: "Please check your email to confirm your account",
+          description: "Account created successfully! You can now use the application.",
         });
+        // Clear form fields
+        setEmail('');
+        setPassword('');
+        setFirstName('');
+        setLastName('');
       }
     } catch (error) {
       toast({
@@ -142,7 +148,10 @@ const AuthForm = () => {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            display_name: email.split('@')[0]
+          }
         }
       });
       
@@ -153,9 +162,9 @@ const AuthForm = () => {
           variant: "destructive"
         });
       } else if (data.user) {
-        // Add user to admin role - this will work because the user is created
+        // Add user to admin role
         try {
-          const { error: roleError } = await (supabase as any)
+          const { error: roleError } = await supabase
             .from('user_roles')
             .insert({
               user_id: data.user.id,
@@ -171,7 +180,7 @@ const AuthForm = () => {
         
         toast({
           title: "Success",
-          description: "Admin account created successfully! Please check your email to confirm your account.",
+          description: "Admin account created successfully! You can now access the admin panel.",
         });
         
         // Clear the form
@@ -239,38 +248,54 @@ const AuthForm = () => {
               <CardHeader>
                 <CardTitle>User Login/Registration</CardTitle>
                 <CardDescription>
-                  {isUserLogin ? "Sign in to your account" : "Create your account to get a unique QR code"}
+                  {isUserLogin ? "Sign in to your account" : "Create your account with your full name and get instant access"}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {!isUserLogin && (
                   <div className="grid grid-cols-2 gap-2">
-                    <Input
-                      type="text"
-                      placeholder="First Name"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                    />
-                    <Input
-                      type="text"
-                      placeholder="Last Name"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                    />
+                    <div>
+                      <Label htmlFor="firstName">First Name</Label>
+                      <Input
+                        id="firstName"
+                        type="text"
+                        placeholder="First Name"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="lastName">Last Name</Label>
+                      <Input
+                        id="lastName"
+                        type="text"
+                        placeholder="Last Name"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                      />
+                    </div>
                   </div>
                 )}
-                <Input
-                  type="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <Input
-                  type="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
                 <div className="space-y-2">
                   {isUserLogin ? (
                     <Button 
@@ -294,7 +319,7 @@ const AuthForm = () => {
                     variant="outline"
                     className="w-full"
                   >
-                    {isUserLogin ? "Create Account" : "Already have an account? Sign In"}
+                    {isUserLogin ? "Already have an account? Sign In" : "Create Account"}
                   </Button>
                 </div>
               </CardContent>

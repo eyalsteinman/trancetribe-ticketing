@@ -109,7 +109,6 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
     try {
       console.log('Creating admin user with email:', newAdminEmail);
       
-      // First, try regular signup since we don't have service role access
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: newAdminEmail,
         password: newAdminPassword,
@@ -169,7 +168,7 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
           
           toast({
             title: "Success",
-            description: "New admin created successfully! Check email for verification if required.",
+            description: "New admin created successfully! They can now access the admin panel.",
           });
           setNewAdminEmail('');
           setNewAdminPassword('');
@@ -289,7 +288,7 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
 
         <Alert>
           <AlertDescription>
-            Here you can manage admin users. The system will attempt to create admins without email verification, but may fall back to standard signup if admin privileges are not available.
+            Here you can manage admin users. New admins are created without email verification and can access the admin panel immediately.
           </AlertDescription>
         </Alert>
 
