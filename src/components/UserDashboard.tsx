@@ -24,9 +24,14 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    loadExistingQR();
     loadCurrentParty();
   }, []);
+
+  useEffect(() => {
+    if (currentParty) {
+      loadExistingQR();
+    }
+  }, [currentParty]);
 
   const loadCurrentParty = async () => {
     try {
@@ -36,49 +41,65 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         .eq('is_active', true)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (data && !error) {
         setCurrentParty(data);
+      } else {
+        console.log('No active party found');
       }
     } catch (error) {
-      // No active party found
+      console.error('Error loading current party:', error);
     }
   };
 
   const loadExistingQR = async () => {
+    if (!currentParty) return;
+    
     try {
       const { data, error } = await (supabase as any)
         .from('qr_codes')
         .select('code')
         .eq('user_id', user.id)
+        .eq('party_id', currentParty.id)
         .eq('is_scanned', false)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (data && !error) {
         setQrCode(data.code);
       }
     } catch (error) {
-      // No existing QR code found
+      console.error('Error loading existing QR code:', error);
     }
   };
 
   const generateQRCode = async () => {
+    if (!currentParty) {
+      toast({
+        title: "Error",
+        description: "No active party found. Please wait for an admin to create a party.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       // Generate a unique QR code
-      const qrData = `${user.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const qrData = `${user.id}-${currentParty.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
       const { error } = await (supabase as any)
         .from('qr_codes')
         .insert({
           user_id: user.id,
+          party_id: currentParty.id,
           code: qrData
         });
 
       if (error) {
+        console.error('QR Code generation error:', error);
         toast({
           title: "Error",
           description: error.message,
@@ -92,6 +113,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         });
       }
     } catch (error) {
+      console.error('QR Code generation catch error:', error);
       toast({
         title: "Error",
         description: "Failed to generate QR code",
