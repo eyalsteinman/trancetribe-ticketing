@@ -15,7 +15,7 @@ const AuthForm = () => {
   const [lastName, setLastName] = useState('');
   const [loading, setLoading] = useState(false);
   const [showAdminPassword, setShowAdminPassword] = useState(false);
-  const [isUserLogin, setIsUserLogin] = useState(true);
+  const [isUserLogin, setIsUserLogin] = useState(false);
   const { toast } = useToast();
 
   const handleUserLogin = async () => {
@@ -319,7 +319,7 @@ const AuthForm = () => {
                     variant="outline"
                     className="w-full"
                   >
-                    {isUserLogin ? "Already have an account? Sign In" : "Create Account"}
+                    {isUserLogin ? "Don't have an account? Create Account" : "Already have an account? Sign In"}
                   </Button>
                 </div>
               </CardContent>
