@@ -14,7 +14,43 @@ const AuthForm = () => {
   const [lastName, setLastName] = useState('');
   const [loading, setLoading] = useState(false);
   const [showAdminPassword, setShowAdminPassword] = useState(false);
+  const [isUserLogin, setIsUserLogin] = useState(true);
   const { toast } = useToast();
+
+  const handleUserLogin = async () => {
+    if (!email || !password) {
+      toast({
+        title: "Error",
+        description: "Please enter email and password",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign in",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleUserSignup = async () => {
     if (!email || !password || !firstName || !lastName) {
@@ -201,24 +237,28 @@ const AuthForm = () => {
           <TabsContent value="user">
             <Card>
               <CardHeader>
-                <CardTitle>User Registration</CardTitle>
-                <CardDescription>Create your account to get a unique QR code</CardDescription>
+                <CardTitle>User Login/Registration</CardTitle>
+                <CardDescription>
+                  {isUserLogin ? "Sign in to your account" : "Create your account to get a unique QR code"}
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-2">
-                  <Input
-                    type="text"
-                    placeholder="First Name"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                  />
-                  <Input
-                    type="text"
-                    placeholder="Last Name"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                  />
-                </div>
+                {!isUserLogin && (
+                  <div className="grid grid-cols-2 gap-2">
+                    <Input
+                      type="text"
+                      placeholder="First Name"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                    />
+                    <Input
+                      type="text"
+                      placeholder="Last Name"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                    />
+                  </div>
+                )}
                 <Input
                   type="email"
                   placeholder="Email"
@@ -231,13 +271,32 @@ const AuthForm = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                <Button 
-                  onClick={handleUserSignup}
-                  disabled={loading || !email || !password || !firstName || !lastName}
-                  className="w-full"
-                >
-                  {loading ? "Creating Account..." : "Create Account"}
-                </Button>
+                <div className="space-y-2">
+                  {isUserLogin ? (
+                    <Button 
+                      onClick={handleUserLogin}
+                      disabled={loading || !email || !password}
+                      className="w-full"
+                    >
+                      {loading ? "Signing in..." : "Sign In"}
+                    </Button>
+                  ) : (
+                    <Button 
+                      onClick={handleUserSignup}
+                      disabled={loading || !email || !password || !firstName || !lastName}
+                      className="w-full"
+                    >
+                      {loading ? "Creating Account..." : "Create Account"}
+                    </Button>
+                  )}
+                  <Button 
+                    onClick={() => setIsUserLogin(!isUserLogin)}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    {isUserLogin ? "Create Account" : "Already have an account? Sign In"}
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
