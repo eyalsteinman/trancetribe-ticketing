@@ -125,7 +125,24 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Sign out error:', error);
+        toast({
+          title: "Error",
+          description: "Failed to sign out. Please try again.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Sign out catch error:', error);
+      toast({
+        title: "Error", 
+        description: "Failed to sign out. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   return (

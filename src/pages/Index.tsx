@@ -17,6 +17,7 @@ const Index = () => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth state change:', event, session);
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -38,6 +39,7 @@ const Index = () => {
             setLoading(false);
           }, 0);
         } else {
+          // User logged out - reset all states
           setIsAdmin(false);
           setLoading(false);
         }
