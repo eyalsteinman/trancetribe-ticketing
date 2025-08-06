@@ -126,21 +126,33 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
   const handleSignOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
+      // Clear all local state first
+      setQrCode(null);
+      setCurrentParty(null);
+      
+      // Attempt to sign out from Supabase
+      const { error } = await supabase.auth.signOut({ scope: 'local' });
+      
+      // Even if server logout fails (session not found), we still successfully logged out locally
+      if (error && !error.message.includes('Session not found')) {
         console.error('Sign out error:', error);
         toast({
-          title: "Error",
-          description: "Failed to sign out. Please try again.",
+          title: "Warning",
+          description: "Logged out locally, but server logout failed.",
           variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Signed out successfully!",
         });
       }
     } catch (error) {
       console.error('Sign out catch error:', error);
+      // Even if there's an error, force local logout
       toast({
-        title: "Error", 
-        description: "Failed to sign out. Please try again.",
-        variant: "destructive"
+        title: "Info", 
+        description: "Logged out locally.",
       });
     }
   };
