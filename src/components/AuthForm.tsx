@@ -91,6 +91,15 @@ const AuthForm = () => {
   };
 
   const handleAdminSignup = async () => {
+    if (!email || !password) {
+      toast({
+        title: "Error",
+        description: "Email and password are required",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -126,14 +135,12 @@ const AuthForm = () => {
         
         toast({
           title: "Success",
-          description: "Admin account created successfully! You can now sign in.",
+          description: "Admin account created successfully! Please check your email to confirm your account.",
         });
         
         // Clear the form
         setEmail('');
         setPassword('');
-        setFirstName('');
-        setLastName('');
       }
     } catch (error) {
       toast({
@@ -147,6 +154,14 @@ const AuthForm = () => {
   };
 
   const handleCreateAdminClick = () => {
+    if (!email || !password) {
+      toast({
+        title: "Error",
+        description: "Please enter email and password first",
+        variant: "destructive"
+      });
+      return;
+    }
     setShowAdminPassword(true);
   };
 
