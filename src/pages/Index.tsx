@@ -13,6 +13,24 @@ const Index = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const checkAdminRole = async (userId: string) => {
+    try {
+      const { data, error } = await (supabase as any)
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .eq('role', 'admin');
+      
+      console.log('Admin role check:', { data, error, userId });
+      setIsAdmin(data && data.length > 0);
+    } catch (error) {
+      console.error('Error checking admin role:', error);
+      setIsAdmin(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -23,21 +41,7 @@ const Index = () => {
         
         if (session?.user) {
           // Check if user is admin
-          setTimeout(async () => {
-            try {
-              const { data } = await (supabase as any)
-                .from('user_roles')
-                .select('role')
-                .eq('user_id', session.user.id)
-                .eq('role', 'admin')
-                .single();
-              
-              setIsAdmin(!!data);
-            } catch (error) {
-              setIsAdmin(false);
-            }
-            setLoading(false);
-          }, 0);
+          checkAdminRole(session.user.id);
         } else {
           // User logged out - reset all states
           setIsAdmin(false);
@@ -50,7 +54,9 @@ const Index = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      if (!session) {
+      if (session?.user) {
+        checkAdminRole(session.user.id);
+      } else {
         setLoading(false);
       }
     });
