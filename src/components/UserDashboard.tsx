@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { QRCodeSVG } from 'qrcode.react';
 import { User } from '@supabase/supabase-js';
+import { ArrowLeft } from 'lucide-react';
 
 interface Party {
   id: string;
@@ -18,50 +19,54 @@ interface UserDashboardProps {
 }
 
 const UserDashboard = ({ user }: UserDashboardProps) => {
+  const [parties, setParties] = useState<Party[]>([]);
+  const [selectedParty, setSelectedParty] = useState<Party | null>(null);
   const [qrCode, setQrCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [currentParty, setCurrentParty] = useState<Party | null>(null);
+  const [loadingParties, setLoadingParties] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
-    loadCurrentParty();
+    loadParties();
   }, []);
 
   useEffect(() => {
-    if (currentParty) {
+    if (selectedParty) {
       loadExistingQR();
+    } else {
+      setQrCode(null);
     }
-  }, [currentParty]);
+  }, [selectedParty]);
 
-  const loadCurrentParty = async () => {
+  const loadParties = async () => {
+    setLoadingParties(true);
     try {
       const { data, error } = await (supabase as any)
         .from('parties')
         .select('*')
-        .eq('is_active', true)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .order('date', { ascending: false });
 
       if (data && !error) {
-        setCurrentParty(data);
+        setParties(data);
       } else {
-        console.log('No active party found');
+        console.log('No parties found');
       }
     } catch (error) {
-      console.error('Error loading current party:', error);
+      console.error('Error loading parties:', error);
+    } finally {
+      setLoadingParties(false);
     }
   };
 
   const loadExistingQR = async () => {
-    if (!currentParty) return;
+    if (!selectedParty) return;
     
     try {
       const { data, error } = await (supabase as any)
         .from('qr_codes')
         .select('code')
         .eq('user_id', user.id)
-        .eq('party_id', currentParty.id)
+        .eq('party_id', selectedParty.id)
         .eq('is_scanned', false)
         .order('created_at', { ascending: false })
         .limit(1)
@@ -76,10 +81,10 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   };
 
   const generateQRCode = async () => {
-    if (!currentParty) {
+    if (!selectedParty) {
       toast({
         title: "Error",
-        description: "No active party found. Please wait for an admin to create a party.",
+        description: "No party selected.",
         variant: "destructive"
       });
       return;
@@ -88,13 +93,13 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     setLoading(true);
     try {
       // Generate a unique QR code
-      const qrData = `${user.id}-${currentParty.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const qrData = `${user.id}-${selectedParty.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
       const { error } = await (supabase as any)
         .from('qr_codes')
         .insert({
           user_id: user.id,
-          party_id: currentParty.id,
+          party_id: selectedParty.id,
           code: qrData
         });
 
@@ -128,7 +133,8 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     try {
       // Clear all local state first
       setQrCode(null);
-      setCurrentParty(null);
+      setSelectedParty(null);
+      setParties([]);
       
       // Attempt to sign out from Supabase
       const { error } = await supabase.auth.signOut({ scope: 'local' });
@@ -157,6 +163,70 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     }
   };
 
+  const selectParty = (party: Party) => {
+    setSelectedParty(party);
+  };
+
+  const goBackToPartyList = () => {
+    setSelectedParty(null);
+    setQrCode(null);
+  };
+
+  if (selectedParty) {
+    return (
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-md mx-auto space-y-6">
+          <div className="flex justify-between items-center">
+            <Button variant="outline" onClick={goBackToPartyList} className="flex items-center gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Button>
+            <Button variant="outline" onClick={handleSignOut}>
+              Sign Out
+            </Button>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Your QR Code</CardTitle>
+              <div className="text-center space-y-1">
+                <div className="text-lg font-semibold">{selectedParty.name}</div>
+                <div className="text-sm text-muted-foreground">
+                  {new Date(selectedParty.date).toLocaleDateString()}
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="text-center space-y-4">
+              {qrCode ? (
+                <div className="flex flex-col items-center space-y-4">
+                  <div className="bg-white p-4 rounded-lg">
+                    <QRCodeSVG value={qrCode} size={200} />
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Show this QR code to the admin for scanning
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <Button
+                    onClick={generateQRCode}
+                    disabled={loading}
+                    className="w-full py-4 text-lg"
+                  >
+                    {loading ? "Generating..." : "Generate QR Code"}
+                  </Button>
+                  <p className="text-sm text-muted-foreground">
+                    Click to generate your unique QR code for {selectedParty.name}
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-md mx-auto space-y-6">
@@ -169,46 +239,32 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Your QR Code</CardTitle>
-            {currentParty && (
-              <div className="text-center space-y-1">
-                <div className="text-lg font-semibold">{currentParty.name}</div>
-                <div className="text-sm text-muted-foreground">
-                  {new Date(currentParty.date).toLocaleDateString()}
-                </div>
-              </div>
-            )}
+            <CardTitle>Select a Party</CardTitle>
           </CardHeader>
-          <CardContent className="text-center space-y-4">
-            {qrCode ? (
-              <div className="flex flex-col items-center space-y-4">
-                <div className="bg-white p-4 rounded-lg">
-                  <QRCodeSVG value={qrCode} size={200} />
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Show this QR code to the admin for scanning
-                </p>
-              </div>
+          <CardContent className="space-y-4">
+            {loadingParties ? (
+              <p className="text-center text-muted-foreground">Loading parties...</p>
+            ) : parties.length === 0 ? (
+              <p className="text-center text-muted-foreground">
+                No parties found. Please wait for an admin to create a party.
+              </p>
             ) : (
-              <div className="space-y-4">
+              parties.map((party) => (
                 <Button
-                  onClick={generateQRCode}
-                  disabled={loading || !currentParty}
-                  className="w-full py-4 text-lg"
+                  key={party.id}
+                  variant="outline"
+                  className="w-full p-4 h-auto flex-col"
+                  onClick={() => selectParty(party)}
                 >
-                  {loading ? "Generating..." : "Generate QR Code"}
+                  <div className="font-semibold">{party.name}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {new Date(party.date).toLocaleDateString()}
+                  </div>
+                  {party.is_active && (
+                    <div className="text-xs text-green-600 font-medium">Active</div>
+                  )}
                 </Button>
-                {!currentParty && (
-                  <p className="text-sm text-muted-foreground">
-                    No active party found. Please wait for an admin to create a party.
-                  </p>
-                )}
-                {currentParty && !qrCode && (
-                  <p className="text-sm text-muted-foreground">
-                    Click to generate your unique QR code for {currentParty.name}
-                  </p>
-                )}
-              </div>
+              ))
             )}
           </CardContent>
         </Card>
