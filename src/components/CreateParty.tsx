@@ -35,11 +35,13 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
         .neq('id', '00000000-0000-0000-0000-000000000000'); // Update all
 
       // Create new party
+      const { data: { user } } = await supabase.auth.getUser();
       const { error } = await (supabase as any)
         .from('parties')
         .insert({
           name: partyName.trim(),
           date: partyDate,
+          created_by: user?.id,
           is_active: true
         });
 
