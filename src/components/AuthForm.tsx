@@ -71,7 +71,7 @@ const AuthForm = () => {
   const handleAdminSignup = async () => {
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -85,22 +85,31 @@ const AuthForm = () => {
           description: error.message,
           variant: "destructive"
         });
-      } else {
-        // Add user to admin role
-        const { data: user } = await supabase.auth.getUser();
-        if (user.user) {
-          await (supabase as any)
+      } else if (data.user) {
+        // Add user to admin role - this will work because the user is created
+        try {
+          const { error: roleError } = await (supabase as any)
             .from('user_roles')
             .insert({
-              user_id: user.user.id,
+              user_id: data.user.id,
               role: 'admin'
             });
+          
+          if (roleError) {
+            console.error('Error adding admin role:', roleError);
+          }
+        } catch (roleErr) {
+          console.error('Role assignment error:', roleErr);
         }
         
         toast({
           title: "Success",
-          description: "Admin account created successfully!",
+          description: "Admin account created successfully! You can now sign in.",
         });
+        
+        // Clear the form
+        setEmail('');
+        setPassword('');
       }
     } catch (error) {
       toast({
@@ -119,6 +128,8 @@ const AuthForm = () => {
 
   const handleAdminPasswordSuccess = () => {
     setShowAdminPassword(false);
+    // Now call the actual signup
+    handleAdminSignup();
   };
 
   const handleAdminPasswordBack = () => {
