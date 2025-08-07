@@ -99,12 +99,16 @@ serve(async (req) => {
       email,
       password,
       email_confirm: true, // This bypasses email verification
+      phone_confirm: true, // Also bypass phone verification if enabled
       app_metadata: {
         provider: 'email',
-        providers: ['email']
+        providers: ['email'],
+        email_verified: true,
+        phone_verified: true
       },
       user_metadata: {
-        display_name: email.split('@')[0]
+        display_name: email.split('@')[0],
+        email_verified: true
       }
     })
 
