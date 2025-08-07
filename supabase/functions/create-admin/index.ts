@@ -23,6 +23,9 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
+    console.log('Supabase URL:', Deno.env.get('SUPABASE_URL'))
+    console.log('Service role key exists:', !!Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'))
+
     // Get the authorization header
     const authHeader = req.headers.get('Authorization')
     console.log('Auth header present:', !!authHeader)
@@ -80,7 +83,18 @@ serve(async (req) => {
     }
 
     console.log('Admin role verified, parsing request body...')
-    const requestBody = await req.json()
+    
+    let requestBody;
+    try {
+      requestBody = await req.json()
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError)
+      return new Response(JSON.stringify({ error: 'Invalid JSON in request body' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+    
     const { email, password } = requestBody
     
     console.log('Request data:', { email: email ? 'present' : 'missing', password: password ? 'present' : 'missing' })
