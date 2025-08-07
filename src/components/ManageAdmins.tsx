@@ -112,76 +112,102 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
     try {
       console.log('Creating admin user with email:', newAdminEmail);
       
-      // Get current session token for authorization
-      const { data: { session } } = await supabase.auth.getSession();
+      // First test if functions work at all
+      console.log('Testing function connectivity...');
+      const { data: testData, error: testError } = await supabase.functions.invoke('test-function');
+      console.log('Test function result:', { testData, testError });
       
-      if (!session) {
+      if (testError) {
         toast({
           title: "Error",
-          description: "You must be logged in to create admins",
+          description: "Edge functions are not accessible: " + testError.message,
           variant: "destructive"
         });
         return;
       }
-
-      console.log('Session exists, calling edge function...');
       
-      // Call edge function to create admin with email verification bypassed
-      const { data, error } = await supabase.functions.invoke('create-admin', {
-        body: {
-          email: newAdminEmail,
-          password: newAdminPassword
-        },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json'
-        }
+      // Try creating admin using direct database operations instead of edge function
+      console.log('Creating admin directly via database...');
+      
+      // Create user via auth admin API
+      const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
+        email: newAdminEmail,
+        password: newAdminPassword,
+        email_confirm: true
       });
 
-      console.log('Edge function response:', { data, error });
-      
-      // Log more detailed error information
-      if (error) {
-        console.error('Detailed error:', {
-          name: error.name,
-          message: error.message,
-          context: error.context,
-          details: error.details
-        });
-      }
+      console.log('Direct user creation result:', { newUser, createError });
 
-      if (error) {
-        console.error('Edge function error:', error);
+      if (createError) {
+        console.error('Direct user creation failed:', createError);
         toast({
           title: "Error",
-          description: error.message || "Failed to create admin",
+          description: "Failed to create user: " + createError.message,
           variant: "destructive"
         });
         return;
       }
 
-      if (data && data.success) {
-        toast({
-          title: "Success",
-          description: "New admin created successfully! They can login immediately without email verification.",
-        });
-        setNewAdminEmail('');
-        setNewAdminPassword('');
-        loadAdmins();
-      } else {
-        const errorMsg = data?.error || "Unknown error occurred";
-        console.error('Admin creation failed:', errorMsg);
+      if (!newUser.user) {
         toast({
           title: "Error",
-          description: errorMsg,
+          description: "No user returned from creation",
           variant: "destructive"
         });
+        return;
       }
-    } catch (error) {
+
+      const userId = newUser.user.id;
+      console.log('User created with ID:', userId);
+
+      // Create profile manually
+      console.log('Creating profile...');
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          user_id: userId,
+          email: newAdminEmail,
+          display_name: newAdminEmail.split('@')[0],
+          first_name: '',
+          last_name: ''
+        });
+
+      if (profileError) {
+        console.error('Profile creation failed:', profileError);
+      }
+
+      // Add admin role
+      console.log('Adding admin role...');
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .insert({
+          user_id: userId,
+          role: 'admin'
+        });
+
+      if (roleError) {
+        console.error('Role assignment failed:', roleError);
+        toast({
+          title: "Error",
+          description: "Failed to assign admin role: " + roleError.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      toast({
+        title: "Success",
+        description: "New admin created successfully!",
+      });
+      setNewAdminEmail('');
+      setNewAdminPassword('');
+      loadAdmins();
+
+    } catch (error: any) {
       console.error('Error creating admin:', error);
       toast({
         title: "Error",
-        description: "Failed to create new admin. Please try again.",
+        description: "Failed to create new admin: " + error.message,
         variant: "destructive"
       });
     } finally {
