@@ -126,82 +126,103 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
         return;
       }
       
-      // Try creating admin using direct database operations instead of edge function
+      // Try creating admin using direct database operations
       console.log('Creating admin directly via database...');
       
-      // Create user via auth admin API
-      const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
-        email: newAdminEmail,
-        password: newAdminPassword,
-        email_confirm: true
-      });
-
-      console.log('Direct user creation result:', { newUser, createError });
-
-      if (createError) {
-        console.error('Direct user creation failed:', createError);
-        toast({
-          title: "Error",
-          description: "Failed to create user: " + createError.message,
-          variant: "destructive"
-        });
-        return;
-      }
-
-      if (!newUser.user) {
-        toast({
-          title: "Error",
-          description: "No user returned from creation",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      const userId = newUser.user.id;
-      console.log('User created with ID:', userId);
-
-      // Create profile manually
-      console.log('Creating profile...');
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          user_id: userId,
+      try {
+        // Create user via auth admin API
+        console.log('Step 1: Creating auth user...');
+        const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
           email: newAdminEmail,
-          display_name: newAdminEmail.split('@')[0],
-          first_name: '',
-          last_name: ''
+          password: newAdminPassword,
+          email_confirm: true
         });
 
-      if (profileError) {
-        console.error('Profile creation failed:', profileError);
-      }
-
-      // Add admin role
-      console.log('Adding admin role...');
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: userId,
-          role: 'admin'
+        console.log('Auth user creation result:', { 
+          success: !!newUser.user, 
+          userId: newUser.user?.id,
+          error: createError 
         });
 
-      if (roleError) {
-        console.error('Role assignment failed:', roleError);
+        if (createError) {
+          throw new Error('Auth user creation failed: ' + createError.message);
+        }
+
+        if (!newUser.user) {
+          throw new Error('No user returned from auth creation');
+        }
+
+        const userId = newUser.user.id;
+        console.log('Step 2: Auth user created successfully with ID:', userId);
+
+        // Create profile manually with proper error handling
+        console.log('Step 3: Creating profile...');
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            user_id: userId,
+            email: newAdminEmail,
+            display_name: newAdminEmail.split('@')[0],
+            first_name: '',
+            last_name: ''
+          });
+
+        if (profileError) {
+          console.error('Profile creation error details:', profileError);
+          throw new Error('Profile creation failed: ' + profileError.message);
+        }
+
+        console.log('Step 4: Profile created successfully');
+
+        // Add user role first
+        console.log('Step 5: Adding user role...');
+        const { error: userRoleError } = await supabase
+          .from('user_roles')
+          .insert({
+            user_id: userId,
+            role: 'user'
+          });
+
+        if (userRoleError) {
+          console.error('User role assignment error:', userRoleError);
+          throw new Error('User role assignment failed: ' + userRoleError.message);
+        }
+
+        console.log('Step 6: User role assigned successfully');
+
+        // Add admin role
+        console.log('Step 7: Adding admin role...');
+        const { error: adminRoleError } = await supabase
+          .from('user_roles')
+          .insert({
+            user_id: userId,
+            role: 'admin'
+          });
+
+        if (adminRoleError) {
+          console.error('Admin role assignment error:', adminRoleError);
+          throw new Error('Admin role assignment failed: ' + adminRoleError.message);
+        }
+
+        console.log('Step 8: Admin role assigned successfully');
+        console.log('SUCCESS: Admin creation completed successfully!');
+
         toast({
-          title: "Error",
-          description: "Failed to assign admin role: " + roleError.message,
+          title: "Success",
+          description: "New admin created successfully!",
+        });
+        setNewAdminEmail('');
+        setNewAdminPassword('');
+        loadAdmins();
+
+      } catch (dbError: any) {
+        console.error('Database operation failed:', dbError);
+        toast({
+          title: "Error", 
+          description: dbError.message || "Database error occurred",
           variant: "destructive"
         });
-        return;
       }
-
-      toast({
-        title: "Success",
-        description: "New admin created successfully!",
-      });
-      setNewAdminEmail('');
-      setNewAdminPassword('');
-      loadAdmins();
 
     } catch (error: any) {
       console.error('Error creating admin:', error);
