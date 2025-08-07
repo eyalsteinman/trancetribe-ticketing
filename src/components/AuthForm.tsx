@@ -144,6 +144,8 @@ const AuthForm = () => {
 
     setLoading(true);
     try {
+      console.log('Starting direct admin signup...');
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -156,41 +158,64 @@ const AuthForm = () => {
       });
       
       if (error) {
+        console.error('Admin signup error:', error);
         toast({
           title: "Error",
           description: error.message,
           variant: "destructive"
         });
-      } else if (data.user) {
-        // Add user to admin role
-        try {
-          const { error: roleError } = await supabase
-            .from('user_roles')
-            .insert({
-              user_id: data.user.id,
-              role: 'admin'
-            });
-          
-          if (roleError) {
-            console.error('Error adding admin role:', roleError);
-          }
-        } catch (roleErr) {
-          console.error('Role assignment error:', roleErr);
-        }
-        
+        return;
+      } 
+
+      if (!data.user) {
+        toast({
+          title: "Error", 
+          description: "No user returned from signup",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      console.log('Admin user created, ID:', data.user.id);
+      
+      // Wait a moment for the trigger to create the profile and user role
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Add admin role to the user
+      console.log('Adding admin role...');
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .insert({
+          user_id: data.user.id,
+          role: 'admin'
+        });
+      
+      if (roleError) {
+        console.error('Error adding admin role:', roleError);
+        toast({
+          title: "Warning",
+          description: "Account created but admin role assignment failed. Contact support.",
+          variant: "destructive"
+        });
+      } else {
+        console.log('Admin role assigned successfully');
         toast({
           title: "Success",
-          description: "Admin account created successfully! You can now access the admin panel.",
+          description: data.user.email_confirmed_at 
+            ? "Admin account created successfully! You can now access the admin panel."
+            : "Admin account created! Please check your email to confirm your account.",
         });
-        
-        // Clear the form
-        setEmail('');
-        setPassword('');
       }
-    } catch (error) {
+      
+      // Clear the form
+      setEmail('');
+      setPassword('');
+      
+    } catch (error: any) {
+      console.error('Unexpected error during admin signup:', error);
       toast({
         title: "Error",
-        description: "Failed to sign up",
+        description: "Failed to create admin account: " + error.message,
         variant: "destructive"
       });
     } finally {
@@ -330,7 +355,7 @@ const AuthForm = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Admin Access</CardTitle>
-                <CardDescription>Sign in with your admin credentials</CardDescription>
+                <CardDescription>Sign in with your admin credentials or create a new admin account</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <Input
@@ -351,14 +376,15 @@ const AuthForm = () => {
                     disabled={loading || !email || !password}
                     className="w-full"
                   >
-                    {loading ? "Signing in..." : "Sign In"}
+                    {loading ? "Signing in..." : "Sign In as Admin"}
                   </Button>
                   <Button 
-                    onClick={handleCreateAdminClick}
+                    onClick={handleAdminSignup}
                     variant="outline"
+                    disabled={loading || !email || !password}
                     className="w-full"
                   >
-                    Create Admin Account
+                    {loading ? "Creating Admin Account..." : "Create New Admin Account"}
                   </Button>
                 </div>
               </CardContent>
