@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { User } from '@supabase/supabase-js';
 import { Badge } from '@/components/ui/badge';
-import { Camera, List, Plus, Edit, Users } from 'lucide-react';
+import { Camera, List, Plus, Edit, Users, User as UserIcon } from 'lucide-react';
 import CreateParty from './CreateParty';
 import EditParties from './EditParties';
 import QRScanner from './QRScanner';
@@ -36,11 +36,15 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [loading, setLoading] = useState(false);
   const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
   const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins'>('dashboard');
+  const [adminNickname, setAdminNickname] = useState('');
+  const [isEditingNickname, setIsEditingNickname] = useState(false);
+  const [nicknameInput, setNicknameInput] = useState('');
   
   const { toast } = useToast();
 
   useEffect(() => {
     loadParties();
+    loadAdminProfile();
   }, []);
 
   useEffect(() => {
@@ -213,6 +217,72 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     }
   };
 
+  const loadAdminProfile = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('nickname')
+        .eq('user_id', user.id)
+        .single();
+
+      if (error) {
+        console.error('Error loading admin profile:', error);
+        return;
+      }
+
+      if (data?.nickname) {
+        setAdminNickname(data.nickname);
+      }
+    } catch (error) {
+      console.error('Error loading admin profile:', error);
+    }
+  };
+
+  const saveNickname = async () => {
+    if (!nicknameInput.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a nickname",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ nickname: nicknameInput.trim() })
+        .eq('user_id', user.id);
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to save nickname",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setAdminNickname(nicknameInput.trim());
+      setIsEditingNickname(false);
+      setNicknameInput('');
+      
+      toast({
+        title: "Success",
+        description: "Nickname saved successfully!",
+      });
+
+      // Refresh the page
+      window.location.reload();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save nickname",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleSignOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
@@ -381,7 +451,14 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+          <div>
+            <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+            {adminNickname && (
+              <p className="text-sm text-muted-foreground mt-1">
+                Welcome back {adminNickname}
+              </p>
+            )}
+          </div>
           <Button variant="outline" onClick={handleSignOut}>
             Sign Out
           </Button>
@@ -422,7 +499,49 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
               <span className="text-sm font-medium">Add Admin</span>
             </CardContent>
           </Card>
+
+          <Card className="cursor-pointer hover:bg-accent" onClick={() => {
+            setNicknameInput(adminNickname);
+            setIsEditingNickname(true);
+          }}>
+            <CardContent className="flex flex-col items-center justify-center p-6">
+              <UserIcon className="h-8 w-8 mb-2" />
+              <span className="text-sm font-medium">Choose Nickname</span>
+            </CardContent>
+          </Card>
         </div>
+
+        {/* Nickname Edit Modal */}
+        {isEditingNickname && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Choose Your Nickname</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Input
+                placeholder="Enter your nickname"
+                value={nicknameInput}
+                onChange={(e) => setNicknameInput(e.target.value)}
+                maxLength={50}
+              />
+              <div className="flex gap-2">
+                <Button onClick={saveNickname} className="flex-1">
+                  Save
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    setIsEditingNickname(false);
+                    setNicknameInput('');
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {selectedParty && (
           <Card>
