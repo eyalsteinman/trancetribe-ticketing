@@ -41,15 +41,19 @@ serve(async (req) => {
       })
     }
 
-    // Check if user has admin role
-    const { data: adminRole, error: roleCheckError } = await supabaseAdmin
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', user.id)
-      .eq('role', 'admin')
-      .single()
+    // Check if user has admin role using the new is_admin function
+    const { data: isAdmin, error: roleCheckError } = await supabaseAdmin
+      .rpc('is_admin', { _user_id: user.id })
 
-    if (roleCheckError || !adminRole) {
+    if (roleCheckError) {
+      console.error('Role check error:', roleCheckError)
+      return new Response(JSON.stringify({ error: 'Role check failed: ' + roleCheckError.message }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    if (!isAdmin) {
       return new Response(JSON.stringify({ error: 'Not authorized as admin' }), {
         status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
