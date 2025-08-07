@@ -144,9 +144,11 @@ const AuthForm = () => {
 
     setLoading(true);
     try {
-      console.log('Starting direct admin signup...');
+      console.log('=== STARTING ADMIN SIGNUP ===');
+      console.log('Email:', email);
       
-      const { data, error } = await supabase.auth.signUp({
+      // Create the user account
+      const { data: signupData, error: signupError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -157,53 +159,67 @@ const AuthForm = () => {
         }
       });
       
-      if (error) {
-        console.error('Admin signup error:', error);
+      console.log('Signup result:', { signupData, signupError });
+
+      if (signupError) {
+        console.error('Signup failed:', signupError);
         toast({
           title: "Error",
-          description: error.message,
+          description: "Failed to create account: " + signupError.message,
           variant: "destructive"
         });
         return;
       } 
 
-      if (!data.user) {
+      if (!signupData.user) {
+        console.error('No user returned from signup');
         toast({
           title: "Error", 
-          description: "No user returned from signup",
+          description: "Account creation failed - no user returned",
           variant: "destructive"
         });
         return;
       }
 
-      console.log('Admin user created, ID:', data.user.id);
+      const userId = signupData.user.id;
+      console.log('User created successfully with ID:', userId);
       
-      // Wait a moment for the trigger to create the profile and user role
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Wait for trigger to complete
+      console.log('Waiting for profile creation...');
+      await new Promise(resolve => setTimeout(resolve, 3000));
       
-      // Add admin role to the user
+      // Add admin role using a direct insert with proper error handling
       console.log('Adding admin role...');
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: data.user.id,
-          role: 'admin'
-        });
-      
-      if (roleError) {
-        console.error('Error adding admin role:', roleError);
+      try {
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .insert({
+            user_id: userId,
+            role: 'admin'
+          });
+        
+        if (roleError) {
+          console.error('Admin role assignment failed:', roleError);
+          toast({
+            title: "Partial Success",
+            description: "Account created but admin role assignment failed. Please contact support.",
+            variant: "destructive"
+          });
+        } else {
+          console.log('Admin role assigned successfully');
+          toast({
+            title: "Success",
+            description: signupData.user.email_confirmed_at 
+              ? "Admin account created successfully! You can now sign in."
+              : "Admin account created! Please check your email to confirm your account.",
+          });
+        }
+      } catch (roleErr: any) {
+        console.error('Role assignment exception:', roleErr);
         toast({
-          title: "Warning",
-          description: "Account created but admin role assignment failed. Contact support.",
+          title: "Partial Success",
+          description: "Account created but role assignment had an error: " + roleErr.message,
           variant: "destructive"
-        });
-      } else {
-        console.log('Admin role assigned successfully');
-        toast({
-          title: "Success",
-          description: data.user.email_confirmed_at 
-            ? "Admin account created successfully! You can now access the admin panel."
-            : "Admin account created! Please check your email to confirm your account.",
         });
       }
       
@@ -212,10 +228,11 @@ const AuthForm = () => {
       setPassword('');
       
     } catch (error: any) {
-      console.error('Unexpected error during admin signup:', error);
+      console.error('=== ADMIN SIGNUP ERROR ===');
+      console.error('Error details:', error);
       toast({
         title: "Error",
-        description: "Failed to create admin account: " + error.message,
+        description: "Failed to create admin account: " + (error.message || 'Unknown error'),
         variant: "destructive"
       });
     } finally {
@@ -384,7 +401,7 @@ const AuthForm = () => {
                     disabled={!email || !password}
                     className="w-full"
                   >
-                    Create Admin Account (Requires Admin Password)
+                    Create Admin Account
                   </Button>
                 </div>
               </CardContent>
