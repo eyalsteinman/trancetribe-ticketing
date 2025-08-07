@@ -355,7 +355,7 @@ const AuthForm = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Admin Access</CardTitle>
-                <CardDescription>Sign in with your admin credentials or create a new admin account</CardDescription>
+                <CardDescription>Sign in with your admin credentials</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <Input
@@ -379,12 +379,12 @@ const AuthForm = () => {
                     {loading ? "Signing in..." : "Sign In as Admin"}
                   </Button>
                   <Button 
-                    onClick={handleAdminSignup}
+                    onClick={handleCreateAdminClick}
                     variant="outline"
-                    disabled={loading || !email || !password}
+                    disabled={!email || !password}
                     className="w-full"
                   >
-                    {loading ? "Creating Admin Account..." : "Create New Admin Account"}
+                    Create Admin Account (Requires Admin Password)
                   </Button>
                 </div>
               </CardContent>
