@@ -32,18 +32,27 @@ serve(async (req) => {
 
     // Verify the caller is an admin
     const token = authHeader.replace('Bearer ', '')
+    console.log('Verifying user with token...')
+    
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token)
     
     if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      console.error('Auth verification failed:', authError)
+      return new Response(JSON.stringify({ error: 'Unauthorized: ' + (authError?.message || 'No user found') }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
 
+    console.log('User verified:', user.id)
+
     // Check if user has admin role using the new is_admin function
+    console.log('Checking admin role for user:', user.id)
+    
     const { data: isAdmin, error: roleCheckError } = await supabaseAdmin
       .rpc('is_admin', { _user_id: user.id })
+
+    console.log('Admin check result:', { isAdmin, roleCheckError })
 
     if (roleCheckError) {
       console.error('Role check error:', roleCheckError)
@@ -54,11 +63,14 @@ serve(async (req) => {
     }
 
     if (!isAdmin) {
+      console.log('User is not admin, denying access')
       return new Response(JSON.stringify({ error: 'Not authorized as admin' }), {
         status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
+
+    console.log('Admin verification successful')
 
     // Parse request body
     const { email, password } = await req.json()
@@ -71,6 +83,8 @@ serve(async (req) => {
     }
 
     // Create the user with email verification bypassed using admin privileges
+    console.log('Creating new user with email:', email)
+    
     const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
@@ -87,7 +101,14 @@ serve(async (req) => {
       }
     })
 
+    console.log('User creation result:', { 
+      success: !!newUser.user, 
+      userId: newUser.user?.id,
+      error: createError?.message 
+    })
+
     if (createError) {
+      console.error('User creation failed:', createError)
       return new Response(JSON.stringify({ error: createError.message }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -95,6 +116,8 @@ serve(async (req) => {
     }
 
     if (newUser.user) {
+      console.log('Adding admin role to user:', newUser.user.id)
+      
       // Add admin role
       const { error: roleError } = await supabaseAdmin
         .from('user_roles')
@@ -103,7 +126,10 @@ serve(async (req) => {
           role: 'admin'
         })
 
+      console.log('Role assignment result:', { error: roleError?.message })
+
       if (roleError) {
+        console.error('Failed to assign admin role:', roleError)
         return new Response(JSON.stringify({ error: 'Failed to assign admin role: ' + roleError.message }), {
           status: 500,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
