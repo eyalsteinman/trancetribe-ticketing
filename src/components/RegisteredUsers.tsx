@@ -103,21 +103,23 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
     }
 
     try {
-      // First delete from profiles table
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('user_id', userId);
+      console.log('Attempting to delete user:', userId);
+      
+      // Call the delete-user edge function
+      const { data, error } = await supabase.functions.invoke('delete-user', {
+        body: {
+          userId: userId
+        }
+      });
 
-      if (profileError) {
-        throw profileError;
+      console.log('Delete user response:', { data, error });
+
+      if (error) {
+        throw error;
       }
 
-      // Then delete from auth.users using admin API
-      const { error: userError } = await supabase.auth.admin.deleteUser(userId);
-
-      if (userError) {
-        throw userError;
+      if (data && !data.success) {
+        throw new Error(data.error || 'Failed to delete user');
       }
 
       toast({
