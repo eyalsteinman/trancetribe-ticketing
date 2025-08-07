@@ -57,11 +57,11 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
         return;
       }
 
-      // Get profiles for admin users
+      // Get profiles for admin users including email
       const adminUserIds = adminRoles.map(role => role.user_id);
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
-        .select('user_id, display_name')
+        .select('user_id, display_name, email, first_name, last_name, created_at')
         .in('user_id', adminUserIds);
 
       if (profilesError) {
@@ -77,9 +77,12 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
       // Transform the data to match our interface
       const adminUsers: AdminUser[] = (profilesData || []).map(profile => ({
         id: profile.user_id,
-        email: '', // We don't have access to email from client side
-        display_name: profile.display_name || 'Unknown Admin',
-        created_at: new Date().toISOString()
+        email: profile.email || 'No email',
+        display_name: profile.display_name || 
+                     (profile.first_name && profile.last_name 
+                       ? `${profile.first_name} ${profile.last_name}`
+                       : profile.email?.split('@')[0] || 'Unknown Admin'),
+        created_at: profile.created_at || new Date().toISOString()
       }));
 
       setAdmins(adminUsers);
@@ -367,7 +370,8 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
                       ) : (
                         <div>
                           <div className="font-medium">{admin.display_name}</div>
-                          <div className="text-sm text-muted-foreground">Admin</div>
+                          <div className="text-sm text-muted-foreground">{admin.email}</div>
+                          <div className="text-xs text-muted-foreground">Admin</div>
                         </div>
                       )}
                     </div>
