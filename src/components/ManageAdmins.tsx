@@ -123,8 +123,8 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
         });
         return;
       }
-      
-      console.log('Calling create-admin edge function...');
+
+      console.log('Session exists, calling edge function...');
       
       // Call edge function to create admin with email verification bypassed
       const { data, error } = await supabase.functions.invoke('create-admin', {
