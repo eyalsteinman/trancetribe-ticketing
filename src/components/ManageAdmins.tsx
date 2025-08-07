@@ -123,7 +123,7 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
         });
         return;
       }
-
+      
       console.log('Calling create-admin edge function...');
       
       // Call edge function to create admin with email verification bypassed
@@ -139,6 +139,16 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
       });
 
       console.log('Edge function response:', { data, error });
+      
+      // Log more detailed error information
+      if (error) {
+        console.error('Detailed error:', {
+          name: error.name,
+          message: error.message,
+          context: error.context,
+          details: error.details
+        });
+      }
 
       if (error) {
         console.error('Edge function error:', error);

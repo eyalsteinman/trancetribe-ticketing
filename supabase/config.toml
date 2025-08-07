@@ -1,1 +1,14 @@
 project_id = "wfyvnzcnhmrsheivbgip"
+
+[auth]
+enabled = true
+site_url = "https://user-scan-hub.lovable.app"
+
+[db]
+schema = "public"
+
+[functions.create-admin]
+verify_jwt = false
+
+[functions.delete-user]
+verify_jwt = false
