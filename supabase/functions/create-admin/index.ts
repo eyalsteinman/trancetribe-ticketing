@@ -66,17 +66,20 @@ serve(async (req) => {
       })
     }
 
-    // Create the user with email verification bypassed
+    // Create the user with email verification bypassed using admin privileges
     const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
-      email_confirm: true, // This bypasses email verification
+      email_confirm: true, // Bypass email verification
+      phone_confirm: true, // Bypass phone verification  
       app_metadata: {
         provider: 'email',
-        providers: ['email']
+        providers: ['email'],
+        email_verified: true // Mark as verified
       },
       user_metadata: {
-        display_name: email.split('@')[0]
+        display_name: email.split('@')[0],
+        email_confirmed: true // Additional confirmation flag
       }
     })
 
