@@ -139,7 +139,10 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     >
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">
+          <h1 
+            className="text-2xl font-bold"
+            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+          >
             {nickname ? `Welcome back, ${nickname}!` : 'User Dashboard'}
           </h1>
           <Button variant="outline" onClick={handleSignOut}>
