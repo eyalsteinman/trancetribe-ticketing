@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
 
 interface ExploderGameProps {
   onBack: () => void;
@@ -10,6 +9,8 @@ interface Ball {
   size: 'large' | 'medium' | 'small';
   radius: number;
   selected: boolean;
+  isDragging?: boolean;
+  dragPosition?: { x: number; y: number };
 }
 
 interface Cube {
@@ -21,8 +22,9 @@ interface Cube {
 
 const ExploderGame = ({ onBack }: ExploderGameProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [selectedBall, setSelectedBall] = useState<Ball | null>(null);
-  const [showDropButton, setShowDropButton] = useState(false);
+  const buildingRef = useRef<HTMLDivElement>(null);
+  const [draggedBall, setDraggedBall] = useState<Ball | null>(null);
+  const [dragPosition, setDragPosition] = useState<{ x: number; y: number } | null>(null);
 
   // Initialize balls
   const [balls] = useState<Ball[]>([
@@ -47,56 +49,88 @@ const ExploderGame = ({ onBack }: ExploderGameProps) => {
     return initialCubes;
   });
 
-  const handleBallClick = (ball: Ball) => {
-    setSelectedBall(ball);
-    setShowDropButton(true);
+  const handleBallMouseDown = (ball: Ball, e: React.MouseEvent) => {
+    e.preventDefault();
+    setDraggedBall(ball);
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (rect) {
+      setDragPosition({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      });
+    }
   };
 
-  const handleDrop = () => {
-    if (!selectedBall) return;
-
-    // Calculate crater size based on ball size
-    let craterRadius: number;
-    switch (selectedBall.size) {
-      case 'large':
-        craterRadius = 3;
-        break;
-      case 'medium':
-        craterRadius = 2;
-        break;
-      case 'small':
-        craterRadius = 1;
-        break;
-      default:
-        craterRadius = 1;
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (draggedBall && containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      setDragPosition({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      });
     }
+  };
 
-    // Create crater in the center of the building
-    const centerX = 5;
-    const centerY = 7;
-
-    setCubes(prevCubes => 
-      prevCubes.map(cube => {
-        const distance = Math.sqrt(
-          Math.pow(cube.x - centerX, 2) + Math.pow(cube.y - centerY, 2)
-        );
+  const handleMouseUp = (e: React.MouseEvent) => {
+    if (draggedBall && buildingRef.current && containerRef.current) {
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const buildingRect = buildingRef.current.getBoundingClientRect();
+      
+      const relativeX = e.clientX - buildingRect.left;
+      const relativeY = e.clientY - buildingRect.top;
+      
+      // Check if dropped on building
+      if (relativeX >= 0 && relativeX <= buildingRect.width && 
+          relativeY >= 0 && relativeY <= buildingRect.height) {
         
-        if (distance <= craterRadius) {
-          return { ...cube, visible: false };
+        // Calculate which cube was hit (convert pixel position to grid position)
+        const cubeSize = 16; // 4 * 4 (w-4 h-4)
+        const gridX = Math.floor(relativeX / cubeSize);
+        const gridY = Math.floor(relativeY / cubeSize);
+        
+        // Calculate crater size based on ball size
+        let craterRadius: number;
+        switch (draggedBall.size) {
+          case 'large':
+            craterRadius = 3;
+            break;
+          case 'medium':
+            craterRadius = 2;
+            break;
+          case 'small':
+            craterRadius = 1;
+            break;
+          default:
+            craterRadius = 1;
         }
-        return cube;
-      })
-    );
 
-    setSelectedBall(null);
-    setShowDropButton(false);
+        // Create crater at drop location
+        setCubes(prevCubes => 
+          prevCubes.map(cube => {
+            const distance = Math.sqrt(
+              Math.pow(cube.x - gridX, 2) + Math.pow(cube.y - gridY, 2)
+            );
+            
+            if (distance <= craterRadius) {
+              return { ...cube, visible: false };
+            }
+            return cube;
+          })
+        );
+      }
+    }
+    
+    setDraggedBall(null);
+    setDragPosition(null);
   };
 
   return (
     <div 
       ref={containerRef}
-      className="min-h-screen relative overflow-hidden"
+      className="min-h-screen relative overflow-hidden select-none"
       style={{ backgroundColor: '#3b82f6' }}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
     >
       {/* Exit Button */}
       <button 
@@ -108,23 +142,23 @@ const ExploderGame = ({ onBack }: ExploderGameProps) => {
 
       {/* Balls on the left side */}
       <div className="absolute left-8 top-1/2 transform -translate-y-1/2 flex flex-col gap-8">
-        {balls.map((ball, index) => (
+        {balls.map((ball) => (
           <div
             key={ball.id}
-            className={`bg-black rounded-full cursor-pointer transition-all duration-200 ${
-              selectedBall?.id === ball.id ? 'ring-4 ring-white' : 'hover:scale-110'
+            className={`bg-black rounded-full cursor-grab active:cursor-grabbing transition-all duration-200 ${
+              draggedBall?.id === ball.id ? 'ring-4 ring-white' : 'hover:scale-110'
             }`}
             style={{
               width: ball.radius * 2,
               height: ball.radius * 2,
             }}
-            onClick={() => handleBallClick(ball)}
+            onMouseDown={(e) => handleBallMouseDown(ball, e)}
           />
         ))}
       </div>
 
       {/* Building on the right side */}
-      <div className="absolute right-16 top-1/2 transform -translate-y-1/2">
+      <div ref={buildingRef} className="absolute right-16 top-1/2 transform -translate-y-1/2">
         <div className="grid grid-cols-10 gap-0">
           {cubes.map((cube) => (
             <div
@@ -141,16 +175,17 @@ const ExploderGame = ({ onBack }: ExploderGameProps) => {
         </div>
       </div>
 
-      {/* Drop Button */}
-      {showDropButton && selectedBall && (
-        <div className="absolute top-20 left-1/2 transform -translate-x-1/2">
-          <Button
-            onClick={handleDrop}
-            className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 text-lg font-bold shadow-xl"
-          >
-            DROP
-          </Button>
-        </div>
+      {/* Dragged Ball */}
+      {draggedBall && dragPosition && (
+        <div
+          className="absolute bg-black rounded-full pointer-events-none z-40"
+          style={{
+            width: draggedBall.radius * 2,
+            height: draggedBall.radius * 2,
+            left: dragPosition.x - draggedBall.radius,
+            top: dragPosition.y - draggedBall.radius,
+          }}
+        />
       )}
     </div>
   );
