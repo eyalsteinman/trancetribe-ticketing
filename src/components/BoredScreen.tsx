@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Save } from 'lucide-react';
+import { useBackground } from '@/contexts/BackgroundContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface BoredScreenProps {
   onBack: () => void;
@@ -8,6 +10,8 @@ interface BoredScreenProps {
 
 const BoredScreen = ({ onBack }: BoredScreenProps) => {
   const [backgroundColor, setBackgroundColor] = useState('#3b82f6'); // Start with blue
+  const { setGlobalBackground } = useBackground();
+  const { toast } = useToast();
 
   const getRandomColor = () => {
     const letters = '0123456789ABCDEF';
@@ -20,6 +24,14 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
 
   const changeBackgroundColor = () => {
     setBackgroundColor(getRandomColor());
+  };
+
+  const saveAsBackground = () => {
+    setGlobalBackground(backgroundColor);
+    toast({
+      title: "Background Saved",
+      description: "The background has been applied to all pages!",
+    });
   };
 
   return (
@@ -47,6 +59,15 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
         }}
       >
         Change Color
+      </Button>
+
+      {/* Save as Background button at bottom */}
+      <Button
+        onClick={saveAsBackground}
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all duration-300 shadow-lg"
+      >
+        <Save className="h-4 w-4 mr-2" />
+        Save as Background
       </Button>
     </div>
   );

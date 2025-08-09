@@ -25,7 +25,7 @@ const UserGames = ({ onBack, onGameSelect }: UserGamesProps) => {
               <div className="mx-auto mb-2">
                 <Circle className="h-12 w-12" />
               </div>
-              <CardTitle>Bored Screen</CardTitle>
+              <CardTitle>Color Changer</CardTitle>
             </CardHeader>
           </Card>
 
