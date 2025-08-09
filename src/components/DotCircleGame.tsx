@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, X } from 'lucide-react';
 
 interface DotCircleGameProps {
   onBack: () => void;
@@ -23,6 +23,8 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
   const [dotCounter, setDotCounter] = useState(0);
   const [isDrawing, setIsDrawing] = useState(false);
   const [path, setPath] = useState<Array<{x: number, y: number}>>([]);
+  const [showInstructions, setShowInstructions] = useState(true);
+  const [gameStarted, setGameStarted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,14 +35,18 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
       setBackgroundColor(randomColor);
     }, 10000);
 
-    // Generate first dot
-    generateNewDot();
-
     // Load high score from localStorage
     loadHighScore();
 
     return () => clearInterval(colorInterval);
   }, []);
+
+  useEffect(() => {
+    // Generate first dot only when game starts
+    if (gameStarted) {
+      generateNewDot();
+    }
+  }, [gameStarted]);
 
   const generateNewDot = () => {
     if (!containerRef.current) return;
@@ -48,8 +54,8 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
     const container = containerRef.current;
     const containerRect = container.getBoundingClientRect();
     
-    // Generate dot position with some margin from edges
-    const margin = 50;
+    // Generate dot position with 30px margin from edges
+    const margin = 30;
     const x = Math.random() * (containerRect.width - margin * 2) + margin;
     const y = Math.random() * (containerRect.height - margin * 2) + margin;
     
@@ -174,48 +180,83 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
     onBack();
   };
 
+  const startGame = () => {
+    setShowInstructions(false);
+    setGameStarted(true);
+  };
+
   return (
     <div 
       ref={containerRef}
-      className="min-h-screen w-full relative transition-colors duration-500 overflow-hidden touch-none"
+      className="min-h-screen w-full relative transition-colors duration-500 overflow-hidden"
       style={{ backgroundColor }}
-      onMouseDown={handleStart}
-      onMouseMove={handleMove}
-      onMouseUp={handleEnd}
-      onTouchStart={handleStart}
-      onTouchMove={handleMove}
-      onTouchEnd={handleEnd}
-      onMouseLeave={() => {
-        setIsDrawing(false);
-        setPath([]);
-      }}
+      {...(gameStarted && !showInstructions ? {
+        onMouseDown: handleStart,
+        onMouseMove: handleMove,
+        onMouseUp: handleEnd,
+        onTouchStart: handleStart,
+        onTouchMove: handleMove,
+        onTouchEnd: handleEnd,
+        onMouseLeave: () => {
+          setIsDrawing(false);
+          setPath([]);
+        },
+        style: { backgroundColor, touchAction: 'none' }
+      } : { style: { backgroundColor } })}
     >
       {/* Exit button */}
       <Button 
         variant="outline"
         onClick={handleExit}
-        className="absolute top-4 left-4 flex items-center gap-2 bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 z-10"
+        className="absolute top-4 left-4 flex items-center gap-2 bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 z-50"
       >
         <ArrowLeft className="h-4 w-4" />
         Exit
       </Button>
 
-      {/* High score display */}
-      {highScore && (
-        <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white px-4 py-2 rounded-lg z-10">
-          <div className="text-xs opacity-75">High Score</div>
-          <div className="font-bold">{highScore.nickname}: {highScore.score}</div>
+      {/* Score displays side by side */}
+      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 flex gap-4 z-40">
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-4 py-2 rounded-lg">
+          <div className="text-xs opacity-75">Your Score</div>
+          <div className="font-bold text-lg">{score}</div>
+        </div>
+        
+        {highScore && (
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-4 py-2 rounded-lg">
+            <div className="text-xs opacity-75">High Score</div>
+            <div className="font-bold">{highScore.nickname}: {highScore.score}</div>
+          </div>
+        )}
+      </div>
+
+      {/* Instructions popup */}
+      {showInstructions && (
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 text-white p-6 rounded-lg text-center max-w-sm mx-4 relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={startGame}
+              className="absolute top-2 right-2 text-white hover:bg-white/20"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+            <div className="mt-4">
+              <h3 className="text-lg font-bold mb-2">Dot Circle Game</h3>
+              <p className="text-sm mb-4">Use one finger to circle the white dot and score points!</p>
+              <Button 
+                onClick={startGame}
+                className="bg-white/20 hover:bg-white/30 text-white border border-white/20"
+              >
+                Start Game
+              </Button>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Current score */}
-      <div className="absolute top-20 left-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white px-4 py-2 rounded-lg z-10">
-        <div className="text-xs opacity-75">Your Score</div>
-        <div className="font-bold text-lg">{score}</div>
-      </div>
-
-      {/* Current dot */}
-      {currentDot && (
+      {/* Current dot - only show when game started */}
+      {currentDot && gameStarted && !showInstructions && (
         <div
           className="absolute w-3 h-3 bg-white rounded-full shadow-lg z-20"
           style={{
@@ -225,13 +266,8 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
         />
       )}
 
-      {/* Instructions */}
-      <div className="absolute top-20 left-1/2 transform -translate-x-1/2 bg-white/10 backdrop-blur-sm border border-white/20 text-white px-4 py-2 rounded-lg text-center z-10 max-w-xs">
-        <div className="text-sm">Use one finger to circle the white dot and score points!</div>
-      </div>
-
-      {/* Drawing path */}
-      {path.length > 1 && (
+      {/* Drawing path - only show when game started */}
+      {path.length > 1 && gameStarted && !showInstructions && (
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-30">
           <path
             d={`M ${path[0].x} ${path[0].y} ${path.slice(1).map(p => `L ${p.x} ${p.y}`).join(' ')}`}
