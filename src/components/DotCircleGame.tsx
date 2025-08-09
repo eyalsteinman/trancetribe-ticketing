@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, X } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 interface DotCircleGameProps {
   onBack: () => void;
@@ -206,23 +206,23 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
     >
       {/* Exit button */}
       <Button 
-        variant="outline"
+        variant="ghost"
         onClick={handleExit}
-        className="absolute top-4 left-4 flex items-center gap-2 bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 z-50"
+        className="absolute top-4 left-4 flex items-center gap-2 text-white hover:bg-white/20 z-50 bg-white/10 border border-white/30"
       >
         <ArrowLeft className="h-4 w-4" />
         Exit
       </Button>
 
-      {/* Score displays side by side */}
-      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 flex gap-4 z-40">
-        <div className="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-4 py-2 rounded-lg">
+      {/* Score displays aligned to right */}
+      <div className="absolute top-4 right-4 flex flex-col gap-2 z-40 text-right">
+        <div className="text-white">
           <div className="text-xs opacity-75">Your Score</div>
           <div className="font-bold text-lg">{score}</div>
         </div>
         
         {highScore && (
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-4 py-2 rounded-lg">
+          <div className="text-white">
             <div className="text-xs opacity-75">High Score</div>
             <div className="font-bold">{highScore.nickname}: {highScore.score}</div>
           </div>
@@ -232,16 +232,8 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
       {/* Instructions popup */}
       {showInstructions && (
         <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 text-white p-6 rounded-lg text-center max-w-sm mx-4 relative">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={startGame}
-              className="absolute top-2 right-2 text-white hover:bg-white/20"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-            <div className="mt-4">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 text-white p-6 rounded-lg text-center max-w-sm mx-4">
+            <div>
               <h3 className="text-lg font-bold mb-2">Dot Circle Game</h3>
               <p className="text-sm mb-4">Use one finger to circle the white dot and score points!</p>
               <Button 
