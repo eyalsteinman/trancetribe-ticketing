@@ -208,15 +208,39 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
         style: { backgroundColor, touchAction: 'none' }
       } : { style: { backgroundColor } })}
     >
-      {/* Exit button */}
-      <button 
-        onClick={handleExit}
-        className="absolute top-4 left-4 flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white border border-white/50 rounded-md z-50 backdrop-blur-sm transition-all"
-        style={{ pointerEvents: 'auto' }}
+      {/* Exit button - completely independent floating button */}
+      <div 
+        className="absolute top-4 left-4 z-[9999]"
+        onTouchStart={(e) => e.stopPropagation()}
+        onTouchEnd={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+        onMouseUp={(e) => e.stopPropagation()}
+        onMouseMove={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          handleExit();
+        }}
+        style={{ 
+          pointerEvents: 'auto',
+          touchAction: 'manipulation'
+        }}
       >
-        <ArrowLeft className="h-4 w-4" />
-        Back
-      </button>
+        <button 
+          className="flex items-center gap-2 px-4 py-2 bg-white/90 hover:bg-white text-black border border-gray-300 rounded-md backdrop-blur-sm transition-all shadow-lg font-medium"
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchEnd={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            handleExit();
+          }}
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </button>
+      </div>
 
       {/* Score displays aligned to right */}
       <div className="absolute top-4 right-4 flex flex-col gap-2 z-40 text-right">
