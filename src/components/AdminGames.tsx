@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, Palette, Target, Gamepad2 } from 'lucide-react';
+import { useBackground } from '@/contexts/BackgroundContext';
 
 interface AdminGamesProps {
   onBack: () => void;
@@ -8,11 +9,24 @@ interface AdminGamesProps {
 }
 
 const AdminGames = ({ onBack, onGameSelect }: AdminGamesProps) => {
+  const { backgroundColor, isBackgroundDark } = useBackground();
+  
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div 
+      className="min-h-screen p-4 transition-colors duration-500"
+      style={{ 
+        backgroundColor,
+        color: isBackgroundDark ? '#ffffff' : '#000000'
+      }}
+    >
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Admin Games</h1>
+          <h1 
+            className="text-2xl font-bold"
+            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+          >
+            Admin Games
+          </h1>
           <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back

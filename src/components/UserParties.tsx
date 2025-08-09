@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { QRCodeSVG } from 'qrcode.react';
 import { User } from '@supabase/supabase-js';
 import { ArrowLeft, ArrowUpDown } from 'lucide-react';
+import { useBackground } from '@/contexts/BackgroundContext';
 
 interface Party {
   id: string;
@@ -28,6 +29,7 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
   const [loadingParties, setLoadingParties] = useState(true);
   const [sortAscending, setSortAscending] = useState(true);
   const { toast } = useToast();
+  const { backgroundColor, isBackgroundDark } = useBackground();
 
   useEffect(() => {
     loadParties();
@@ -146,7 +148,13 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
 
   if (selectedParty) {
     return (
-      <div className="min-h-screen bg-background p-4">
+      <div 
+        className="min-h-screen p-4 transition-colors duration-500"
+        style={{ 
+          backgroundColor,
+          color: isBackgroundDark ? '#ffffff' : '#000000'
+        }}
+      >
         <div className="max-w-md mx-auto space-y-6">
           <div className="flex justify-between items-center">
             <Button variant="outline" onClick={goBackToPartyList} className="flex items-center gap-2">
@@ -197,14 +205,25 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div 
+      className="min-h-screen p-4 transition-colors duration-500"
+      style={{ 
+        backgroundColor,
+        color: isBackgroundDark ? '#ffffff' : '#000000'
+      }}
+    >
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex items-center gap-4">
           <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back
           </Button>
-          <h1 className="text-2xl font-bold">Parties</h1>
+          <h1 
+            className="text-2xl font-bold"
+            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+          >
+            Parties
+          </h1>
         </div>
 
         <Card>
