@@ -193,7 +193,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                       {new Date(qrCode.parties?.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      {qrCode.is_scanned ? 'Going!' : 'Not scanned'}
+                      {qrCode.is_scanned ? 'qr used' : 'qr generated but not scanned yet'}
                     </div>
                   </div>
                   {qrCode.is_scanned && (
