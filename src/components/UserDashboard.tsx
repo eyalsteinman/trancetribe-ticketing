@@ -25,6 +25,13 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   useEffect(() => {
     loadUserQRCodes();
     loadUserProfile();
+    
+    // Set up polling to refresh QR codes every 30 seconds
+    const interval = setInterval(() => {
+      loadUserQRCodes();
+    }, 30000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const loadUserProfile = async () => {
@@ -186,7 +193,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                       {new Date(qrCode.parties?.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      {qrCode.is_scanned ? 'Scanned' : 'Not scanned'}
+                      {qrCode.is_scanned ? 'Going!' : 'Not scanned'}
                     </div>
                   </div>
                   {qrCode.is_scanned && (
