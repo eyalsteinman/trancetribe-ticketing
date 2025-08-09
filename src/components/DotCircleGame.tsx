@@ -28,12 +28,12 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Change background color every 10 seconds
+    // Change background color every 5 seconds
     const colorInterval = setInterval(() => {
       const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#84cc16', '#f97316'];
       const randomColor = colors[Math.floor(Math.random() * colors.length)];
       setBackgroundColor(randomColor);
-    }, 10000);
+    }, 5000);
 
     // Load high score from localStorage
     loadHighScore();
@@ -228,7 +228,7 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
         }}
       >
         <button 
-          className="flex items-center gap-2 px-4 py-2 bg-white/90 hover:bg-white text-black border border-gray-300 rounded-md backdrop-blur-sm transition-all shadow-lg font-medium"
+          className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 rounded-lg backdrop-blur-md transition-all shadow-xl font-medium"
           onTouchStart={(e) => e.stopPropagation()}
           onTouchEnd={(e) => e.stopPropagation()}
           onClick={(e) => {
