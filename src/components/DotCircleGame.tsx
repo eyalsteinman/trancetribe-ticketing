@@ -90,23 +90,48 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
     }
   };
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleStart = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
     setIsDrawing(true);
     const rect = containerRef.current?.getBoundingClientRect();
     if (rect) {
-      setPath([{ x: e.clientX - rect.left, y: e.clientY - rect.top }]);
+      let clientX, clientY;
+      if ('touches' in e) {
+        // Touch event
+        if (e.touches.length !== 1) return; // Only allow single finger
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else {
+        // Mouse event
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+      setPath([{ x: clientX - rect.left, y: clientY - rect.top }]);
     }
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMove = (e: React.MouseEvent | React.TouchEvent) => {
     if (!isDrawing || !containerRef.current) return;
+    e.preventDefault();
     
     const rect = containerRef.current.getBoundingClientRect();
-    const newPoint = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    let clientX, clientY;
+    if ('touches' in e) {
+      // Touch event
+      if (e.touches.length !== 1) return; // Only allow single finger
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      // Mouse event
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    const newPoint = { x: clientX - rect.left, y: clientY - rect.top };
     setPath(prev => [...prev, newPoint]);
   };
 
-  const handleMouseUp = () => {
+  const handleEnd = (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
     if (!isDrawing || !currentDot || path.length < 3) {
       setIsDrawing(false);
       setPath([]);
@@ -152,11 +177,14 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
   return (
     <div 
       ref={containerRef}
-      className="min-h-screen w-full relative transition-colors duration-500 overflow-hidden"
+      className="min-h-screen w-full relative transition-colors duration-500 overflow-hidden touch-none"
       style={{ backgroundColor }}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
+      onMouseDown={handleStart}
+      onMouseMove={handleMove}
+      onMouseUp={handleEnd}
+      onTouchStart={handleStart}
+      onTouchMove={handleMove}
+      onTouchEnd={handleEnd}
       onMouseLeave={() => {
         setIsDrawing(false);
         setPath([]);
@@ -197,23 +225,23 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
         />
       )}
 
+      {/* Instructions */}
+      <div className="absolute top-20 left-1/2 transform -translate-x-1/2 bg-white/10 backdrop-blur-sm border border-white/20 text-white px-4 py-2 rounded-lg text-center z-10 max-w-xs">
+        <div className="text-sm">Use one finger to circle the white dot and score points!</div>
+      </div>
+
       {/* Drawing path */}
       {path.length > 1 && (
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-30">
           <path
             d={`M ${path[0].x} ${path[0].y} ${path.slice(1).map(p => `L ${p.x} ${p.y}`).join(' ')}`}
             stroke="white"
-            strokeWidth="2"
+            strokeWidth="1"
             fill="none"
-            opacity="0.7"
+            opacity="0.8"
           />
         </svg>
       )}
-
-      {/* Instructions */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/10 backdrop-blur-sm border border-white/20 text-white px-4 py-2 rounded-lg text-center z-10">
-        <div className="text-sm">Circle the white dot with your mouse to score points!</div>
-      </div>
     </div>
   );
 };
