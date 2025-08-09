@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
 import { Badge } from '@/components/ui/badge';
 import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2 } from 'lucide-react';
@@ -47,6 +48,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [nicknameInput, setNicknameInput] = useState('');
   
   const { toast } = useToast();
+  const { backgroundColor, isBackgroundDark } = useBackground();
 
   useEffect(() => {
     loadParties();
@@ -346,7 +348,13 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
 
   if (currentView === 'scanner') {
     return (
-      <div className="min-h-screen bg-background p-4">
+      <div 
+        className="min-h-screen p-4 transition-colors duration-500"
+        style={{ 
+          backgroundColor,
+          color: isBackgroundDark ? '#ffffff' : '#000000'
+        }}
+      >
         <div className="max-w-md mx-auto space-y-6">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold">QR Scanner</h1>
@@ -397,7 +405,13 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
 
   if (currentView === 'guests') {
     return (
-      <div className="min-h-screen bg-background p-4">
+      <div 
+        className="min-h-screen p-4 transition-colors duration-500"
+        style={{ 
+          backgroundColor,
+          color: isBackgroundDark ? '#ffffff' : '#000000'
+        }}
+      >
         <div className="max-w-md mx-auto space-y-6">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold">Scanned Guests</h1>
@@ -478,7 +492,13 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div 
+      className="min-h-screen p-4 transition-colors duration-500"
+      style={{ 
+        backgroundColor,
+        color: isBackgroundDark ? '#ffffff' : '#000000'
+      }}
+    >
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <div>

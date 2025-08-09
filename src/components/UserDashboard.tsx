@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
 import { Calendar, UserIcon, Gamepad2 } from 'lucide-react';
 import UserParties from './UserParties';
@@ -21,6 +22,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   const [nickname, setNickname] = useState<string>('');
   const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
   const { toast } = useToast();
+  const { backgroundColor, isBackgroundDark } = useBackground();
 
   useEffect(() => {
     loadUserQRCodes();
@@ -128,7 +130,13 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div 
+      className="min-h-screen p-4 transition-colors duration-500"
+      style={{ 
+        backgroundColor,
+        color: isBackgroundDark ? '#ffffff' : '#000000'
+      }}
+    >
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">

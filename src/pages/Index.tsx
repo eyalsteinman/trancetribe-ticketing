@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { useBackground } from '@/contexts/BackgroundContext';
 import SplashScreen from '@/components/SplashScreen';
 import AuthForm from '@/components/AuthForm';
 import UserDashboard from '@/components/UserDashboard';
@@ -12,6 +13,7 @@ const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { backgroundColor, isBackgroundDark } = useBackground();
 
   const checkAdminRole = async (userId: string) => {
     try {
@@ -76,7 +78,13 @@ const Index = () => {
   if (loading) {
     console.log('Loading state, user:', user, 'isAdmin:', isAdmin);
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div 
+        className="min-h-screen flex items-center justify-center transition-colors duration-500"
+        style={{ 
+          backgroundColor,
+          color: isBackgroundDark ? '#ffffff' : '#000000'
+        }}
+      >
         <div className="text-center">
           <h1 className="text-xl">Loading...</h1>
         </div>

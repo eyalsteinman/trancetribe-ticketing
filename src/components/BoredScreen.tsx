@@ -61,14 +61,30 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
         Change Color
       </Button>
 
-      {/* Save as Background button at bottom */}
-      <Button
-        onClick={saveAsBackground}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all duration-300 shadow-lg"
-      >
-        <Save className="h-4 w-4 mr-2" />
-        Save as Background
-      </Button>
+      {/* Action buttons at bottom */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-4">
+        <Button
+          onClick={saveAsBackground}
+          className="bg-white/20 backdrop-blur-md border border-white/30 text-white hover:bg-white/30 transition-all duration-300 shadow-xl px-6 py-3 text-base font-semibold"
+        >
+          <Save className="h-5 w-5 mr-2" />
+          Save as Background
+        </Button>
+        
+        <Button
+          onClick={() => {
+            setBackgroundColor('#ffffff');
+            setGlobalBackground('#ffffff');
+            toast({
+              title: "Background Reset",
+              description: "Background has been reverted to white!",
+            });
+          }}
+          className="bg-white/20 backdrop-blur-md border border-white/30 text-white hover:bg-white/30 transition-all duration-300 shadow-xl px-6 py-3 text-base font-semibold"
+        >
+          Revert to White
+        </Button>
+      </div>
     </div>
   );
 };

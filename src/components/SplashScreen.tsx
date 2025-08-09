@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useBackground } from '@/contexts/BackgroundContext';
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -6,6 +7,7 @@ interface SplashScreenProps {
 
 const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const [isVisible, setIsVisible] = useState(true);
+  const { backgroundColor, isBackgroundDark } = useBackground();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -19,15 +21,21 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 bg-blue-600 flex items-center justify-center z-50">
+    <div 
+      className="fixed inset-0 flex items-center justify-center z-50 transition-colors duration-500"
+      style={{ 
+        backgroundColor: backgroundColor || '#2563eb',
+        color: isBackgroundDark ? '#ffffff' : '#000000'
+      }}
+    >
       <div className="text-center">
-        <p className="text-white text-lg font-light mb-4">welcome to</p>
-        <h1 className="text-white text-6xl font-bold font-sans leading-tight">
+        <p className="text-lg font-light mb-4">welcome to</p>
+        <h1 className="text-6xl font-bold font-sans leading-tight">
           TRANCE
           <br />
           TRIBE
         </h1>
-        <p className="text-white text-lg font-light mt-4">ticket generator</p>
+        <p className="text-lg font-light mt-4">ticket generator</p>
       </div>
     </div>
   );

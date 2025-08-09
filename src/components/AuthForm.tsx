@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { useBackground } from '@/contexts/BackgroundContext';
 import AdminPasswordForm from './AdminPasswordForm';
 
 const AuthForm = () => {
@@ -17,6 +18,7 @@ const AuthForm = () => {
   const [showAdminPassword, setShowAdminPassword] = useState(false);
   const [isUserLogin, setIsUserLogin] = useState(false);
   const { toast } = useToast();
+  const { backgroundColor, isBackgroundDark } = useBackground();
 
   const handleUserLogin = async () => {
     if (!email || !password) {
@@ -272,11 +274,17 @@ const AuthForm = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div 
+      className="min-h-screen flex items-center justify-center p-4 transition-colors duration-500"
+      style={{ 
+        backgroundColor,
+        color: isBackgroundDark ? '#ffffff' : '#000000'
+      }}
+    >
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-foreground">TRANCE TRIBE</h1>
-          <p className="text-muted-foreground mt-2">Choose your access type</p>
+          <h1 className="text-3xl font-bold">TRANCE TRIBE</h1>
+          <p className="opacity-75 mt-2">Choose your access type</p>
         </div>
 
         <Tabs defaultValue="user" className="w-full">
