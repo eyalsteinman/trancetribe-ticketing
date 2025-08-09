@@ -15,6 +15,7 @@ import RegisteredUsers from './RegisteredUsers';
 import BoredScreen from './BoredScreen';
 import AdminGames from './AdminGames';
 import DotCircleGame from './DotCircleGame';
+import ExploderGame from './ExploderGame';
 
 interface AdminDashboardProps {
   user: User;
@@ -39,7 +40,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
-  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder'>('dashboard');
   const [adminNickname, setAdminNickname] = useState('');
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [nicknameInput, setNicknameInput] = useState('');
@@ -332,6 +333,10 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
 
   if (currentView === 'dot-circle') {
     return <DotCircleGame onBack={() => setCurrentView('admin-games')} adminId={user.id} adminNickname={adminNickname} />;
+  }
+
+  if (currentView === 'exploder') {
+    return <ExploderGame onBack={() => setCurrentView('admin-games')} />;
   }
 
   if (currentView === 'scanner') {

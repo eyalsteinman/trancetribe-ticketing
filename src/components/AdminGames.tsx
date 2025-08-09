@@ -34,10 +34,10 @@ const AdminGames = ({ onBack, onGameSelect }: AdminGamesProps) => {
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-muted">
+          <Card className="cursor-pointer hover:bg-accent" onClick={() => onGameSelect('exploder')}>
             <CardContent className="flex flex-col items-center justify-center p-6">
-              <Gamepad2 className="h-8 w-8 mb-2 text-muted-foreground" />
-              <span className="text-sm font-medium text-muted-foreground">Game 3 TBD</span>
+              <Gamepad2 className="h-8 w-8 mb-2" />
+              <span className="text-sm font-medium">Exploder</span>
             </CardContent>
           </Card>
 
