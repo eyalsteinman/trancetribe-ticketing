@@ -54,10 +54,14 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
     const container = containerRef.current;
     const containerRect = container.getBoundingClientRect();
     
-    // Generate dot position with 30px margin from edges
-    const margin = 30;
-    const x = Math.random() * (containerRect.width - margin * 2) + margin;
-    const y = Math.random() * (containerRect.height - margin * 2) + margin;
+    // Generate dot position with proper padding from edges and UI elements
+    // 60px from edges, extra padding for UI elements
+    const edgePadding = 60;
+    const topPadding = 120; // Extra space for scores at top
+    const leftPadding = 120; // Extra space for back button
+    
+    const x = Math.random() * (containerRect.width - leftPadding - edgePadding) + leftPadding;
+    const y = Math.random() * (containerRect.height - topPadding - edgePadding) + topPadding;
     
     setCurrentDot({
       id: dotCounter + 1,
@@ -205,14 +209,14 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
       } : { style: { backgroundColor } })}
     >
       {/* Exit button */}
-      <Button 
-        variant="ghost"
+      <button 
         onClick={handleExit}
-        className="absolute top-4 left-4 flex items-center gap-2 text-white hover:bg-white/20 z-50 bg-white/10 border border-white/30"
+        className="absolute top-4 left-4 flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white border border-white/50 rounded-md z-50 backdrop-blur-sm transition-all"
+        style={{ pointerEvents: 'auto' }}
       >
         <ArrowLeft className="h-4 w-4" />
-        Exit
-      </Button>
+        Back
+      </button>
 
       {/* Score displays aligned to right */}
       <div className="absolute top-4 right-4 flex flex-col gap-2 z-40 text-right">
