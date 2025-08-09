@@ -69,10 +69,12 @@ const Index = () => {
   };
 
   if (showSplash) {
+    console.log('Showing splash screen');
     return <SplashScreen onComplete={handleSplashComplete} />;
   }
 
   if (loading) {
+    console.log('Loading state, user:', user, 'isAdmin:', isAdmin);
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
@@ -83,13 +85,16 @@ const Index = () => {
   }
 
   if (!user) {
+    console.log('No user, showing auth form');
     return <AuthForm />;
   }
 
   if (isAdmin) {
+    console.log('User is admin, showing admin dashboard');
     return <AdminDashboard user={user} />;
   }
 
+  console.log('User is regular user, showing user dashboard');
   return <UserDashboard user={user} />;
 };
 
