@@ -16,6 +16,7 @@ import BoredScreen from './BoredScreen';
 import AdminGames from './AdminGames';
 import DotCircleGame from './DotCircleGame';
 import ExploderGame from './ExploderGame';
+import NicknameManager from './NicknameManager';
 
 interface AdminDashboardProps {
   user: User;
@@ -40,7 +41,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
-  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder' | 'nickname'>('dashboard');
   const [adminNickname, setAdminNickname] = useState('');
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [nicknameInput, setNicknameInput] = useState('');
@@ -307,6 +308,10 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     }
   };
 
+  if (currentView === 'nickname') {
+    return <NicknameManager user={user} onBack={() => setCurrentView('dashboard')} />;
+  }
+
   if (currentView === 'create-party') {
     return <CreateParty onBack={() => setCurrentView('dashboard')} />;
   }
@@ -539,48 +544,14 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-accent" onClick={() => {
-            setNicknameInput(adminNickname);
-            setIsEditingNickname(true);
-          }}>
-            <CardContent className="flex flex-col items-center justify-center p-6">
-              <UserIcon className="h-8 w-8 mb-2" />
-              <span className="text-sm font-medium">Choose Nickname</span>
-            </CardContent>
-          </Card>
+           <Card className="cursor-pointer hover:bg-accent" onClick={() => setCurrentView('nickname')}>
+             <CardContent className="flex flex-col items-center justify-center p-6">
+               <UserIcon className="h-8 w-8 mb-2" />
+               <span className="text-sm font-medium">Choose Nickname</span>
+             </CardContent>
+           </Card>
         </div>
 
-        {/* Nickname Edit Modal */}
-        {isEditingNickname && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Choose Your Nickname</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Input
-                placeholder="Enter your nickname"
-                value={nicknameInput}
-                onChange={(e) => setNicknameInput(e.target.value)}
-                maxLength={50}
-              />
-              <div className="flex gap-2">
-                <Button onClick={saveNickname} className="flex-1">
-                  Save
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => {
-                    setIsEditingNickname(false);
-                    setNicknameInput('');
-                  }}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         {selectedParty && (
           <Card>

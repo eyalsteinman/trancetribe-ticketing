@@ -3,149 +3,55 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { QRCodeSVG } from 'qrcode.react';
 import { User } from '@supabase/supabase-js';
-import { ArrowLeft, ArrowUpDown } from 'lucide-react';
-
-interface Party {
-  id: string;
-  name: string;
-  date: string;
-  is_active: boolean;
-  photo_url: string | null;
-}
+import { Calendar, UserIcon, Gamepad2 } from 'lucide-react';
+import UserParties from './UserParties';
+import UserGames from './UserGames';
+import NicknameManager from './NicknameManager';
+import BoredScreen from './BoredScreen';
+import DotCircleGame from './DotCircleGame';
+import ExploderGame from './ExploderGame';
 
 interface UserDashboardProps {
   user: User;
 }
 
 const UserDashboard = ({ user }: UserDashboardProps) => {
-  const [parties, setParties] = useState<Party[]>([]);
-  const [selectedParty, setSelectedParty] = useState<Party | null>(null);
-  const [qrCode, setQrCode] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [loadingParties, setLoadingParties] = useState(true);
-  const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
+  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder'>('dashboard');
+  const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
-    loadParties();
+    loadUserQRCodes();
   }, []);
 
-  useEffect(() => {
-    loadParties();
-  }, [sortAscending]);
-
-  useEffect(() => {
-    if (selectedParty) {
-      loadExistingQR();
-    } else {
-      setQrCode(null);
-    }
-  }, [selectedParty]);
-
-  const loadParties = async () => {
-    setLoadingParties(true);
+  const loadUserQRCodes = async () => {
     try {
-      const { data, error } = await (supabase as any)
-        .from('parties')
-        .select('*')
-        .order('date', { ascending: sortAscending });
-
-      if (data && !error) {
-        setParties(data);
-      } else {
-        console.log('No parties found');
-      }
-    } catch (error) {
-      console.error('Error loading parties:', error);
-    } finally {
-      setLoadingParties(false);
-    }
-  };
-
-  const loadExistingQR = async () => {
-    if (!selectedParty) return;
-    
-    try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('qr_codes')
-        .select('code')
+        .select(`
+          *,
+          parties (
+            name,
+            date,
+            photo_url
+          )
+        `)
         .eq('user_id', user.id)
-        .eq('party_id', selectedParty.id)
-        .eq('is_scanned', false)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .order('created_at', { ascending: false });
 
       if (data && !error) {
-        setQrCode(data.code);
+        setUserQRCodes(data);
       }
     } catch (error) {
-      console.error('Error loading existing QR code:', error);
-    }
-  };
-
-  const generateQRCode = async () => {
-    if (!selectedParty) {
-      toast({
-        title: "Error",
-        description: "No party selected.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setLoading(true);
-    try {
-      // Generate a unique QR code
-      const qrData = `${user.id}-${selectedParty.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
-      const { error } = await (supabase as any)
-        .from('qr_codes')
-        .insert({
-          user_id: user.id,
-          party_id: selectedParty.id,
-          code: qrData
-        });
-
-      if (error) {
-        console.error('QR Code generation error:', error);
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive"
-        });
-      } else {
-        setQrCode(qrData);
-        toast({
-          title: "Success",
-          description: "QR code generated successfully!",
-        });
-      }
-    } catch (error) {
-      console.error('QR Code generation catch error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to generate QR code",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
+      console.error('Error loading user QR codes:', error);
     }
   };
 
   const handleSignOut = async () => {
     try {
-      // Clear all local state first
-      setQrCode(null);
-      setSelectedParty(null);
-      setParties([]);
-      
-      // Attempt to sign out from Supabase
       const { error } = await supabase.auth.signOut({ scope: 'local' });
       
-      // Even if server logout fails (session not found), we still successfully logged out locally
       if (error && !error.message.includes('Session not found')) {
         console.error('Sign out error:', error);
         toast({
@@ -161,7 +67,6 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
       }
     } catch (error) {
       console.error('Sign out catch error:', error);
-      // Even if there's an error, force local logout
       toast({
         title: "Info", 
         description: "Logged out locally.",
@@ -169,153 +74,95 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     }
   };
 
-  const selectParty = (party: Party) => {
-    setSelectedParty(party);
-  };
+  // Handle different views
+  if (currentView === 'parties') {
+    return <UserParties user={user} onBack={() => setCurrentView('dashboard')} />;
+  }
 
-  const goBackToPartyList = () => {
-    setSelectedParty(null);
-    setQrCode(null);
-  };
+  if (currentView === 'nickname') {
+    return <NicknameManager user={user} onBack={() => setCurrentView('dashboard')} />;
+  }
 
-  if (selectedParty) {
-    return (
-      <div className="min-h-screen bg-background p-4">
-        <div className="max-w-md mx-auto space-y-6">
-          <div className="flex justify-between items-center">
-            <Button variant="outline" onClick={goBackToPartyList} className="flex items-center gap-2">
-              <ArrowLeft className="h-4 w-4" />
-              Back
-            </Button>
-            <Button variant="outline" onClick={handleSignOut}>
-              Sign Out
-            </Button>
-          </div>
+  if (currentView === 'games') {
+    return <UserGames onBack={() => setCurrentView('dashboard')} onGameSelect={(game) => setCurrentView(game as any)} />;
+  }
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Your QR Code</CardTitle>
-              <div className="text-center space-y-1">
-                <div className="text-lg font-semibold">{selectedParty.name}</div>
-                <div className="text-sm text-muted-foreground">
-                  {new Date(selectedParty.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="text-center space-y-4">
-              {qrCode ? (
-                <div className="flex flex-col items-center space-y-4">
-                  <div className="bg-white p-4 rounded-lg">
-                    <QRCodeSVG value={qrCode} size={200} />
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Show this QR code to the admin for scanning
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <Button
-                    onClick={generateQRCode}
-                    disabled={loading}
-                    className="w-full py-4 text-lg"
-                  >
-                    {loading ? "Generating..." : "Generate QR Code"}
-                  </Button>
-                  <p className="text-sm text-muted-foreground">
-                    Click to generate your unique QR code for {selectedParty.name}
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
+  if (currentView === 'color-changer') {
+    return <BoredScreen onBack={() => setCurrentView('games')} />;
+  }
+
+  if (currentView === 'dot-circle') {
+    return <DotCircleGame onBack={() => setCurrentView('games')} adminId={user.id} adminNickname="" />;
+  }
+
+  if (currentView === 'exploder') {
+    return <ExploderGame onBack={() => setCurrentView('games')} />;
   }
 
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Welcome!</h1>
+          <h1 className="text-2xl font-bold">User Dashboard</h1>
           <Button variant="outline" onClick={handleSignOut}>
             Sign Out
           </Button>
         </div>
 
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle>Select a Party</CardTitle>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSortAscending(!sortAscending)}
-                className="flex items-center gap-2"
-              >
-                <ArrowUpDown className="h-4 w-4" />
-                {sortAscending ? "Oldest First" : "Newest First"}
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {loadingParties ? (
-              <p className="text-center text-muted-foreground">Loading parties...</p>
-            ) : parties.length === 0 ? (
-              <p className="text-center text-muted-foreground">
-                No parties found. Please wait for an admin to create a party.
-              </p>
-            ) : (
-              parties.map((party) => {
-                const partyDate = new Date(party.date);
-                const now = new Date();
-                const isToday = partyDate.toDateString() === now.toDateString();
-                const isWithin24Hours = partyDate.getTime() > now.getTime() - 24 * 60 * 60 * 1000 && partyDate.getTime() <= now.getTime();
-                const hasEnded = partyDate.getTime() < now.getTime() - 24 * 60 * 60 * 1000;
-                
-                // Find the soonest party that hasn't ended
-                const upcomingParties = parties.filter(p => new Date(p.date).getTime() >= now.getTime() - 24 * 60 * 60 * 1000);
-                const soonestParty = upcomingParties.length > 0 ? upcomingParties.reduce((earliest, current) => 
-                  new Date(current.date) < new Date(earliest.date) ? current : earliest
-                ) : null;
-                
-                const showActive = soonestParty?.id === party.id && (isToday || isWithin24Hours);
-                const showEnded = hasEnded;
+        <div className="grid gap-4">
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => setCurrentView('parties')}>
+            <CardHeader className="text-center">
+              <div className="mx-auto mb-2">
+                <Calendar className="h-12 w-12" />
+              </div>
+              <CardTitle>Parties</CardTitle>
+            </CardHeader>
+          </Card>
 
-                return (
-                  <Button
-                    key={party.id}
-                    variant="outline"
-                    className="w-full p-4 h-auto flex-col space-y-3"
-                    onClick={() => selectParty(party)}
-                  >
-                    {party.photo_url && (
-                      <div className="w-full">
-                        <img 
-                          src={party.photo_url} 
-                          alt={party.name}
-                          className="w-full h-auto object-contain rounded-md"
-                        />
-                      </div>
-                    )}
-                    <div className="w-full text-center space-y-1">
-                      <div className="font-semibold">{party.name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                      </div>
-                      {showActive && (
-                        <div className="text-xs text-green-600 font-medium">Active</div>
-                      )}
-                      {showEnded && (
-                        <div className="text-xs text-red-600 font-medium">Ended</div>
-                      )}
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => setCurrentView('nickname')}>
+            <CardHeader className="text-center">
+              <div className="mx-auto mb-2">
+                <UserIcon className="h-12 w-12" />
+              </div>
+              <CardTitle>Choose Nickname</CardTitle>
+            </CardHeader>
+          </Card>
+
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => setCurrentView('games')}>
+            <CardHeader className="text-center">
+              <div className="mx-auto mb-2">
+                <Gamepad2 className="h-12 w-12" />
+              </div>
+              <CardTitle>Games</CardTitle>
+            </CardHeader>
+          </Card>
+        </div>
+
+        {userQRCodes.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Your QR Codes</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {userQRCodes.map((qrCode) => (
+                <div key={qrCode.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div>
+                    <div className="font-semibold">{qrCode.parties?.name}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {new Date(qrCode.parties?.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </div>
-                  </Button>
-                );
-              })
-            )}
-          </CardContent>
-        </Card>
+                    <div className="text-xs text-muted-foreground">
+                      {qrCode.is_scanned ? 'Scanned' : 'Not scanned'}
+                    </div>
+                  </div>
+                  {qrCode.is_scanned && (
+                    <div className="text-green-600 text-sm">✓</div>
+                  )}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
