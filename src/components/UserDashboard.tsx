@@ -18,12 +18,30 @@ interface UserDashboardProps {
 
 const UserDashboard = ({ user }: UserDashboardProps) => {
   const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder'>('dashboard');
+  const [nickname, setNickname] = useState<string>('');
   const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
     loadUserQRCodes();
+    loadUserProfile();
   }, []);
+
+  const loadUserProfile = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('nickname')
+        .eq('user_id', user.id)
+        .single();
+
+      if (data && !error) {
+        setNickname(data.nickname || '');
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
+    }
+  };
 
   const loadUserQRCodes = async () => {
     try {
@@ -80,7 +98,10 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   if (currentView === 'nickname') {
-    return <NicknameManager user={user} onBack={() => setCurrentView('dashboard')} />;
+    return <NicknameManager user={user} onBack={() => {
+      setCurrentView('dashboard');
+      loadUserProfile(); // Refresh nickname after returning
+    }} />;
   }
 
   if (currentView === 'games') {
@@ -103,7 +124,9 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">User Dashboard</h1>
+          <h1 className="text-2xl font-bold">
+            {nickname ? `Welcome back, ${nickname}!` : 'User Dashboard'}
+          </h1>
           <Button variant="outline" onClick={handleSignOut}>
             Sign Out
           </Button>
@@ -145,8 +168,19 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
             </CardHeader>
             <CardContent className="space-y-4">
               {userQRCodes.map((qrCode) => (
-                <div key={qrCode.id} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div>
+                <div 
+                  key={qrCode.id} 
+                  className="flex items-center gap-4 p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={() => setCurrentView('parties')}
+                >
+                  {qrCode.parties?.photo_url && (
+                    <img 
+                      src={qrCode.parties.photo_url} 
+                      alt={qrCode.parties.name}
+                      className="w-16 h-16 object-cover rounded"
+                    />
+                  )}
+                  <div className="flex-1">
                     <div className="font-semibold">{qrCode.parties?.name}</div>
                     <div className="text-sm text-muted-foreground">
                       {new Date(qrCode.parties?.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
