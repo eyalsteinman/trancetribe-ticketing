@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      game_scores: {
+        Row: {
+          admin_id: string
+          created_at: string
+          game_type: string
+          id: string
+          nickname: string
+          score: number
+          updated_at: string
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string
+          game_type: string
+          id?: string
+          nickname: string
+          score?: number
+          updated_at?: string
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string
+          game_type?: string
+          id?: string
+          nickname?: string
+          score?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       parties: {
         Row: {
           created_at: string

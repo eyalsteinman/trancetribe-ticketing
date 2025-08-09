@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
 
 interface DotCircleGameProps {
   onBack: () => void;
@@ -17,23 +15,15 @@ interface Dot {
   circled: boolean;
 }
 
-interface GameScore {
-  admin_id: string;
-  nickname: string;
-  score: number;
-  created_at: string;
-}
-
 const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) => {
   const [backgroundColor, setBackgroundColor] = useState('#3b82f6');
   const [currentDot, setCurrentDot] = useState<Dot | null>(null);
   const [score, setScore] = useState(0);
-  const [highScore, setHighScore] = useState<GameScore | null>(null);
+  const [highScore, setHighScore] = useState<{ nickname: string; score: number } | null>(null);
   const [dotCounter, setDotCounter] = useState(0);
   const [isDrawing, setIsDrawing] = useState(false);
   const [path, setPath] = useState<Array<{x: number, y: number}>>([]);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { toast } = useToast();
 
   useEffect(() => {
     // Change background color every 10 seconds
@@ -46,7 +36,7 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
     // Generate first dot
     generateNewDot();
 
-    // Load high score
+    // Load high score from localStorage
     loadHighScore();
 
     return () => clearInterval(colorInterval);
@@ -72,64 +62,28 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
     setDotCounter(prev => prev + 1);
   };
 
-  const loadHighScore = async () => {
+  const loadHighScore = () => {
     try {
-      const { data, error } = await supabase
-        .from('game_scores')
-        .select('*')
-        .eq('game_type', 'dot_circle')
-        .order('score', { ascending: false })
-        .limit(1)
-        .single();
-
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error loading high score:', error);
-        return;
-      }
-
-      if (data) {
-        setHighScore(data);
+      const savedScore = localStorage.getItem('dot_circle_high_score');
+      if (savedScore) {
+        setHighScore(JSON.parse(savedScore));
       }
     } catch (error) {
       console.error('Error loading high score:', error);
     }
   };
 
-  const saveScore = async (finalScore: number) => {
+  const saveScore = (finalScore: number) => {
     try {
-      // First, save the current score
-      const { error: insertError } = await supabase
-        .from('game_scores')
-        .insert({
-          admin_id: adminId,
-          nickname: adminNickname,
-          game_type: 'dot_circle',
-          score: finalScore
-        });
-
-      if (insertError) {
-        console.error('Error saving score:', insertError);
-        return;
-      }
-
       // Check if this is a new high score
       if (!highScore || finalScore > highScore.score) {
-        setHighScore({
-          admin_id: adminId,
+        const newHighScore = {
           nickname: adminNickname,
-          score: finalScore,
-          created_at: new Date().toISOString()
-        });
+          score: finalScore
+        };
         
-        toast({
-          title: "New High Score!",
-          description: `Congratulations ${adminNickname}! You scored ${finalScore} dots!`,
-        });
-      } else {
-        toast({
-          title: "Score Saved",
-          description: `You scored ${finalScore} dots!`,
-        });
+        setHighScore(newHighScore);
+        localStorage.setItem('dot_circle_high_score', JSON.stringify(newHighScore));
       }
     } catch (error) {
       console.error('Error saving score:', error);
