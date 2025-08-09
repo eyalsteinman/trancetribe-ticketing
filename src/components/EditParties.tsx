@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Edit, Trash2, Upload, X } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { useBackground } from '@/contexts/BackgroundContext';
 
 interface EditPartiesProps {
   onBack: () => void;
@@ -30,6 +31,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
   const [loadingParties, setLoadingParties] = useState(true);
   const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
   const { toast } = useToast();
+  const { backgroundColor, isBackgroundDark } = useBackground();
 
   useEffect(() => {
     loadParties();
@@ -257,14 +259,25 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
 
   if (editingParty) {
     return (
-      <div className="min-h-screen bg-background p-4">
+      <div 
+        className="min-h-screen p-4 transition-colors duration-500"
+        style={{ 
+          backgroundColor,
+          color: isBackgroundDark ? '#ffffff' : '#000000'
+        }}
+      >
         <div className="max-w-md mx-auto space-y-6">
           <div className="flex justify-between items-center">
             <Button variant="outline" onClick={cancelEdit} className="flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />
               Cancel
             </Button>
-            <h1 className="text-xl font-bold">Edit Party</h1>
+            <h1 
+              className="text-xl font-bold"
+              style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+            >
+              Edit Party
+            </h1>
           </div>
 
           <Card>
@@ -300,10 +313,11 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                       className="w-full h-32 object-cover rounded-md"
                     />
                     <Button
-                      variant="destructive"
+                      variant="outline"
                       size="sm"
                       onClick={() => removePartyPhoto(editingParty)}
                       disabled={loading}
+                      className="bg-red-600 hover:bg-red-700 text-white border-red-600"
                     >
                       Remove Current Photo
                     </Button>
@@ -360,14 +374,25 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div 
+      className="min-h-screen p-4 transition-colors duration-500"
+      style={{ 
+        backgroundColor,
+        color: isBackgroundDark ? '#ffffff' : '#000000'
+      }}
+    >
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back
           </Button>
-          <h1 className="text-xl font-bold">Edit Parties</h1>
+          <h1 
+            className="text-xl font-bold"
+            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+          >
+            Edit Parties
+          </h1>
         </div>
 
         <Card>
@@ -439,11 +464,11 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
-                            variant="destructive"
+                            variant="outline"
                             size="sm"
-                            className="flex items-center gap-1"
+                            className="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white border-red-600"
                           >
-                            <Trash2 className="h-3 w-3" />
+                            <Trash2 className="h-3 w-3" style={{ color: 'white' }} />
                             Delete
                           </Button>
                         </AlertDialogTrigger>

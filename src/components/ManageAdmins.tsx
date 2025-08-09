@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Trash2, Edit, UserPlus } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useBackground } from '@/contexts/BackgroundContext';
 
 interface ManageAdminsProps {
   onBack: () => void;
@@ -27,6 +28,7 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
   const [editingAdmin, setEditingAdmin] = useState<string | null>(null);
   const [editEmail, setEditEmail] = useState('');
   const { toast } = useToast();
+  const { backgroundColor, isBackgroundDark } = useBackground();
 
   useEffect(() => {
     loadAdmins();
@@ -325,14 +327,25 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div 
+      className="min-h-screen p-4 transition-colors duration-500"
+      style={{ 
+        backgroundColor,
+        color: isBackgroundDark ? '#ffffff' : '#000000'
+      }}
+    >
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="flex items-center gap-4">
           <Button variant="outline" onClick={onBack}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
-          <h1 className="text-2xl font-bold">Manage Admins</h1>
+          <h1 
+            className="text-2xl font-bold"
+            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+          >
+            Manage Admins
+          </h1>
         </div>
 
         <Alert>
@@ -447,11 +460,12 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
                         </Button>
                         <Button
                           size="sm"
-                          variant="destructive"
+                          variant="outline"
                           onClick={() => deleteAdmin(admin.id)}
                           disabled={loading}
+                          className="bg-red-600 hover:bg-red-700 text-white border-red-600"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" style={{ color: 'white' }} />
                         </Button>
                       </div>
                     )}

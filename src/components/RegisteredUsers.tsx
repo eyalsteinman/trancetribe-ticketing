@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Trash2, Edit2, Save, X, UserCheck, Shield } from 'lucide-react';
+import { useBackground } from '@/contexts/BackgroundContext';
 
 interface RegisteredUsersProps {
   onBack: () => void;
@@ -33,6 +34,7 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
   });
   
   const { toast } = useToast();
+  const { backgroundColor, isBackgroundDark } = useBackground();
 
   useEffect(() => {
     loadUsers();
@@ -239,10 +241,21 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div 
+      className="min-h-screen p-4 transition-colors duration-500"
+      style={{ 
+        backgroundColor,
+        color: isBackgroundDark ? '#ffffff' : '#000000'
+      }}
+    >
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Registered Users</h1>
+          <h1 
+            className="text-2xl font-bold"
+            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+          >
+            Registered Users
+          </h1>
           <Button variant="outline" onClick={onBack}>
             Back
           </Button>
@@ -387,11 +400,11 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                                 </Button>
                                 <Button
                                   size="sm"
-                                  variant="destructive"
+                                  variant="outline"
                                   onClick={() => deleteUser(user.user_id)}
-                                  className="p-1"
+                                  className="p-1 bg-red-600 hover:bg-red-700 text-white border-red-600"
                                 >
-                                  <Trash2 className="h-4 w-4" />
+                                  <Trash2 className="h-4 w-4" style={{ color: 'white' }} />
                                 </Button>
                               </div>
                             </td>
