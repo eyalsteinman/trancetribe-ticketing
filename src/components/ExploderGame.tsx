@@ -12,6 +12,9 @@ interface FallingBall {
   radius: number;
   active: boolean;
   enteredBuilding: boolean;
+  // impact position relative to building when first entered
+  impactRelX?: number;
+  impactRelY?: number;
 }
 
 interface Cube {
@@ -96,6 +99,7 @@ const ExploderGame = ({ onBack, scope = 'user' }: ExploderGameProps) => {
     e.preventDefault();
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
+    setBallAvailable(false);
     setIsDragging(true);
     setDragPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
   };
@@ -126,6 +130,7 @@ const ExploderGame = ({ onBack, scope = 'user' }: ExploderGameProps) => {
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
     const t = e.touches[0];
+    setBallAvailable(false);
     setIsDragging(true);
     setDragPos({ x: t.clientX - rect.left, y: t.clientY - rect.top });
   };
@@ -155,7 +160,7 @@ const ExploderGame = ({ onBack, scope = 'user' }: ExploderGameProps) => {
 
       setFallingBall((prev) => {
         if (!prev) return prev;
-        let { x, y, radius, active, enteredBuilding } = prev;
+        let { x, y, radius, active, enteredBuilding, impactRelX, impactRelY } = prev;
 
         y += velocityRef.current;
         velocityRef.current = Math.min(velocityRef.current + 0.4, 20);
@@ -167,7 +172,11 @@ const ExploderGame = ({ onBack, scope = 'user' }: ExploderGameProps) => {
           const yAbs = containerRect.top + y;
           const insideX = xAbs >= buildingRect.left && xAbs <= buildingRect.right;
           const insideY = yAbs >= buildingRect.top && yAbs <= buildingRect.bottom;
-          if (insideX && insideY) enteredBuilding = true;
+          if (insideX && insideY && !enteredBuilding) {
+            enteredBuilding = true;
+            impactRelX = xAbs - buildingRect.left;
+            impactRelY = yAbs - buildingRect.top;
+          }
         }
 
         const offBottom = y > containerRect.height + 50;
@@ -176,13 +185,13 @@ const ExploderGame = ({ onBack, scope = 'user' }: ExploderGameProps) => {
         if (offBottom || fullyShrunk) {
           active = false;
 
-          if (enteredBuilding && buildingRect) {
-            const xAbs = containerRect.left + x;
-            const yAbs = containerRect.top + y;
-            const relX = xAbs - buildingRect.left;
-            const relY = yAbs - buildingRect.top;
-            const gridX = Math.floor(relX / CUBE_SIZE);
-            const gridY = Math.floor(relY / CUBE_SIZE);
+            if (enteredBuilding && buildingRect) {
+              const xAbs = containerRect.left + x;
+              const yAbs = containerRect.top + y;
+              const relX = (impactRelX != null ? impactRelX : xAbs - buildingRect.left);
+              const relY = (impactRelY != null ? impactRelY : yAbs - buildingRect.top);
+              const gridX = Math.floor(relX / CUBE_SIZE);
+              const gridY = Math.floor(relY / CUBE_SIZE);
 
             let destroyed = 0;
             setCubes((prevCubes) =>
@@ -201,10 +210,10 @@ const ExploderGame = ({ onBack, scope = 'user' }: ExploderGameProps) => {
 
           setTimeout(() => setBallAvailable(true), 0);
 
-          return { x, y, radius, active, enteredBuilding };
+          return { x, y, radius, active, enteredBuilding, impactRelX, impactRelY };
         }
 
-        return { x, y, radius, active, enteredBuilding };
+        return { x, y, radius, active, enteredBuilding, impactRelX, impactRelY };
       });
 
       rafRef.current = requestAnimationFrame(step);
