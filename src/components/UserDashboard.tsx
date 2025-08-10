@@ -126,7 +126,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   if (currentView === 'exploder') {
-    return <ExploderGame onBack={() => setCurrentView('games')} />;
+    return <ExploderGame onBack={() => setCurrentView('games')} scope="user" />;
   }
 
   return (

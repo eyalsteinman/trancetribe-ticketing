@@ -1,189 +1,278 @@
-import { useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { toast } from '@/hooks/use-toast';
 
 interface ExploderGameProps {
   onBack: () => void;
+  scope?: 'admin' | 'user'; // per-scope high score
 }
 
-interface Ball {
-  id: string;
-  size: 'large' | 'medium' | 'small';
+interface FallingBall {
+  x: number; // relative to container
+  y: number; // relative to container
   radius: number;
-  selected: boolean;
-  isDragging?: boolean;
-  dragPosition?: { x: number; y: number };
+  active: boolean;
+  enteredBuilding: boolean;
 }
 
 interface Cube {
   id: string;
-  x: number;
-  y: number;
+  x: number; // grid col
+  y: number; // grid row
   visible: boolean;
 }
 
-const ExploderGame = ({ onBack }: ExploderGameProps) => {
+const GRID_COLS = 10;
+const GRID_ROWS = 15;
+const CUBE_SIZE = 16; // pixels (w-4 h-4)
+
+const ExploderGame = ({ onBack, scope = 'user' }: ExploderGameProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const buildingRef = useRef<HTMLDivElement>(null);
-  const [draggedBall, setDraggedBall] = useState<Ball | null>(null);
-  const [dragPosition, setDragPosition] = useState<{ x: number; y: number } | null>(null);
 
-  // Initialize balls
-  const [balls] = useState<Ball[]>([
-    { id: 'large', size: 'large', radius: 40, selected: false },
-    { id: 'medium', size: 'medium', radius: 30, selected: false },
-    { id: 'small', size: 'small', radius: 20, selected: false }
-  ]);
+  // Single small ball
+  const SMALL_RADIUS = 20; // diameter 40px
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null);
+  const [ballAvailable, setBallAvailable] = useState(true);
 
-  // Initialize building cubes (10x15 grid)
-  const [cubes, setCubes] = useState<Cube[]>(() => {
-    const initialCubes: Cube[] = [];
-    for (let row = 0; row < 15; row++) {
-      for (let col = 0; col < 10; col++) {
-        initialCubes.push({
-          id: `${row}-${col}`,
-          x: col,
-          y: row,
-          visible: true
-        });
+  // Falling
+  const [fallingBall, setFallingBall] = useState<FallingBall | null>(null);
+  const velocityRef = useRef(6);
+  const rafRef = useRef<number | null>(null);
+
+  // Level and board
+  const [level, setLevel] = useState(1);
+  const [cubes, setCubes] = useState<Cube[]>([]);
+
+  // Score
+  const [destroyedTotal, setDestroyedTotal] = useState(0);
+  const [highScore, setHighScore] = useState(0);
+
+  // Local background color that changes per level
+  const [bgColor, setBgColor] = useState<string>('hsl(220, 70%, 50%)');
+
+  const initBoard = (lvl: number) => {
+    const targetPixels = Math.min(GRID_COLS * GRID_ROWS, 8 * Math.pow(2, lvl - 1));
+
+    const all: Cube[] = [];
+    for (let row = 0; row < GRID_ROWS; row++) {
+      for (let col = 0; col < GRID_COLS; col++) {
+        all.push({ id: `${row}-${col}`, x: col, y: row, visible: false });
       }
     }
-    return initialCubes;
-  });
 
-  const handleBallMouseDown = (ball: Ball, e: React.MouseEvent) => {
-    e.preventDefault();
-    setDraggedBall(ball);
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (rect) {
-      setDragPosition({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      });
+    const indices = new Set<number>();
+    while (indices.size < targetPixels && indices.size < all.length) {
+      indices.add(Math.floor(Math.random() * all.length));
     }
+    indices.forEach((idx) => (all[idx].visible = true));
+
+    setCubes(all);
+  };
+
+  const randomHsl = () => {
+    const h = Math.floor(Math.random() * 360);
+    const s = 70;
+    const l = 45;
+    return `hsl(${h}, ${s}%, ${l}%)`;
+  };
+
+  // mount
+  useEffect(() => {
+    initBoard(1);
+    const stored = localStorage.getItem(`exploder-highscore-${scope}`);
+    if (stored) setHighScore(parseInt(stored, 10) || 0);
+  }, [scope]);
+
+  useEffect(() => {
+    if (destroyedTotal > highScore) {
+      setHighScore(destroyedTotal);
+      localStorage.setItem(`exploder-highscore-${scope}`, String(destroyedTotal));
+    }
+  }, [destroyedTotal, highScore, scope]);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!ballAvailable) return;
+    e.preventDefault();
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setIsDragging(true);
+    setDragPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (draggedBall && containerRef.current) {
-      const rect = containerRef.current.getBoundingClientRect();
-      setDragPosition({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      });
-    }
+    if (!isDragging) return;
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setDragPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
   };
 
-  const handleMouseUp = (e: React.MouseEvent) => {
-    if (draggedBall && buildingRef.current && containerRef.current) {
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const buildingRect = buildingRef.current.getBoundingClientRect();
-      
-      const relativeX = e.clientX - buildingRect.left;
-      const relativeY = e.clientY - buildingRect.top;
-      
-      // Check if dropped on building
-      if (relativeX >= 0 && relativeX <= buildingRect.width && 
-          relativeY >= 0 && relativeY <= buildingRect.height) {
-        
-        // Calculate which cube was hit (convert pixel position to grid position)
-        const cubeSize = 16; // 4 * 4 (w-4 h-4)
-        const gridX = Math.floor(relativeX / cubeSize);
-        const gridY = Math.floor(relativeY / cubeSize);
-        
-        // Calculate crater size based on ball size
-        let craterRadius: number;
-        switch (draggedBall.size) {
-          case 'large':
-            craterRadius = 3;
-            break;
-          case 'medium':
-            craterRadius = 2;
-            break;
-          case 'small':
-            craterRadius = 1;
-            break;
-          default:
-            craterRadius = 1;
+  const startFalling = (startX: number, startY: number) => {
+    setBallAvailable(false);
+    velocityRef.current = 6;
+    setFallingBall({ x: startX, y: startY, radius: SMALL_RADIUS, active: true, enteredBuilding: false });
+  };
+
+  const handleMouseUp = () => {
+    if (!isDragging || !dragPos) return;
+    setIsDragging(false);
+    startFalling(dragPos.x, dragPos.y);
+    setDragPos(null);
+  };
+
+  // Animate falling
+  useEffect(() => {
+    if (!fallingBall || !fallingBall.active) return;
+
+    const step = () => {
+      const containerRect = containerRef.current?.getBoundingClientRect();
+      const buildingRect = buildingRef.current?.getBoundingClientRect();
+      if (!containerRect) return;
+
+      setFallingBall((prev) => {
+        if (!prev) return prev;
+        let { x, y, radius, active, enteredBuilding } = prev;
+
+        y += velocityRef.current;
+        velocityRef.current = Math.min(velocityRef.current + 0.4, 20);
+
+        if (radius > 1) radius = Math.max(1, radius - 0.7);
+
+        if (buildingRect) {
+          const xAbs = containerRect.left + x;
+          const yAbs = containerRect.top + y;
+          const insideX = xAbs >= buildingRect.left && xAbs <= buildingRect.right;
+          const insideY = yAbs >= buildingRect.top && yAbs <= buildingRect.bottom;
+          if (insideX && insideY) enteredBuilding = true;
         }
 
-        // Create crater at drop location
-        setCubes(prevCubes => 
-          prevCubes.map(cube => {
-            const distance = Math.sqrt(
-              Math.pow(cube.x - gridX, 2) + Math.pow(cube.y - gridY, 2)
+        const offBottom = y > containerRect.height + 50;
+        const fullyShrunk = radius <= 1;
+
+        if (offBottom || fullyShrunk) {
+          active = false;
+
+          if (enteredBuilding && buildingRect) {
+            const xAbs = containerRect.left + x;
+            const yAbs = containerRect.top + y;
+            const relX = xAbs - buildingRect.left;
+            const relY = yAbs - buildingRect.top;
+            const gridX = Math.floor(relX / CUBE_SIZE);
+            const gridY = Math.floor(relY / CUBE_SIZE);
+
+            let destroyed = 0;
+            setCubes((prevCubes) =>
+              prevCubes.map((cube) => {
+                if (!cube.visible) return cube;
+                const dist = Math.hypot(cube.x - gridX, cube.y - gridY);
+                if (dist <= 1) {
+                  destroyed += 1;
+                  return { ...cube, visible: false };
+                }
+                return cube;
+              })
             );
-            
-            if (distance <= craterRadius) {
-              return { ...cube, visible: false };
-            }
-            return cube;
-          })
-        );
-      }
+            if (destroyed > 0) setDestroyedTotal((t) => t + destroyed);
+          }
+
+          setTimeout(() => setBallAvailable(true), 0);
+
+          return { x, y, radius, active, enteredBuilding };
+        }
+
+        return { x, y, radius, active, enteredBuilding };
+      });
+
+      rafRef.current = requestAnimationFrame(step);
+    };
+
+    rafRef.current = requestAnimationFrame(step);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [fallingBall]);
+
+  // Level cleared
+  useEffect(() => {
+    if (cubes.length > 0 && cubes.every((c) => !c.visible)) {
+      toast({ title: 'Super! Level passed!' });
+      const next = level + 1;
+      setLevel(next);
+      setBgColor(randomHsl());
+      initBoard(next);
     }
-    
-    setDraggedBall(null);
-    setDragPosition(null);
-  };
+  }, [cubes]);
 
   return (
-    <div 
+    <div
       ref={containerRef}
-      className="min-h-screen relative overflow-hidden select-none"
-      style={{ backgroundColor: '#3b82f6' }}
+      className="min-h-screen relative overflow-hidden select-none transition-colors duration-500"
+      style={{ backgroundColor: bgColor }}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
-      {/* Exit Button */}
-      <button 
-        className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 py-2 bg-white/20 hover:bg-white/30 text-white border border-white/30 rounded-lg backdrop-blur-md transition-all shadow-xl font-medium"
+      {/* Exit */}
+      <button
+        className="absolute top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 rounded-lg backdrop-blur-md transition-all shadow-xl font-medium"
         onClick={onBack}
       >
         Exit
       </button>
 
-      {/* Balls on the left side */}
-      <div className="absolute left-8 top-1/2 transform -translate-y-1/2 flex flex-col gap-8">
-        {balls.map((ball) => (
-          <div
-            key={ball.id}
-            className={`bg-black rounded-full cursor-grab active:cursor-grabbing transition-all duration-200 ${
-              draggedBall?.id === ball.id ? 'ring-4 ring-white' : 'hover:scale-110'
-            }`}
-            style={{
-              width: ball.radius * 2,
-              height: ball.radius * 2,
-            }}
-            onMouseDown={(e) => handleBallMouseDown(ball, e)}
-          />
-        ))}
+      {/* Scoreboard */}
+      <div className="absolute top-4 right-4 z-50 text-right text-white">
+        <div className="text-sm opacity-90">Total pixels destroyed</div>
+        <div className="text-2xl font-bold">{destroyedTotal}</div>
+        <div className="mt-1 text-xs opacity-80">High score ({scope})</div>
+        <div className="text-lg font-semibold">{highScore}</div>
       </div>
 
-      {/* Building on the right side */}
-      <div ref={buildingRef} className="absolute right-16 top-1/2 transform -translate-y-1/2">
+      {/* Single draggable small white circle */}
+      {ballAvailable && (
+        <div className="absolute left-8 top-1/2 -translate-y-1/2">
+          <div
+            className="bg-white rounded-full cursor-grab active:cursor-grabbing transition-transform duration-200 hover:scale-110 shadow-lg"
+            style={{ width: SMALL_RADIUS * 2, height: SMALL_RADIUS * 2 }}
+            onMouseDown={handleMouseDown}
+          />
+        </div>
+      )}
+
+      {/* Building of pixels (white) */}
+      <div ref={buildingRef} className="absolute right-16 top-1/2 -translate-y-1/2">
         <div className="grid grid-cols-10 gap-0">
           {cubes.map((cube) => (
             <div
               key={cube.id}
-              className={`w-4 h-4 border border-gray-600 transition-opacity duration-300 ${
-                cube.visible ? 'bg-gray-800 opacity-100' : 'opacity-0'
-              }`}
-              style={{
-                gridColumn: cube.x + 1,
-                gridRow: cube.y + 1,
-              }}
+              className={`${cube.visible ? 'bg-white opacity-100' : 'opacity-0'} w-4 h-4 border border-white/30 transition-opacity duration-300`}
+              style={{ gridColumn: cube.x + 1, gridRow: cube.y + 1 }}
             />
           ))}
         </div>
       </div>
 
-      {/* Dragged Ball */}
-      {draggedBall && dragPosition && (
+      {/* Drag ghost */}
+      {isDragging && dragPos && (
         <div
-          className="absolute bg-black rounded-full pointer-events-none z-40"
+          className="absolute bg-white rounded-full pointer-events-none z-40 shadow"
           style={{
-            width: draggedBall.radius * 2,
-            height: draggedBall.radius * 2,
-            left: dragPosition.x - draggedBall.radius,
-            top: dragPosition.y - draggedBall.radius,
+            width: SMALL_RADIUS * 2,
+            height: SMALL_RADIUS * 2,
+            left: dragPos.x - SMALL_RADIUS,
+            top: dragPos.y - SMALL_RADIUS,
+          }}
+        />
+      )}
+
+      {/* Falling ball */}
+      {fallingBall && fallingBall.active && (
+        <div
+          className="absolute bg-white rounded-full pointer-events-none z-40 shadow"
+          style={{
+            width: fallingBall.radius * 2,
+            height: fallingBall.radius * 2,
+            left: fallingBall.x - fallingBall.radius,
+            top: fallingBall.y - fallingBall.radius,
           }}
         />
       )}
