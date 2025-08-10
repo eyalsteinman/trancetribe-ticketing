@@ -120,6 +120,30 @@ const ExploderGame = ({ onBack, scope = 'user' }: ExploderGameProps) => {
     setDragPos(null);
   };
 
+  // Touch support for mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!ballAvailable) return;
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const t = e.touches[0];
+    setIsDragging(true);
+    setDragPos({ x: t.clientX - rect.left, y: t.clientY - rect.top });
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const t = e.touches[0];
+    setDragPos({ x: t.clientX - rect.left, y: t.clientY - rect.top });
+  };
+
+  const handleTouchEnd = () => {
+    if (!isDragging || !dragPos) return;
+    setIsDragging(false);
+    startFalling(dragPos.x, dragPos.y);
+    setDragPos(null);
+  };
   // Animate falling
   useEffect(() => {
     if (!fallingBall || !fallingBall.active) return;
@@ -210,10 +234,12 @@ const ExploderGame = ({ onBack, scope = 'user' }: ExploderGameProps) => {
       style={{ backgroundColor: bgColor }}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Exit */}
       <button
-        className="absolute top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 rounded-lg backdrop-blur-md transition-all shadow-xl font-medium"
+        className="absolute top-4 left-4 z-50 px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 rounded-lg backdrop-blur-md transition-all shadow-xl font-medium"
         onClick={onBack}
       >
         Exit
@@ -234,6 +260,7 @@ const ExploderGame = ({ onBack, scope = 'user' }: ExploderGameProps) => {
             className="bg-white rounded-full cursor-grab active:cursor-grabbing transition-transform duration-200 hover:scale-110 shadow-lg"
             style={{ width: SMALL_RADIUS * 2, height: SMALL_RADIUS * 2 }}
             onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
           />
         </div>
       )}
