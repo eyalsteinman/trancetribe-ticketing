@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
-import { Calendar, UserIcon, Gamepad2 } from 'lucide-react';
+import { Calendar, UserIcon, Gamepad2, Crown } from 'lucide-react';
 import UserParties from './UserParties';
 import UserGames from './UserGames';
 import NicknameManager from './NicknameManager';
@@ -14,15 +14,18 @@ import DotCircleGame from './DotCircleGame';
 import ExploderGame from './ExploderGame';
 import HayaNinja from './HayaNinja';
 import SocialNetworks from './SocialNetworks';
+import VIPHub from './VIP/VIPHub';
+import VIPProduction from './VIP/VIPProduction';
 
 interface UserDashboardProps {
   user: User;
 }
 
 const UserDashboard = ({ user }: UserDashboardProps) => {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail'>('dashboard');
   const [nickname, setNickname] = useState<string>('');
   const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
+  const [selectedProduction, setSelectedProduction] = useState<number | null>(null);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
@@ -138,6 +141,31 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   if (currentView === 'social') {
     return <SocialNetworks userId={user.id} onBack={() => setCurrentView('dashboard')} />;
   }
+
+  if (currentView === 'vip') {
+    return (
+      <VIPHub
+        user={user}
+        nickname={nickname}
+        onBack={() => setCurrentView('dashboard')}
+        onSelectProduction={(id) => {
+          setSelectedProduction(id);
+          setCurrentView('vip-detail');
+        }}
+      />
+    );
+  }
+
+  if (currentView === 'vip-detail' && selectedProduction !== null) {
+    return (
+      <VIPProduction
+        user={user}
+        productionId={selectedProduction}
+        onBack={() => setCurrentView('vip')}
+      />
+    );
+  }
+
   return (
     <div 
       className="min-h-screen p-4 transition-colors duration-500"
@@ -193,6 +221,15 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 <UserIcon className="h-12 w-12" />
               </div>
               <CardTitle>Social Networks</CardTitle>
+            </CardHeader>
+          </Card>
+
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => setCurrentView('vip')}>
+            <CardHeader className="text-center">
+              <div className="mx-auto mb-2">
+                <Crown className="h-12 w-12" />
+              </div>
+              <CardTitle>VIP</CardTitle>
             </CardHeader>
           </Card>
         </div>
