@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
-import { Calendar, UserIcon, Gamepad2, Crown } from 'lucide-react';
+import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck } from 'lucide-react';
 import UserParties from './UserParties';
 import UserGames from './UserGames';
 import NicknameManager from './NicknameManager';
@@ -17,13 +17,14 @@ import SocialNetworks from './SocialNetworks';
 import VIPHub from './VIP/VIPHub';
 import VIPProduction from './VIP/VIPProduction';
 import ReorderableTiles from './ReorderableTiles';
+import Insurance from './Insurance';
 
 interface UserDashboardProps {
   user: User;
 }
 
 const UserDashboard = ({ user }: UserDashboardProps) => {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance'>('dashboard');
   const [nickname, setNickname] = useState<string>('');
   const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
   const [selectedProduction, setSelectedProduction] = useState<number | null>(null);
@@ -143,6 +144,10 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     return <SocialNetworks userId={user.id} onBack={() => setCurrentView('dashboard')} />;
   }
 
+  if (currentView === 'insurance') {
+    return <Insurance onBack={() => setCurrentView('dashboard')} />;
+  }
+
   if (currentView === 'vip') {
     return (
       <VIPHub
@@ -214,6 +219,12 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 title: 'Social Networks',
                 icon: <UserIcon className="h-12 w-12" />,
                 onClick: () => setCurrentView('social' as const),
+              },
+              {
+                id: 'insurance',
+                title: 'Insurance',
+                icon: <ShieldCheck className="h-12 w-12" />,
+                onClick: () => setCurrentView('insurance' as const),
               },
               {
                 id: 'vip',
