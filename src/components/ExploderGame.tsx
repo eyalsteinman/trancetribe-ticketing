@@ -176,8 +176,16 @@ const ExploderGame = ({ onBack, scope = 'user', playerNickname = '' }: ExploderG
         if (!prev) return prev;
         let { x, y, radius, active, enteredBuilding, impactRelX, impactRelY } = prev;
 
-        y += velocityRef.current;
-        velocityRef.current = Math.min(velocityRef.current + 0.4, 20);
+        if (!enteredBuilding) {
+          y += velocityRef.current;
+          velocityRef.current = Math.min(velocityRef.current + 0.4, 20);
+        } else {
+          // Simulate "falling into" the building on Z-axis by keeping roughly same Y and shrinking
+          if (buildingRect) {
+            const targetY = buildingRect.top + buildingRect.height / 2 - containerRect.top;
+            y += (targetY - y) * 0.08; // ease toward building center
+          }
+        }
 
         if (radius > 1) radius = Math.max(1, radius - 0.7);
 

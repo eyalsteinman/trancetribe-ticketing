@@ -173,6 +173,10 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
             style={{ width: 240, height: 240, background: 'conic-gradient(from 0deg, red, yellow, lime, cyan, blue, magenta, red)' }}
             onMouseDown={onWheelPointerDown}
             onTouchStart={onWheelPointerDown}
+            onTouchMove={(e) => {
+              if (e.touches[0]) handleWheelMove(e.touches[0].clientX, e.touches[0].clientY);
+              e.preventDefault();
+            }}
           >
             <div className="absolute inset-6 rounded-full bg-background/70 border border-white/20" />
             <div

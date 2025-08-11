@@ -13,13 +13,14 @@ import BoredScreen from './BoredScreen';
 import DotCircleGame from './DotCircleGame';
 import ExploderGame from './ExploderGame';
 import HayaNinja from './HayaNinja';
+import SocialNetworks from './SocialNetworks';
 
 interface UserDashboardProps {
   user: User;
 }
 
 const UserDashboard = ({ user }: UserDashboardProps) => {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social'>('dashboard');
   const [nickname, setNickname] = useState<string>('');
   const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
   const { toast } = useToast();
@@ -134,6 +135,9 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     return <HayaNinja onBack={() => setCurrentView('games')} scope="user" playerNickname={nickname} />;
   }
 
+  if (currentView === 'social') {
+    return <SocialNetworks userId={user.id} onBack={() => setCurrentView('dashboard')} />;
+  }
   return (
     <div 
       className="min-h-screen p-4 transition-colors duration-500"
@@ -180,6 +184,15 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 <Gamepad2 className="h-12 w-12" />
               </div>
               <CardTitle>Games</CardTitle>
+            </CardHeader>
+          </Card>
+
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => setCurrentView('social')}>
+            <CardHeader className="text-center">
+              <div className="mx-auto mb-2">
+                <UserIcon className="h-12 w-12" />
+              </div>
+              <CardTitle>Social Networks</CardTitle>
             </CardHeader>
           </Card>
         </div>
