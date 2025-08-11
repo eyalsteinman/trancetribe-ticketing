@@ -95,14 +95,15 @@ const HayaNinja = ({ onBack, scope = 'user', playerNickname = '' }: HayaNinjaPro
     setGameStarted(true);
   };
 
-  const handleBack = () => {
-    if (intervalRef.current) window.clearInterval(intervalRef.current);
-    setGameStarted(false);
-    setPath([]);
-    setAllPaths([]);
-    setShowEndPopup(false);
-    onBack();
-  };
+const handleBack = () => {
+  if (intervalRef.current) window.clearInterval(intervalRef.current);
+  setGameStarted(false);
+  setPath([]);
+  setAllPaths([]);
+  setShowEndPopup(false);
+  setTimeLeft(120);
+  onBack();
+};
 
   const onPointerDown = (e: React.MouseEvent | React.TouchEvent) => {
     if (!gameStarted) return;

@@ -16,6 +16,7 @@ interface FallingBall {
   // impact position relative to building when first entered
   impactRelX?: number;
   impactRelY?: number;
+  explodedDone?: boolean; // ensure we only destroy once
 }
 
 interface Cube {
@@ -125,11 +126,11 @@ const ExploderGame = ({ onBack, scope = 'user', playerNickname = '' }: ExploderG
     setDragPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
   };
 
-  const startFalling = (startX: number, startY: number) => {
-    setBallAvailable(false);
-    velocityRef.current = 6;
-    setFallingBall({ x: startX, y: startY, radius: SMALL_RADIUS, active: true, enteredBuilding: false });
-  };
+const startFalling = (startX: number, startY: number) => {
+  setBallAvailable(false);
+  velocityRef.current = 6;
+  setFallingBall({ x: startX, y: startY, radius: SMALL_RADIUS, active: true, enteredBuilding: false, explodedDone: false });
+};
 
   const handleMouseUp = () => {
     if (!isDragging || !dragPos) return;
@@ -172,76 +173,73 @@ const ExploderGame = ({ onBack, scope = 'user', playerNickname = '' }: ExploderG
       const buildingRect = buildingRef.current?.getBoundingClientRect();
       if (!containerRect) return;
 
-      setFallingBall((prev) => {
-        if (!prev) return prev;
-        let { x, y, radius, active, enteredBuilding, impactRelX, impactRelY } = prev;
+setFallingBall((prev) => {
+  if (!prev) return prev;
+  let { x, y, radius, active, enteredBuilding, impactRelX, impactRelY, explodedDone } = prev;
 
-        if (!enteredBuilding) {
-          y += velocityRef.current;
-          velocityRef.current = Math.min(velocityRef.current + 0.4, 20);
-        } else {
-          // Simulate "falling into" the building on Z-axis by keeping roughly same Y and shrinking
-          if (buildingRect) {
-            const targetY = buildingRect.top + buildingRect.height / 2 - containerRect.top;
-            y += (targetY - y) * 0.08; // ease toward building center
-          }
-        }
+  if (!enteredBuilding) {
+    y += velocityRef.current;
+    velocityRef.current = Math.min(velocityRef.current + 0.4, 20);
+  } else {
+    // Simulate "falling into" the building on Z-axis by keeping roughly same Y and shrinking
+    if (buildingRect) {
+      const targetY = buildingRect.top + buildingRect.height / 2 - containerRect.top;
+      y += (targetY - y) * 0.08; // ease toward building center
+    }
+  }
 
-        if (radius > 1) radius = Math.max(1, radius - 0.7);
+  if (radius > 1) radius = Math.max(1, radius - 0.7);
 
-        if (buildingRect) {
-          const xAbs = containerRect.left + x;
-          const yAbs = containerRect.top + y;
-          const insideX = xAbs >= buildingRect.left && xAbs <= buildingRect.right;
-          const insideY = yAbs >= buildingRect.top && yAbs <= buildingRect.bottom;
-          if (insideX && insideY && !enteredBuilding) {
-            enteredBuilding = true;
-            impactRelX = xAbs - buildingRect.left;
-            impactRelY = yAbs - buildingRect.top;
-          }
-        }
+  if (buildingRect) {
+    const xAbs = containerRect.left + x;
+    const yAbs = containerRect.top + y;
+    const insideX = xAbs >= buildingRect.left && xAbs <= buildingRect.right;
+    const insideY = yAbs >= buildingRect.top && yAbs <= buildingRect.bottom;
+    if (insideX && insideY && !enteredBuilding) {
+      enteredBuilding = true;
+      impactRelX = xAbs - buildingRect.left;
+      impactRelY = yAbs - buildingRect.top;
+      // explode immediately once
+      if (!explodedDone) {
+        const gridX = Math.floor(impactRelX / CUBE_SIZE);
+        const gridY = Math.floor(impactRelY / CUBE_SIZE);
+        let destroyed = 0;
+        setCubes((prevCubes) =>
+          prevCubes.map((cube) => {
+            if (!cube.visible) return cube;
+            const dist = Math.hypot(cube.x - gridX, cube.y - gridY);
+            if (dist <= 1) {
+              destroyed += 1;
+              return { ...cube, visible: false };
+            }
+            return cube;
+          })
+        );
+        if (destroyed > 0) setDestroyedTotal((t) => t + destroyed);
+        explodedDone = true;
+        setCenterMessage('fuckinshit!');
+      }
+    }
+  }
 
-        const offBottom = y > containerRect.height + 50;
-        const fullyShrunk = radius <= 1;
+  const offBottom = y > containerRect.height + 50;
+  const fullyShrunk = radius <= 1;
 
-        if (offBottom || fullyShrunk) {
-          active = false;
+  if (offBottom || fullyShrunk) {
+    active = false;
 
-            if (enteredBuilding && buildingRect) {
-              const xAbs = containerRect.left + x;
-              const yAbs = containerRect.top + y;
-              const relX = (impactRelX != null ? impactRelX : xAbs - buildingRect.left);
-              const relY = (impactRelY != null ? impactRelY : yAbs - buildingRect.top);
-              const gridX = Math.floor(relX / CUBE_SIZE);
-              const gridY = Math.floor(relY / CUBE_SIZE);
+    // show message and respawn after delay
+    if (!enteredBuilding) setCenterMessage('missed');
+    setTimeout(() => {
+      setCenterMessage(null);
+      setBallAvailable(true);
+    }, 2000);
 
-            let destroyed = 0;
-            setCubes((prevCubes) =>
-              prevCubes.map((cube) => {
-                if (!cube.visible) return cube;
-                const dist = Math.hypot(cube.x - gridX, cube.y - gridY);
-                if (dist <= 1) {
-                  destroyed += 1;
-                  return { ...cube, visible: false };
-                }
-                return cube;
-              })
-            );
-            if (destroyed > 0) setDestroyedTotal((t) => t + destroyed);
-          }
+    return { x, y, radius, active, enteredBuilding, impactRelX, impactRelY, explodedDone };
+  }
 
-          // show message and respawn after delay
-          setCenterMessage(enteredBuilding && buildingRect ? 'fuckinshit!' : 'missed');
-          setTimeout(() => {
-            setCenterMessage(null);
-            setBallAvailable(true);
-          }, 2000);
-
-          return { x, y, radius, active, enteredBuilding, impactRelX, impactRelY };
-        }
-
-        return { x, y, radius, active, enteredBuilding, impactRelX, impactRelY };
-      });
+  return { x, y, radius, active, enteredBuilding, impactRelX, impactRelY, explodedDone };
+});
 
       rafRef.current = requestAnimationFrame(step);
     };
@@ -306,8 +304,15 @@ const ExploderGame = ({ onBack, scope = 'user', playerNickname = '' }: ExploderG
         ) : null}
       </div>
 
-      {/* Center message */}
-      {centerMessage && (
+      {/* Messages */}
+      {centerMessage && centerMessage.toLowerCase().includes('fuckinshit') && (
+        <div className="absolute top-2 left-0 right-0 z-[9500] pointer-events-none">
+          <div className="mx-auto w-fit px-3 py-1 bg-black/40 text-white rounded-md border border-white/20 backdrop-blur-sm text-lg font-extrabold">
+            {centerMessage}
+          </div>
+        </div>
+      )}
+      {centerMessage && !centerMessage.toLowerCase().includes('fuckinshit') && (
         <div className="absolute inset-0 flex items-center justify-center z-[9000] pointer-events-none">
           <div className="text-white font-extrabold text-3xl drop-shadow-lg">{centerMessage}</div>
         </div>

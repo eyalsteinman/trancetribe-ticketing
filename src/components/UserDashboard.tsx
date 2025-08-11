@@ -16,6 +16,7 @@ import HayaNinja from './HayaNinja';
 import SocialNetworks from './SocialNetworks';
 import VIPHub from './VIP/VIPHub';
 import VIPProduction from './VIP/VIPProduction';
+import ReorderableTiles from './ReorderableTiles';
 
 interface UserDashboardProps {
   user: User;
@@ -187,51 +188,44 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           </Button>
         </div>
 
-        <div className="grid gap-4">
-          <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => setCurrentView('parties')}>
-            <CardHeader className="text-center">
-              <div className="mx-auto mb-2">
-                <Calendar className="h-12 w-12" />
-              </div>
-              <CardTitle>Parties</CardTitle>
-            </CardHeader>
-          </Card>
-
-          <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => setCurrentView('nickname')}>
-            <CardHeader className="text-center">
-              <div className="mx-auto mb-2">
-                <UserIcon className="h-12 w-12" />
-              </div>
-              <CardTitle>Choose Nickname</CardTitle>
-            </CardHeader>
-          </Card>
-
-          <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => setCurrentView('games')}>
-            <CardHeader className="text-center">
-              <div className="mx-auto mb-2">
-                <Gamepad2 className="h-12 w-12" />
-              </div>
-              <CardTitle>Games</CardTitle>
-            </CardHeader>
-          </Card>
-
-          <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => setCurrentView('social')}>
-            <CardHeader className="text-center">
-              <div className="mx-auto mb-2">
-                <UserIcon className="h-12 w-12" />
-              </div>
-              <CardTitle>Social Networks</CardTitle>
-            </CardHeader>
-          </Card>
-
-          <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => setCurrentView('vip')}>
-            <CardHeader className="text-center">
-              <div className="mx-auto mb-2">
-                <Crown className="h-12 w-12" />
-              </div>
-              <CardTitle>VIP</CardTitle>
-            </CardHeader>
-          </Card>
+        <div className="space-y-4">
+          {(() => {
+            const items = [
+              {
+                id: 'parties',
+                title: 'Parties',
+                icon: <Calendar className="h-12 w-12" />,
+                onClick: () => setCurrentView('parties' as const),
+              },
+              {
+                id: 'nickname',
+                title: 'Choose Nickname',
+                icon: <UserIcon className="h-12 w-12" />,
+                onClick: () => setCurrentView('nickname' as const),
+              },
+              {
+                id: 'games',
+                title: 'Games',
+                icon: <Gamepad2 className="h-12 w-12" />,
+                onClick: () => setCurrentView('games' as const),
+              },
+              {
+                id: 'social',
+                title: 'Social Networks',
+                icon: <UserIcon className="h-12 w-12" />,
+                onClick: () => setCurrentView('social' as const),
+              },
+              {
+                id: 'vip',
+                title: 'VIP',
+                icon: <Crown className="h-12 w-12" />,
+                onClick: () => setCurrentView('vip' as const),
+              },
+            ];
+            return (
+              <ReorderableTiles items={items} orderKey={`dashboard-order-user-${user.id}`} />
+            );
+          })()}
         </div>
 
         {userQRCodes.length > 0 && (

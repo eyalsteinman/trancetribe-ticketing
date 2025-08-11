@@ -19,6 +19,7 @@ import DotCircleGame from './DotCircleGame';
 import ExploderGame from './ExploderGame';
 import NicknameManager from './NicknameManager';
 import HayaNinja from './HayaNinja';
+import ReorderableTiles from './ReorderableTiles';
 
 interface AdminDashboardProps {
   user: User;
@@ -527,63 +528,22 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           </Button>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <Card className="cursor-pointer hover:bg-accent" onClick={() => setCurrentView('scanner')}>
-            <CardContent className="flex flex-col items-center justify-center p-6">
-              <Camera className="h-8 w-8 mb-2" />
-              <span className="text-sm font-medium">Camera Scan</span>
-            </CardContent>
-          </Card>
+        {(() => {
+          const tiles = [
+            { id: 'scanner', title: 'Camera Scan', icon: <Camera className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('scanner' as const) },
+            { id: 'guests', title: 'Guest List', icon: <List className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('guests' as const) },
+            { id: 'create-party', title: 'Create Party', icon: <Plus className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('create-party' as const) },
+            { id: 'edit-parties', title: 'Edit Parties', icon: <Edit className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('edit-parties' as const) },
+            { id: 'manage-admins', title: 'Add Admin', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('manage-admins' as const) },
+            { id: 'registered-users', title: 'Registered Users', icon: <UserCheck className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('registered-users' as const) },
+            { id: 'admin-games', title: 'Admin Games', icon: <Gamepad2 className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('admin-games' as const) },
+            { id: 'nickname', title: 'Choose Nickname', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('nickname' as const) },
+          ];
+          return (
+            <ReorderableTiles items={tiles} orderKey={`dashboard-order-admin-${user.id}`} />
+          );
+        })()}
 
-          <Card className="cursor-pointer hover:bg-accent" onClick={() => setCurrentView('guests')}>
-            <CardContent className="flex flex-col items-center justify-center p-6">
-              <List className="h-8 w-8 mb-2" />
-              <span className="text-sm font-medium">Guest List</span>
-            </CardContent>
-          </Card>
-
-          <Card className="cursor-pointer hover:bg-accent" onClick={() => setCurrentView('create-party')}>
-            <CardContent className="flex flex-col items-center justify-center p-6">
-              <Plus className="h-8 w-8 mb-2" />
-              <span className="text-sm font-medium">Create Party</span>
-            </CardContent>
-          </Card>
-
-          <Card className="cursor-pointer hover:bg-accent" onClick={() => setCurrentView('edit-parties')}>
-            <CardContent className="flex flex-col items-center justify-center p-6">
-              <Edit className="h-8 w-8 mb-2" />
-              <span className="text-sm font-medium">Edit Parties</span>
-            </CardContent>
-          </Card>
-
-          <Card className="cursor-pointer hover:bg-accent" onClick={() => setCurrentView('manage-admins')}>
-            <CardContent className="flex flex-col items-center justify-center p-6">
-              <Users className="h-8 w-8 mb-2" />
-              <span className="text-sm font-medium">Add Admin</span>
-            </CardContent>
-          </Card>
-
-          <Card className="cursor-pointer hover:bg-accent" onClick={() => setCurrentView('registered-users')}>
-            <CardContent className="flex flex-col items-center justify-center p-6">
-              <UserCheck className="h-8 w-8 mb-2" />
-              <span className="text-sm font-medium">Registered Users</span>
-            </CardContent>
-          </Card>
-
-           <Card className="cursor-pointer hover:bg-accent" onClick={() => setCurrentView('admin-games')}>
-            <CardContent className="flex flex-col items-center justify-center p-6">
-              <Gamepad2 className="h-8 w-8 mb-2" />
-              <span className="text-sm font-medium">Admin Games</span>
-            </CardContent>
-          </Card>
-
-           <Card className="cursor-pointer hover:bg-accent" onClick={() => setCurrentView('nickname')}>
-             <CardContent className="flex flex-col items-center justify-center p-6">
-               <UserIcon className="h-8 w-8 mb-2" />
-               <span className="text-sm font-medium">Choose Nickname</span>
-             </CardContent>
-           </Card>
-        </div>
 
 
         {selectedParty && (
