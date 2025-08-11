@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Circle, Target, Bomb } from 'lucide-react';
+import { ArrowLeft, Circle, Target, Bomb, PenTool } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
 
 interface UserGamesProps {
@@ -51,10 +51,19 @@ const UserGames = ({ onBack, onGameSelect }: UserGamesProps) => {
               <CardTitle>Exploder</CardTitle>
             </CardHeader>
           </Card>
-        </div>
-      </div>
-    </div>
-  );
+
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => onGameSelect('haya-ninja')}>
+            <CardHeader className="text-center">
+              <div className="mx-auto mb-2">
+                <PenTool className="h-12 w-12" />
+              </div>
+              <CardTitle>
+                Haya
+                <br />
+                Ninja
+              </CardTitle>
+            </CardHeader>
+          </Card>
 };
 
 export default UserGames;

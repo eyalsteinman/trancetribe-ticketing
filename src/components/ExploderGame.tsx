@@ -255,15 +255,29 @@ const ExploderGame = ({ onBack, scope = 'user', playerNickname = '' }: ExploderG
     }
   }, [cubes]);
 
+  useEffect(() => {
+    const prev = document.body.style.overscrollBehavior;
+    document.body.style.overscrollBehavior = 'none';
+    const preventTouch = (e: TouchEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener('touchmove', preventTouch, { passive: false });
+    return () => {
+      document.body.style.overscrollBehavior = prev;
+      window.removeEventListener('touchmove', preventTouch as any);
+    };
+  }, []);
+
   return (
     <div
       ref={containerRef}
       className="min-h-screen relative overflow-hidden select-none transition-colors duration-500 touch-none overscroll-none"
-      style={{ backgroundColor: bgColor }}
+      style={{ backgroundColor: bgColor, touchAction: 'none' }}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      onTouchMove={handleTouchMove}
+      onTouchMove={(e) => { e.preventDefault(); handleTouchMove(e); }}
       onTouchEnd={handleTouchEnd}
+      onContextMenu={(e) => e.preventDefault()}
     >
       {/* Exit */}
       <button
@@ -283,6 +297,14 @@ const ExploderGame = ({ onBack, scope = 'user', playerNickname = '' }: ExploderG
           <div className="text-xs opacity-80">{highScore.nickname}</div>
         ) : null}
       </div>
+
+      {/* Center message */}
+      {centerMessage && (
+        <div className="absolute inset-0 flex items-center justify-center z-[9000] pointer-events-none">
+          <div className="text-white font-extrabold text-3xl drop-shadow-lg">{centerMessage}</div>
+        </div>
+      )}
+
 
       {/* Single draggable small white circle */}
       {ballAvailable && (
@@ -334,6 +356,9 @@ const ExploderGame = ({ onBack, scope = 'user', playerNickname = '' }: ExploderG
           }}
         />
       )}
+
+      {/* Game name footer */}
+      <div className="absolute bottom-2 left-0 right-0 text-center text-white/80 text-xs z-[9000]">Exploder</div>
     </div>
   );
 };

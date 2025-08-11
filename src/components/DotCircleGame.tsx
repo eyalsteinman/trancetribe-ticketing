@@ -25,6 +25,7 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
   const [path, setPath] = useState<Array<{x: number, y: number}>>([]);
   const [showInstructions, setShowInstructions] = useState(true);
   const [gameStarted, setGameStarted] = useState(false);
+  const [centerMessage, setCenterMessage] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -155,6 +156,16 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
       const newScore = score + 1;
       setScore(newScore);
       generateNewDot();
+
+      // Messages
+      if (newScore % 10 === 0) {
+        setCenterMessage('fuckinshit');
+        setTimeout(() => setCenterMessage(null), 2000);
+      } else if (newScore % 3 === 0) {
+        const words = ['Awesome', 'Great', 'Nice', 'Bravo', 'Cool', 'Super'];
+        setCenterMessage(words[Math.floor(Math.random() * words.length)]);
+        setTimeout(() => setCenterMessage(null), 2000);
+      }
       
       // Save score every 5 dots
       if (newScore % 5 === 0) {
@@ -242,18 +253,20 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
         </button>
       </div>
 
-      {/* Score displays aligned to right */}
-      <div className="absolute top-4 right-4 flex flex-col gap-2 z-40 text-right">
-        <div className="text-white">
-          <div className="text-xs opacity-75">Your Score</div>
-          <div className="font-bold text-lg">{score}</div>
-        </div>
-        
-        {highScore && (
-          <div className="text-white">
-            <div className="text-xs opacity-75">High Score</div>
-            <div className="font-bold">{highScore.nickname}: {highScore.score}</div>
+      {/* Scores aligned to right, side-by-side */}
+      <div className="absolute top-4 right-4 flex flex-col items-end z-40 text-right text-white">
+        <div className="flex items-baseline gap-4">
+          <div>
+            <div className="text-xs opacity-75">Your Score</div>
+            <div className="font-bold text-lg">{score}</div>
           </div>
+          <div>
+            <div className="text-xs opacity-75">High Score</div>
+            <div className="font-bold text-lg">{highScore?.score ?? 0}</div>
+          </div>
+        </div>
+        {highScore?.nickname && (
+          <div className="text-xs opacity-75 mt-1">{highScore.nickname}</div>
         )}
       </div>
 
@@ -297,6 +310,13 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
             opacity="0.8"
           />
         </svg>
+      )}
+
+      {/* Center message overlay */}
+      {centerMessage && (
+        <div className="absolute inset-0 flex items-center justify-center z-[9000] pointer-events-none">
+          <div className="text-white font-extrabold text-3xl drop-shadow-lg">{centerMessage}</div>
+        </div>
       )}
     </div>
   );

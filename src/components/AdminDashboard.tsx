@@ -18,6 +18,7 @@ import AdminGames from './AdminGames';
 import DotCircleGame from './DotCircleGame';
 import ExploderGame from './ExploderGame';
 import NicknameManager from './NicknameManager';
+import HayaNinja from './HayaNinja';
 
 interface AdminDashboardProps {
   user: User;
@@ -42,7 +43,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
-  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder' | 'nickname'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'nickname'>('dashboard');
   const [adminNickname, setAdminNickname] = useState('');
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [nicknameInput, setNicknameInput] = useState('');
@@ -344,6 +345,10 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
 
   if (currentView === 'exploder') {
     return <ExploderGame onBack={() => setCurrentView('admin-games')} scope="admin" playerNickname={adminNickname} />;
+  }
+
+  if (currentView === 'haya-ninja') {
+    return <HayaNinja onBack={() => setCurrentView('admin-games')} scope="admin" playerNickname={adminNickname} />;
   }
 
   if (currentView === 'scanner') {

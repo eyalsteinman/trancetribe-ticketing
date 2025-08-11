@@ -12,13 +12,14 @@ import NicknameManager from './NicknameManager';
 import BoredScreen from './BoredScreen';
 import DotCircleGame from './DotCircleGame';
 import ExploderGame from './ExploderGame';
+import HayaNinja from './HayaNinja';
 
 interface UserDashboardProps {
   user: User;
 }
 
 const UserDashboard = ({ user }: UserDashboardProps) => {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja'>('dashboard');
   const [nickname, setNickname] = useState<string>('');
   const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
   const { toast } = useToast();
@@ -122,11 +123,15 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   if (currentView === 'dot-circle') {
-    return <DotCircleGame onBack={() => setCurrentView('games')} adminId={user.id} adminNickname="" />;
+    return <DotCircleGame onBack={() => setCurrentView('games')} adminId={user.id} adminNickname={nickname} />;
   }
 
   if (currentView === 'exploder') {
     return <ExploderGame onBack={() => setCurrentView('games')} scope="user" playerNickname={nickname} />;
+  }
+
+  if (currentView === 'haya-ninja') {
+    return <HayaNinja onBack={() => setCurrentView('games')} scope="user" playerNickname={nickname} />;
   }
 
   return (

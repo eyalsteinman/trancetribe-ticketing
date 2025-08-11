@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, Palette, Target, Gamepad2 } from 'lucide-react';
+import { ArrowLeft, Palette, Target, Gamepad2, PenTool } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
 
 interface AdminGamesProps {
@@ -55,10 +55,10 @@ const AdminGames = ({ onBack, onGameSelect }: AdminGamesProps) => {
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-muted">
+          <Card className="cursor-pointer hover:bg-accent" onClick={() => onGameSelect('haya-ninja')}>
             <CardContent className="flex flex-col items-center justify-center p-6">
-              <Gamepad2 className="h-8 w-8 mb-2 text-muted-foreground" />
-              <span className="text-sm font-medium text-muted-foreground">Game 4 TBD</span>
+              <PenTool className="h-8 w-8 mb-2" />
+              <span className="text-sm font-medium">Haya<br/>Ninja</span>
             </CardContent>
           </Card>
 
