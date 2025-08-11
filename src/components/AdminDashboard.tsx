@@ -343,7 +343,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   }
 
   if (currentView === 'exploder') {
-    return <ExploderGame onBack={() => setCurrentView('admin-games')} scope="admin" />;
+    return <ExploderGame onBack={() => setCurrentView('admin-games')} scope="admin" playerNickname={adminNickname} />;
   }
 
   if (currentView === 'scanner') {

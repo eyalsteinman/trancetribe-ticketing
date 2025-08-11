@@ -4,6 +4,7 @@ import { toast } from '@/hooks/use-toast';
 interface ExploderGameProps {
   onBack: () => void;
   scope?: 'admin' | 'user'; // per-scope high score
+  playerNickname?: string; // display on high score
 }
 
 interface FallingBall {
@@ -28,7 +29,7 @@ const GRID_COLS = 10;
 const GRID_ROWS = 15;
 const CUBE_SIZE = 16; // pixels (w-4 h-4)
 
-const ExploderGame = ({ onBack, scope = 'user' }: ExploderGameProps) => {
+const ExploderGame = ({ onBack, scope = 'user', playerNickname = '' }: ExploderGameProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const buildingRef = useRef<HTMLDivElement>(null);
 
@@ -49,7 +50,8 @@ const ExploderGame = ({ onBack, scope = 'user' }: ExploderGameProps) => {
 
   // Score
   const [destroyedTotal, setDestroyedTotal] = useState(0);
-  const [highScore, setHighScore] = useState(0);
+  const [highScore, setHighScore] = useState<{ score: number; nickname: string }>({ score: 0, nickname: '' });
+  const [centerMessage, setCenterMessage] = useState<string | null>(null);
 
   // Local background color that changes per level
   const [bgColor, setBgColor] = useState<string>('hsl(220, 70%, 50%)');
@@ -84,15 +86,27 @@ const ExploderGame = ({ onBack, scope = 'user' }: ExploderGameProps) => {
   useEffect(() => {
     initBoard(1);
     const stored = localStorage.getItem(`exploder-highscore-${scope}`);
-    if (stored) setHighScore(parseInt(stored, 10) || 0);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (typeof parsed === 'number') {
+          setHighScore({ score: parsed, nickname: '' });
+        } else if (parsed && typeof parsed.score === 'number') {
+          setHighScore({ score: parsed.score, nickname: parsed.nickname || '' });
+        }
+      } catch {
+        setHighScore({ score: parseInt(stored, 10) || 0, nickname: '' });
+      }
+    }
   }, [scope]);
 
   useEffect(() => {
-    if (destroyedTotal > highScore) {
-      setHighScore(destroyedTotal);
-      localStorage.setItem(`exploder-highscore-${scope}`, String(destroyedTotal));
+    if (destroyedTotal > highScore.score) {
+      const toSave = { score: destroyedTotal, nickname: playerNickname || '' };
+      setHighScore(toSave);
+      localStorage.setItem(`exploder-highscore-${scope}`, JSON.stringify(toSave));
     }
-  }, [destroyedTotal, highScore, scope]);
+  }, [destroyedTotal, highScore.score, scope, playerNickname]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!ballAvailable) return;
@@ -208,7 +222,12 @@ const ExploderGame = ({ onBack, scope = 'user' }: ExploderGameProps) => {
             if (destroyed > 0) setDestroyedTotal((t) => t + destroyed);
           }
 
-          setTimeout(() => setBallAvailable(true), 0);
+          // show message and respawn after delay
+          setCenterMessage(enteredBuilding && buildingRect ? 'fuckinshit!' : 'missed');
+          setTimeout(() => {
+            setCenterMessage(null);
+            setBallAvailable(true);
+          }, 2000);
 
           return { x, y, radius, active, enteredBuilding, impactRelX, impactRelY };
         }
@@ -239,7 +258,7 @@ const ExploderGame = ({ onBack, scope = 'user' }: ExploderGameProps) => {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen relative overflow-hidden select-none transition-colors duration-500"
+      className="min-h-screen relative overflow-hidden select-none transition-colors duration-500 touch-none overscroll-none"
       style={{ backgroundColor: bgColor }}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -248,18 +267,21 @@ const ExploderGame = ({ onBack, scope = 'user' }: ExploderGameProps) => {
     >
       {/* Exit */}
       <button
-        className="absolute top-4 left-4 z-50 px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 rounded-lg backdrop-blur-md transition-all shadow-xl font-medium"
+        className="absolute top-4 left-4 z-[9999] px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 rounded-lg backdrop-blur-md transition-all shadow-xl font-medium"
         onClick={onBack}
       >
         Exit
       </button>
 
       {/* Scoreboard */}
-      <div className="absolute top-4 right-4 z-50 text-right text-white">
+      <div className="absolute top-4 right-4 z-[9999] text-right text-white">
         <div className="text-sm opacity-90">Total pixels destroyed</div>
         <div className="text-2xl font-bold">{destroyedTotal}</div>
         <div className="mt-1 text-xs opacity-80">High score ({scope})</div>
-        <div className="text-lg font-semibold">{highScore}</div>
+        <div className="text-lg font-semibold">{highScore.score}</div>
+        {highScore.nickname ? (
+          <div className="text-xs opacity-80">{highScore.nickname}</div>
+        ) : null}
       </div>
 
       {/* Single draggable small white circle */}

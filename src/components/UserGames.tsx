@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Circle, Target, Bomb } from 'lucide-react';
+import { useBackground } from '@/contexts/BackgroundContext';
 
 interface UserGamesProps {
   onBack: () => void;
@@ -8,8 +9,12 @@ interface UserGamesProps {
 }
 
 const UserGames = ({ onBack, onGameSelect }: UserGamesProps) => {
+  const { backgroundColor, isBackgroundDark } = useBackground();
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div
+      className="min-h-screen p-4 transition-colors duration-500"
+      style={{ backgroundColor, color: isBackgroundDark ? '#ffffff' : '#000000' }}
+    >
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex items-center gap-4">
           <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
