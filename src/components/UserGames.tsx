@@ -64,6 +64,10 @@ const UserGames = ({ onBack, onGameSelect }: UserGamesProps) => {
               </CardTitle>
             </CardHeader>
           </Card>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default UserGames;
