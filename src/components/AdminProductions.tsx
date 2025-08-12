@@ -11,6 +11,13 @@ interface AdminProductionsProps {
   onBack: () => void;
 }
 
+interface Production {
+  id: string;
+  name: string;
+  description: string | null;
+  logo_url: string | null;
+}
+
 const AdminProductions = ({ onBack }: AdminProductionsProps) => {
   const [hasProductions, setHasProductions] = useState<boolean | null>(null);
   const [isCreating, setIsCreating] = useState(false);
@@ -18,6 +25,7 @@ const AdminProductions = ({ onBack }: AdminProductionsProps) => {
   const [description, setDescription] = useState('');
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [productions, setProductions] = useState<Production[]>([]);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
@@ -40,6 +48,8 @@ const AdminProductions = ({ onBack }: AdminProductionsProps) => {
     checkProductions();
   }, []);
 
+  useEffect(() => { loadProductions(); }, []);
+
   const uploadLogo = async (): Promise<string | null> => {
     if (!logoFile) return null;
     const ext = logoFile.name.split('.').pop();
@@ -50,6 +60,17 @@ const AdminProductions = ({ onBack }: AdminProductionsProps) => {
     if (error) throw error;
     const { data: pub } = supabase.storage.from('production-logos').getPublicUrl(fileName);
     return pub.publicUrl;
+  };
+
+  const loadProductions = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setProductions([]); return; }
+    const { data, error } = await (supabase as any)
+      .from('productions')
+      .select('id, name, description, logo_url')
+      .eq('created_by', user.id)
+      .order('created_at', { ascending: false });
+    if (!error && data) setProductions(data);
   };
 
   const saveProduction = async () => {
@@ -68,7 +89,9 @@ const AdminProductions = ({ onBack }: AdminProductionsProps) => {
         .insert({ created_by: user.id, name: name.trim(), description: description.trim() || null, logo_url: logoUrl });
       if (error) throw error;
       toast({ title: 'Saved', description: 'Production created!' });
-      onBack();
+      setIsCreating(false);
+      await loadProductions();
+      setHasProductions(true);
     } catch (e: any) {
       console.error(e);
       toast({ title: 'Error', description: e.message || 'Failed to save', variant: 'destructive' });
@@ -79,9 +102,9 @@ const AdminProductions = ({ onBack }: AdminProductionsProps) => {
 
   return (
     <div className="min-h-screen p-4" style={{ backgroundColor }}>
-      <div className="max-w-md mx-auto space-y-6 text-right">
+      <div className="max-w-md mx-auto space-y-6 text-left">
         <div className="relative">
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 left-4 z-[9999] on-color back-button">
+          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h1 className="text-2xl font-bold" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>My Productions</h1>
@@ -103,6 +126,26 @@ const AdminProductions = ({ onBack }: AdminProductionsProps) => {
               </button>
             </CardContent>
           </Card>
+        )}
+
+        {!isCreating && productions.length > 0 && (
+          <div className="space-y-4">
+            {productions.map((p) => (
+              <Card key={p.id}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  {p.logo_url && (
+                    <img src={p.logo_url} alt={`${p.name} logo`} className="h-12 w-12 rounded object-cover" />
+                  )}
+                  <div className="flex-1">
+                    <div className="font-medium">{p.name}</div>
+                    {p.description && (
+                      <div className="text-sm text-muted-foreground">{p.description}</div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         )}
 
         {isCreating && (

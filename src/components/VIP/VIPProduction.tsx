@@ -17,14 +17,14 @@ const VIPProduction = ({ productionId, onBack }: VIPProductionProps) => {
 
   return (
     <div className="min-h-screen p-4">
-      <header className="relative text-right mb-4">
-        <Button variant="ghost" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 left-4 z-[9999] on-color back-button">
+      <header className="relative text-left mb-4">
+        <Button variant="ghost" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <h1 className="text-xl font-semibold">Production {productionId}</h1>
       </header>
 
-      <main className="max-w-md mx-auto space-y-6 text-right">
+      <main className="max-w-md mx-auto space-y-6 text-left">
         <div className="flex justify-center">
           <img
             src="/placeholder.svg"

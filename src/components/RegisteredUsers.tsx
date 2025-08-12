@@ -247,9 +247,9 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
         backgroundColor
       }}
     >
-      <div className="max-w-4xl mx-auto space-y-6 text-right">
+      <div className="max-w-4xl mx-auto space-y-6 text-left">
         <div className="relative">
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 left-4 z-[9999] back-button">
+          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] back-button">
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h1 

@@ -16,9 +16,9 @@ const Insurance = ({ onBack }: InsuranceProps) => {
         backgroundColor
       }}
     >
-      <div className="max-w-md mx-auto space-y-6 text-right">
+      <div className="max-w-md mx-auto space-y-6 text-left">
         <div className="relative">
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 left-4 z-[9999] on-color back-button">
+          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="flex items-center gap-2 opacity-80 justify-end">
@@ -27,7 +27,7 @@ const Insurance = ({ onBack }: InsuranceProps) => {
           </div>
         </div>
 
-        <div className="text-center space-y-4">
+        <div className="space-y-4">
           <h1 className="text-2xl font-bold">Buy Party Insurance</h1>
           <p className="text-sm text-muted-foreground">
             Buy insurance for parties. 19 ILS a month. Get covered for any party and any unused tickets for up to 400 ILS per year.

@@ -370,9 +370,9 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           backgroundColor
         }}
       >
-        <div className="max-w-md mx-auto space-y-6 text-right">
+        <div className="max-w-md mx-auto space-y-6 text-left">
           <div className="relative">
-            <Button variant="outline" size="icon" className="absolute top-4 left-4 z-[9999] on-color back-button" onClick={() => setCurrentView('dashboard')} aria-label="Back">
+            <Button variant="outline" size="icon" className="absolute top-4 right-4 z-[9999] on-color back-button" onClick={() => setCurrentView('dashboard')} aria-label="Back">
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <h1 className="text-2xl font-bold">QR Scanner</h1>
@@ -426,10 +426,10 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           backgroundColor
         }}
       >
-        <div className="max-w-md mx-auto space-y-6 text-right">
+        <div className="max-w-md mx-auto space-y-6 text-left">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold">Scanned Guests</h1>
-            <Button variant="outline" className="on-color back-button" size="icon" onClick={() => setCurrentView('dashboard')} aria-label="Back">
+            <Button variant="outline" className="on-color back-button absolute top-4 right-4" size="icon" onClick={() => setCurrentView('dashboard')} aria-label="Back">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </div>
@@ -512,7 +512,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         backgroundColor
       }}
     >
-      <div className="max-w-md mx-auto space-y-6 text-right">
+      <div className="max-w-md mx-auto space-y-6 text-left">
         <div className="flex justify-between items-center">
           <div>
             <h1 

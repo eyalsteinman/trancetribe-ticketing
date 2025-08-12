@@ -275,16 +275,16 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           backgroundColor
         }}
       >
-        <div className="max-w-md mx-auto space-y-6 text-right">
-          <Button variant="outline" size="icon" onClick={cancelEdit} aria-label="Back" className="absolute top-4 left-4 z-[9999] on-color back-button">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 
-            className="text-xl font-bold"
-            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-          >
-            Edit Party
-          </h1>
+          <div className="max-w-md mx-auto space-y-6 text-left">
+            <Button variant="outline" size="icon" onClick={cancelEdit} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <h1 
+              className="text-xl font-bold"
+              style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+            >
+              Edit Party
+            </h1>
 
           <Card>
             <CardHeader>
@@ -375,11 +375,10 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                       className="w-full h-32 object-cover rounded-md"
                     />
                     <Button
-                      variant="outline"
+                      variant="destructive"
                       size="sm"
                       onClick={() => removePartyPhoto(editingParty)}
                       disabled={loading}
-                      className="bg-red-600 hover:bg-red-700 border-red-600"
                     >
                       Remove Current Photo
                     </Button>
@@ -442,9 +441,9 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
         backgroundColor
       }}
     >
-        <div className="max-w-md mx-auto space-y-6 text-right">
+        <div className="max-w-md mx-auto space-y-6 text-left">
           <div className="flex items-center justify-between">
-            <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 left-4 z-[9999] on-color back-button">
+            <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <h1 
@@ -524,11 +523,11 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
-                            variant="outline"
+                            variant="destructive"
                             size="sm"
-                            className="flex items-center gap-1 bg-red-600 hover:bg-red-700 border-red-600"
+                            className="flex items-center gap-1"
                           >
-                            <Trash2 className="h-3 w-3" style={{ color: 'white' }} />
+                            <Trash2 className="h-3 w-3" />
                             Delete
                           </Button>
                         </AlertDialogTrigger>

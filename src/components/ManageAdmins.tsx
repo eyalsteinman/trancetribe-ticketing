@@ -333,9 +333,9 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
         backgroundColor
       }}
     >
-      <div className="max-w-2xl mx-auto space-y-6 text-right">
+      <div className="max-w-2xl mx-auto space-y-6 text-left">
         <div className="flex items-center gap-4">
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 left-4 z-[9999] on-color back-button">
+          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h1 
@@ -458,12 +458,11 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
                         </Button>
                         <Button
                           size="sm"
-                          variant="outline"
+                          variant="destructive"
                           onClick={() => deleteAdmin(admin.id)}
                           disabled={loading}
-                          className="bg-red-600 hover:bg-red-700 text-white border-red-600"
                         >
-                          <Trash2 className="h-4 w-4" style={{ color: 'white' }} />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     )}
