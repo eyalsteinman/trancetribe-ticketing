@@ -17,6 +17,7 @@ interface Party {
   description: string | null;
   price: number | null;
   is_free: boolean;
+  required_socials: string[];
 }
 
 interface UserPartiesProps {

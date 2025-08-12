@@ -18,6 +18,8 @@ const ReorderableTiles: React.FC<ReorderableTilesProps> = ({ items, orderKey }) 
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dragReadyId, setDragReadyId] = useState<string | null>(null);
   const longPressTimer = useRef<number | null>(null);
+  const prevOverflowRef = useRef<string>("");
+  const prevTouchActionRef = useRef<string>("");
 
   // Load saved order
   useEffect(() => {
@@ -96,6 +98,7 @@ const ReorderableTiles: React.FC<ReorderableTilesProps> = ({ items, orderKey }) 
       setDraggingId(dragReadyId);
     }
     if (!draggingId) return;
+    e.preventDefault();
     const touch = e.touches[0];
     if (!touch) return;
     const el = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement | null;
@@ -115,9 +118,26 @@ const ReorderableTiles: React.FC<ReorderableTilesProps> = ({ items, orderKey }) 
     cancelLongPress();
   };
 
+  // Lock scroll while reordering
+  useEffect(() => {
+    if (dragReadyId || draggingId) {
+      prevOverflowRef.current = document.body.style.overflow;
+      prevTouchActionRef.current = (document.body.style as any).touchAction || '';
+      document.body.style.overflow = 'hidden';
+      (document.body.style as any).touchAction = 'none';
+    } else {
+      document.body.style.overflow = prevOverflowRef.current || '';
+      (document.body.style as any).touchAction = prevTouchActionRef.current || '';
+    }
+    return () => {
+      document.body.style.overflow = prevOverflowRef.current || '';
+      (document.body.style as any).touchAction = prevTouchActionRef.current || '';
+    };
+  }, [dragReadyId, draggingId]);
+
   return (
     <div
-      className="grid grid-cols-2 gap-4"
+      className={`grid grid-cols-2 gap-4 ${dragReadyId || draggingId ? 'touch-none select-none' : ''}`}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
     >

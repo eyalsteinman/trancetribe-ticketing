@@ -17,7 +17,7 @@ const HayaNinja = ({ onBack, scope = 'user', playerNickname = '' }: HayaNinjaPro
   const [path, setPath] = useState<Point[]>([]);
   const [allPaths, setAllPaths] = useState<Point[][]>([]); // persistent scratches
   const [gameStarted, setGameStarted] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(120);
+  const [timeLeft, setTimeLeft] = useState(60);
   const [showEndPopup, setShowEndPopup] = useState(false);
   const [highScore, setHighScore] = useState<{ score: number; nickname: string }>({ score: 0, nickname: '' });
   const contRef = useRef<HTMLDivElement>(null);
@@ -89,7 +89,7 @@ const HayaNinja = ({ onBack, scope = 'user', playerNickname = '' }: HayaNinjaPro
 
   const start = () => {
     setLines(0);
-    setTimeLeft(120);
+    setTimeLeft(60);
     setAllPaths([]);
     setPath([]);
     setShowEndPopup(false);
@@ -102,7 +102,7 @@ const handleBack = () => {
   setPath([]);
   setAllPaths([]);
   setShowEndPopup(false);
-  setTimeLeft(120);
+  setTimeLeft(60);
   onBack();
 };
 

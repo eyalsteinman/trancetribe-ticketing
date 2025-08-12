@@ -17,6 +17,7 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState<string>('');
   const [isFree, setIsFree] = useState<boolean>(false);
+  const [requiredSocials, setRequiredSocials] = useState<string[]>([]);
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -87,7 +88,8 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
           photo_url: photoUrl,
           description: description.trim() || null,
           price: price ? Number(price) : null,
-          is_free: isFree
+          is_free: isFree,
+          required_socials: requiredSocials
         });
 
       if (error) {
