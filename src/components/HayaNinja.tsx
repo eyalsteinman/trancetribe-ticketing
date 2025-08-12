@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useBackground } from '@/contexts/BackgroundContext';
 
 interface HayaNinjaProps {
   onBack: () => void;
@@ -12,7 +13,7 @@ interface HayaNinjaProps {
 interface Point { x: number; y: number }
 
 const HayaNinja = ({ onBack, scope = 'user', playerNickname = '' }: HayaNinjaProps) => {
-  const [bgColor, setBgColor] = useState('hsl(220,70%,50%)');
+  const { backgroundColor } = useBackground();
   const [lines, setLines] = useState<number>(0);
   const [path, setPath] = useState<Point[]>([]);
   const [allPaths, setAllPaths] = useState<Point[][]>([]); // persistent scratches
@@ -26,14 +27,6 @@ const HayaNinja = ({ onBack, scope = 'user', playerNickname = '' }: HayaNinjaPro
   const lastTurnPointRef = useRef<Point | null>(null);
   const { toast } = useToast();
 
-  // Background color change every 10s
-  useEffect(() => {
-    const id = window.setInterval(() => {
-      const h = Math.floor(Math.random() * 360);
-      setBgColor(`hsl(${h},70%,50%)`);
-    }, 10000);
-    return () => window.clearInterval(id);
-  }, []);
 
   // Disable pull-to-refresh / scrolling gestures
   useEffect(() => {
@@ -180,7 +173,7 @@ const handleBack = () => {
     <div
       ref={contRef}
       className="min-h-screen relative overflow-hidden select-none transition-colors duration-500 touch-none overscroll-none"
-      style={{ backgroundColor: bgColor, touchAction: 'none' }}
+      style={{ backgroundColor, touchAction: 'none' }}
       onMouseDown={onPointerDown}
       onMouseMove={onPointerMove}
       onMouseUp={onPointerUp}
@@ -189,13 +182,13 @@ const handleBack = () => {
       onTouchEnd={onPointerUp}
       onContextMenu={(e) => e.preventDefault()}
     >
-      {/* Back button */}
-      <button
-        className="absolute top-4 left-4 z-[9999] px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 rounded-lg backdrop-blur-md transition-all shadow-xl font-medium"
+      <Button
+        className="absolute top-4 left-4 z-[9999]"
+        variant="outline"
         onClick={handleBack}
       >
         <ArrowLeft className="inline-block h-4 w-4 mr-2" /> Back
-      </button>
+      </Button>
 
       {/* Scoreboard */}
       <div className="absolute top-4 right-4 z-[9999] text-right text-white">

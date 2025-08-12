@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { useBackground } from '@/contexts/BackgroundContext';
 
 interface DotCircleGameProps {
   onBack: () => void;
@@ -16,7 +17,7 @@ interface Dot {
 }
 
 const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) => {
-  const [backgroundColor, setBackgroundColor] = useState('#3b82f6');
+  const { backgroundColor } = useBackground();
   const [currentDot, setCurrentDot] = useState<Dot | null>(null);
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState<{ nickname: string; score: number } | null>(null);
@@ -29,17 +30,8 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Change background color every 5 seconds
-    const colorInterval = setInterval(() => {
-      const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#84cc16', '#f97316'];
-      const randomColor = colors[Math.floor(Math.random() * colors.length)];
-      setBackgroundColor(randomColor);
-    }, 5000);
-
     // Load high score from localStorage
     loadHighScore();
-
-    return () => clearInterval(colorInterval);
   }, []);
 
   useEffect(() => {
@@ -219,7 +211,7 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
         style: { backgroundColor, touchAction: 'none' }
       } : { style: { backgroundColor } })}
     >
-      {/* Exit button - completely independent floating button */}
+      {/* Exit button */}
       <div 
         className="absolute top-4 left-4 z-[9999]"
         onTouchStart={(e) => e.stopPropagation()}
@@ -228,20 +220,9 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
         onMouseDown={(e) => e.stopPropagation()}
         onMouseUp={(e) => e.stopPropagation()}
         onMouseMove={(e) => e.stopPropagation()}
-        onClick={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          handleExit();
-        }}
-        style={{ 
-          pointerEvents: 'auto',
-          touchAction: 'manipulation'
-        }}
       >
-        <button 
-          className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 rounded-lg backdrop-blur-md transition-all shadow-xl font-medium"
-          onTouchStart={(e) => e.stopPropagation()}
-          onTouchEnd={(e) => e.stopPropagation()}
+        <Button 
+          variant="outline"
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();
@@ -250,7 +231,7 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
         >
           <ArrowLeft className="h-4 w-4" />
           Back
-        </button>
+        </Button>
       </div>
 
       {/* Scores aligned to right, side-by-side */}

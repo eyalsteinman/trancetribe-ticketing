@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { toast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { useBackground } from '@/contexts/BackgroundContext';
 
 interface ExploderGameProps {
   onBack: () => void;
@@ -54,8 +56,8 @@ const ExploderGame = ({ onBack, scope = 'user', playerNickname = '' }: ExploderG
   const [highScore, setHighScore] = useState<{ score: number; nickname: string }>({ score: 0, nickname: '' });
   const [centerMessage, setCenterMessage] = useState<string | null>(null);
 
-  // Local background color that changes per level
-  const [bgColor, setBgColor] = useState<string>('hsl(220, 70%, 50%)');
+  // Use global app background color
+  const { backgroundColor } = useBackground();
 
   const initBoard = (lvl: number) => {
     const targetPixels = Math.min(GRID_COLS * GRID_ROWS, 8 * Math.pow(2, lvl - 1));
@@ -76,12 +78,6 @@ const ExploderGame = ({ onBack, scope = 'user', playerNickname = '' }: ExploderG
     setCubes(all);
   };
 
-  const randomHsl = () => {
-    const h = Math.floor(Math.random() * 360);
-    const s = 70;
-    const l = 45;
-    return `hsl(${h}, ${s}%, ${l}%)`;
-  };
 
   // mount
   useEffect(() => {
@@ -279,7 +275,7 @@ setFallingBall((prev) => {
     <div
       ref={containerRef}
       className="min-h-screen relative overflow-hidden select-none transition-colors duration-500 touch-none overscroll-none"
-      style={{ backgroundColor: bgColor, touchAction: 'none' }}
+      style={{ backgroundColor, touchAction: 'none' }}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onTouchMove={(e) => { e.preventDefault(); handleTouchMove(e); }}
@@ -287,13 +283,14 @@ setFallingBall((prev) => {
       onContextMenu={(e) => e.preventDefault()}
     >
       {/* Exit */}
-      <button
-        className="absolute left-4 z-[9999] px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 rounded-lg backdrop-blur-md transition-all shadow-xl font-medium"
+      <Button
+        className="absolute left-4 z-[9999]"
         style={{ top: 'calc(env(safe-area-inset-top) + 8px)' }}
+        variant="outline"
         onClick={onBack}
       >
         Exit
-      </button>
+      </Button>
 
       {/* Scoreboard */}
       <div className="absolute right-4 z-[9999] text-right text-white" style={{ top: 'calc(env(safe-area-inset-top) + 8px)' }}>
@@ -304,17 +301,12 @@ setFallingBall((prev) => {
         <div className="text-xs opacity-80">{highScore.nickname || (playerNickname || (scope === 'admin' ? 'Admin' : 'User'))}</div>
       </div>
 
-      {/* Messages */}
-      {centerMessage && centerMessage.toLowerCase().includes('fuckinshit') && (
-        <div className="absolute top-2 left-0 right-0 z-[9500] pointer-events-none">
-          <div className="mx-auto w-fit px-3 py-1 bg-black/40 text-white rounded-md border border-white/20 backdrop-blur-sm text-lg font-extrabold">
+      {/* Messages - centered on screen */}
+      {centerMessage && (
+        <div className="absolute inset-0 flex items-center justify-center z-[9500] pointer-events-none">
+          <div className="mx-auto w-fit px-3 py-1 bg-black/40 text-white rounded-md border border-white/20 backdrop-blur-sm text-2xl font-extrabold">
             {centerMessage}
           </div>
-        </div>
-      )}
-      {centerMessage && !centerMessage.toLowerCase().includes('fuckinshit') && (
-        <div className="absolute inset-0 flex items-center justify-center z-[9000] pointer-events-none">
-          <div className="text-white font-extrabold text-3xl drop-shadow-lg">{centerMessage}</div>
         </div>
       )}
 

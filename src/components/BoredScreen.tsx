@@ -22,7 +22,6 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
   const [paletteIndex, setPaletteIndex] = useState(0);
   const [showWheel, setShowWheel] = useState(false);
   const [wheelHue, setWheelHue] = useState(200);
-  const holdTimer = useRef<number | null>(null);
   const wheelRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -33,8 +32,11 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
 
   const cycleColor = () => {
     const next = (paletteIndex + 1) % PALETTE.length;
+    const nextColor = PALETTE[next];
     setPaletteIndex(next);
-    setBackgroundColor(PALETTE[next]);
+    setBackgroundColor(nextColor);
+    // Apply globally immediately
+    setGlobalBackground(nextColor);
   };
 
   const save = () => {
@@ -48,15 +50,6 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
     toast({ title: 'Reverted', description: 'Background set to white.' });
   };
 
-  // Long-press handlers to open the color wheel
-  const startHold = () => {
-    if (holdTimer.current) window.clearTimeout(holdTimer.current);
-    holdTimer.current = window.setTimeout(() => setShowWheel(true), 500);
-  };
-  const cancelHold = () => {
-    if (holdTimer.current) window.clearTimeout(holdTimer.current);
-  };
-
   // Convert pointer position to hue
   const handleWheelMove = (clientX: number, clientY: number) => {
     const el = wheelRef.current;
@@ -68,9 +61,11 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
     let deg = Math.round((angle * 180) / Math.PI);
     if (deg < 0) deg += 360;
     setWheelHue(deg);
-    setBackgroundColor(`hsl(${deg}, 80%, 55%)`);
+    const color = `hsl(${deg}, 80%, 55%)`;
+    setBackgroundColor(color);
+    // Apply globally immediately
+    setGlobalBackground(color);
   };
-
   const onWheelPointerDown = (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
     const move = (x: number, y: number) => handleWheelMove(x, y);
@@ -113,7 +108,7 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
       <Button
         variant="outline"
         onClick={onBack}
-        className="absolute top-4 left-4 z-[9999] flex items-center gap-2 bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20"
+        className="absolute top-4 left-4 z-[9999]"
       >
         <ArrowLeft className="h-4 w-4" />
         Back
@@ -143,14 +138,7 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
       <div className="flex flex-col items-center gap-6">
         {/* Main round glass button with two-line label */}
         <Button
-          onClick={cycleColor}
-          onMouseDown={startHold}
-          onMouseUp={cancelHold}
-          onMouseLeave={cancelHold}
-          onTouchStart={(e) => {
-            startHold();
-            (e.target as HTMLElement).addEventListener('touchend', cancelHold, { once: true });
-          }}
+        onClick={cycleColor}
           className="rounded-full w-40 h-40 bg-white/10 text-white border border-white/20 backdrop-blur-lg shadow-2xl hover:bg-white/20 active:scale-95 transition-all duration-300 flex flex-col items-center justify-center text-center"
         >
           <span className="leading-tight font-semibold">
@@ -160,34 +148,8 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
           </span>
         </Button>
 
-        {/* Small hint */}
-        <div className="text-white/80 text-sm">Long press for color wheel</div>
       </div>
 
-      {/* Color Wheel Overlay */}
-      {showWheel && (
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-[9998]" onClick={() => setShowWheel(false)}>
-          <div
-            ref={wheelRef}
-            className="relative rounded-full"
-            style={{ width: 240, height: 240, background: 'conic-gradient(from 0deg, red, yellow, lime, cyan, blue, magenta, red)' }}
-            onMouseDown={onWheelPointerDown}
-            onTouchStart={onWheelPointerDown}
-            onTouchMove={(e) => {
-              if (e.touches[0]) handleWheelMove(e.touches[0].clientX, e.touches[0].clientY);
-              e.preventDefault();
-            }}
-          >
-            <div className="absolute inset-6 rounded-full bg-background/70 border border-white/20" />
-            <div
-              className="absolute inset-0 flex items-center justify-center text-white font-semibold"
-              style={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}
-            >
-              H:{wheelHue}°
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
