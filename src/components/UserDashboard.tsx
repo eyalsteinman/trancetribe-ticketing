@@ -188,7 +188,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           >
             {nickname ? `Welcome back, ${nickname}!` : 'User Dashboard'}
           </h1>
-          <Button variant="outline" onClick={handleSignOut}>
+          <Button variant="outline" onClick={handleSignOut} className="whitespace-nowrap">
             Sign Out
           </Button>
         </div>

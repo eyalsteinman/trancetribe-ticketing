@@ -523,7 +523,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
               </p>
             )}
           </div>
-          <Button variant="outline" onClick={handleSignOut}>
+          <Button variant="outline" onClick={handleSignOut} className="whitespace-nowrap">
             Sign Out
           </Button>
         </div>
