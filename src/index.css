@@ -106,7 +106,7 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 
-  /* Colored background (non-white): all text tokens turn white, button icons stay black */
+  /* Colored background (non-white): direct-on-background text tokens turn white */
   body[data-colored-bg="true"] {
     --foreground: 0 0% 100%;
     --muted-foreground: 0 0% 100%;
@@ -119,6 +119,35 @@ All colors MUST be HSL.
   body[data-colored-bg="true"] button svg,
   body[data-colored-bg="true"] [role="button"] svg {
     color: hsl(var(--button-icon-on-colored));
+  }
+
+  /* On colored background, force wrappers/surfaces and buttons to use black text */
+  body[data-colored-bg="true"] .surface,
+  body[data-colored-bg="true"] .card,
+  body[data-colored-bg="true"] .bg-card,
+  body[data-colored-bg="true"] .bg-white,
+  body[data-colored-bg="true"] .bg-secondary,
+  body[data-colored-bg="true"] .bg-muted,
+  body[data-colored-bg="true"] .bg-accent,
+  body[data-colored-bg="true"] .bg-popover {
+    --foreground: 0 0% 0%;
+    --muted-foreground: 0 0% 0%;
+    --secondary-foreground: 0 0% 0%;
+    --accent-foreground: 0 0% 0%;
+    --card-foreground: 0 0% 0%;
+    --popover-foreground: 0 0% 0%;
+    color: hsl(var(--foreground));
+  }
+
+  /* Buttons: black text/icons on colored background, except red buttons keep white text */
+  body[data-colored-bg="true"] button {
+    --foreground: 0 0% 0%;
+    color: hsl(var(--foreground));
+  }
+  /* Red/destructive buttons should always have white text */
+  button.bg-red-600 {
+    --foreground: 0 0% 100%;
+    color: hsl(var(--foreground));
   }
 
   /* White background: ensure all text tokens are pure black */
@@ -134,7 +163,20 @@ All colors MUST be HSL.
   body[data-colored-bg="false"] [class*="text-white"] {
     color: hsl(0 0% 0%) !important;
   }
-  body[data-colored-bg="true"] [class*="text-black"] {
+  /* Inside surfaces and buttons on colored background, kill legacy text-white */
+  body[data-colored-bg="true"] .surface [class*="text-white"],
+  body[data-colored-bg="true"] .card [class*="text-white"],
+  body[data-colored-bg="true"] .bg-card [class*="text-white"],
+  body[data-colored-bg="true"] .bg-white [class*="text-white"],
+  body[data-colored-bg="true"] .bg-secondary [class*="text-white"],
+  body[data-colored-bg="true"] .bg-muted [class*="text-white"],
+  body[data-colored-bg="true"] .bg-accent [class*="text-white"],
+  body[data-colored-bg="true"] .bg-popover [class*="text-white"],
+  body[data-colored-bg="true"] button [class*="text-white"] {
+    color: hsl(0 0% 0%) !important;
+  }
+  /* For direct-on-background content, flip any forced text-black to white */
+  body[data-colored-bg="true"] :not(.bg-card):not(.bg-secondary):not(.bg-muted):not(.bg-accent):not(.bg-popover):not(.card):not(.surface):not(.bg-white):not(button) [class*="text-black"] {
     color: hsl(0 0% 100%) !important;
   }
 }
