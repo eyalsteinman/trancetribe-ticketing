@@ -187,7 +187,11 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           >
             {nickname ? `Welcome back, ${nickname}!` : 'User Dashboard'}
           </h1>
-          <Button variant="outline" onClick={handleSignOut} className="whitespace-nowrap">
+          <Button 
+            variant="outline" 
+            onClick={handleSignOut} 
+            className={`whitespace-nowrap ${isBackgroundDark ? 'text-white border-white/60 hover:bg-white/10' : ''}`}
+          >
             Sign Out
           </Button>
         </div>

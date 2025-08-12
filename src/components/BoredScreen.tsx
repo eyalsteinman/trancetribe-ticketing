@@ -17,7 +17,7 @@ const PALETTE = [
 ];
 
 const BoredScreen = ({ onBack }: BoredScreenProps) => {
-  const { backgroundColor: globalBg, setGlobalBackground } = useBackground();
+  const { backgroundColor: globalBg, setGlobalBackground, isBackgroundDark } = useBackground();
   const [backgroundColor, setBackgroundColor] = useState(globalBg);
   const [paletteIndex, setPaletteIndex] = useState(0);
   const [showWheel, setShowWheel] = useState(false);
@@ -108,7 +108,7 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
       <Button
         variant="outline"
         onClick={onBack}
-        className="absolute top-4 left-4 z-[9999]"
+        className={`absolute top-4 left-4 z-[9999] ${isBackgroundDark ? 'text-white border-white/60 hover:bg-white/10' : ''}`}
       >
         <ArrowLeft className="h-4 w-4" />
         Back
@@ -119,7 +119,7 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
         <Button
           onClick={save}
           size="sm"
-          className="bg-white/20 backdrop-blur-md border border-white/30 text-white hover:bg-white/30 transition-all duration-300 shadow-lg px-4 py-2 text-sm"
+          className="bg-white/20 backdrop-blur-md border border-white/30 hover:bg-white/30 transition-all duration-300 shadow-lg px-4 py-2 text-sm"
         >
           <Save className="h-4 w-4 mr-2" />
           Save
@@ -127,7 +127,7 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
         <Button
           onClick={revert}
           size="sm"
-          className="bg-white/20 backdrop-blur-md border border-white/30 text-white hover:bg-white/30 transition-all duration-300 shadow-lg px-4 py-2 text-sm"
+          className="bg-white/20 backdrop-blur-md border border-white/30 hover:bg-white/30 transition-all duration-300 shadow-lg px-4 py-2 text-sm"
         >
           <RotateCcw className="h-4 w-4 mr-2" />
           Revert
@@ -139,7 +139,7 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
         {/* Main round glass button with two-line label */}
         <Button
         onClick={cycleColor}
-          className="rounded-full w-40 h-40 bg-white/10 text-white border border-white/20 backdrop-blur-lg shadow-2xl hover:bg-white/20 active:scale-95 transition-all duration-300 flex flex-col items-center justify-center text-center"
+          className="rounded-full w-40 h-40 bg-white/10 border border-white/20 backdrop-blur-lg shadow-2xl hover:bg-white/20 active:scale-95 transition-all duration-300 flex flex-col items-center justify-center text-center"
         >
           <span className="leading-tight font-semibold">
             Change
