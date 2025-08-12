@@ -283,7 +283,7 @@ setFallingBall((prev) => {
     >
       {/* Exit */}
       <Button
-        className="absolute left-4 z-[9999]"
+        className="absolute left-4 z-[9999] on-color"
         style={{ top: 'calc(env(safe-area-inset-top) + 8px)' }}
         variant="outline"
         onClick={onBack}

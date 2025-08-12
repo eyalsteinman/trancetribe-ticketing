@@ -81,7 +81,7 @@ const AdminProductions = ({ onBack }: AdminProductionsProps) => {
     <div className="min-h-screen p-4" style={{ backgroundColor }}>
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex items-center gap-4">
-          <Button variant="outline" size="icon" onClick={onBack}>
+          <Button variant="outline" size="icon" onClick={onBack} className="on-color">
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h1 className="text-2xl font-bold" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>My Productions</h1>

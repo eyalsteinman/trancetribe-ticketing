@@ -108,7 +108,7 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
       <Button
         variant="outline"
         onClick={onBack}
-        className={`absolute top-4 left-4 z-[9999] ${isBackgroundDark ? 'text-white border-white/60 hover:bg-white/10' : ''}`}
+        className="absolute top-4 left-4 z-[9999] on-color"
       >
         <ArrowLeft className="h-4 w-4" />
         Back

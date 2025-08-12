@@ -447,7 +447,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
     >
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex justify-between items-center">
-          <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
+          <Button variant="outline" onClick={onBack} className="flex items-center gap-2 on-color">
             <ArrowLeft className="h-4 w-4" />
             Back
           </Button>

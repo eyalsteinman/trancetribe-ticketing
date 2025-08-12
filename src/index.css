@@ -179,6 +179,28 @@ All colors MUST be HSL.
   body[data-colored-bg="true"] :not(.bg-card):not(.bg-secondary):not(.bg-muted):not(.bg-accent):not(.bg-popover):not(.card):not(.surface):not(.bg-white):not(button) [class*="text-black"] {
     color: hsl(0 0% 100%) !important;
   }
+
+  /* Allow specific elements to stay white on colored backgrounds */
+  body[data-colored-bg="true"] .on-color,
+  body[data-colored-bg="true"] button.on-color {
+    --foreground: 0 0% 100%;
+    color: hsl(var(--foreground)) !important;
+  }
+  /* Keep icons black for on-color buttons (except destructive) */
+  body[data-colored-bg="true"] button.on-color svg {
+    color: hsl(var(--button-icon-on-colored)) !important;
+  }
+
+  /* Destructive (red) buttons: text and icons always white */
+  .bg-destructive,
+  .bg-red-600 {
+    --foreground: 0 0% 100%;
+    color: hsl(var(--foreground));
+  }
+  .bg-destructive svg,
+  .bg-red-600 svg {
+    color: hsl(var(--destructive-foreground)) !important;
+  }
 }
 
 @layer utilities {

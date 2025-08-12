@@ -134,7 +134,7 @@ const AdminSignup = ({ onBack }: AdminSignupProps) => {
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex items-center gap-4">
-          <Button variant="outline" onClick={onBack}>
+          <Button variant="outline" onClick={onBack} className="on-color">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>

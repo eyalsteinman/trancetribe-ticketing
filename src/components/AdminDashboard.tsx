@@ -373,7 +373,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         <div className="max-w-md mx-auto space-y-6">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold">QR Scanner</h1>
-            <Button variant="outline" onClick={() => setCurrentView('dashboard')}>
+            <Button variant="outline" className="on-color" onClick={() => setCurrentView('dashboard')}>
               Back
             </Button>
           </div>
@@ -429,7 +429,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         <div className="max-w-md mx-auto space-y-6">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold">Scanned Guests</h1>
-            <Button variant="outline" onClick={() => setCurrentView('dashboard')}>
+            <Button variant="outline" className="on-color" onClick={() => setCurrentView('dashboard')}>
               Back
             </Button>
           </div>
@@ -530,7 +530,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
               </p>
             )}
           </div>
-          <Button variant="outline" onClick={handleSignOut} className="whitespace-nowrap">
+          <Button variant="outline" onClick={handleSignOut} className="whitespace-nowrap on-color">
             Sign Out
           </Button>
         </div>

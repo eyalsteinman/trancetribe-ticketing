@@ -223,6 +223,7 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
       >
         <Button 
           variant="outline"
+          className="on-color"
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();
@@ -254,13 +255,13 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
       {/* Instructions popup */}
       {showInstructions && (
         <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 text-white p-6 rounded-lg text-center max-w-sm mx-4">
+          <div className="surface bg-white/10 backdrop-blur-sm border border-white/20 p-6 rounded-lg text-center max-w-sm mx-4">
             <div>
               <h3 className="text-lg font-bold mb-2">Dot Circle Game</h3>
               <p className="text-sm mb-4">Use one finger to circle the white dot and score points!</p>
               <Button 
                 onClick={startGame}
-                className="bg-white/20 hover:bg-white/30 text-white border border-white/20"
+                className="bg-white/20 hover:bg-white/30 border border-white/20"
               >
                 Start Game
               </Button>

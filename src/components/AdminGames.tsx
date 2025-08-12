@@ -26,49 +26,49 @@ const AdminGames = ({ onBack, onGameSelect }: AdminGamesProps) => {
           >
             Admin Games
           </h1>
-          <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
+          <Button variant="outline" onClick={onBack} className="flex items-center gap-2 on-color">
             <ArrowLeft className="h-4 w-4" />
             Back
           </Button>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <Card className="cursor-pointer hover:bg-accent" onClick={() => onGameSelect('color-changer')}>
+          <Card className="cursor-pointer hover:bg-accent surface" onClick={() => onGameSelect('color-changer')}>
             <CardContent className="flex flex-col items-center justify-center p-6">
               <Palette className="h-8 w-8 mb-2" />
               <span className="text-sm font-medium">Color Changer</span>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-accent" onClick={() => onGameSelect('dot-circle')}>
+          <Card className="cursor-pointer hover:bg-accent surface" onClick={() => onGameSelect('dot-circle')}>
             <CardContent className="flex flex-col items-center justify-center p-6">
               <Target className="h-8 w-8 mb-2" />
               <span className="text-sm font-medium">Dot Circle</span>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-accent" onClick={() => onGameSelect('exploder')}>
+          <Card className="cursor-pointer hover:bg-accent surface" onClick={() => onGameSelect('exploder')}>
             <CardContent className="flex flex-col items-center justify-center p-6">
               <Gamepad2 className="h-8 w-8 mb-2" />
               <span className="text-sm font-medium">Exploder</span>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-accent" onClick={() => onGameSelect('haya-ninja')}>
+          <Card className="cursor-pointer hover:bg-accent surface" onClick={() => onGameSelect('haya-ninja')}>
             <CardContent className="flex flex-col items-center justify-center p-6">
               <PenTool className="h-8 w-8 mb-2" />
               <span className="text-sm font-medium">Haya<br/>Ninja</span>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-muted">
+          <Card className="cursor-pointer hover:bg-muted surface">
             <CardContent className="flex flex-col items-center justify-center p-6">
               <Gamepad2 className="h-8 w-8 mb-2 text-muted-foreground" />
               <span className="text-sm font-medium text-muted-foreground">Game 5 TBD</span>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-muted">
+          <Card className="cursor-pointer hover:bg-muted surface">
             <CardContent className="flex flex-col items-center justify-center p-6">
               <Gamepad2 className="h-8 w-8 mb-2 text-muted-foreground" />
               <span className="text-sm font-medium text-muted-foreground">Game 6 TBD</span>

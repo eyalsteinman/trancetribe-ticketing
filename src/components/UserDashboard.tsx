@@ -190,7 +190,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           <Button 
             variant="outline" 
             onClick={handleSignOut} 
-            className={`whitespace-nowrap ${isBackgroundDark ? 'text-white border-white/60 hover:bg-white/10' : ''}`}
+            className="whitespace-nowrap on-color"
           >
             Sign Out
           </Button>
