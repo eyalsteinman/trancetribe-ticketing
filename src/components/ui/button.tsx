@@ -5,19 +5,19 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-normal break-words text-center leading-tight rounded-lg text-sm font-medium backdrop-blur-md border shadow-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-normal break-words text-center leading-tight rounded-lg text-sm font-medium backdrop-blur-md border shadow-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-current",
   {
     variants: {
       variant: {
-        default: "bg-white/10 text-black hover:bg-white/20 border-white/20 focus-visible:ring-white/30",
+        default: "bg-white/10 text-black hover:bg-white/20 border-white/30 focus-visible:ring-white/30",
         destructive:
           "bg-red-600 text-white hover:bg-red-700 border-red-600 focus-visible:ring-red-600/30",
         outline:
-          "border border-border bg-background/80 hover:bg-accent text-black focus-visible:ring-ring",
+          "bg-white/10 text-black hover:bg-white/20 border-white/30 focus-visible:ring-white/30",
         secondary:
-          "bg-secondary text-black hover:bg-secondary/80 border-border focus-visible:ring-ring",
-        ghost: "bg-transparent border-transparent hover:bg-accent text-black focus-visible:ring-ring",
-        link: "text-black underline-offset-4 hover:underline bg-transparent border-transparent focus-visible:ring-ring",
+          "bg-white/10 text-black hover:bg-white/20 border-white/30 focus-visible:ring-white/30",
+        ghost: "bg-transparent border-transparent hover:bg-white/10 text-black focus-visible:ring-white/20",
+        link: "text-black underline-offset-4 hover:underline bg-transparent border-transparent focus-visible:ring-white/20",
       },
       size: {
         default: "h-10 px-4 py-2",

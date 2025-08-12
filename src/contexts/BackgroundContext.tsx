@@ -11,17 +11,14 @@ const BackgroundContext = createContext<BackgroundContextType | undefined>(undef
 export const BackgroundProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
 
-  // Function to determine if a color is dark
-  const isColorDark = (hexColor: string): boolean => {
-    // Convert hex to RGB
-    const hex = hexColor.replace('#', '');
-    const r = parseInt(hex.substr(0, 2), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
-    
-    // Calculate luminance
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    return luminance < 0.5;
+  // Determine if a color should be treated as white
+  const isWhiteColor = (color: string): boolean => {
+    const c = color.trim().toLowerCase();
+    if (c === '#ffffff' || c === 'white') return true;
+    const noSpace = c.replace(/\s/g, '');
+    if (noSpace === 'hsl(0,0%,100%)') return true;
+    if (noSpace === 'rgb(255,255,255)') return true;
+    return false;
   };
 
   const setGlobalBackground = (color: string) => {
@@ -30,8 +27,9 @@ export const BackgroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     
     // Apply to document body
     document.body.style.backgroundColor = color;
-    // Set text color based on luminance for proper contrast
-    document.body.style.color = isColorDark(color) ? '#ffffff' : '#000000';
+    // Toggle colored background mode for global text color handling
+    const isWhite = isWhiteColor(color);
+    document.body.setAttribute('data-colored-bg', isWhite ? 'false' : 'true');
   };
 
   // Load saved background on mount
@@ -40,7 +38,8 @@ export const BackgroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     if (savedColor) {
       setBackgroundColor(savedColor);
       document.body.style.backgroundColor = savedColor;
-      document.body.style.color = isColorDark(savedColor) ? '#ffffff' : '#000000';
+      const isWhite = isWhiteColor(savedColor);
+      document.body.setAttribute('data-colored-bg', isWhite ? 'false' : 'true');
     }
   }, []);
 
@@ -49,7 +48,7 @@ export const BackgroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       value={{ 
         backgroundColor, 
         setGlobalBackground, 
-        isBackgroundDark: isColorDark(backgroundColor) 
+        isBackgroundDark: !isWhiteColor(backgroundColor) 
       }}
     >
       {children}

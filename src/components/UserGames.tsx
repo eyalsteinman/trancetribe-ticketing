@@ -11,9 +11,9 @@ interface UserGamesProps {
 const UserGames = ({ onBack, onGameSelect }: UserGamesProps) => {
   const { backgroundColor, isBackgroundDark } = useBackground();
   return (
-    <div
+  <div
       className="min-h-screen p-4 transition-colors duration-500"
-      style={{ backgroundColor, color: isBackgroundDark ? '#ffffff' : '#000000' }}
+      style={{ backgroundColor }}
     >
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex items-center gap-4">

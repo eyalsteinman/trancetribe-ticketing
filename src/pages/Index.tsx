@@ -81,8 +81,7 @@ const Index = () => {
       <div 
         className="min-h-screen flex items-center justify-center transition-colors duration-500"
         style={{ 
-          backgroundColor,
-          color: isBackgroundDark ? '#ffffff' : '#000000'
+          backgroundColor
         }}
       >
         <div className="text-center">

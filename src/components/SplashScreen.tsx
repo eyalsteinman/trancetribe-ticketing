@@ -24,8 +24,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
     <div 
       className="fixed inset-0 flex items-center justify-center z-50 transition-colors duration-500"
       style={{ 
-        backgroundColor: backgroundColor,
-        color: isBackgroundDark ? '#ffffff' : '#000000'
+        backgroundColor: backgroundColor
       }}
     >
       <div className="text-center">

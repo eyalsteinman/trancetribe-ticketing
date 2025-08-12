@@ -176,8 +176,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     <div 
       className="min-h-screen p-4 transition-colors duration-500"
       style={{ 
-        backgroundColor,
-        color: isBackgroundDark ? '#ffffff' : '#000000'
+        backgroundColor
       }}
     >
       <div className="max-w-md mx-auto space-y-6">
