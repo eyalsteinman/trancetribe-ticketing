@@ -73,6 +73,7 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
           description: p.description ?? null,
           price: p.price ?? null,
           is_free: p.is_free ?? false,
+          required_socials: Array.isArray(p.required_socials) ? p.required_socials : []
         }));
         setParties(normalized);
       } else {
