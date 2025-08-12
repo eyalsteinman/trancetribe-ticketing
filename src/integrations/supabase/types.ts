@@ -49,33 +49,89 @@ export type Database = {
           created_at: string
           created_by: string
           date: string
+          description: string | null
           id: string
           is_active: boolean
+          is_free: boolean
           name: string
           photo_url: string | null
+          price: number | null
+          required_socials: string[]
           updated_at: string
         }
         Insert: {
           created_at?: string
           created_by: string
           date: string
+          description?: string | null
           id?: string
           is_active?: boolean
+          is_free?: boolean
           name: string
           photo_url?: string | null
+          price?: number | null
+          required_socials?: string[]
           updated_at?: string
         }
         Update: {
           created_at?: string
           created_by?: string
           date?: string
+          description?: string | null
           id?: string
           is_active?: boolean
+          is_free?: boolean
           name?: string
           photo_url?: string | null
+          price?: number | null
+          required_socials?: string[]
           updated_at?: string
         }
         Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string | null
+          id: string
+          party_id: string
+          quantity: number
+          status: string
+          stripe_session_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          currency?: string | null
+          id?: string
+          party_id: string
+          quantity?: number
+          status: string
+          stripe_session_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string | null
+          id?: string
+          party_id?: string
+          quantity?: number
+          status?: string
+          stripe_session_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_party_id_fkey"
+            columns: ["party_id"]
+            isOneToOne: false
+            referencedRelation: "parties"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -181,6 +237,36 @@ export type Database = {
           created_at?: string
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_socials: {
+        Row: {
+          created_at: string
+          handle: string | null
+          id: string
+          platform: string
+          updated_at: string
+          url: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          handle?: string | null
+          id?: string
+          platform: string
+          updated_at?: string
+          url?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          handle?: string | null
+          id?: string
+          platform?: string
+          updated_at?: string
+          url?: string | null
           user_id?: string
         }
         Relationships: []
