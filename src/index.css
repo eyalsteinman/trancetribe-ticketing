@@ -201,6 +201,17 @@ All colors MUST be HSL.
   .bg-red-600 svg {
     color: hsl(var(--destructive-foreground)) !important;
   }
+
+  /* Back buttons: icons white on colored backgrounds */
+  body[data-colored-bg="true"] button.back-button,
+  body[data-colored-bg="true"] [role="button"].back-button {
+    --foreground: 0 0% 100%;
+    color: hsl(var(--foreground)) !important;
+  }
+  body[data-colored-bg="true"] button.back-button svg,
+  body[data-colored-bg="true"] [role="button"].back-button svg {
+    color: hsl(var(--foreground)) !important;
+  }
 }
 
 @layer utilities {

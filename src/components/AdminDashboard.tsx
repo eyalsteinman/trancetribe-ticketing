@@ -7,7 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
 import { Badge } from '@/components/ui/badge';
-import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2 } from 'lucide-react';
+import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ArrowLeft } from 'lucide-react';
 import CreateParty from './CreateParty';
 import EditParties from './EditParties';
 import QRScanner from './QRScanner';
@@ -373,8 +373,8 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         <div className="max-w-md mx-auto space-y-6">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold">QR Scanner</h1>
-            <Button variant="outline" className="on-color" onClick={() => setCurrentView('dashboard')}>
-              Back
+            <Button variant="outline" size="icon" className="on-color back-button" onClick={() => setCurrentView('dashboard')} aria-label="Back">
+              <ArrowLeft className="h-4 w-4" />
             </Button>
           </div>
           
@@ -429,8 +429,8 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         <div className="max-w-md mx-auto space-y-6">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold">Scanned Guests</h1>
-            <Button variant="outline" className="on-color" onClick={() => setCurrentView('dashboard')}>
-              Back
+            <Button variant="outline" className="on-color back-button" size="icon" onClick={() => setCurrentView('dashboard')} aria-label="Back">
+              <ArrowLeft className="h-4 w-4" />
             </Button>
           </div>
           {parties.length > 0 && (

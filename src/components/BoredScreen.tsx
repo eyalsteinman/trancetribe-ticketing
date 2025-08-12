@@ -107,11 +107,12 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
       {/* Back button - top left */}
       <Button
         variant="outline"
+        size="icon"
         onClick={onBack}
-        className="absolute top-4 left-4 z-[9999] on-color"
+        aria-label="Back"
+        className="absolute top-4 left-4 z-[9999] on-color back-button"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back
       </Button>
 
       {/* Save + Revert - top right */}

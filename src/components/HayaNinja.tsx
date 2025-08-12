@@ -183,11 +183,13 @@ const handleBack = () => {
       onContextMenu={(e) => e.preventDefault()}
     >
       <Button
-        className="absolute top-4 left-4 z-[9999]"
+        className="absolute top-4 left-4 z-[9999] on-color back-button"
         variant="outline"
+        size="icon"
+        aria-label="Back"
         onClick={handleBack}
       >
-        <ArrowLeft className="inline-block h-4 w-4 mr-2" /> Back
+        <ArrowLeft className="h-4 w-4" />
       </Button>
 
       {/* Scoreboard */}

@@ -18,9 +18,8 @@ const Insurance = ({ onBack }: InsuranceProps) => {
     >
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex items-center justify-between">
-          <Button variant="outline" onClick={onBack} className="flex items-center gap-2 on-color">
+          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="on-color back-button">
             <ArrowLeft className="h-4 w-4" />
-            Back
           </Button>
           <div className="flex items-center gap-2 opacity-80">
             <ShieldCheck className="h-5 w-5" />

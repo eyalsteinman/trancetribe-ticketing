@@ -223,7 +223,9 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
       >
         <Button 
           variant="outline"
-          className="on-color"
+          size="icon"
+          aria-label="Back"
+          className="on-color back-button"
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();
@@ -231,7 +233,6 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
           }}
         >
           <ArrowLeft className="h-4 w-4" />
-          Back
         </Button>
       </div>
 

@@ -277,9 +277,8 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
       >
         <div className="max-w-md mx-auto space-y-6">
           <div className="flex justify-between items-center">
-            <Button variant="outline" onClick={cancelEdit} className="flex items-center gap-2">
+            <Button variant="outline" size="icon" onClick={cancelEdit} aria-label="Back" className="on-color back-button">
               <ArrowLeft className="h-4 w-4" />
-              Cancel
             </Button>
             <h1 
               className="text-xl font-bold"
@@ -447,9 +446,8 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
     >
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex justify-between items-center">
-          <Button variant="outline" onClick={onBack} className="flex items-center gap-2 on-color">
+          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="on-color back-button">
             <ArrowLeft className="h-4 w-4" />
-            Back
           </Button>
           <h1 
             className="text-xl font-bold"

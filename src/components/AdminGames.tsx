@@ -26,9 +26,8 @@ const AdminGames = ({ onBack, onGameSelect }: AdminGamesProps) => {
           >
             Admin Games
           </h1>
-          <Button variant="outline" onClick={onBack} className="flex items-center gap-2 on-color">
+          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="on-color back-button">
             <ArrowLeft className="h-4 w-4" />
-            Back
           </Button>
         </div>
 
