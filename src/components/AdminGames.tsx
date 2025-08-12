@@ -18,56 +18,56 @@ const AdminGames = ({ onBack, onGameSelect }: AdminGamesProps) => {
         backgroundColor
       }}
     >
-      <div className="max-w-md mx-auto space-y-6">
-        <div className="flex justify-between items-center">
+      <div className="max-w-md mx-auto space-y-6 text-right">
+        <div className="relative">
+          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 left-4 z-[9999] on-color back-button">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
           <h1 
             className="text-2xl font-bold"
             style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
           >
             Admin Games
           </h1>
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 left-4 z-[9999] on-color back-button">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <Card className="cursor-pointer hover:bg-accent surface" onClick={() => onGameSelect('color-changer')}>
+          <Card className="cursor-pointer hover:bg-accent surface text-black [&_svg]:text-black" onClick={() => onGameSelect('color-changer')}>
             <CardContent className="flex flex-col items-center justify-center p-6">
               <Palette className="h-8 w-8 mb-2" />
               <span className="text-sm font-medium">Color Changer</span>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-accent surface" onClick={() => onGameSelect('dot-circle')}>
+          <Card className="cursor-pointer hover:bg-accent surface text-black [&_svg]:text-black" onClick={() => onGameSelect('dot-circle')}>
             <CardContent className="flex flex-col items-center justify-center p-6">
               <Target className="h-8 w-8 mb-2" />
               <span className="text-sm font-medium">Dot Circle</span>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-accent surface" onClick={() => onGameSelect('exploder')}>
+          <Card className="cursor-pointer hover:bg-accent surface text-black [&_svg]:text-black" onClick={() => onGameSelect('exploder')}>
             <CardContent className="flex flex-col items-center justify-center p-6">
               <Gamepad2 className="h-8 w-8 mb-2" />
               <span className="text-sm font-medium">Exploder</span>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-accent surface" onClick={() => onGameSelect('haya-ninja')}>
+          <Card className="cursor-pointer hover:bg-accent surface text-black [&_svg]:text-black" onClick={() => onGameSelect('haya-ninja')}>
             <CardContent className="flex flex-col items-center justify-center p-6">
               <PenTool className="h-8 w-8 mb-2" />
               <span className="text-sm font-medium">Haya<br/>Ninja</span>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-muted surface">
+          <Card className="cursor-pointer hover:bg-muted surface text-black [&_svg]:text-black">
             <CardContent className="flex flex-col items-center justify-center p-6">
               <Gamepad2 className="h-8 w-8 mb-2 text-muted-foreground" />
               <span className="text-sm font-medium text-muted-foreground">Game 5 TBD</span>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-muted surface">
+          <Card className="cursor-pointer hover:bg-muted surface text-black [&_svg]:text-black">
             <CardContent className="flex flex-col items-center justify-center p-6">
               <Gamepad2 className="h-8 w-8 mb-2 text-muted-foreground" />
               <span className="text-sm font-medium text-muted-foreground">Game 6 TBD</span>

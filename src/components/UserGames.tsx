@@ -15,8 +15,8 @@ const UserGames = ({ onBack, onGameSelect }: UserGamesProps) => {
       className="min-h-screen p-4 transition-colors duration-500"
       style={{ backgroundColor }}
     >
-      <div className="max-w-md mx-auto space-y-6">
-        <div className="flex items-center gap-4">
+      <div className="max-w-md mx-auto space-y-6 text-right">
+        <div className="relative">
           <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 left-4 z-[9999] on-color back-button">
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -24,7 +24,7 @@ const UserGames = ({ onBack, onGameSelect }: UserGamesProps) => {
         </div>
 
         <div className="grid gap-4">
-          <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => onGameSelect('color-changer')}>
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-black [&_svg]:text-black" onClick={() => onGameSelect('color-changer')}>
             <CardHeader className="text-center">
               <div className="mx-auto mb-2">
                 <Circle className="h-12 w-12" />
@@ -33,7 +33,7 @@ const UserGames = ({ onBack, onGameSelect }: UserGamesProps) => {
             </CardHeader>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => onGameSelect('dot-circle')}>
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-black [&_svg]:text-black" onClick={() => onGameSelect('dot-circle')}>
             <CardHeader className="text-center">
               <div className="mx-auto mb-2">
                 <Target className="h-12 w-12" />
@@ -42,7 +42,7 @@ const UserGames = ({ onBack, onGameSelect }: UserGamesProps) => {
             </CardHeader>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => onGameSelect('exploder')}>
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-black [&_svg]:text-black" onClick={() => onGameSelect('exploder')}>
             <CardHeader className="text-center">
               <div className="mx-auto mb-2">
                 <Bomb className="h-12 w-12" />
@@ -51,7 +51,7 @@ const UserGames = ({ onBack, onGameSelect }: UserGamesProps) => {
             </CardHeader>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-accent/50 transition-colors" onClick={() => onGameSelect('haya-ninja')}>
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-black [&_svg]:text-black" onClick={() => onGameSelect('haya-ninja')}>
             <CardHeader className="text-center">
               <div className="mx-auto mb-2">
                 <PenTool className="h-12 w-12" />

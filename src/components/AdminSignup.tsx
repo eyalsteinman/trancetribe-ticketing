@@ -132,8 +132,8 @@ const AdminSignup = ({ onBack }: AdminSignupProps) => {
 
   return (
     <div className="min-h-screen bg-background p-4">
-      <div className="max-w-md mx-auto space-y-6">
-        <div className="flex items-center gap-4">
+      <div className="max-w-md mx-auto space-y-6 text-right">
+        <div className="relative">
           <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 left-4 z-[9999] on-color back-button">
             <ArrowLeft className="h-4 w-4" />
           </Button>
