@@ -7,7 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
 import { Badge } from '@/components/ui/badge';
-import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2 } from 'lucide-react';
+import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2 } from 'lucide-react';
 import CreateParty from './CreateParty';
 import EditParties from './EditParties';
 import QRScanner from './QRScanner';
@@ -20,6 +20,8 @@ import ExploderGame from './ExploderGame';
 import NicknameManager from './NicknameManager';
 import HayaNinja from './HayaNinja';
 import ReorderableTiles from './ReorderableTiles';
+import AdminProductions from './AdminProductions';
+import ManageProductions from './ManageProductions';
 
 interface AdminDashboardProps {
   user: User;
@@ -44,7 +46,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
-  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'nickname'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'nickname' | 'my-productions' | 'manage-productions'>('dashboard');
   const [adminNickname, setAdminNickname] = useState('');
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [nicknameInput, setNicknameInput] = useState('');
@@ -352,6 +354,14 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     return <HayaNinja onBack={() => setCurrentView('admin-games')} scope="admin" playerNickname={adminNickname} />;
   }
 
+  if (currentView === 'my-productions') {
+    return <AdminProductions onBack={() => setCurrentView('dashboard')} />;
+  }
+
+  if (currentView === 'manage-productions') {
+    return <ManageProductions onBack={() => setCurrentView('dashboard')} />;
+  }
+
   if (currentView === 'scanner') {
     return (
       <div 
@@ -531,6 +541,8 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             { id: 'guests', title: 'Guest List', icon: <List className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('guests' as const) },
             { id: 'create-party', title: 'Create Party', icon: <Plus className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('create-party' as const) },
             { id: 'edit-parties', title: 'Edit Parties', icon: <Edit className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('edit-parties' as const) },
+            { id: 'my-productions', title: 'My Productions', icon: <Building2 className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('my-productions' as const) },
+            { id: 'manage-productions', title: 'Manage Productions', icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('manage-productions' as const) },
             { id: 'manage-admins', title: 'Add Admin', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('manage-admins' as const) },
             { id: 'registered-users', title: 'Registered Users', icon: <UserCheck className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('registered-users' as const) },
             { id: 'admin-games', title: 'Admin Games', icon: <Gamepad2 className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('admin-games' as const) },

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,6 +26,8 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
   const [isFree, setIsFree] = useState<boolean>(false);
   const [requiredSocials, setRequiredSocials] = useState<string[]>([]);
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
+  const [selectedProductionId, setSelectedProductionId] = useState<string>('');
+  const [productions, setProductions] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
@@ -36,6 +38,17 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
       setSelectedPhoto(file);
     }
   };
+
+  useEffect(() => {
+    const loadProductions = async () => {
+      const { data, error } = await (supabase as any)
+        .from('productions')
+        .select('id, name')
+        .order('name');
+      if (!error && data) setProductions(data);
+    };
+    loadProductions();
+  }, []);
 
   const uploadPhoto = async (): Promise<string | null> => {
     if (!selectedPhoto) return null;
@@ -96,7 +109,8 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
           description: description.trim() || null,
           price: price ? Number(price) : null,
           is_free: isFree,
-          required_socials: requiredSocials
+          required_socials: requiredSocials,
+          production_id: selectedProductionId || null
         });
 
       if (error) {
@@ -152,6 +166,19 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
             <CardTitle>Party Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div>
+              <label className="text-sm font-medium">Production</label>
+              <select
+                className="w-full p-2 border rounded-md"
+                value={selectedProductionId}
+                onChange={(e) => setSelectedProductionId(e.target.value)}
+              >
+                <option value="">Select production (optional)</option>
+                {productions.map((p) => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+              </select>
+            </div>
             <div>
               <label className="text-sm font-medium">Party Name</label>
               <Input

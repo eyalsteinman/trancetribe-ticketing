@@ -20,6 +20,7 @@ interface Party {
   price: number | null;
   is_free: boolean;
   required_socials: string[];
+  production_id: string | null;
 }
 
 interface UserPartiesProps {
@@ -43,6 +44,7 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
   const [missingPlatforms, setMissingPlatforms] = useState<string[]>([]);
   const [socialInputs, setSocialInputs] = useState<Record<string, string>>({});
   const [pendingAction, setPendingAction] = useState<null | 'pay' | 'qr'>(null);
+  const [infoProduction, setInfoProduction] = useState<{ name: string; description: string | null; logo_url: string | null } | null>(null);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
@@ -50,11 +52,27 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
     loadParties();
   }, []);
 
-  useEffect(() => { loadUserSocials(); }, []);
+useEffect(() => { loadUserSocials(); }, []);
 
-  useEffect(() => {
-    loadParties();
-  }, [sortAscending]);
+useEffect(() => {
+  loadParties();
+}, [sortAscending]);
+
+useEffect(() => {
+  const loadProduction = async () => {
+    if (infoParty?.production_id) {
+      const { data } = await (supabase as any)
+        .from('productions')
+        .select('name, description, logo_url')
+        .eq('id', infoParty.production_id)
+        .maybeSingle();
+      setInfoProduction((data as any) || null);
+    } else {
+      setInfoProduction(null);
+    }
+  };
+  loadProduction();
+}, [infoParty]);
 
   useEffect(() => {
     if (selectedParty) {
@@ -100,7 +118,8 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
           description: p.description ?? null,
           price: p.price ?? null,
           is_free: p.is_free ?? false,
-          required_socials: Array.isArray(p.required_socials) ? p.required_socials : []
+          required_socials: Array.isArray(p.required_socials) ? p.required_socials : [],
+          production_id: p.production_id ?? null
         }));
         setParties(normalized);
       } else {
@@ -501,11 +520,11 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
                       </div>
                     )}
                     <div className="w-full text-center space-y-1 relative">
-                      <div className="font-semibold flex items-center justify-center gap-2">
+                    <div className="font-semibold flex items-center justify-center gap-2">
                         {party.name}
                         <button
                           type="button"
-                          className="ml-2 h-5 w-5 rounded-full border flex items-center justify-center text-xs"
+                          className="absolute right-2 top-2 h-8 w-8 rounded-full border flex items-center justify-center text-sm"
                           onClick={(e) => { e.stopPropagation(); setInfoParty(party); }}
                           aria-label="Party info"
                         >i</button>
@@ -535,6 +554,12 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
           <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50">
             <div className="bg-white text-black rounded-lg w-11/12 max-w-md p-4 relative">
               <button className="absolute top-2 right-2" onClick={() => setInfoParty(null)} aria-label="Close">×</button>
+              {infoProduction?.logo_url && (
+                <img src={infoProduction.logo_url} alt={`${infoProduction.name} logo`} className="w-full h-auto object-contain rounded mb-3" />
+              )}
+              {infoProduction?.description && (
+                <div className="text-sm text-gray-800 whitespace-pre-wrap mb-3">{infoProduction.description}</div>
+              )}
               <h2 className="text-lg font-semibold mb-2">{infoParty.name}</h2>
               <div className="text-sm text-gray-700 whitespace-pre-wrap">{infoParty.description || 'No additional information provided.'}</div>
             </div>
