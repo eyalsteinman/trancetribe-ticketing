@@ -276,17 +276,16 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
         }}
       >
         <div className="max-w-md mx-auto space-y-6">
-          <div className="flex justify-between items-center">
-            <Button variant="outline" size="icon" onClick={cancelEdit} aria-label="Back" className="on-color back-button">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <h1 
-              className="text-xl font-bold"
-              style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-            >
-              Edit Party
-            </h1>
-          </div>
+          <Button variant="outline" size="icon" onClick={cancelEdit} aria-label="Back" className="absolute top-4 left-4 z-[9999] on-color back-button">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h1 
+            className="text-xl font-bold"
+            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+          >
+            Edit Party
+          </h1>
+        </div>
 
           <Card>
             <CardHeader>
@@ -445,9 +444,9 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
       }}
     >
       <div className="max-w-md mx-auto space-y-6">
-        <div className="flex justify-between items-center">
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="on-color back-button">
+          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 left-4 z-[9999] on-color back-button">
             <ArrowLeft className="h-4 w-4" />
+          </Button>
           </Button>
           <h1 
             className="text-xl font-bold"

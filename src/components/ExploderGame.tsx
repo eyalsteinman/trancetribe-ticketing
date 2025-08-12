@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
 
 interface ExploderGameProps {
@@ -281,14 +282,14 @@ setFallingBall((prev) => {
       onTouchEnd={handleTouchEnd}
       onContextMenu={(e) => e.preventDefault()}
     >
-      {/* Exit */}
       <Button
-        className="absolute left-4 z-[9999] on-color"
-        style={{ top: 'calc(env(safe-area-inset-top) + 8px)' }}
+        className="absolute top-4 left-4 z-[9999] on-color back-button"
         variant="outline"
+        size="icon"
+        aria-label="Back"
         onClick={onBack}
       >
-        Exit
+        <ArrowLeft className="h-4 w-4" />
       </Button>
 
       {/* Scoreboard */}

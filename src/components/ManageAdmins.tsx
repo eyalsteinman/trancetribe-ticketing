@@ -335,7 +335,7 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
     >
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="flex items-center gap-4">
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="on-color back-button">
+          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 left-4 z-[9999] on-color back-button">
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h1 
@@ -347,7 +347,7 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
         </div>
 
         <Alert>
-          <AlertDescription>
+          <AlertDescription className="surface">
             Here you can manage admin users. New admins are created without email verification and can access the admin panel immediately.
           </AlertDescription>
         </Alert>

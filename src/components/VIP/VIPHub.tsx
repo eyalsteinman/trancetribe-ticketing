@@ -23,7 +23,7 @@ const VIPHub = ({ user, nickname, onBack, onSelectProduction }: VIPHubProps) => 
   return (
     <div className="min-h-screen p-4">
       <header className="flex items-center gap-2 mb-4">
-        <Button variant="ghost" size="icon" onClick={onBack} aria-label="Back" className="on-color back-button">
+        <Button variant="ghost" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 left-4 z-[9999] on-color back-button">
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <h1 className="text-xl font-semibold">

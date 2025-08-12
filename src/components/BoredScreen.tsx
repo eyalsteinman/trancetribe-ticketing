@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Save, RotateCcw } from 'lucide-react';
+import { ArrowLeft, RotateCcw } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { useToast } from '@/hooks/use-toast';
 
@@ -24,6 +24,7 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
   const [wheelHue, setWheelHue] = useState(200);
   const wheelRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const notWhite = backgroundColor.trim() !== 'hsl(0, 0%, 100%)';
 
   useEffect(() => {
     // Sync local when global changes
@@ -115,20 +116,12 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
         <ArrowLeft className="h-4 w-4" />
       </Button>
 
-      {/* Save + Revert - top right */}
+      {/* Revert - top right */}
       <div className="absolute top-4 right-4 z-[9999] flex gap-2">
-        <Button
-          onClick={save}
-          size="sm"
-          className="bg-white/20 backdrop-blur-md border border-white/30 hover:bg-white/30 transition-all duration-300 shadow-lg px-4 py-2 text-sm"
-        >
-          <Save className="h-4 w-4 mr-2" />
-          Save
-        </Button>
         <Button
           onClick={revert}
           size="sm"
-          className="bg-white/20 backdrop-blur-md border border-white/30 hover:bg-white/30 transition-all duration-300 shadow-lg px-4 py-2 text-sm"
+          className={`bg-white/20 backdrop-blur-md border border-white/30 hover:bg-white/30 transition-all duration-300 shadow-lg px-4 py-2 text-sm${notWhite ? ' on-color' : ''}`}
         >
           <RotateCcw className="h-4 w-4 mr-2" />
           Revert
@@ -140,7 +133,7 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
         {/* Main round glass button with two-line label */}
         <Button
         onClick={cycleColor}
-          className="rounded-full w-40 h-40 bg-white/10 border border-white/20 backdrop-blur-lg shadow-2xl hover:bg-white/20 active:scale-95 transition-all duration-300 flex flex-col items-center justify-center text-center"
+          className={`rounded-full w-40 h-40 bg-white/10 border border-white/20 backdrop-blur-lg shadow-2xl hover:bg-white/20 active:scale-95 transition-all duration-300 flex flex-col items-center justify-center text-center${notWhite ? ' on-color' : ''}`}
         >
           <span className="leading-tight font-semibold">
             Change
