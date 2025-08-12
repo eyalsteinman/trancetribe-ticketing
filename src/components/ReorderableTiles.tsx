@@ -135,6 +135,12 @@ const ReorderableTiles: React.FC<ReorderableTilesProps> = ({ items, orderKey }) 
     };
   }, [dragReadyId, draggingId]);
 
+  const getLabelLines = (title: string): [string, string] => {
+    const parts = title.trim().split(/\s+/);
+    if (parts.length >= 2) return [parts[0], parts[1]];
+    return [parts[0] || '', ''];
+  };
+
   return (
     <div
       className={`grid grid-cols-2 gap-4 ${dragReadyId || draggingId ? 'touch-none select-none' : ''}`}
@@ -159,7 +165,10 @@ const ReorderableTiles: React.FC<ReorderableTilesProps> = ({ items, orderKey }) 
           <Card className="cursor-pointer hover:bg-accent text-black [&_svg]:text-black" onClick={item.onClick}>
             <CardContent className="flex flex-col items-center justify-center p-6 select-none">
               {item.icon}
-              <span className="text-sm font-medium mt-2 text-center whitespace-normal break-words leading-tight line-clamp-2">{item.title}</span>
+              <div className="mt-2 text-center leading-tight select-none">
+                <div className="text-sm font-semibold whitespace-nowrap">{getLabelLines(item.title)[0]}</div>
+                <div className="text-sm font-medium">{getLabelLines(item.title)[1] || "\u00A0"}</div>
+              </div>
             </CardContent>
           </Card>
         </div>
