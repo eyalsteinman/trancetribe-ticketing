@@ -253,7 +253,6 @@ setFallingBall((prev) => {
       toast({ title: 'Super! Level passed!' });
       const next = level + 1;
       setLevel(next);
-      setBgColor(randomHsl());
       initBoard(next);
     }
   }, [cubes]);
