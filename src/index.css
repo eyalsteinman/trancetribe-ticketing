@@ -53,6 +53,9 @@ All colors MUST be HSL.
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Explicit token to force button icons black on colored backgrounds */
+    --button-icon-on-colored: 0 0% 0%;
   }
 
   .dark {
@@ -103,7 +106,7 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 
-  /* When background is any color except white, force all text tokens to white */
+  /* Colored background (non-white): all text tokens turn white, button icons stay black */
   body[data-colored-bg="true"] {
     --foreground: 0 0% 100%;
     --muted-foreground: 0 0% 100%;
@@ -111,6 +114,28 @@ All colors MUST be HSL.
     --accent-foreground: 0 0% 100%;
     --card-foreground: 0 0% 100%;
     --popover-foreground: 0 0% 100%;
+  }
+  /* Exception: icons inside buttons remain black when on colored background */
+  body[data-colored-bg="true"] button svg,
+  body[data-colored-bg="true"] [role="button"] svg {
+    color: hsl(var(--button-icon-on-colored));
+  }
+
+  /* White background: ensure all text tokens are pure black */
+  body[data-colored-bg="false"] {
+    --foreground: 0 0% 0%;
+    --muted-foreground: 0 0% 0%;
+    --secondary-foreground: 0 0% 0%;
+    --accent-foreground: 0 0% 0%;
+    --card-foreground: 0 0% 0%;
+    --popover-foreground: 0 0% 0%;
+  }
+  /* Force-override legacy utility classes to respect global rule */
+  body[data-colored-bg="false"] [class*="text-white"] {
+    color: hsl(0 0% 0%) !important;
+  }
+  body[data-colored-bg="true"] [class*="text-black"] {
+    color: hsl(0 0% 100%) !important;
   }
 }
 
