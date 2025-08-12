@@ -103,7 +103,8 @@ const ExploderGame = ({ onBack, scope = 'user', playerNickname = '' }: ExploderG
 
   useEffect(() => {
     if (destroyedTotal > highScore.score) {
-      const toSave = { score: destroyedTotal, nickname: playerNickname || '' };
+      const displayName = playerNickname || (scope === 'admin' ? 'Admin' : 'User');
+      const toSave = { score: destroyedTotal, nickname: displayName };
       setHighScore(toSave);
       localStorage.setItem(`exploder-highscore-${scope}`, JSON.stringify(toSave));
     }
@@ -287,21 +288,20 @@ setFallingBall((prev) => {
     >
       {/* Exit */}
       <button
-        className="absolute top-4 left-4 z-[9999] px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 rounded-lg backdrop-blur-md transition-all shadow-xl font-medium"
+        className="absolute left-4 z-[9999] px-4 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/30 rounded-lg backdrop-blur-md transition-all shadow-xl font-medium"
+        style={{ top: 'calc(env(safe-area-inset-top) + 8px)' }}
         onClick={onBack}
       >
         Exit
       </button>
 
       {/* Scoreboard */}
-      <div className="absolute top-4 right-4 z-[9999] text-right text-white">
+      <div className="absolute right-4 z-[9999] text-right text-white" style={{ top: 'calc(env(safe-area-inset-top) + 8px)' }}>
         <div className="text-sm opacity-90">Total pixels destroyed</div>
         <div className="text-2xl font-bold">{destroyedTotal}</div>
         <div className="mt-1 text-xs opacity-80">High score ({scope})</div>
         <div className="text-lg font-semibold">{highScore.score}</div>
-        {highScore.nickname ? (
-          <div className="text-xs opacity-80">{highScore.nickname}</div>
-        ) : null}
+        <div className="text-xs opacity-80">{highScore.nickname || (playerNickname || (scope === 'admin' ? 'Admin' : 'User'))}</div>
       </div>
 
       {/* Messages */}

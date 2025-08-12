@@ -14,6 +14,9 @@ interface Party {
   date: string;
   is_active: boolean;
   photo_url: string | null;
+  description: string | null;
+  price: number | null;
+  is_free: boolean;
 }
 
 interface UserPartiesProps {
@@ -28,6 +31,7 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
   const [loading, setLoading] = useState(false);
   const [loadingParties, setLoadingParties] = useState(true);
   const [sortAscending, setSortAscending] = useState(true);
+  const [infoParty, setInfoParty] = useState<Party | null>(null);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
@@ -50,13 +54,23 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
   const loadParties = async () => {
     setLoadingParties(true);
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('parties')
         .select('*')
         .order('date', { ascending: sortAscending });
 
       if (data && !error) {
-        setParties(data);
+        const normalized = (data as any[]).map((p) => ({
+          id: p.id,
+          name: p.name,
+          date: p.date,
+          is_active: p.is_active,
+          photo_url: p.photo_url ?? null,
+          description: p.description ?? null,
+          price: p.price ?? null,
+          is_free: p.is_free ?? false,
+        }));
+        setParties(normalized);
       } else {
         console.log('No parties found');
       }
@@ -94,6 +108,15 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
       toast({
         title: "Error",
         description: "No party selected.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (selectedParty.price && !selectedParty.is_free) {
+      toast({
+        title: "Payment required",
+        description: "Please complete payment before generating a QR code.",
         variant: "destructive"
       });
       return;
@@ -171,6 +194,11 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
                 <div className="text-sm text-muted-foreground">
                   {new Date(selectedParty.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </div>
+                {selectedParty.price !== null && (
+                  <div className="text-sm font-medium">
+                    Price: {selectedParty.price} ILS {selectedParty.is_free && <span className="text-xs text-green-600">(Free)</span>}
+                  </div>
+                )}
               </div>
             </CardHeader>
             <CardContent className="text-center space-y-4">
@@ -185,16 +213,24 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <Button
-                    onClick={generateQRCode}
-                    disabled={loading}
-                    className="w-full py-4 text-lg"
-                  >
-                    {loading ? "Generating..." : "Generate QR Code"}
-                  </Button>
-                  <p className="text-sm text-muted-foreground">
-                    Click to generate your unique QR code for {selectedParty.name}
-                  </p>
+                  {!selectedParty.is_free && selectedParty.price ? (
+                    <>
+                      <Button disabled className="w-full py-4 text-lg bg-gray-400 text-white">
+                        Payment required
+                      </Button>
+                      <p className="text-sm text-muted-foreground">
+                        Please complete payment to generate a QR code.
+                      </p>
+                    </>
+                  ) : (
+                    <Button
+                      onClick={generateQRCode}
+                      disabled={loading}
+                      className="w-full py-4 text-lg"
+                    >
+                      {loading ? "Generating..." : "Generate QR Code"}
+                    </Button>
+                  )}
                 </div>
               )}
             </CardContent>
@@ -280,11 +316,22 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
                         />
                       </div>
                     )}
-                    <div className="w-full text-center space-y-1">
-                      <div className="font-semibold">{party.name}</div>
+                    <div className="w-full text-center space-y-1 relative">
+                      <div className="font-semibold flex items-center justify-center gap-2">
+                        {party.name}
+                        <button
+                          type="button"
+                          className="ml-2 h-5 w-5 rounded-full border flex items-center justify-center text-xs"
+                          onClick={(e) => { e.stopPropagation(); setInfoParty(party); }}
+                          aria-label="Party info"
+                        >i</button>
+                      </div>
                       <div className="text-sm text-muted-foreground">
                         {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                       </div>
+                      {party.price !== null && (
+                        <div className="text-xs font-medium">Price: {party.price} ILS {party.is_free && <span className="text-green-600">(Free)</span>}</div>
+                      )}
                       {showActive && (
                         <div className="text-xs text-green-600 font-medium">Active</div>
                       )}
@@ -298,6 +345,17 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
             )}
           </CardContent>
         </Card>
+
+        {/* Info Dialog */}
+        {infoParty && (
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50">
+            <div className="bg-white text-black rounded-lg w-11/12 max-w-md p-4 relative">
+              <button className="absolute top-2 right-2" onClick={() => setInfoParty(null)} aria-label="Close">×</button>
+              <h2 className="text-lg font-semibold mb-2">{infoParty.name}</h2>
+              <div className="text-sm text-gray-700 whitespace-pre-wrap">{infoParty.description || 'No additional information provided.'}</div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -63,7 +63,8 @@ const HayaNinja = ({ onBack, scope = 'user', playerNickname = '' }: HayaNinjaPro
 
   useEffect(() => {
     if (lines > highScore.score) {
-      const toSave = { score: lines, nickname: playerNickname || '' };
+      const displayName = playerNickname || (scope === 'admin' ? 'Admin' : 'User');
+      const toSave = { score: lines, nickname: displayName };
       setHighScore(toSave);
       localStorage.setItem(`haya-highscore-${scope}`, JSON.stringify(toSave));
     }
@@ -202,9 +203,7 @@ const handleBack = () => {
         <div className="text-5xl font-extrabold">{lines}</div>
         <div className="mt-1 text-xs opacity-80">High score ({scope})</div>
         <div className="text-2xl font-semibold">{highScore.score}</div>
-        {highScore.nickname ? (
-          <div className="text-xs opacity-80">{highScore.nickname}</div>
-        ) : null}
+        <div className="text-xs opacity-80">{highScore.nickname || (playerNickname || (scope === 'admin' ? 'Admin' : 'User'))}</div>
         {gameStarted && (
           <div className="text-xs opacity-80 mt-2">Time left: {timeLeft}s</div>
         )}

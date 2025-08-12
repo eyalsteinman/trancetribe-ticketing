@@ -19,6 +19,9 @@ interface Party {
   is_active: boolean;
   photo_url: string | null;
   created_at: string;
+  description: string | null;
+  price: number | null;
+  is_free: boolean;
 }
 
 const EditParties = ({ onBack }: EditPartiesProps) => {
@@ -143,7 +146,10 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
         .update({
           name: editName.trim(),
           date: editDate,
-          photo_url: photoUrl
+          photo_url: photoUrl,
+          description: (editingParty as any).description ?? null,
+          price: (editingParty as any).price ?? null,
+          is_free: (editingParty as any).is_free ?? false
         })
         .eq('id', editingParty.id);
 
@@ -301,6 +307,39 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                   value={editDate}
                   onChange={(e) => setEditDate(e.target.value)}
                 />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Description</label>
+                <textarea
+                  className="w-full border rounded-md p-2"
+                  rows={4}
+                  defaultValue={(editingParty as any).description || ''}
+                  onChange={(e) => setEditingParty((p) => p ? { ...p, description: e.target.value } as any : p)}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Price (ILS)</label>
+                  <Input
+                    type="number"
+                    min="0"
+                    step="0.5"
+                    defaultValue={(editingParty as any).price ?? ''}
+                    onChange={(e) => setEditingParty((p) => p ? { ...p, price: e.target.value ? Number(e.target.value) : null } as any : p)}
+                  />
+                </div>
+                <div className="flex items-end gap-2">
+                  <input
+                    id="editIsFree"
+                    type="checkbox"
+                    defaultChecked={(editingParty as any).is_free || false}
+                    onChange={(e) => setEditingParty((p) => p ? { ...p, is_free: e.target.checked } as any : p)}
+                    className="h-4 w-4"
+                  />
+                  <label htmlFor="editIsFree" className="text-sm">Free Party</label>
+                </div>
               </div>
 
               <div>

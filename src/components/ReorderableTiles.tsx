@@ -16,6 +16,7 @@ interface ReorderableTilesProps {
 const ReorderableTiles: React.FC<ReorderableTilesProps> = ({ items, orderKey }) => {
   const [order, setOrder] = useState<string[]>([]);
   const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dragReadyId, setDragReadyId] = useState<string | null>(null);
   const longPressTimer = useRef<number | null>(null);
 
   // Load saved order
@@ -53,6 +54,10 @@ const ReorderableTiles: React.FC<ReorderableTilesProps> = ({ items, orderKey }) 
   }, [order, items, itemsById]);
 
   const onDragStart = (id: string, e: React.DragEvent) => {
+    if (dragReadyId !== id) {
+      e.preventDefault();
+      return;
+    }
     e.dataTransfer.setData('text/plain', id);
     setDraggingId(id);
   };
@@ -76,16 +81,20 @@ const ReorderableTiles: React.FC<ReorderableTilesProps> = ({ items, orderKey }) 
     setDraggingId(null);
   };
 
-  // Touch long-press to drag
+  // Touch/mouse long-press to enable drag (2 seconds)
   const startLongPress = (id: string) => {
     if (longPressTimer.current) window.clearTimeout(longPressTimer.current);
-    longPressTimer.current = window.setTimeout(() => setDraggingId(id), 250);
+    longPressTimer.current = window.setTimeout(() => setDragReadyId(id), 2000);
   };
   const cancelLongPress = () => {
     if (longPressTimer.current) window.clearTimeout(longPressTimer.current);
     longPressTimer.current = null;
+    setDragReadyId(null);
   };
   const onTouchMove = (e: React.TouchEvent) => {
+    if (!draggingId && dragReadyId) {
+      setDraggingId(dragReadyId);
+    }
     if (!draggingId) return;
     const touch = e.touches[0];
     if (!touch) return;
@@ -122,12 +131,15 @@ const ReorderableTiles: React.FC<ReorderableTilesProps> = ({ items, orderKey }) 
           onDrop={(e) => onDrop(item.id, e)}
           onTouchStart={() => startLongPress(item.id)}
           onTouchCancel={cancelLongPress}
+          onMouseDown={() => startLongPress(item.id)}
+          onMouseUp={cancelLongPress}
+          onMouseLeave={cancelLongPress}
           className={`transition-transform ${draggingId === item.id ? 'scale-[0.98] opacity-90' : ''}`}
         >
-          <Card className="cursor-pointer hover:bg-accent" onClick={item.onClick}>
+          <Card className="cursor-pointer hover:bg-accent text-black [&_svg]:text-black" onClick={item.onClick}>
             <CardContent className="flex flex-col items-center justify-center p-6 select-none">
               {item.icon}
-              <span className="text-sm font-medium mt-2 text-center">{item.title}</span>
+              <span className="text-sm font-medium mt-2 text-center whitespace-normal break-words leading-tight max-h-[2.5rem] overflow-hidden">{item.title}</span>
             </CardContent>
           </Card>
         </div>

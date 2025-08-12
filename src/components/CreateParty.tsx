@@ -14,6 +14,9 @@ interface CreatePartyProps {
 const CreateParty = ({ onBack }: CreatePartyProps) => {
   const [partyName, setPartyName] = useState('');
   const [partyDate, setPartyDate] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState<string>('');
+  const [isFree, setIsFree] = useState<boolean>(false);
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -81,7 +84,10 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
           date: partyDate,
           created_by: user?.id,
           is_active: true,
-          photo_url: photoUrl
+          photo_url: photoUrl,
+          description: description.trim() || null,
+          price: price ? Number(price) : null,
+          is_free: isFree
         });
 
       if (error) {
@@ -153,6 +159,39 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
                 value={partyDate}
                 onChange={(e) => setPartyDate(e.target.value)}
               />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Description</label>
+              <textarea
+                className="w-full border rounded-md p-2"
+                rows={4}
+                placeholder="Write about the party..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium">Price (ILS)</label>
+                <Input
+                  type="number"
+                  min="0"
+                  step="0.5"
+                  placeholder="e.g. 50"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                />
+              </div>
+              <div className="flex items-end gap-2">
+                <input
+                  id="isFree"
+                  type="checkbox"
+                  checked={isFree}
+                  onChange={(e) => setIsFree(e.target.checked)}
+                  className="h-4 w-4"
+                />
+                <label htmlFor="isFree" className="text-sm">Free Party</label>
+              </div>
             </div>
             <div>
               <label className="text-sm font-medium">Party Photo (Optional)</label>

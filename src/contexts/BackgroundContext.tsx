@@ -30,7 +30,8 @@ export const BackgroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     
     // Apply to document body
     document.body.style.backgroundColor = color;
-    document.body.style.color = isColorDark(color) ? '#ffffff' : '#000000';
+    // Global rule: if background is pure white, use black text; otherwise use white text
+    document.body.style.color = color.trim().toLowerCase() === '#ffffff' ? '#000000' : '#ffffff';
   };
 
   // Load saved background on mount
@@ -39,7 +40,7 @@ export const BackgroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     if (savedColor) {
       setBackgroundColor(savedColor);
       document.body.style.backgroundColor = savedColor;
-      document.body.style.color = isColorDark(savedColor) ? '#ffffff' : '#000000';
+      document.body.style.color = savedColor.trim().toLowerCase() === '#ffffff' ? '#000000' : '#ffffff';
     }
   }, []);
 
