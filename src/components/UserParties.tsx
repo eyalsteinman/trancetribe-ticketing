@@ -32,6 +32,7 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
   const [loadingParties, setLoadingParties] = useState(true);
   const [sortAscending, setSortAscending] = useState(true);
   const [infoParty, setInfoParty] = useState<Party | null>(null);
+  const [hasPaid, setHasPaid] = useState(false);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
@@ -46,8 +47,10 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
   useEffect(() => {
     if (selectedParty) {
       loadExistingQR();
+      loadPaymentStatus();
     } else {
       setQrCode(null);
+      setHasPaid(false);
     }
   }, [selectedParty]);
 
@@ -103,6 +106,47 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
     }
   };
 
+  const handlePayNow = async () => {
+    if (!selectedParty) return;
+    setLoading(true);
+    try {
+      const { error } = await (supabase as any)
+        .from('payments')
+        .insert({
+          user_id: user.id,
+          party_id: selectedParty.id,
+          amount: selectedParty.price || 0,
+          status: 'paid'
+        });
+      if (error) {
+        toast({ title: 'Error', description: error.message, variant: 'destructive' });
+        return;
+      }
+      setHasPaid(true);
+      toast({ title: 'Payment successful', description: 'You can now generate a QR code.' });
+    } catch (e) {
+      console.error('Payment error', e);
+      toast({ title: 'Error', description: 'Payment failed. Try again.', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
+  const loadPaymentStatus = async () => {
+    if (!selectedParty) return;
+    try {
+      const { data, error } = await (supabase as any)
+        .from('payments')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('party_id', selectedParty.id)
+        .eq('status', 'paid')
+        .maybeSingle();
+      setHasPaid(!!data && !error);
+    } catch (e) {
+      console.error('Error checking payment status:', e);
+      setHasPaid(false);
+    }
+  };
   const generateQRCode = async () => {
     if (!selectedParty) {
       toast({
@@ -113,7 +157,7 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
       return;
     }
 
-    if (selectedParty.price && !selectedParty.is_free) {
+    if (selectedParty.price && !selectedParty.is_free && !hasPaid) {
       toast({
         title: "Payment required",
         description: "Please complete payment before generating a QR code.",
@@ -213,13 +257,13 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {!selectedParty.is_free && selectedParty.price ? (
+                  {!selectedParty.is_free && selectedParty.price && !hasPaid ? (
                     <>
-                      <Button disabled className="w-full py-4 text-lg bg-gray-400 text-white">
-                        Payment required
+                      <Button onClick={handlePayNow} disabled={loading} className="w-full py-4 text-lg">
+                        {loading ? "Processing..." : `Pay Now (${selectedParty.price} ILS)`}
                       </Button>
                       <p className="text-sm text-muted-foreground">
-                        Please complete payment to generate a QR code.
+                        Complete payment to generate your QR code.
                       </p>
                     </>
                   ) : (
