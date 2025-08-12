@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { QRCodeSVG } from 'qrcode.react';
 import { User } from '@supabase/supabase-js';
@@ -25,6 +27,8 @@ interface UserPartiesProps {
   onBack: () => void;
 }
 
+const platformLabels: Record<string, string> = { facebook: 'Facebook', instagram: 'Instagram', tiktok: 'TikTok', x: 'X (Twitter)' };
+
 const UserParties = ({ user, onBack }: UserPartiesProps) => {
   const [parties, setParties] = useState<Party[]>([]);
   const [selectedParty, setSelectedParty] = useState<Party | null>(null);
@@ -34,12 +38,19 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
   const [sortAscending, setSortAscending] = useState(true);
   const [infoParty, setInfoParty] = useState<Party | null>(null);
   const [hasPaid, setHasPaid] = useState(false);
+  const [userSocials, setUserSocials] = useState<Record<string, string>>({});
+  const [showSocialsDialog, setShowSocialsDialog] = useState(false);
+  const [missingPlatforms, setMissingPlatforms] = useState<string[]>([]);
+  const [socialInputs, setSocialInputs] = useState<Record<string, string>>({});
+  const [pendingAction, setPendingAction] = useState<null | 'pay' | 'qr'>(null);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
   useEffect(() => {
     loadParties();
   }, []);
+
+  useEffect(() => { loadUserSocials(); }, []);
 
   useEffect(() => {
     loadParties();
@@ -49,11 +60,27 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
     if (selectedParty) {
       loadExistingQR();
       loadPaymentStatus();
+      const required = Array.isArray(selectedParty.required_socials) ? selectedParty.required_socials : [];
+      const missing = required.filter((p) => !userSocials[p]);
+      if (missing.length > 0) {
+        setMissingPlatforms(missing);
+        setSocialInputs((prev) => {
+          const inputs: Record<string, string> = { ...prev };
+          missing.forEach((p) => { inputs[p] = userSocials[p] || ''; });
+          return inputs;
+        });
+        setShowSocialsDialog(true);
+      } else {
+        setMissingPlatforms([]);
+        setShowSocialsDialog(false);
+      }
     } else {
       setQrCode(null);
       setHasPaid(false);
+      setShowSocialsDialog(false);
+      setMissingPlatforms([]);
     }
-  }, [selectedParty]);
+  }, [selectedParty, userSocials]);
 
   const loadParties = async () => {
     setLoadingParties(true);
@@ -86,6 +113,24 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
     }
   };
 
+  const loadUserSocials = async () => {
+    try {
+      const { data, error } = await (supabase as any)
+        .from('user_socials')
+        .select('platform, url')
+        .eq('user_id', user.id);
+      if (!error && data) {
+        const map: Record<string, string> = {};
+        (data as any[]).forEach((row) => {
+          map[row.platform] = row.url || '';
+        });
+        setUserSocials(map);
+      }
+    } catch (e) {
+      console.error('Error loading user socials:', e);
+    }
+  };
+
   const loadExistingQR = async () => {
     if (!selectedParty) return;
     
@@ -108,8 +153,25 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
     }
   };
 
+  const ensureRequiredSocials = (action: 'pay' | 'qr'): boolean => {
+    if (!selectedParty) return false;
+    const required = Array.isArray(selectedParty.required_socials) ? selectedParty.required_socials : [];
+    const missing = required.filter((p) => !userSocials[p]);
+    if (missing.length > 0) {
+      setMissingPlatforms(missing);
+      const inputs: Record<string, string> = {};
+      missing.forEach((p) => { inputs[p] = userSocials[p] || ''; });
+      setSocialInputs(inputs);
+      setPendingAction(action);
+      setShowSocialsDialog(true);
+      return false;
+    }
+    return true;
+  };
+
   const handlePayNow = async () => {
     if (!selectedParty) return;
+    if (!ensureRequiredSocials('pay')) return;
     setLoading(true);
     try {
       const { error } = await (supabase as any)
@@ -149,6 +211,52 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
       setHasPaid(false);
     }
   };
+  
+  const saveMissingSocials = async () => {
+    setLoading(true);
+    try {
+      if (missingPlatforms.length === 0) {
+        setShowSocialsDialog(false);
+        return;
+      }
+      const platformsToSave = missingPlatforms.filter((p) => (socialInputs[p] || '').trim());
+      if (platformsToSave.length !== missingPlatforms.length) {
+        toast({ title: 'Missing info', description: 'Please fill all required socials.', variant: 'destructive' });
+        setLoading(false);
+        return;
+      }
+      const { error: delErr } = await (supabase as any)
+        .from('user_socials')
+        .delete()
+        .eq('user_id', user.id)
+        .in('platform', platformsToSave);
+      if (delErr) throw delErr;
+      const rows = platformsToSave.map((p) => ({ user_id: user.id, platform: p, url: socialInputs[p].trim() }));
+      const { error: insErr } = await (supabase as any)
+        .from('user_socials')
+        .insert(rows);
+      if (insErr) throw insErr;
+
+      const updated = { ...userSocials };
+      platformsToSave.forEach((p) => { updated[p] = socialInputs[p].trim(); });
+      setUserSocials(updated);
+      setShowSocialsDialog(false);
+      setMissingPlatforms([]);
+      const action = pendingAction;
+      setPendingAction(null);
+      if (action === 'pay') {
+        handlePayNow();
+      } else if (action === 'qr') {
+        generateQRCode();
+      }
+    } catch (e: any) {
+      console.error('Save required socials error', e);
+      toast({ title: 'Error', description: e.message || 'Failed to save socials', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const generateQRCode = async () => {
     if (!selectedParty) {
       toast({
@@ -156,6 +264,10 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
         description: "No party selected.",
         variant: "destructive"
       });
+      return;
+    }
+
+    if (!ensureRequiredSocials('qr')) {
       return;
     }
 
@@ -280,6 +392,34 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
               )}
             </CardContent>
           </Card>
+
+          <Dialog open={showSocialsDialog} onOpenChange={setShowSocialsDialog}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Social profile required</DialogTitle>
+                <DialogDescription>
+                  This event requires the following social profile(s). Please provide URLs to continue.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-3">
+                {missingPlatforms.map((p) => (
+                  <div key={p}>
+                    <label className="text-sm font-medium">{platformLabels[p] || p}</label>
+                    <Input
+                      placeholder={`Enter your ${platformLabels[p] || p} profile URL`}
+                      value={socialInputs[p] || ''}
+                      onChange={(e) => setSocialInputs((prev) => ({ ...prev, [p]: e.target.value }))}
+                      inputMode="url"
+                    />
+                  </div>
+                ))}
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => { setShowSocialsDialog(false); setPendingAction(null); }}>Cancel</Button>
+                <Button onClick={saveMissingSocials} disabled={loading}>{loading ? 'Saving...' : 'Save & Continue'}</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     );
@@ -400,6 +540,34 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
             </div>
           </div>
         )}
+
+        <Dialog open={showSocialsDialog} onOpenChange={setShowSocialsDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Social profile required</DialogTitle>
+              <DialogDescription>
+                This event requires the following social profile(s). Please provide URLs to continue.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-3">
+              {missingPlatforms.map((p) => (
+                <div key={p}>
+                  <label className="text-sm font-medium">{platformLabels[p] || p}</label>
+                  <Input
+                    placeholder={`Enter your ${platformLabels[p] || p} profile URL`}
+                    value={socialInputs[p] || ''}
+                    onChange={(e) => setSocialInputs((prev) => ({ ...prev, [p]: e.target.value }))}
+                    inputMode="url"
+                  />
+                </div>
+              ))}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => { setShowSocialsDialog(false); setPendingAction(null); }}>Cancel</Button>
+              <Button onClick={saveMissingSocials} disabled={loading}>{loading ? 'Saving...' : 'Save & Continue'}</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

@@ -7,6 +7,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft, Upload } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
 
+const socialOptions = [
+  { key: 'facebook', label: 'Facebook' },
+  { key: 'instagram', label: 'Instagram' },
+  { key: 'tiktok', label: 'TikTok' },
+  { key: 'x', label: 'X (Twitter)' },
+] as const;
+
 interface CreatePartyProps {
   onBack: () => void;
 }
@@ -194,6 +201,30 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
                 <label htmlFor="isFree" className="text-sm">Free Party</label>
               </div>
             </div>
+
+            <div>
+              <label className="text-sm font-medium">Required Social Networks</label>
+              <div className="grid grid-cols-2 gap-3 mt-2">
+                {socialOptions.map((opt) => (
+                  <label key={opt.key} className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={requiredSocials.includes(opt.key)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setRequiredSocials([...requiredSocials, opt.key]);
+                        } else {
+                          setRequiredSocials(requiredSocials.filter((s) => s !== opt.key));
+                        }
+                      }}
+                      className="h-4 w-4"
+                    />
+                    {opt.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+
             <div>
               <label className="text-sm font-medium">Party Photo (Optional)</label>
               <div className="flex items-center gap-2">

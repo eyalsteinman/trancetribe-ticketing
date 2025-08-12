@@ -22,6 +22,7 @@ interface Party {
   description: string | null;
   price: number | null;
   is_free: boolean;
+  required_socials: string[];
 }
 
 const EditParties = ({ onBack }: EditPartiesProps) => {
@@ -33,6 +34,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
   const [loading, setLoading] = useState(false);
   const [loadingParties, setLoadingParties] = useState(true);
   const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
+  const [editRequiredSocials, setEditRequiredSocials] = useState<string[]>([]);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
@@ -73,6 +75,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
     setEditingParty(party);
     setEditName(party.name);
     setEditDate(party.date);
+    setEditRequiredSocials(Array.isArray((party as any).required_socials) ? (party as any).required_socials : []);
     setSelectedPhoto(null);
   };
 
@@ -149,7 +152,8 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           photo_url: photoUrl,
           description: (editingParty as any).description ?? null,
           price: (editingParty as any).price ?? null,
-          is_free: (editingParty as any).is_free ?? false
+          is_free: (editingParty as any).is_free ?? false,
+          required_socials: editRequiredSocials
         })
         .eq('id', editingParty.id);
 
@@ -338,6 +342,29 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                     className="h-4 w-4"
                   />
                   <label htmlFor="editIsFree" className="text-sm">Free Party</label>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Required Social Networks</label>
+                <div className="grid grid-cols-2 gap-3 mt-2">
+                  {['facebook','instagram','tiktok','x'].map((key) => (
+                    <label key={key} className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={editRequiredSocials.includes(key)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setEditRequiredSocials([...editRequiredSocials, key]);
+                          } else {
+                            setEditRequiredSocials(editRequiredSocials.filter((s) => s !== key));
+                          }
+                        }}
+                        className="h-4 w-4"
+                      />
+                      {key.charAt(0).toUpperCase() + key.slice(1)}
+                    </label>
+                  ))}
                 </div>
               </div>
 
