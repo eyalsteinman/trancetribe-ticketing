@@ -371,11 +371,11 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         }}
       >
         <div className="max-w-md mx-auto space-y-6">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold">QR Scanner</h1>
-            <Button variant="outline" size="icon" className="on-color back-button" onClick={() => setCurrentView('dashboard')} aria-label="Back">
+          <div className="relative">
+            <Button variant="outline" size="icon" className="absolute top-4 left-4 z-[9999] on-color back-button" onClick={() => setCurrentView('dashboard')} aria-label="Back">
               <ArrowLeft className="h-4 w-4" />
             </Button>
+            <h1 className="text-2xl font-bold">QR Scanner</h1>
           </div>
           
           {parties.length > 0 && (

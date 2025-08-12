@@ -285,7 +285,6 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           >
             Edit Party
           </h1>
-        </div>
 
           <Card>
             <CardHeader>
@@ -443,10 +442,9 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
         backgroundColor
       }}
     >
-      <div className="max-w-md mx-auto space-y-6">
+        <div className="flex items-center justify-between">
           <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 left-4 z-[9999] on-color back-button">
             <ArrowLeft className="h-4 w-4" />
-          </Button>
           </Button>
           <h1 
             className="text-xl font-bold"
@@ -537,7 +535,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Delete Party</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Are you sure you want to delete "{party.name}"? This action cannot be undone.
+                              Are you sure you want to delete {party.name}? This action cannot be undone.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -575,3 +573,4 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
 };
 
 export default EditParties;
+
