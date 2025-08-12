@@ -275,7 +275,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           backgroundColor
         }}
       >
-        <div className="max-w-md mx-auto space-y-6">
+        <div className="max-w-md mx-auto space-y-6 text-right">
           <Button variant="outline" size="icon" onClick={cancelEdit} aria-label="Back" className="absolute top-4 left-4 z-[9999] on-color back-button">
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -379,7 +379,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                       size="sm"
                       onClick={() => removePartyPhoto(editingParty)}
                       disabled={loading}
-                      className="bg-red-600 hover:bg-red-700 text-white border-red-600"
+                      className="bg-red-600 hover:bg-red-700 border-red-600"
                     >
                       Remove Current Photo
                     </Button>
@@ -442,7 +442,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
         backgroundColor
       }}
     >
-        <div className="max-w-md mx-auto space-y-6">
+        <div className="max-w-md mx-auto space-y-6 text-right">
           <div className="flex items-center justify-between">
             <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 left-4 z-[9999] on-color back-button">
               <ArrowLeft className="h-4 w-4" />
@@ -526,7 +526,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white border-red-600"
+                            className="flex items-center gap-1 bg-red-600 hover:bg-red-700 border-red-600"
                           >
                             <Trash2 className="h-3 w-3" style={{ color: 'white' }} />
                             Delete

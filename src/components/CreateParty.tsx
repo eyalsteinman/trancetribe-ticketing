@@ -148,7 +148,7 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
         backgroundColor
       }}
     >
-      <div className="max-w-md mx-auto space-y-6">
+      <div className="max-w-md mx-auto space-y-6 text-right">
         <div className="flex items-center space-x-4">
           <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 left-4 z-[9999] on-color back-button">
             <ArrowLeft className="h-4 w-4" />

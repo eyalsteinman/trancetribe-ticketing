@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Edit2, Save, X, UserCheck, Shield } from 'lucide-react';
+import { Trash2, Edit2, Save, X, UserCheck, Shield, ArrowLeft } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
 
 interface RegisteredUsersProps {
@@ -247,17 +247,17 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
         backgroundColor
       }}
     >
-      <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex justify-between items-center">
+      <div className="max-w-4xl mx-auto space-y-6 text-right">
+        <div className="relative">
+          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 left-4 z-[9999] back-button">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
           <h1 
             className="text-2xl font-bold"
             style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
           >
             Registered Users
           </h1>
-          <Button variant="outline" onClick={onBack}>
-            Back
-          </Button>
         </div>
 
         <Card>
@@ -401,7 +401,7 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                                   size="sm"
                                   variant="outline"
                                   onClick={() => deleteUser(user.user_id)}
-                                  className="p-1 bg-red-600 hover:bg-red-700 text-white border-red-600"
+                                  className="p-1 bg-red-600 hover:bg-red-700 border-red-600"
                                 >
                                   <Trash2 className="h-4 w-4" style={{ color: 'white' }} />
                                 </Button>
