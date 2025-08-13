@@ -526,82 +526,74 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         </div>
         
         <div className="space-y-4">
-          <div>
-            {adminNickname && (
-              <p 
-                className="text-sm mt-1"
-                style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-              >
-                Welcome back {adminNickname}
-              </p>
-            )}
-          </div>
-          <Button variant="outline" onClick={handleSignOut} className="whitespace-nowrap on-color">
-            Sign Out
-          </Button>
-        </div>
+          {adminNickname && (
+            <p 
+              className="text-sm"
+              style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+            >
+              Welcome back {adminNickname}
+            </p>
+          )}
 
-        {(() => {
-          const tiles = [
-            { id: 'scanner', title: 'Camera Scan', icon: <Camera className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('scanner' as const) },
-            { id: 'guests', title: 'Guest List', icon: <List className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('guests' as const) },
-            { id: 'create-party', title: 'Create Party', icon: <Plus className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('create-party' as const) },
-            { id: 'edit-parties', title: 'Edit Parties', icon: <Edit className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('edit-parties' as const) },
-            { id: 'my-productions', title: 'My Productions', icon: <Building2 className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('my-productions' as const) },
-            { id: 'manage-productions', title: 'Manage Productions', icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('manage-productions' as const) },
-            { id: 'manage-admins', title: 'Add Admin', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('manage-admins' as const) },
-            { id: 'registered-users', title: 'Registered Users', icon: <UserCheck className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('registered-users' as const) },
-            { id: 'admin-games', title: 'Admin Games', icon: <Gamepad2 className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('admin-games' as const) },
-            { id: 'nickname', title: 'Choose Nickname', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('nickname' as const) },
-          ];
-          return (
-            <ReorderableTiles items={tiles} orderKey={`dashboard-order-admin-${user.id}`} />
-          );
-        })()}
+          {(() => {
+            const tiles = [
+              { id: 'scanner', title: 'Camera Scan', icon: <Camera className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('scanner' as const) },
+              { id: 'guests', title: 'Guest List', icon: <List className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('guests' as const) },
+              { id: 'create-party', title: 'Create Party', icon: <Plus className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('create-party' as const) },
+              { id: 'edit-parties', title: 'Edit Parties', icon: <Edit className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('edit-parties' as const) },
+              { id: 'my-productions', title: 'My Productions', icon: <Building2 className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('my-productions' as const) },
+              { id: 'manage-productions', title: 'Manage Productions', icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('manage-productions' as const) },
+              { id: 'manage-admins', title: 'Add Admin', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('manage-admins' as const) },
+              { id: 'registered-users', title: 'Registered Users', icon: <UserCheck className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('registered-users' as const) },
+              { id: 'admin-games', title: 'Admin Games', icon: <Gamepad2 className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('admin-games' as const) },
+              { id: 'nickname', title: 'Choose Nickname', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('nickname' as const) },
+            ];
+            return (
+              <ReorderableTiles items={tiles} orderKey={`dashboard-order-admin-${user.id}`} />
+            );
+          })()}
 
-
-
-        {selectedParty && (
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle>Coming Up</CardTitle>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setSortAscending(!sortAscending)}
-                  className="flex items-center gap-2"
-                >
-                  {sortAscending ? "Latest First" : "Soonest First"}
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center space-y-4">
-                <div className="text-lg font-semibold">
-                  {parties.find(p => p.id === selectedParty)?.name}
+          {selectedParty && (
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>Coming Up</CardTitle>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setSortAscending(!sortAscending)}
+                    className="flex items-center gap-2"
+                  >
+                    {sortAscending ? "Latest First" : "Soonest First"}
+                  </Button>
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  {parties.find(p => p.id === selectedParty)?.date && 
-                    new Date(parties.find(p => p.id === selectedParty)?.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                </div>
-                {parties.find(p => p.id === selectedParty)?.photo_url && (
-                  <div className="w-full">
-                    <img 
-                      src={parties.find(p => p.id === selectedParty)?.photo_url} 
-                      alt={parties.find(p => p.id === selectedParty)?.name}
-                      className="w-full h-auto object-contain rounded-md mx-auto"
-                    />
+              </CardHeader>
+              <CardContent>
+                <div className="text-center space-y-4">
+                  <div className="text-lg font-semibold">
+                    {parties.find(p => p.id === selectedParty)?.name}
                   </div>
-                )}
-                <div className="text-2xl font-bold">{scannedUsers.length}</div>
-                <div className="text-sm text-muted-foreground">Guests Scanned</div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+                  <div className="text-sm text-muted-foreground">
+                    {parties.find(p => p.id === selectedParty)?.date && 
+                      new Date(parties.find(p => p.id === selectedParty)?.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </div>
+                  {parties.find(p => p.id === selectedParty)?.photo_url && (
+                    <div className="w-full">
+                      <img 
+                        src={parties.find(p => p.id === selectedParty)?.photo_url} 
+                        alt={parties.find(p => p.id === selectedParty)?.name}
+                        className="w-full h-auto object-contain rounded-md mx-auto"
+                      />
+                    </div>
+                  )}
+                  <div className="text-2xl font-bold">{scannedUsers.length}</div>
+                  <div className="text-sm text-muted-foreground">Guests Scanned</div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </div>
-      
     </div>
   );
 };
