@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
-import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck } from 'lucide-react';
+import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut } from 'lucide-react';
 import UserParties from './UserParties';
 import UserGames from './UserGames';
 import NicknameManager from './NicknameManager';
@@ -180,7 +180,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
       }}
     >
       <div className="max-w-md mx-auto space-y-6">
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <h1 
             className="text-xl font-bold"
             style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
@@ -192,6 +192,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
             onClick={handleSignOut} 
             className="whitespace-nowrap on-color"
           >
+            <LogOut className="h-4 w-4 mr-2" />
             Sign Out
           </Button>
         </div>

@@ -93,7 +93,7 @@ const SocialNetworks = ({ userId, onBack }: SocialNetworksProps) => {
   return (
     <div className="min-h-screen p-4">
       <div className="max-w-md mx-auto space-y-6 text-left">
-        <div className="relative">
+        <div className="flex items-center space-x-4">
           <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
             <ArrowLeft className="h-4 w-4" />
           </Button>

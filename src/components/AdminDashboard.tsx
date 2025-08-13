@@ -513,14 +513,20 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
       }}
     >
       <div className="max-w-md mx-auto space-y-6 text-left">
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
+          <h1 
+            className="text-xl font-bold"
+            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+          >
+            Admin Dashboard
+          </h1>
+          <Button variant="outline" onClick={handleSignOut} className="on-color">
+            Sign Out
+          </Button>
+        </div>
+        
+        <div className="space-y-4">
           <div>
-        <h1 
-          className="text-xl font-bold"
-          style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-        >
-          Admin Dashboard
-        </h1>
             {adminNickname && (
               <p 
                 className="text-sm mt-1"

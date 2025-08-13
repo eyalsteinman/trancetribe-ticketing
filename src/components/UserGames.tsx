@@ -16,11 +16,16 @@ const UserGames = ({ onBack, onGameSelect }: UserGamesProps) => {
       style={{ backgroundColor }}
     >
       <div className="max-w-md mx-auto space-y-6 text-left">
-        <div className="relative">
+        <div className="flex items-center space-x-4">
           <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-xl font-bold">Games</h1>
+          <h1 
+            className="text-xl font-bold"
+            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+          >
+            Games
+          </h1>
         </div>
 
         <div className="grid gap-4">

@@ -95,19 +95,11 @@ const QRScanner = ({ onScan, onClose }: QRScannerProps) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
       <Card className="w-full max-w-md mx-4">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Camera className="h-5 w-5" />
             QR Scanner
           </CardTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleStop}
-            className="h-8 w-8"
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </CardHeader>
         <CardContent className="space-y-4">
           {error ? (
