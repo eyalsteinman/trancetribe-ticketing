@@ -149,79 +149,103 @@ const AuthForm = () => {
       console.log('=== STARTING ADMIN SIGNUP ===');
       console.log('Email:', email);
       
-      // Create the user account
-      const { data: signupData, error: signupError } = await supabase.auth.signUp({
+      // Try to sign in first to check if user already exists
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            display_name: email.split('@')[0]
-          }
-        }
+        password
       });
-      
-      console.log('Signup result:', { signupData, signupError });
 
-      if (signupError) {
-        console.error('Signup failed:', signupError);
-        toast({
-          title: "Error",
-          description: "Failed to create account: " + signupError.message,
-          variant: "destructive"
+      let userId: string;
+      
+      if (signInData?.user) {
+        // User exists, use existing user ID
+        userId = signInData.user.id;
+        console.log('User already exists with ID:', userId);
+      } else if (signInError?.message?.includes('Invalid login credentials')) {
+        // User doesn't exist, create new account
+        const { data: signupData, error: signupError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/`,
+            data: {
+              display_name: email.split('@')[0]
+            }
+          }
         });
-        return;
-      } 
-
-      if (!signupData.user) {
-        console.error('No user returned from signup');
-        toast({
-          title: "Error", 
-          description: "Account creation failed - no user returned",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      const userId = signupData.user.id;
-      console.log('User created successfully with ID:', userId);
-      
-      // Wait for trigger to complete
-      console.log('Waiting for profile creation...');
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
-      // Add admin role using a direct insert with proper error handling
-      console.log('Adding admin role...');
-      try {
-        const { error: roleError } = await supabase
-          .from('user_roles')
-          .insert({
-            user_id: userId,
-            role: 'admin'
-          });
         
-        if (roleError) {
-          console.error('Admin role assignment failed:', roleError);
+        console.log('Signup result:', { signupData, signupError });
+
+        if (signupError) {
+          console.error('Signup failed:', signupError);
           toast({
-            title: "Partial Success",
-            description: "Account created but admin role assignment failed. Please contact support.",
+            title: "Error",
+            description: "Failed to create account: " + signupError.message,
             variant: "destructive"
           });
-        } else {
-          console.log('Admin role assigned successfully');
+          return;
+        } 
+
+        if (!signupData.user) {
+          console.error('No user returned from signup');
           toast({
-            title: "Success",
-            description: signupData.user.email_confirmed_at 
-              ? "Admin account created successfully! You can now sign in."
-              : "Admin account created! Please check your email to confirm your account.",
+            title: "Error", 
+            description: "Account creation failed - no user returned",
+            variant: "destructive"
           });
+          return;
         }
-      } catch (roleErr: any) {
-        console.error('Role assignment exception:', roleErr);
+
+        userId = signupData.user.id;
+        console.log('User created successfully with ID:', userId);
+        
+        // Wait for trigger to complete
+        console.log('Waiting for profile creation...');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      } else {
+        // Other auth error
+        throw signInError;
+      }
+      
+      // Check if user already has admin role
+      const { data: existingRole } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .eq('role', 'admin')
+        .single();
+
+      if (existingRole) {
         toast({
-          title: "Partial Success",
-          description: "Account created but role assignment had an error: " + roleErr.message,
+          title: "Info",
+          description: "User already has admin privileges!",
+        });
+        setEmail('');
+        setPassword('');
+        return;
+      }
+      
+      // Add admin role
+      console.log('Adding admin role...');
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .insert({
+          user_id: userId,
+          role: 'admin'
+        });
+      
+      if (roleError) {
+        console.error('Admin role assignment failed:', roleError);
+        toast({
+          title: "Error",
+          description: "Failed to assign admin role: " + roleError.message,
           variant: "destructive"
+        });
+      } else {
+        console.log('Admin role assigned successfully');
+        toast({
+          title: "Success",
+          description: "Admin privileges granted successfully! You can now sign in as admin.",
         });
       }
       
@@ -234,7 +258,7 @@ const AuthForm = () => {
       console.error('Error details:', error);
       toast({
         title: "Error",
-        description: "Failed to create admin account: " + (error.message || 'Unknown error'),
+        description: "Failed to process admin account: " + (error.message || 'Unknown error'),
         variant: "destructive"
       });
     } finally {

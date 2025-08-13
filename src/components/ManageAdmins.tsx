@@ -114,125 +114,128 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
     try {
       console.log('Creating admin user with email:', newAdminEmail);
       
-      // First test if functions work at all
-      console.log('Testing function connectivity...');
-      const { data: testData, error: testError } = await supabase.functions.invoke('test-function');
-      console.log('Test function result:', { testData, testError });
-      
-      if (testError) {
-        toast({
-          title: "Error",
-          description: "Edge functions are not accessible: " + testError.message,
-          variant: "destructive"
-        });
-        return;
+      // Use the create-admin edge function
+      const { data: result, error: functionError } = await supabase.functions.invoke('create-admin', {
+        body: {
+          email: newAdminEmail,
+          password: newAdminPassword
+        }
+      });
+
+      console.log('Create admin function result:', { result, functionError });
+
+      if (functionError) {
+        throw new Error('Function call failed: ' + functionError.message);
       }
+
+      if (!result?.success) {
+        throw new Error(result?.error || 'Unknown error from function');
+      }
+
+      toast({
+        title: "Success",
+        description: "New admin created successfully!",
+      });
+      setNewAdminEmail('');
+      setNewAdminPassword('');
+      loadAdmins();
+
+    } catch (error: any) {
+      console.error('Error creating admin:', error);
       
-      // Try creating admin using direct database operations
-      console.log('Creating admin directly via database...');
+      // Fallback to direct creation if edge function fails
+      console.log('Falling back to direct admin creation...');
       
       try {
-        // Create user via auth admin API
-        console.log('Step 1: Creating auth user...');
-        const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
+        // Try to sign in first to check if user already exists
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
           email: newAdminEmail,
-          password: newAdminPassword,
-          email_confirm: true
+          password: newAdminPassword
         });
 
-        console.log('Auth user creation result:', { 
-          success: !!newUser.user, 
-          userId: newUser.user?.id,
-          error: createError 
-        });
-
-        if (createError) {
-          throw new Error('Auth user creation failed: ' + createError.message);
-        }
-
-        if (!newUser.user) {
-          throw new Error('No user returned from auth creation');
-        }
-
-        const userId = newUser.user.id;
-        console.log('Step 2: Auth user created successfully with ID:', userId);
-
-        // Create profile manually with proper error handling
-        console.log('Step 3: Creating profile...');
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            user_id: userId,
+        let userId: string;
+        
+        if (signInData?.user) {
+          // User exists, use existing user ID
+          userId = signInData.user.id;
+          console.log('User already exists with ID:', userId);
+        } else if (signInError?.message?.includes('Invalid login credentials')) {
+          // User doesn't exist, create new user via signup
+          const { data: signupData, error: signupError } = await supabase.auth.signUp({
             email: newAdminEmail,
-            display_name: newAdminEmail.split('@')[0],
-            first_name: '',
-            last_name: ''
+            password: newAdminPassword,
+            options: {
+              emailRedirectTo: `${window.location.origin}/`,
+              data: {
+                display_name: newAdminEmail.split('@')[0]
+              }
+            }
           });
 
-        if (profileError) {
-          console.error('Profile creation error details:', profileError);
-          throw new Error('Profile creation failed: ' + profileError.message);
+          if (signupError) {
+            throw new Error('Account creation failed: ' + signupError.message);
+          }
+
+          if (!signupData.user) {
+            throw new Error('No user returned from signup');
+          }
+
+          userId = signupData.user.id;
+          console.log('User created successfully with ID:', userId);
+          
+          // Wait for trigger to complete
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        } else {
+          throw signInError;
         }
-
-        console.log('Step 4: Profile created successfully');
-
-        // Add user role first
-        console.log('Step 5: Adding user role...');
-        const { error: userRoleError } = await supabase
+        
+        // Check if user already has admin role
+        const { data: existingRole } = await supabase
           .from('user_roles')
-          .insert({
-            user_id: userId,
-            role: 'user'
+          .select('role')
+          .eq('user_id', userId)
+          .eq('role', 'admin')
+          .single();
+
+        if (existingRole) {
+          toast({
+            title: "Info",
+            description: "User already has admin privileges!",
           });
-
-        if (userRoleError) {
-          console.error('User role assignment error:', userRoleError);
-          throw new Error('User role assignment failed: ' + userRoleError.message);
+          setNewAdminEmail('');
+          setNewAdminPassword('');
+          loadAdmins();
+          return;
         }
-
-        console.log('Step 6: User role assigned successfully');
-
+        
         // Add admin role
-        console.log('Step 7: Adding admin role...');
-        const { error: adminRoleError } = await supabase
+        const { error: roleError } = await supabase
           .from('user_roles')
           .insert({
             user_id: userId,
             role: 'admin'
           });
-
-        if (adminRoleError) {
-          console.error('Admin role assignment error:', adminRoleError);
-          throw new Error('Admin role assignment failed: ' + adminRoleError.message);
+        
+        if (roleError) {
+          throw new Error('Admin role assignment failed: ' + roleError.message);
         }
-
-        console.log('Step 8: Admin role assigned successfully');
-        console.log('SUCCESS: Admin creation completed successfully!');
 
         toast({
           title: "Success",
-          description: "New admin created successfully!",
+          description: "Admin privileges granted successfully!",
         });
         setNewAdminEmail('');
         setNewAdminPassword('');
         loadAdmins();
 
-      } catch (dbError: any) {
-        console.error('Database operation failed:', dbError);
+      } catch (fallbackError: any) {
+        console.error('Fallback admin creation failed:', fallbackError);
         toast({
-          title: "Error", 
-          description: dbError.message || "Database error occurred",
+          title: "Error",
+          description: "Failed to create admin: " + fallbackError.message,
           variant: "destructive"
         });
       }
-
-    } catch (error: any) {
-      console.error('Error creating admin:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create new admin: " + error.message,
-        variant: "destructive"
-      });
     } finally {
       setLoading(false);
     }
