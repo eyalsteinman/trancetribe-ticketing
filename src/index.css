@@ -213,13 +213,24 @@ All colors MUST be HSL.
 
   /* Destructive (red) buttons: text and icons always white */
   .bg-destructive,
-  .bg-red-600 {
-    --foreground: 0 0% 100%;
-    color: hsl(var(--foreground));
+  .bg-red-600,
+  button[class*="destructive"],
+  button[class*="bg-red"],
+  .delete-button {
+    --foreground: 0 0% 100% !important;
+    color: hsl(var(--foreground)) !important;
   }
   .bg-destructive svg,
-  .bg-red-600 svg {
-    color: hsl(var(--destructive-foreground)) !important;
+  .bg-red-600 svg,
+  button[class*="destructive"] svg,
+  button[class*="bg-red"] svg,
+  .delete-button svg {
+    color: hsl(0 0% 100%) !important;
+  }
+
+  /* Ensure popover/dialog content is properly centered */
+  [data-radix-popper-content-wrapper] {
+    z-index: 50 !important;
   }
 
   /* Back buttons: icons white on colored backgrounds */

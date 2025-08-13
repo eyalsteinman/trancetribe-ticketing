@@ -461,6 +461,7 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
                           variant="destructive"
                           onClick={() => deleteAdmin(admin.id)}
                           disabled={loading}
+                          className="delete-button"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

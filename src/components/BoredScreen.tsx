@@ -105,19 +105,19 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
       style={{ backgroundColor }}
       onContextMenu={(e) => e.preventDefault()}
     >
-      {/* Back button - top left */}
+      {/* Back button - top right */}
       <Button
         variant="outline"
         size="icon"
         onClick={onBack}
         aria-label="Back"
-        className="absolute top-4 left-4 z-[9999] on-color back-button"
+        className="absolute top-4 right-4 z-[9999] on-color back-button"
       >
         <ArrowLeft className="h-4 w-4" />
       </Button>
 
-      {/* Revert - top right */}
-      <div className="absolute top-4 right-4 z-[9999] flex gap-2">
+      {/* Revert - top left */}
+      <div className="absolute top-4 left-4 z-[9999] flex gap-2">
         <Button
           onClick={revert}
           size="sm"

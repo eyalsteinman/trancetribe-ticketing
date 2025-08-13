@@ -225,7 +225,7 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
           variant="outline"
           size="icon"
           aria-label="Back"
-          className="on-color back-button"
+          className="absolute top-4 right-4 z-[9999] on-color back-button"
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();

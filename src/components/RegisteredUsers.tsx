@@ -401,9 +401,9 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                                   size="sm"
                                   variant="outline"
                                   onClick={() => deleteUser(user.user_id)}
-                                  className="p-1 bg-red-600 hover:bg-red-700 border-red-600"
+                                  className="p-1 bg-red-600 hover:bg-red-700 border-red-600 delete-button"
                                 >
-                                  <Trash2 className="h-4 w-4" style={{ color: 'white' }} />
+                                  <Trash2 className="h-4 w-4" />
                                 </Button>
                               </div>
                             </td>

@@ -525,7 +525,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                           <Button
                             variant="destructive"
                             size="sm"
-                            className="flex items-center gap-1"
+                            className="flex items-center gap-1 delete-button"
                           >
                             <Trash2 className="h-3 w-3" />
                             Delete
@@ -543,6 +543,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                             <AlertDialogAction
                               onClick={() => deleteParty(party.id)}
                               disabled={loading}
+                              className="delete-button"
                             >
                               {loading ? "Deleting..." : "Delete"}
                             </AlertDialogAction>
