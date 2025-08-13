@@ -191,6 +191,26 @@ All colors MUST be HSL.
     color: hsl(var(--button-icon-on-colored)) !important;
   }
 
+  /* Dashboard tiles: ALWAYS black text and icons regardless of background */
+  [data-tile-id] .text-black,
+  [data-tile-id] [class*="text-black"],
+  [data-tile-id] span,
+  [data-tile-id] div {
+    color: hsl(0 0% 0%) !important;
+  }
+  [data-tile-id] svg,
+  [data-tile-id] .text-black svg,
+  [data-tile-id] [class*="text-black"] svg {
+    color: hsl(0 0% 0%) !important;
+  }
+
+  /* AdminGames cards: ALWAYS black text and icons */
+  .grid .cursor-pointer.text-black,
+  .grid .cursor-pointer.text-black span,
+  .grid .cursor-pointer.text-black svg {
+    color: hsl(0 0% 0%) !important;
+  }
+
   /* Destructive (red) buttons: text and icons always white */
   .bg-destructive,
   .bg-red-600 {
