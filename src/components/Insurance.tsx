@@ -28,7 +28,7 @@ const Insurance = ({ onBack }: InsuranceProps) => {
         </div>
 
         <div className="space-y-4">
-          <h1 className="text-2xl font-bold">Buy Party Insurance</h1>
+          <h1 className="text-xl font-bold">Buy Party Insurance</h1>
           <p className="text-sm text-muted-foreground">
             Buy insurance for parties. 19 ILS a month. Get covered for any party and any unused tickets for up to 400 ILS per year.
           </p>

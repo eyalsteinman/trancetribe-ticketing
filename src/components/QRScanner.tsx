@@ -98,18 +98,24 @@ const QRScanner = ({ onScan, onClose }: QRScannerProps) => {
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="flex items-center gap-2">
             <Camera className="h-5 w-5" />
-            QR Code Scanner
+            QR Scanner
           </CardTitle>
-          <Button variant="ghost" size="icon" onClick={handleStop}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleStop}
+            className="h-8 w-8"
+          >
             <X className="h-4 w-4" />
           </Button>
         </CardHeader>
         <CardContent className="space-y-4">
           {error ? (
             <div className="text-center space-y-4">
-              <div className="flex flex-col items-center text-muted-foreground">
-                <Smartphone className="h-12 w-12 mb-2" />
-                <p className="text-sm">{error}</p>
+              <Smartphone className="h-16 w-16 mx-auto text-muted-foreground" />
+              <div>
+                <p className="font-medium">Camera not available</p>
+                <p className="text-sm text-muted-foreground mt-1">{error}</p>
               </div>
               {hasCamera && (
                 <Button onClick={handleRestart} variant="outline" className="w-full">
@@ -119,44 +125,46 @@ const QRScanner = ({ onScan, onClose }: QRScannerProps) => {
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="relative">
+              <div className="relative aspect-square bg-black rounded-lg overflow-hidden">
                 <video
                   ref={videoRef}
-                  className="w-full rounded-lg bg-black"
-                  style={{ aspectRatio: '1' }}
+                  className="w-full h-full object-cover"
+                  playsInline
+                  muted
                 />
-                {!isScanning && hasCamera && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg">
+                {!isScanning && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                     <div className="text-white text-center">
                       <Camera className="h-8 w-8 mx-auto mb-2" />
-                      <p className="text-sm">Starting camera...</p>
+                      <p>Starting camera...</p>
                     </div>
                   </div>
                 )}
               </div>
               
-              <div className="text-center">
+              <div className="text-center space-y-2">
                 <p className="text-sm text-muted-foreground">
                   Position the QR code within the camera view
                 </p>
                 {isScanning && (
-                  <p className="text-xs text-green-600 mt-1">
-                    ✓ Camera active - scanning for QR codes
-                  </p>
+                  <div className="flex items-center justify-center gap-2 text-green-600">
+                    <div className="w-2 h-2 bg-green-600 rounded-full animate-pulse"></div>
+                    <span className="text-sm">Scanning...</span>
+                  </div>
                 )}
               </div>
 
               <div className="flex gap-2">
                 <Button 
+                  onClick={handleStop} 
                   variant="outline" 
-                  onClick={handleStop}
                   className="flex-1"
                 >
                   Cancel
                 </Button>
                 {!isScanning && hasCamera && (
                   <Button 
-                    onClick={handleRestart}
+                    onClick={handleRestart} 
                     className="flex-1"
                   >
                     Start Scanning

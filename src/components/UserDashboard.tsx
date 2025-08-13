@@ -182,7 +182,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
       <div className="max-w-md mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <h1 
-            className="text-2xl font-bold"
+            className="text-xl font-bold"
             style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
           >
             {nickname ? `Welcome back, ${nickname}!` : 'User Dashboard'}

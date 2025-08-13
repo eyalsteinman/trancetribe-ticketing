@@ -154,7 +154,7 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h1 
-            className="text-2xl font-bold"
+            className="text-xl font-bold"
             style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
           >
             Create Party

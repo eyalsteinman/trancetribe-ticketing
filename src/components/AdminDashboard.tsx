@@ -515,12 +515,12 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
       <div className="max-w-md mx-auto space-y-6 text-left">
         <div className="flex justify-between items-center">
           <div>
-            <h1 
-              className="text-2xl font-bold"
-              style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-            >
-              Admin Dashboard
-            </h1>
+        <h1 
+          className="text-xl font-bold"
+          style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+        >
+          Admin Dashboard
+        </h1>
             {adminNickname && (
               <p 
                 className="text-sm mt-1"
