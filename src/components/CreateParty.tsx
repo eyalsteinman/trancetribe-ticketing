@@ -266,10 +266,12 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
                   type="button"
                   variant="outline"
                   onClick={() => document.getElementById('partyPhoto')?.click()}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 text-foreground"
                 >
                   <Upload className="h-4 w-4" />
-                  {selectedPhoto ? selectedPhoto.name : 'Upload Photo'}
+                  <span className="truncate max-w-32">
+                    {selectedPhoto ? selectedPhoto.name : 'Upload Photo'}
+                  </span>
                 </Button>
                 {selectedPhoto && (
                   <Button

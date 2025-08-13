@@ -25,6 +25,12 @@ interface Party {
   required_socials: string[];
 }
 
+interface Production {
+  id: string;
+  name: string;
+  logo_url: string | null;
+}
+
 const EditParties = ({ onBack }: EditPartiesProps) => {
   const [parties, setParties] = useState<Party[]>([]);
   const [editingParty, setEditingParty] = useState<Party | null>(null);
@@ -35,16 +41,31 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
   const [loadingParties, setLoadingParties] = useState(true);
   const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
   const [editRequiredSocials, setEditRequiredSocials] = useState<string[]>([]);
+  const [productions, setProductions] = useState<Production[]>([]);
+  const [productionLogo, setProductionLogo] = useState<string | null>(null);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
   useEffect(() => {
     loadParties();
+    loadProductions();
   }, []);
 
   useEffect(() => {
     loadParties();
   }, [sortAscending]);
+
+  const loadProductions = async () => {
+    try {
+      const { data, error } = await (supabase as any)
+        .from('productions')
+        .select('id, name, logo_url')
+        .order('name');
+      if (!error && data) setProductions(data);
+    } catch (error) {
+      console.error('Error loading productions:', error);
+    }
+  };
 
   const loadParties = async () => {
     setLoadingParties(true);
@@ -77,6 +98,14 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
     setEditDate(party.date);
     setEditRequiredSocials(Array.isArray((party as any).required_socials) ? (party as any).required_socials : []);
     setSelectedPhoto(null);
+    
+    // Load production logo if party has a production
+    if ((party as any).production_id) {
+      const production = productions.find(p => p.id === (party as any).production_id);
+      setProductionLogo(production?.logo_url || null);
+    } else {
+      setProductionLogo(null);
+    }
   };
 
   const handlePhotoSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -153,7 +182,8 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           description: (editingParty as any).description ?? null,
           price: (editingParty as any).price ?? null,
           is_free: (editingParty as any).is_free ?? false,
-          required_socials: editRequiredSocials
+          required_socials: editRequiredSocials,
+          production_id: (editingParty as any).production_id || null
         })
         .eq('id', editingParty.id);
 
@@ -292,6 +322,36 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
+                <label className="text-sm font-medium">Production</label>
+                <div className="space-y-2">
+                  <select
+                    className="w-full p-2 border rounded-md"
+                    value={(editingParty as any).production_id || ''}
+                    onChange={(e) => setEditingParty((p) => p ? { ...p, production_id: e.target.value || null } as any : p)}
+                  >
+                    <option value="">Select production (optional)</option>
+                    {productions.map((p) => (
+                      <option key={p.id} value={p.id}>{p.name}</option>
+                    ))}
+                  </select>
+                  {(editingParty as any).production_id && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">Current production logo:</span>
+                      {productionLogo ? (
+                        <img 
+                          src={productionLogo} 
+                          alt="Production logo"
+                          className="h-8 w-8 object-cover rounded"
+                        />
+                      ) : (
+                        <span className="text-sm text-muted-foreground">No logo</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div>
                 <label className="text-sm font-medium">Party Name</label>
                 <Input
                   value={editName}
@@ -402,10 +462,12 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                     type="button"
                     variant="outline"
                     onClick={() => document.getElementById('editPhoto')?.click()}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 text-foreground"
                   >
                     <Upload className="h-4 w-4" />
-                    {selectedPhoto ? selectedPhoto.name : 'Choose New Photo'}
+                    <span className="truncate max-w-32">
+                      {selectedPhoto ? selectedPhoto.name : 'Choose New Photo'}
+                    </span>
                   </Button>
                   {selectedPhoto && (
                     <Button

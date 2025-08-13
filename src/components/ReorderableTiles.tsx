@@ -162,7 +162,10 @@ const ReorderableTiles: React.FC<ReorderableTilesProps> = ({ items, orderKey }) 
           onMouseLeave={cancelLongPress}
           className={`transition-transform ${draggingId === item.id ? 'scale-[0.98] opacity-90' : ''}`}
         >
-          <Card className="cursor-pointer hover:bg-accent text-black [&_svg]:text-black" onClick={item.onClick}>
+          <Card 
+            className="cursor-pointer hover:bg-accent text-black [&_svg]:text-black" 
+            onClick={dragReadyId !== item.id ? item.onClick : undefined}
+          >
             <CardContent className="flex flex-col items-center justify-center p-6 select-none">
               {item.icon}
               <div className="mt-2 text-center leading-tight select-none">
