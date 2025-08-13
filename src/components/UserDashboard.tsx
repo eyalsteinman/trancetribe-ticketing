@@ -27,7 +27,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance'>('dashboard');
   const [nickname, setNickname] = useState<string>('');
   const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
-  const [selectedProduction, setSelectedProduction] = useState<number | null>(null);
+  const [selectedProduction, setSelectedProduction] = useState<{id: string; name: string; logo_url: string | null; vip_description: string | null} | null>(null);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
@@ -154,8 +154,8 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         user={user}
         nickname={nickname}
         onBack={() => setCurrentView('dashboard')}
-        onSelectProduction={(id) => {
-          setSelectedProduction(id);
+        onSelectProduction={(production) => {
+          setSelectedProduction(production);
           setCurrentView('vip-detail');
         }}
       />
@@ -166,7 +166,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     return (
       <VIPProduction
         user={user}
-        productionId={selectedProduction}
+        production={selectedProduction}
         onBack={() => setCurrentView('vip')}
       />
     );

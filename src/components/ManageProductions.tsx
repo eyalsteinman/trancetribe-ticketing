@@ -16,6 +16,7 @@ interface Production {
   name: string;
   description: string | null;
   logo_url: string | null;
+  vip_description: string | null;
 }
 
 const ManageProductions = ({ onBack }: ManageProductionsProps) => {
@@ -23,6 +24,7 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');
+  const [editVipDescription, setEditVipDescription] = useState('');
   const [editLogo, setEditLogo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -31,7 +33,7 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
   const loadProductions = async () => {
     const { data, error } = await (supabase as any)
       .from('productions')
-      .select('id, name, description, logo_url')
+      .select('id, name, description, logo_url, vip_description')
       .order('created_at', { ascending: false });
     if (error) {
       console.error(error);
@@ -47,6 +49,7 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
     setEditingId(p.id);
     setEditName(p.name);
     setEditDescription(p.description || '');
+    setEditVipDescription(p.vip_description || '');
     setEditLogo(null);
   };
 
@@ -66,7 +69,11 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
     try {
       let logoUrl: string | null | undefined = undefined; // undefined means do not change
       if (editLogo) logoUrl = await uploadLogo();
-      const update: any = { name: editName.trim(), description: editDescription.trim() || null };
+      const update: any = { 
+        name: editName.trim(), 
+        description: editDescription.trim() || null,
+        vip_description: editVipDescription.trim() || null
+      };
       if (logoUrl !== undefined) update.logo_url = logoUrl;
       const { error } = await (supabase as any)
         .from('productions')
@@ -158,6 +165,16 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
                       />
                     </div>
                     <div>
+                      <label className="text-sm font-medium">VIP Subscription Benefits</label>
+                      <textarea
+                        rows={4}
+                        value={editVipDescription}
+                        onChange={(e) => setEditVipDescription(e.target.value)}
+                        placeholder="Describe what VIP subscription gives users for this production"
+                        className="w-full border rounded-md p-2"
+                      />
+                    </div>
+                    <div>
                       <label className="text-sm font-medium">Logo</label>
                       <div className="flex items-center gap-2">
                         <Input id={`logo-${p.id}`} type="file" accept="image/*" onChange={(e) => setEditLogo(e.target.files?.[0] || null)} className="hidden" />
@@ -177,6 +194,11 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
                       <img src={p.logo_url} alt={`${p.name} logo`} className="w-full h-auto object-contain rounded" />
                     )}
                     <div className="text-sm text-muted-foreground whitespace-pre-wrap">{p.description || 'No description.'}</div>
+                    {p.vip_description && (
+                      <div className="text-sm text-muted-foreground whitespace-pre-wrap border-t pt-2">
+                        <strong>VIP Benefits:</strong> {p.vip_description}
+                      </div>
+                    )}
                   </>
                 )}
               </CardContent>

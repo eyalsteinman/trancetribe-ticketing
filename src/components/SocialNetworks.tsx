@@ -116,7 +116,7 @@ const SocialNetworks = ({ userId, onBack }: SocialNetworksProps) => {
           </Card>
         ))}
 
-        <div className="flex justify-end">
+        <div className="flex justify-center">
           <Button onClick={handleSave} disabled={loading} className="flex items-center gap-2">
             <Save className="h-4 w-4" />
             {loading ? 'Saving...' : 'Save'}

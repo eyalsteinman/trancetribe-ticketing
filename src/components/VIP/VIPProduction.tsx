@@ -6,14 +6,19 @@ import { ArrowLeft } from "lucide-react";
 
 interface VIPProductionProps {
   user: User;
-  productionId: number;
+  production: {
+    id: string;
+    name: string;
+    logo_url: string | null;
+    vip_description: string | null;
+  };
   onBack: () => void;
 }
 
-const VIPProduction = ({ productionId, onBack }: VIPProductionProps) => {
+const VIPProduction = ({ production, onBack }: VIPProductionProps) => {
   useEffect(() => {
-    document.title = `VIP | Production ${productionId}`;
-  }, [productionId]);
+    document.title = `VIP | ${production.name}`;
+  }, [production.name]);
 
   return (
     <div className="min-h-screen p-4">
@@ -21,14 +26,14 @@ const VIPProduction = ({ productionId, onBack }: VIPProductionProps) => {
         <Button variant="ghost" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-xl font-semibold">Production {productionId}</h1>
+        <h1 className="text-xl font-semibold">{production.name}</h1>
       </header>
 
       <main className="max-w-md mx-auto space-y-6 text-left">
         <div className="flex justify-center">
           <img
-            src="/placeholder.svg"
-            alt={`Production ${productionId} logo placeholder`}
+            src={production.logo_url || "/placeholder.svg"}
+            alt={`${production.name} logo`}
             className="h-24 w-24 object-contain"
             loading="lazy"
           />
@@ -43,7 +48,7 @@ const VIPProduction = ({ productionId, onBack }: VIPProductionProps) => {
 
         <Card>
           <CardContent className="py-4 text-sm text-muted-foreground text-center">
-            Details and benefits will appear here once configured by admin.
+            {production.vip_description || "Details and benefits will appear here once configured by admin."}
           </CardContent>
         </Card>
       </main>

@@ -16,6 +16,7 @@ interface Production {
   name: string;
   description: string | null;
   logo_url: string | null;
+  vip_description: string | null;
 }
 
 const AdminProductions = ({ onBack }: AdminProductionsProps) => {
@@ -23,6 +24,7 @@ const AdminProductions = ({ onBack }: AdminProductionsProps) => {
   const [isCreating, setIsCreating] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [vipDescription, setVipDescription] = useState('');
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [productions, setProductions] = useState<Production[]>([]);
@@ -67,7 +69,7 @@ const AdminProductions = ({ onBack }: AdminProductionsProps) => {
     if (!user) { setProductions([]); return; }
     const { data, error } = await (supabase as any)
       .from('productions')
-      .select('id, name, description, logo_url')
+      .select('id, name, description, logo_url, vip_description')
       .eq('created_by', user.id)
       .order('created_at', { ascending: false });
     if (!error && data) setProductions(data);
@@ -86,7 +88,13 @@ const AdminProductions = ({ onBack }: AdminProductionsProps) => {
       if (logoFile) logoUrl = await uploadLogo();
       const { error } = await (supabase as any)
         .from('productions')
-        .insert({ created_by: user.id, name: name.trim(), description: description.trim() || null, logo_url: logoUrl });
+        .insert({ 
+          created_by: user.id, 
+          name: name.trim(), 
+          description: description.trim() || null, 
+          logo_url: logoUrl,
+          vip_description: vipDescription.trim() || null
+        });
       if (error) throw error;
       toast({ title: 'Saved', description: 'Production created!' });
       setIsCreating(false);
@@ -170,6 +178,16 @@ const AdminProductions = ({ onBack }: AdminProductionsProps) => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Write a short description"
+                  className="w-full border rounded-md p-2"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">VIP Subscription Benefits</label>
+                <textarea
+                  rows={4}
+                  value={vipDescription}
+                  onChange={(e) => setVipDescription(e.target.value)}
+                  placeholder="Describe what VIP subscription gives users for this production"
                   className="w-full border rounded-md p-2"
                 />
               </div>
