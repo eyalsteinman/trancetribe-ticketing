@@ -183,7 +183,7 @@ const handleBack = () => {
       onContextMenu={(e) => e.preventDefault()}
     >
       <Button
-        className="absolute top-4 right-4 z-[9999] on-color back-button"
+        className="absolute top-4 left-4 z-[9999] on-color back-button"
         variant="outline"
         size="icon"
         aria-label="Back"
