@@ -7,13 +7,46 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.12 (cd3cf9e)"
   }
   public: {
     Tables: {
+      friends: {
+        Row: {
+          created_at: string
+          friend_display_name: string
+          friend_first_name: string | null
+          friend_last_name: string | null
+          friend_personal_code: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          friend_display_name: string
+          friend_first_name?: string | null
+          friend_last_name?: string | null
+          friend_personal_code: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          friend_display_name?: string
+          friend_first_name?: string | null
+          friend_last_name?: string | null
+          friend_personal_code?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       game_scores: {
         Row: {
           admin_id: string
@@ -186,6 +219,7 @@ export type Database = {
           id: string
           last_name: string | null
           nickname: string | null
+          personal_code: string | null
           updated_at: string
           user_id: string
         }
@@ -197,6 +231,7 @@ export type Database = {
           id?: string
           last_name?: string | null
           nickname?: string | null
+          personal_code?: string | null
           updated_at?: string
           user_id: string
         }
@@ -208,6 +243,7 @@ export type Database = {
           id?: string
           last_name?: string | null
           nickname?: string | null
+          personal_code?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -320,10 +356,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_personal_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       has_role: {
         Args: {
-          _user_id: string
           _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
         }
         Returns: boolean
       }

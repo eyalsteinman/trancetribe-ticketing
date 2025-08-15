@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, Circle, Target, Bomb, PenTool } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
 
@@ -28,45 +28,37 @@ const UserGames = ({ onBack, onGameSelect }: UserGamesProps) => {
           </h1>
         </div>
 
-        <div className="grid gap-4">
-          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-black [&_svg]:text-black" onClick={() => onGameSelect('color-changer')}>
-          <CardHeader className="text-left">
-              <div className="mx-auto mb-2">
-                <Circle className="h-12 w-12" />
-              </div>
-              <CardTitle>Color Changer</CardTitle>
-            </CardHeader>
+        <div className="grid grid-cols-2 gap-4">
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-black [&_svg]:text-black aspect-square" onClick={() => onGameSelect('color-changer')}>
+            <CardContent className="p-4 flex flex-col items-center justify-center h-full text-center">
+              <Circle className="h-8 w-8 mb-2 text-black" />
+              <div className="text-sm font-semibold text-black">Color Changer</div>
+            </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-black [&_svg]:text-black" onClick={() => onGameSelect('dot-circle')}>
-            <CardHeader className="text-left">
-              <div className="mx-auto mb-2">
-                <Target className="h-12 w-12" />
-              </div>
-              <CardTitle>Dot Circle</CardTitle>
-            </CardHeader>
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-black [&_svg]:text-black aspect-square" onClick={() => onGameSelect('dot-circle')}>
+            <CardContent className="p-4 flex flex-col items-center justify-center h-full text-center">
+              <Target className="h-8 w-8 mb-2 text-black" />
+              <div className="text-sm font-semibold text-black">Dot Circle</div>
+            </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-black [&_svg]:text-black" onClick={() => onGameSelect('exploder')}>
-            <CardHeader className="text-left">
-              <div className="mx-auto mb-2">
-                <Bomb className="h-12 w-12" />
-              </div>
-              <CardTitle>Exploder</CardTitle>
-            </CardHeader>
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-black [&_svg]:text-black aspect-square" onClick={() => onGameSelect('exploder')}>
+            <CardContent className="p-4 flex flex-col items-center justify-center h-full text-center">
+              <Bomb className="h-8 w-8 mb-2 text-black" />
+              <div className="text-sm font-semibold text-black">Exploder</div>
+            </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-black [&_svg]:text-black" onClick={() => onGameSelect('haya-ninja')}>
-            <CardHeader className="text-left">
-              <div className="mx-auto mb-2">
-                <PenTool className="h-12 w-12" />
-              </div>
-              <CardTitle>
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-black [&_svg]:text-black aspect-square" onClick={() => onGameSelect('haya-ninja')}>
+            <CardContent className="p-4 flex flex-col items-center justify-center h-full text-center">
+              <PenTool className="h-8 w-8 mb-2 text-black" />
+              <div className="text-sm font-semibold text-black">
                 Haya
                 <br />
                 Ninja
-              </CardTitle>
-            </CardHeader>
+              </div>
+            </CardContent>
           </Card>
         </div>
       </div>

@@ -18,13 +18,15 @@ import VIPHub from './VIP/VIPHub';
 import VIPProduction from './VIP/VIPProduction';
 import ReorderableTiles from './ReorderableTiles';
 import Insurance from './Insurance';
+import PersonalCode from './PersonalCode';
+import FriendsCodes from './FriendsCodes';
 
 interface UserDashboardProps {
   user: User;
 }
 
 const UserDashboard = ({ user }: UserDashboardProps) => {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance' | 'personal-code' | 'friends-codes'>('dashboard');
   const [nickname, setNickname] = useState<string>('');
   const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
   const [selectedProduction, setSelectedProduction] = useState<{id: string; name: string; logo_url: string | null; vip_description: string | null} | null>(null);
@@ -172,6 +174,14 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     );
   }
 
+  if (currentView === 'personal-code') {
+    return <PersonalCode user={user} onBack={() => setCurrentView('dashboard')} />;
+  }
+
+  if (currentView === 'friends-codes') {
+    return <FriendsCodes user={user} onBack={() => setCurrentView('dashboard')} />;
+  }
+
   return (
     <div 
       className="min-h-screen p-4 transition-colors duration-500"
@@ -235,6 +245,18 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 title: 'VIP',
                 icon: <Crown className="h-12 w-12" />,
                 onClick: () => setCurrentView('vip' as const),
+              },
+              {
+                id: 'personal-code',
+                title: 'Personal Code',
+                icon: <UserIcon className="h-12 w-12" />,
+                onClick: () => setCurrentView('personal-code' as const),
+              },
+              {
+                id: 'friends-codes',
+                title: 'Friends Codes',
+                icon: <UserIcon className="h-12 w-12" />,
+                onClick: () => setCurrentView('friends-codes' as const),
               },
             ];
             return (
