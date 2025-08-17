@@ -229,7 +229,7 @@ const FriendsCodes = ({ user, onBack }: FriendsCodesProps) => {
                     onClick={() => removeFriend(friend.id)}
                     className="text-red-600 hover:bg-red-50"
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4 text-black" />
                   </Button>
                 </CardContent>
               </Card>

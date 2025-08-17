@@ -3,13 +3,18 @@ import { useEffect } from 'react';
 interface UseBackNavigationProps {
   onBackNavigation: () => void;
   isActive: boolean;
+  preventBackNavigation?: boolean;
 }
 
-export const useBackNavigation = ({ onBackNavigation, isActive }: UseBackNavigationProps) => {
+export const useBackNavigation = ({ onBackNavigation, isActive, preventBackNavigation = false }: UseBackNavigationProps) => {
   useEffect(() => {
     if (!isActive) return;
 
     const handlePopState = (event: PopStateEvent) => {
+      if (preventBackNavigation) {
+        // Push the same state back to prevent actual navigation
+        window.history.pushState({ modal: true }, '');
+      }
       event.preventDefault();
       onBackNavigation();
     };
@@ -26,5 +31,5 @@ export const useBackNavigation = ({ onBackNavigation, isActive }: UseBackNavigat
         window.history.back();
       }
     };
-  }, [isActive, onBackNavigation]);
+  }, [isActive, onBackNavigation, preventBackNavigation]);
 };

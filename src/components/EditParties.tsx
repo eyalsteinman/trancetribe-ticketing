@@ -599,7 +599,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                             className="flex items-center gap-1 bg-red-600 hover:bg-red-700 border-red-600 text-white"
                           >
                             <Trash2 className="h-3 w-3" />
-                            Delete
+                            <span className="text-white">Delete</span>
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>

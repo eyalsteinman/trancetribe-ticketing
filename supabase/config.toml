@@ -7,6 +7,9 @@ site_url = "https://user-scan-hub.lovable.app"
 [db]
 schema = "public"
 
+[functions.cleanup-ended-parties]
+verify_jwt = false
+
 [functions.create-admin]
 verify_jwt = false
 

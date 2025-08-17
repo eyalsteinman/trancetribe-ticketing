@@ -546,8 +546,8 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
               { id: 'guests', title: 'Guest List', icon: <List className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('guest-list' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'create-party', title: 'Create Party', icon: <Plus className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('create-party' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'edit-parties', title: 'Edit Parties', icon: <Edit className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('edit-parties' as const); setTimeout(() => loadParties(), 100); } },
-              { id: 'my-productions', title: 'My Productions', icon: <Building2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('my-productions' as const); setTimeout(() => loadParties(), 100); } },
-              { id: 'manage-productions', title: 'Manage Productions', icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('manage-productions' as const); setTimeout(() => loadParties(), 100); } },
+              { id: 'my-productions', title: 'My Productions', icon: <Building2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('my-productions' as const); setTimeout(() => { loadParties(); window.location.reload(); }, 100); } },
+              { id: 'manage-productions', title: 'Manage Productions', icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('manage-productions' as const); setTimeout(() => { loadParties(); window.location.reload(); }, 100); } },
               { id: 'manage-admins', title: 'Add Admin', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('manage-admins' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'registered-users', title: 'Registered Users', icon: <UserCheck className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('registered-users' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'admin-games', title: 'Admin Games', icon: <Gamepad2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('admin-games' as const); setTimeout(() => loadParties(), 100); } },
@@ -559,7 +559,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           })()}
 
           {(() => {
-            // Find the next upcoming party
+            // Find the next upcoming party (soonest party)
             const now = new Date();
             const upcomingParties = parties.filter(p => new Date(p.date) >= now);
             const nextParty = upcomingParties.length > 0 ? upcomingParties.reduce((earliest, current) => 
@@ -570,7 +570,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
               <Card>
                 <CardHeader>
                   <div className="flex justify-between items-center">
-                    <CardTitle>Next Party</CardTitle>
+                    <CardTitle>Next Party (Soonest)</CardTitle>
                     <Button
                       variant="outline"
                       size="sm"

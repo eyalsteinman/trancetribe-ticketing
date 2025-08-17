@@ -51,7 +51,7 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
-  // Auto-close dialogs on back navigation
+  // Auto-close dialogs on back navigation - prevent back navigation when dialogs are open
   useBackNavigation({
     onBackNavigation: () => {
       if (showSocialsDialog) {
@@ -62,12 +62,19 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
         setInfoParty(null);
       }
     },
-    isActive: showSocialsDialog || !!infoParty
+    isActive: showSocialsDialog || !!infoParty,
+    preventBackNavigation: true
   });
 
   useEffect(() => {
     loadParties();
     loadTicketCounts();
+    // Automatically refresh parties every 5 seconds to sync with admin changes
+    const interval = setInterval(() => {
+      loadParties();
+    }, 5000);
+    
+    return () => clearInterval(interval);
   }, []);
 
 useEffect(() => { loadUserSocials(); }, []);
@@ -193,16 +200,33 @@ useEffect(() => {
     try {
       const { data, error } = await supabase
         .from('qr_codes')
-        .select('code, is_approved')
+        .select('code, is_approved, is_scanned')
         .eq('user_id', user.id)
         .eq('party_id', selectedParty.id)
-        .eq('is_scanned', false)
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
 
-      if (data && !error && data.is_approved) {
+      if (data && !error && data.is_scanned) {
+        // QR was scanned
+        toast({
+          title: "QR Used",
+          description: "qr used",
+          variant: "default"
+        });
+      } else if (data && !error && data.is_approved) {
         setQrCode(data.code);
+        toast({
+          title: "QR Approved! Enjoy the party!",
+          description: "qr approved! Enjoy the party!",
+          variant: "default"
+        });
+      } else if (data && !error && !data.is_approved) {
+        toast({
+          title: "QR Pending Approval",
+          description: "qr pending approval",
+          variant: "default"
+        });
       }
     } catch (error) {
       console.error('Error loading existing QR code:', error);
@@ -379,13 +403,13 @@ useEffect(() => {
           
           setQrCode(qrData);
           toast({
-            title: "Success",
-            description: "QR code generated and approved!",
+            title: "QR Approved! Enjoy the party!",
+            description: "qr approved! Enjoy the party!",
           });
         } else {
           toast({
-            title: "QR Generated",
-            description: "QR code waiting for admin approval.",
+            title: "QR Pending Approval",
+            description: "qr pending approval",
             variant: "default"
           });
         }
@@ -589,7 +613,11 @@ useEffect(() => {
                         <button
                           type="button"
                           className="absolute right-2 top-2 h-8 w-8 rounded-full border flex items-center justify-center text-sm"
-                          onClick={(e) => { e.stopPropagation(); setInfoParty(party); }}
+                          onClick={(e) => { 
+                            e.stopPropagation(); 
+                            e.preventDefault();
+                            setInfoParty(party); 
+                          }}
                           aria-label="Party info"
                         >i</button>
                       </div>

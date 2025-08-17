@@ -77,11 +77,16 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
     }
   }, [selectedParty, activeTab]);
 
-  // Load guests when entering the page/tab for the first time  
+  // Load guests when entering the page for the first time  
   useEffect(() => {
-    if (selectedParty && activeTab === 'arriving') {
+    if (selectedParty) {
       loadGuests();
     }
+  }, []);
+
+  // Update counts when entering the page
+  useEffect(() => {
+    loadGuests();
   }, []);
 
   const loadParties = async () => {
