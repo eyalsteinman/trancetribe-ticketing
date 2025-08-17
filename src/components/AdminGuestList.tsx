@@ -77,6 +77,13 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
     }
   }, [selectedParty, activeTab]);
 
+  // Load guests when entering the page/tab for the first time  
+  useEffect(() => {
+    if (selectedParty && activeTab === 'arriving') {
+      loadGuests();
+    }
+  }, []);
+
   const loadParties = async () => {
     try {
       const { data, error } = await supabase
@@ -274,23 +281,46 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
     }
 
     try {
-      const { data, error } = await supabase.functions.invoke('send-guest-message', {
-        body: {
-          to: emailDialog.email,
-          message: emailMessage,
-          subject: `Message about your party registration`,
-          partyName: parties.find(p => p.id === selectedParty)?.name
+      if (emailDialog.guestId === 'all') {
+        // Send to all arriving guests
+        const emails = emailDialog.email.split(', ');
+        const promises = emails.map(email => 
+          supabase.functions.invoke('send-guest-message', {
+            body: {
+              to: email,
+              message: emailMessage,
+              subject: `Message about your party registration`,
+              partyName: parties.find(p => p.id === selectedParty)?.name
+            }
+          })
+        );
+        
+        await Promise.all(promises);
+        
+        toast({
+          title: "Success",
+          description: `Message sent to ${emails.length} guests successfully`,
+        });
+      } else {
+        // Send to single guest
+        const { data, error } = await supabase.functions.invoke('send-guest-message', {
+          body: {
+            to: emailDialog.email,
+            message: emailMessage,
+            subject: `Message about your party registration`,
+            partyName: parties.find(p => p.id === selectedParty)?.name
+          }
+        });
+
+        if (error) {
+          throw error;
         }
-      });
 
-      if (error) {
-        throw error;
+        toast({
+          title: "Success",
+          description: "Message sent successfully",
+        });
       }
-
-      toast({
-        title: "Success",
-        description: "Message sent successfully",
-      });
     } catch (error: any) {
       console.error('Error sending message:', error);
       toast({
@@ -496,6 +526,43 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                   </TableBody>
                 </Table>
               )
+            )}
+            
+            {/* Email All Arriving and WhatsApp Actions - Only show for arriving tab */}
+            {activeTab === 'arriving' && arrivingGuests.length > 0 && (
+              <div className="flex gap-2 mt-4 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    const emails = arrivingGuests
+                      .filter(guest => guest.profiles?.email)
+                      .map(guest => guest.profiles!.email)
+                      .join(', ');
+                    setEmailDialog({
+                      open: true,
+                      guestId: 'all',
+                      email: emails
+                    });
+                  }}
+                  className="flex-1"
+                >
+                  <Mail className="h-4 w-4 mr-2" />
+                  Email All ({arrivingGuests.filter(g => g.profiles?.email).length})
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    toast({
+                      title: "WhatsApp Feature",
+                      description: "WhatsApp messaging requires phone numbers to be collected first. This feature will be available once phone numbers are added to user profiles.",
+                      variant: "default"
+                    });
+                  }}
+                  className="flex-1"
+                >
+                  WhatsApp All
+                </Button>
+              </div>
             )}
           </CardContent>
         </Card>

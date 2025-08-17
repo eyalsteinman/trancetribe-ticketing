@@ -201,6 +201,10 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
         setEditingParty(null);
         setSelectedPhoto(null);
         loadParties();
+        // Refresh the page after successful edit
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       }
     } catch (error) {
       toast({
@@ -278,6 +282,10 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           description: "Party deleted successfully!",
         });
         loadParties();
+        // Refresh the page after successful deletion
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       }
     } catch (error) {
       toast({
@@ -439,6 +447,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                       size="sm"
                       onClick={() => removePartyPhoto(editingParty)}
                       disabled={loading}
+                      className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
                     >
                       Remove Current Photo
                     </Button>

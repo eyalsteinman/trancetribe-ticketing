@@ -14,6 +14,7 @@ const AuthForm = () => {
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [showAdminPassword, setShowAdminPassword] = useState(false);
   const [isUserLogin, setIsUserLogin] = useState(false);
@@ -56,10 +57,10 @@ const AuthForm = () => {
   };
 
   const handleUserSignup = async () => {
-    if (!email || !password || !firstName || !lastName) {
+    if (!email || !password || !firstName || !lastName || !phoneNumber) {
       toast({
         title: "Error",
-        description: "Please fill in all fields",
+        description: "Please fill in all fields including phone number",
         variant: "destructive"
       });
       return;
@@ -75,7 +76,8 @@ const AuthForm = () => {
           data: {
             display_name: `${firstName} ${lastName}`,
             first_name: firstName,
-            last_name: lastName
+            last_name: lastName,
+            phone_number: phoneNumber
           }
         }
       });
@@ -96,6 +98,7 @@ const AuthForm = () => {
         setPassword('');
         setFirstName('');
         setLastName('');
+        setPhoneNumber('');
       }
     } catch (error) {
       toast({
@@ -350,6 +353,18 @@ const AuthForm = () => {
                     </div>
                   </div>
                 )}
+                {!isUserLogin && (
+                  <div>
+                    <Label htmlFor="phoneNumber">Phone Number</Label>
+                    <Input
+                      id="phoneNumber"
+                      type="tel"
+                      placeholder="Phone Number"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                    />
+                  </div>
+                )}
                 <div>
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -382,7 +397,7 @@ const AuthForm = () => {
                   ) : (
                     <Button 
                       onClick={handleUserSignup}
-                      disabled={loading || !email || !password || !firstName || !lastName}
+                      disabled={loading || !email || !password || !firstName || !lastName || !phoneNumber}
                       className="w-full"
                     >
                       {loading ? "Creating Account..." : "Create Account"}
