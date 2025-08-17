@@ -223,6 +223,7 @@ export type Database = {
           last_name: string | null
           nickname: string | null
           personal_code: string | null
+          phone_number: string | null
           updated_at: string
           user_id: string
         }
@@ -235,6 +236,7 @@ export type Database = {
           last_name?: string | null
           nickname?: string | null
           personal_code?: string | null
+          phone_number?: string | null
           updated_at?: string
           user_id: string
         }
@@ -247,6 +249,7 @@ export type Database = {
           last_name?: string | null
           nickname?: string | null
           personal_code?: string | null
+          phone_number?: string | null
           updated_at?: string
           user_id?: string
         }
