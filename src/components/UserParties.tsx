@@ -21,6 +21,7 @@ interface Party {
   is_free: boolean;
   required_socials: string[];
   production_id: string | null;
+  ticket_count: number | null;
 }
 
 interface UserPartiesProps {
@@ -45,11 +46,13 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
   const [socialInputs, setSocialInputs] = useState<Record<string, string>>({});
   const [pendingAction, setPendingAction] = useState<null | 'pay' | 'qr'>(null);
   const [infoProduction, setInfoProduction] = useState<{ name: string; description: string | null; logo_url: string | null } | null>(null);
+  const [partyTicketCounts, setPartyTicketCounts] = useState<Record<string, number>>({});
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
   useEffect(() => {
     loadParties();
+    loadTicketCounts();
   }, []);
 
 useEffect(() => { loadUserSocials(); }, []);
@@ -119,7 +122,8 @@ useEffect(() => {
           price: p.price ?? null,
           is_free: p.is_free ?? false,
           required_socials: Array.isArray(p.required_socials) ? p.required_socials : [],
-          production_id: p.production_id ?? null
+          production_id: p.production_id ?? null,
+          ticket_count: p.ticket_count ?? null
         }));
         setParties(normalized);
       } else {
@@ -129,6 +133,24 @@ useEffect(() => {
       console.error('Error loading parties:', error);
     } finally {
       setLoadingParties(false);
+    }
+  };
+
+  const loadTicketCounts = async () => {
+    try {
+      const { data, error } = await (supabase as any)
+        .from('qr_codes')
+        .select('party_id');
+      
+      if (!error && data) {
+        const counts: Record<string, number> = {};
+        (data as any[]).forEach((qr) => {
+          counts[qr.party_id] = (counts[qr.party_id] || 0) + 1;
+        });
+        setPartyTicketCounts(counts);
+      }
+    } catch (error) {
+      console.error('Error loading ticket counts:', error);
     }
   };
 
@@ -532,6 +554,11 @@ useEffect(() => {
                       </div>
                       {party.price !== null && (
                         <div className="text-xs font-medium">Price: {party.price} ILS {party.is_free && <span className="text-green-600">(Free)</span>}</div>
+                      )}
+                      {party.ticket_count !== null && (
+                        <div className="text-xs text-blue-600 font-medium">
+                          Tickets: {Math.max(0, party.ticket_count - (partyTicketCounts[party.id] || 0))} left of {party.ticket_count}
+                        </div>
                       )}
                       {showActive && (
                         <div className="text-xs text-green-600 font-medium">Active</div>

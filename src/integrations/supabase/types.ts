@@ -91,6 +91,7 @@ export type Database = {
           price: number | null
           production_id: string | null
           required_socials: string[]
+          ticket_count: number | null
           updated_at: string
         }
         Insert: {
@@ -106,6 +107,7 @@ export type Database = {
           price?: number | null
           production_id?: string | null
           required_socials?: string[]
+          ticket_count?: number | null
           updated_at?: string
         }
         Update: {
@@ -121,6 +123,7 @@ export type Database = {
           price?: number | null
           production_id?: string | null
           required_socials?: string[]
+          ticket_count?: number | null
           updated_at?: string
         }
         Relationships: [

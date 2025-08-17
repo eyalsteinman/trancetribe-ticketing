@@ -57,7 +57,48 @@ const SocialNetworks = ({ userId, onBack }: SocialNetworksProps) => {
     setValues((prev) => ({ ...prev, [key]: val }));
   };
 
+  const validateUrl = (url: string, platform: Platform): boolean => {
+    if (!url.trim()) return true; // Empty URLs are valid (optional)
+    
+    try {
+      const urlObj = new URL(url);
+      const domain = urlObj.hostname.toLowerCase();
+      
+      switch (platform) {
+        case 'facebook':
+          return domain === 'facebook.com' || domain === 'www.facebook.com' || domain === 'm.facebook.com';
+        case 'instagram':
+          return domain === 'instagram.com' || domain === 'www.instagram.com';
+        case 'tiktok':
+          return domain === 'tiktok.com' || domain === 'www.tiktok.com';
+        case 'x':
+          return domain === 'x.com' || domain === 'www.x.com' || domain === 'twitter.com' || domain === 'www.twitter.com';
+        default:
+          return false;
+      }
+    } catch {
+      return false;
+    }
+  };
+
   const handleSave = async () => {
+    // Validate all URLs before saving
+    const invalidPlatforms: string[] = [];
+    platforms.forEach((p) => {
+      if (values[p.key]?.trim() && !validateUrl(values[p.key], p.key)) {
+        invalidPlatforms.push(p.label);
+      }
+    });
+
+    if (invalidPlatforms.length > 0) {
+      toast({ 
+        title: 'Invalid URLs', 
+        description: `Please enter valid URLs for: ${invalidPlatforms.join(', ')}`, 
+        variant: 'destructive' 
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       // Remove existing rows for these platforms

@@ -28,6 +28,7 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [selectedProductionId, setSelectedProductionId] = useState<string>('');
   const [productions, setProductions] = useState<{ id: string; name: string }[]>([]);
+  const [ticketCount, setTicketCount] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
@@ -110,7 +111,8 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
           price: price ? Number(price) : null,
           is_free: isFree,
           required_socials: requiredSocials,
-          production_id: selectedProductionId || null
+          production_id: selectedProductionId || null,
+          ticket_count: ticketCount ? Number(ticketCount) : null
         });
 
       if (error) {
@@ -128,6 +130,7 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
         setPartyName('');
         setPartyDate('');
         setSelectedPhoto(null);
+        setTicketCount('');
         onBack();
       }
     } catch (error) {
@@ -227,6 +230,16 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
                 />
                 <label htmlFor="isFree" className="text-sm">Free Party</label>
               </div>
+            </div>
+            <div>
+              <label className="text-sm font-medium">Number of Tickets Available</label>
+              <Input
+                type="number"
+                min="1"
+                placeholder="e.g. 100"
+                value={ticketCount}
+                onChange={(e) => setTicketCount(e.target.value)}
+              />
             </div>
 
             <div>
