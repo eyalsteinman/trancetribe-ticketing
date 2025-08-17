@@ -147,7 +147,7 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
                   ) : (
                     <div className="flex gap-2">
                       <Button size="sm" variant="outline" onClick={() => startEdit(p)}><Edit className="h-4 w-4 mr-1" />Edit</Button>
-                      <Button size="sm" variant="destructive" onClick={() => deleteProduction(p.id)} className="delete-button"><Trash2 className="h-4 w-4 mr-1" />Delete</Button>
+                      <Button size="sm" className="bg-red-600 hover:bg-red-700 border-red-600 text-white" onClick={() => deleteProduction(p.id)}><Trash2 className="h-4 w-4 mr-1" />Delete</Button>
                     </div>
                   )}
                 </CardTitle>

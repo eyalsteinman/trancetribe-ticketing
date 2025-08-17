@@ -22,6 +22,7 @@ import HayaNinja from './HayaNinja';
 import ReorderableTiles from './ReorderableTiles';
 import AdminProductions from './AdminProductions';
 import ManageProductions from './ManageProductions';
+import AdminGuestList from './AdminGuestList';
 
 interface AdminDashboardProps {
   user: User;
@@ -46,7 +47,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
-  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'nickname' | 'my-productions' | 'manage-productions'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'nickname' | 'my-productions' | 'manage-productions' | 'guest-list'>('dashboard');
   const [adminNickname, setAdminNickname] = useState('');
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [nicknameInput, setNicknameInput] = useState('');
@@ -362,6 +363,10 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     return <ManageProductions onBack={() => setCurrentView('dashboard')} />;
   }
 
+  if (currentView === 'guest-list') {
+    return <AdminGuestList user={user} onBack={() => setCurrentView('dashboard')} />;
+  }
+
   if (currentView === 'scanner') {
     return (
       <div 
@@ -538,7 +543,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           {(() => {
             const tiles = [
               { id: 'scanner', title: 'Camera Scan', icon: <Camera className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('scanner' as const) },
-              { id: 'guests', title: 'Guest List', icon: <List className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('guests' as const) },
+              { id: 'guests', title: 'Guest List', icon: <List className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('guest-list' as const) },
               { id: 'create-party', title: 'Create Party', icon: <Plus className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('create-party' as const) },
               { id: 'edit-parties', title: 'Edit Parties', icon: <Edit className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('edit-parties' as const) },
               { id: 'my-productions', title: 'My Productions', icon: <Building2 className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('my-productions' as const) },

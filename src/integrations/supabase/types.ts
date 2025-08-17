@@ -254,9 +254,13 @@ export type Database = {
       }
       qr_codes: {
         Row: {
+          approved_at: string | null
+          approved_by: string | null
+          auto_approved: boolean
           code: string
           created_at: string
           id: string
+          is_approved: boolean
           is_scanned: boolean
           party_id: string
           scanned_at: string | null
@@ -265,9 +269,13 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          auto_approved?: boolean
           code: string
           created_at?: string
           id?: string
+          is_approved?: boolean
           is_scanned?: boolean
           party_id: string
           scanned_at?: string | null
@@ -276,9 +284,13 @@ export type Database = {
           user_id: string
         }
         Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          auto_approved?: boolean
           code?: string
           created_at?: string
           id?: string
+          is_approved?: boolean
           is_scanned?: boolean
           party_id?: string
           scanned_at?: string | null

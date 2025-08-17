@@ -9,6 +9,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { User } from '@supabase/supabase-js';
 import { ArrowLeft, ArrowUpDown } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 interface Party {
   id: string;
@@ -49,6 +50,20 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
   const [partyTicketCounts, setPartyTicketCounts] = useState<Record<string, number>>({});
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
+
+  // Auto-close dialogs on back navigation
+  useBackNavigation({
+    onBackNavigation: () => {
+      if (showSocialsDialog) {
+        setShowSocialsDialog(false);
+        setPendingAction(null);
+      }
+      if (infoParty) {
+        setInfoParty(null);
+      }
+    },
+    isActive: showSocialsDialog || !!infoParty
+  });
 
   useEffect(() => {
     loadParties();
@@ -178,7 +193,7 @@ useEffect(() => {
     try {
       const { data, error } = await supabase
         .from('qr_codes')
-        .select('code')
+        .select('code, is_approved')
         .eq('user_id', user.id)
         .eq('party_id', selectedParty.id)
         .eq('is_scanned', false)
@@ -186,7 +201,7 @@ useEffect(() => {
         .limit(1)
         .maybeSingle();
 
-      if (data && !error) {
+      if (data && !error && data.is_approved) {
         setQrCode(data.code);
       }
     } catch (error) {
@@ -330,7 +345,8 @@ useEffect(() => {
         .insert({
           user_id: user.id,
           party_id: selectedParty.id,
-          code: qrData
+          code: qrData,
+          is_approved: false
         });
 
       if (error) {
@@ -341,11 +357,38 @@ useEffect(() => {
           variant: "destructive"
         });
       } else {
-        setQrCode(qrData);
-        toast({
-          title: "Success",
-          description: "QR code generated successfully!",
-        });
+        // Check if this user has auto-approval
+        const { data: existingApproval } = await supabase
+          .from('qr_codes')
+          .select('auto_approved')
+          .eq('user_id', user.id)
+          .eq('auto_approved', true)
+          .limit(1)
+          .maybeSingle();
+
+        if (existingApproval) {
+          // Auto-approve this QR code
+          await supabase
+            .from('qr_codes')
+            .update({
+              is_approved: true,
+              auto_approved: true,
+              approved_at: new Date().toISOString()
+            })
+            .eq('code', qrData);
+          
+          setQrCode(qrData);
+          toast({
+            title: "Success",
+            description: "QR code generated and approved!",
+          });
+        } else {
+          toast({
+            title: "QR Generated",
+            description: "QR code waiting for admin approval.",
+            variant: "default"
+          });
+        }
       }
     } catch (error) {
       console.error('QR Code generation catch error:', error);
@@ -433,33 +476,34 @@ useEffect(() => {
             </CardContent>
           </Card>
 
-          <Dialog open={showSocialsDialog} onOpenChange={setShowSocialsDialog}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Social profile required</DialogTitle>
-                <DialogDescription>
-                  This event requires the following social profile(s). Please provide URLs to continue.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-3">
-                {missingPlatforms.map((p) => (
-                  <div key={p}>
-                    <label className="text-sm font-medium">{platformLabels[p] || p}</label>
-                    <Input
-                      placeholder={`Enter your ${platformLabels[p] || p} profile URL`}
-                      value={socialInputs[p] || ''}
-                      onChange={(e) => setSocialInputs((prev) => ({ ...prev, [p]: e.target.value }))}
-                      inputMode="url"
-                    />
-                  </div>
-                ))}
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => { setShowSocialsDialog(false); setPendingAction(null); }}>Cancel</Button>
-                <Button onClick={saveMissingSocials} disabled={loading}>{loading ? 'Saving...' : 'Save & Continue'}</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+            <Dialog open={showSocialsDialog} onOpenChange={setShowSocialsDialog}>
+              <DialogContent className="text-black">
+                <DialogHeader>
+                  <DialogTitle className="text-black">Social profile required</DialogTitle>
+                  <DialogDescription className="text-black">
+                    This event requires the following social profile(s). Please provide URLs to continue.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-3">
+                  {missingPlatforms.map((p) => (
+                    <div key={p}>
+                      <label className="text-sm font-medium text-black">{platformLabels[p] || p}</label>
+                      <Input
+                        placeholder={`Enter your ${platformLabels[p] || p} profile URL`}
+                        value={socialInputs[p] || ''}
+                        onChange={(e) => setSocialInputs((prev) => ({ ...prev, [p]: e.target.value }))}
+                        inputMode="url"
+                        className="text-black"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => { setShowSocialsDialog(false); setPendingAction(null); }}>Cancel</Button>
+                  <Button onClick={saveMissingSocials} disabled={loading}>{loading ? 'Saving...' : 'Save & Continue'}</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
         </div>
       </div>
     );
@@ -577,37 +621,38 @@ useEffect(() => {
         {/* Info Dialog */}
         {infoParty && (
           <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50">
-            <div className="bg-white text-black rounded-lg w-11/12 max-w-md p-4 relative">
-              <button className="absolute top-2 right-2" onClick={() => setInfoParty(null)} aria-label="Close">×</button>
+            <div className="bg-white text-black rounded-lg w-11/12 max-w-md p-4 relative max-h-[80vh] overflow-y-auto">
+              <button className="absolute top-2 right-2 text-black text-xl" onClick={() => setInfoParty(null)} aria-label="Close">×</button>
               {infoProduction?.logo_url && (
                 <img src={infoProduction.logo_url} alt={`${infoProduction.name} logo`} className="w-full h-auto object-contain rounded mb-3" />
               )}
               {infoProduction?.description && (
                 <div className="text-sm text-gray-800 whitespace-pre-wrap mb-3">{infoProduction.description}</div>
               )}
-              <h2 className="text-lg font-semibold mb-2">{infoParty.name}</h2>
+              <h2 className="text-lg font-semibold mb-2 text-black">{infoParty.name}</h2>
               <div className="text-sm text-gray-700 whitespace-pre-wrap">{infoParty.description || 'No additional information provided.'}</div>
             </div>
           </div>
         )}
 
         <Dialog open={showSocialsDialog} onOpenChange={setShowSocialsDialog}>
-          <DialogContent>
+          <DialogContent className="text-black">
             <DialogHeader>
-              <DialogTitle>Social profile required</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="text-black">Social profile required</DialogTitle>
+              <DialogDescription className="text-black">
                 This event requires the following social profile(s). Please provide URLs to continue.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3">
               {missingPlatforms.map((p) => (
                 <div key={p}>
-                  <label className="text-sm font-medium">{platformLabels[p] || p}</label>
+                  <label className="text-sm font-medium text-black">{platformLabels[p] || p}</label>
                   <Input
                     placeholder={`Enter your ${platformLabels[p] || p} profile URL`}
                     value={socialInputs[p] || ''}
                     onChange={(e) => setSocialInputs((prev) => ({ ...prev, [p]: e.target.value }))}
                     inputMode="url"
+                    className="text-black"
                   />
                 </div>
               ))}
