@@ -1,5 +1,8 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
+import { renderAsync } from 'npm:@react-email/components@0.0.22';
+import React from 'npm:react@18.3.1';
+import { GuestMessageEmail } from './_templates/guest-message.tsx';
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -35,22 +38,19 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
+    // Render the React email template
+    const html = await renderAsync(
+      React.createElement(GuestMessageEmail, {
+        message,
+        partyName,
+      })
+    );
+
     const emailResponse = await resend.emails.send({
       from: "Party Admin <admin@resend.dev>",
       to: [to],
       subject: subject || `Message about ${partyName || 'your party registration'}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #333;">Message from Party Admin</h2>
-          ${partyName ? `<p><strong>Regarding:</strong> ${partyName}</p>` : ''}
-          <div style="background-color: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0;">
-            ${message.replace(/\n/g, '<br>')}
-          </div>
-          <p style="color: #666; font-size: 14px;">
-            This message was sent by the party administrator. Please do not reply to this email.
-          </p>
-        </div>
-      `,
+      html,
     });
 
     console.log("Message sent successfully:", emailResponse);
