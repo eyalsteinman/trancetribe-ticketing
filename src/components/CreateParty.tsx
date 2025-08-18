@@ -83,6 +83,29 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
       return;
     }
 
+    // Validate free/price logic
+    if (isFree && price && Number(price) > 0) {
+      toast({
+        title: "Error",
+        description: "Deselect free or remove price",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!isFree && price && Number(price) > 0) {
+      // Price is set and not free - this is valid
+    } else if (isFree) {
+      // Free party - this is valid
+    } else if (price && Number(price) > 0) {
+      toast({
+        title: "Error", 
+        description: "Delete price to select free",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       // Upload photo if selected
@@ -217,7 +240,16 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
                   step="0.5"
                   placeholder="e.g. 50"
                   value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  onChange={(e) => {
+                    setPrice(e.target.value);
+                    if (e.target.value && Number(e.target.value) > 0 && isFree) {
+                      toast({
+                        title: "Error",
+                        description: "Deselect free to enter price",
+                        variant: "destructive"
+                      });
+                    }
+                  }}
                 />
               </div>
               <div className="flex items-end gap-2">
@@ -225,7 +257,16 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
                   id="isFree"
                   type="checkbox"
                   checked={isFree}
-                  onChange={(e) => setIsFree(e.target.checked)}
+                  onChange={(e) => {
+                    setIsFree(e.target.checked);
+                    if (e.target.checked && price && Number(price) > 0) {
+                      toast({
+                        title: "Error", 
+                        description: "Delete price to select free",
+                        variant: "destructive"
+                      });
+                    }
+                  }}
                   className="h-4 w-4"
                 />
                 <label htmlFor="isFree" className="text-sm">Free Party</label>

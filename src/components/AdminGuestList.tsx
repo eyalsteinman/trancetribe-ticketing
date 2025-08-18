@@ -77,17 +77,22 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
     }
   }, [selectedParty, activeTab]);
 
-  // Load guests when entering the page for the first time  
+  // Refresh guest counts when entering the page
   useEffect(() => {
-    if (selectedParty) {
-      loadGuests();
-    }
-  }, []);
-
-  // Update counts when entering the page
-  useEffect(() => {
-    loadGuests();
-  }, []);
+    const refreshGuests = () => {
+      if (selectedParty) {
+        loadGuests();
+      }
+    };
+    
+    // Load immediately on mount
+    refreshGuests();
+    
+    // Set up periodic refresh
+    const interval = setInterval(refreshGuests, 2000);
+    
+    return () => clearInterval(interval);
+  }, [selectedParty, activeTab]);
 
   const loadParties = async () => {
     try {

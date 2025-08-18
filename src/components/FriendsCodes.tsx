@@ -224,12 +224,12 @@ const FriendsCodes = ({ user, onBack }: FriendsCodesProps) => {
                     </div>
                   </div>
                   <Button
-                    variant="outline"
+                    variant="destructive"
                     size="sm"
                     onClick={() => removeFriend(friend.id)}
-                    className="text-red-600 hover:bg-red-50"
+                    className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
                   >
-                    <Trash2 className="h-4 w-4 text-black" />
+                    <Trash2 className="h-4 w-4 text-white" />
                   </Button>
                 </CardContent>
               </Card>

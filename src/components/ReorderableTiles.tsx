@@ -160,7 +160,13 @@ const ReorderableTiles: React.FC<ReorderableTilesProps> = ({ items, orderKey }) 
           onMouseDown={() => startLongPress(item.id)}
           onMouseUp={cancelLongPress}
           onMouseLeave={cancelLongPress}
-          className={`transition-transform ${draggingId === item.id ? 'scale-[0.98] opacity-90' : ''}`}
+          className={`transition-all duration-300 ease-in-out ${
+            draggingId === item.id 
+              ? 'scale-95 opacity-80 transform rotate-2 shadow-lg z-10' 
+              : dragReadyId === item.id 
+                ? 'scale-105 shadow-md animate-pulse' 
+                : 'hover:scale-102'
+          }`}
         >
           <Card 
             className="cursor-pointer hover:bg-accent text-black [&_svg]:text-black" 

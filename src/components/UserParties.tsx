@@ -69,10 +69,10 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
   useEffect(() => {
     loadParties();
     loadTicketCounts();
-    // Automatically refresh parties every 5 seconds to sync with admin changes
+    // Set up periodic refresh to sync with admin deletions
     const interval = setInterval(() => {
       loadParties();
-    }, 5000);
+    }, 3000); // Check every 3 seconds for party changes
     
     return () => clearInterval(interval);
   }, []);
@@ -648,9 +648,9 @@ useEffect(() => {
 
         {/* Info Dialog */}
         {infoParty && (
-          <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50">
-            <div className="bg-white text-black rounded-lg w-11/12 max-w-md p-4 relative max-h-[80vh] overflow-y-auto">
-              <button className="absolute top-2 right-2 text-black text-xl" onClick={() => setInfoParty(null)} aria-label="Close">×</button>
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50" onClick={() => setInfoParty(null)}>
+            <div className="bg-white text-black rounded-lg w-11/12 max-w-md p-4 relative max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <button className="absolute top-2 right-2 text-black text-2xl w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded" onClick={() => setInfoParty(null)} aria-label="Close">×</button>
               {infoProduction?.logo_url && (
                 <img src={infoProduction.logo_url} alt={`${infoProduction.name} logo`} className="w-full h-auto object-contain rounded mb-3" />
               )}

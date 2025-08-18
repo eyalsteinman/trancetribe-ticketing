@@ -201,10 +201,8 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
         setEditingParty(null);
         setSelectedPhoto(null);
         loadParties();
-        // Refresh the page after successful edit
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+  // Remove duplicate loadParties call
+  // loadParties();
       }
     } catch (error) {
       toast({
@@ -282,10 +280,8 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           description: "Party deleted successfully!",
         });
         loadParties();
-        // Refresh the page after successful deletion
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+  // Remove duplicate loadParties call
+  // loadParties();
       }
     } catch (error) {
       toast({
@@ -449,7 +445,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                       disabled={loading}
                       className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
                     >
-                      Remove Current Photo
+                      <span className="text-white">Remove Current Photo</span>
                     </Button>
                   </div>
                 ) : (
@@ -566,6 +562,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                 return (
                   <div
                     key={party.id}
+                    data-party-id={party.id}
                     className="border rounded-lg p-4 space-y-3"
                   >
                     <div className="flex justify-between items-start">
@@ -596,7 +593,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                           <Button
                             variant="destructive"
                             size="sm"
-                            className="flex items-center gap-1 bg-red-600 hover:bg-red-700 border-red-600 text-white"
+                            className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
                           >
                             <Trash2 className="h-3 w-3" />
                             <span className="text-white">Delete</span>
@@ -614,9 +611,9 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                             <AlertDialogAction
                               onClick={() => deleteParty(party.id)}
                               disabled={loading}
-                              className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
+                      className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
                             >
-                              {loading ? "Deleting..." : "Delete"}
+                              {loading ? "Deleting..." : <span className="text-white">Delete</span>}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>

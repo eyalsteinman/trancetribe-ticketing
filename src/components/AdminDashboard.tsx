@@ -546,8 +546,8 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
               { id: 'guests', title: 'Guest List', icon: <List className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('guest-list' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'create-party', title: 'Create Party', icon: <Plus className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('create-party' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'edit-parties', title: 'Edit Parties', icon: <Edit className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('edit-parties' as const); setTimeout(() => loadParties(), 100); } },
-              { id: 'my-productions', title: 'My Productions', icon: <Building2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('my-productions' as const); setTimeout(() => { loadParties(); window.location.reload(); }, 100); } },
-              { id: 'manage-productions', title: 'Manage Productions', icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('manage-productions' as const); setTimeout(() => { loadParties(); window.location.reload(); }, 100); } },
+              { id: 'my-productions', title: 'My Productions', icon: <Building2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('my-productions' as const); setTimeout(() => loadParties(), 100); } },
+              { id: 'manage-productions', title: 'Manage Productions', icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('manage-productions' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'manage-admins', title: 'Add Admin', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('manage-admins' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'registered-users', title: 'Registered Users', icon: <UserCheck className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('registered-users' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'admin-games', title: 'Admin Games', icon: <Gamepad2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('admin-games' as const); setTimeout(() => loadParties(), 100); } },
@@ -567,42 +567,47 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             ) : null;
             
             return nextParty && (
-              <Card>
-                <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <CardTitle>Next Party (Soonest)</CardTitle>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSortAscending(!sortAscending)}
-                      className="flex items-center gap-2"
-                    >
-                      {sortAscending ? "Latest First" : "Soonest First"}
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center space-y-4">
-                    <div className="text-lg font-semibold">
-                      {nextParty.name}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Upcoming Parties</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3 max-h-64 overflow-y-auto">
+                      {upcomingParties.length === 0 ? (
+                        <p className="text-center text-muted-foreground">No upcoming parties</p>
+                      ) : (
+                        upcomingParties
+                          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                          .map((party) => (
+                            <div
+                              key={party.id}
+                              className="border rounded-lg p-3 cursor-pointer hover:bg-accent transition-colors"
+                              onClick={() => {
+                                setCurrentView('edit-parties');
+                                // Pass the party ID to edit parties component
+                                setTimeout(() => {
+                                  const editButton = document.querySelector(`[data-party-id="${party.id}"] button[aria-label*="Edit"]`) as HTMLButtonElement;
+                                  if (editButton) editButton.click();
+                                }, 100);
+                              }}
+                            >
+                              <div className="flex justify-between items-center">
+                                <div>
+                                  <div className="font-semibold">{party.name}</div>
+                                  <div className="text-sm text-muted-foreground">
+                                    {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                  </div>
+                                </div>
+                                {party === nextParty && (
+                                  <div className="text-xs text-green-600 font-medium">Next</div>
+                                )}
+                              </div>
+                            </div>
+                          ))
+                      )}
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      {new Date(nextParty.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                    </div>
-                    {nextParty.photo_url && (
-                      <div className="w-full">
-                        <img 
-                          src={nextParty.photo_url} 
-                          alt={nextParty.name}
-                          className="w-full h-auto object-contain rounded-md mx-auto"
-                        />
-                      </div>
-                    )}
-                    <div className="text-2xl font-bold">{scannedUsers.length}</div>
-                    <div className="text-sm text-muted-foreground">Guests Scanned for Selected Party</div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
             );
           })()}
         </div>
