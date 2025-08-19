@@ -23,6 +23,8 @@ interface Party {
   required_socials: string[];
   production_id: string | null;
   ticket_count: number | null;
+  start_time: string | null;
+  end_time: string | null;
 }
 
 interface UserPartiesProps {
@@ -70,12 +72,20 @@ const UserParties = ({ user, onBack }: UserPartiesProps) => {
     loadParties();
     loadTicketCounts();
     
-    // Set up periodic refresh to sync with admin deletions
-    const interval = setInterval(() => {
-      loadParties();
-    }, 5000); // Check every 5 seconds for party changes
-    
-    return () => clearInterval(interval);
+    const channel = supabase
+      .channel('public:parties-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'parties' }, (payload: any) => {
+        if (payload.eventType === 'DELETE') {
+          setParties((prev) => prev.filter((p) => p.id !== (payload.old as any).id));
+        } else {
+          loadParties();
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
 useEffect(() => { loadUserSocials(); }, []);
@@ -146,7 +156,9 @@ useEffect(() => {
           is_free: p.is_free ?? false,
           required_socials: Array.isArray(p.required_socials) ? p.required_socials : [],
           production_id: p.production_id ?? null,
-          ticket_count: p.ticket_count ?? null
+          ticket_count: p.ticket_count ?? null,
+          start_time: p.start_time ?? null,
+          end_time: p.end_time ?? null
         }));
         setParties(normalized);
       } else {
@@ -459,6 +471,12 @@ useEffect(() => {
                 <div className="text-sm text-muted-foreground">
                   {new Date(selectedParty.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </div>
+                {(selectedParty.start_time || selectedParty.end_time) && (
+                  <div className="text-sm text-muted-foreground">
+                    {selectedParty.start_time ? `Starts: ${selectedParty.start_time}` : ''}
+                    {selectedParty.end_time ? ` • Ends: ${selectedParty.end_time}` : ''}
+                  </div>
+                )}
                 {selectedParty.price !== null && (
                   <div className="text-sm font-medium">
                     Price: {selectedParty.price} ILS {selectedParty.is_free && <span className="text-xs text-green-600">(Free)</span>}

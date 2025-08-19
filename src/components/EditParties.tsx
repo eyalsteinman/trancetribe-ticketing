@@ -263,6 +263,12 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
         await removePhoto(party.photo_url);
       }
 
+      // Remove related QR codes first to avoid FK issues
+      await (supabase as any)
+        .from('qr_codes')
+        .delete()
+        .eq('party_id', partyId);
+
       const { error } = await (supabase as any)
         .from('parties')
         .delete()
@@ -602,7 +608,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                             size="sm"
                             className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
                           >
-                            <Trash2 className="h-3 w-3" />
+                            <Trash2 className="h-3 w-3 text-white" />
                             <span className="text-white">Delete</span>
                           </Button>
                         </AlertDialogTrigger>

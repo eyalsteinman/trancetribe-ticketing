@@ -146,7 +146,7 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
                     </div>
                   ) : (
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={() => startEdit(p)}><Edit className="h-4 w-4 mr-1" />Edit</Button>
+                      <Button size="sm" variant="outline" aria-label="Edit production" onClick={() => startEdit(p)}><Edit className="h-4 w-4 mr-1" />Edit</Button>
                       <Button size="sm" className="bg-red-600 hover:bg-red-700 border-red-600 text-white" onClick={() => deleteProduction(p.id)}><Trash2 className="h-4 w-4 mr-1 text-white" /><span className="text-white">Delete</span></Button>
                     </div>
                   )}

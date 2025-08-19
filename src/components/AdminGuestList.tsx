@@ -77,12 +77,6 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
     }
   }, [selectedParty, activeTab]);
 
-  // Load guests when entering the page
-  useEffect(() => {
-    if (selectedParty) {
-      loadGuests();
-    }
-  }, [selectedParty, activeTab]);
 
   const loadParties = async () => {
     try {

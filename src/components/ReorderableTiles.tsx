@@ -86,7 +86,7 @@ const ReorderableTiles: React.FC<ReorderableTilesProps> = ({ items, orderKey }) 
   // Touch/mouse long-press to enable drag (2 seconds)
   const startLongPress = (id: string) => {
     if (longPressTimer.current) window.clearTimeout(longPressTimer.current);
-    longPressTimer.current = window.setTimeout(() => setDragReadyId(id), 2000);
+    longPressTimer.current = window.setTimeout(() => setDragReadyId(id), 600);
   };
   const cancelLongPress = () => {
     if (longPressTimer.current) window.clearTimeout(longPressTimer.current);

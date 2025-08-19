@@ -18,38 +18,58 @@ const handler = async (req: Request): Promise<Response> => {
     
     const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
-    // Calculate the date 12 hours ago  
-    const twelveHoursAgo = new Date();
-    twelveHoursAgo.setHours(twelveHoursAgo.getHours() - 12);
+    // Determine parties that ended more than 12 hours ago
+    const now = new Date();
+    const twelveHoursMs = 12 * 60 * 60 * 1000;
 
-    console.log('Cleaning up parties that ended before:', twelveHoursAgo.toISOString());
-
-    // Delete parties that ended more than 12 hours ago
-    const { error, count } = await supabase
+    const { data: parties, error: partiesError } = await supabase
       .from('parties')
-      .delete()
-      .lt('date', twelveHoursAgo.toISOString().split('T')[0]);
+      .select('id, date, end_time');
 
-    if (error) {
-      console.error('Error deleting ended parties:', error);
-      throw error;
+    if (partiesError) {
+      console.error('Error loading parties for cleanup:', partiesError);
+      throw partiesError;
     }
 
-    console.log(`Successfully deleted ${count || 0} ended parties`);
+    const toDeleteIds = (parties || [])
+      .filter((p: any) => {
+        // Build end datetime using end_time when available; default to end of day
+        const endTimeStr = p.end_time ? p.end_time : '23:59:59';
+        const endAt = new Date(`${p.date}T${endTimeStr}`);
+        return endAt.getTime() + twelveHoursMs < now.getTime();
+      })
+      .map((p: any) => p.id);
+
+    console.log('Parties to delete (older than 12h after end):', toDeleteIds);
+
+    if (toDeleteIds.length === 0) {
+      return new Response(JSON.stringify({ success: true, message: 'No parties to delete', deletedCount: 0 }), { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+    }
+
+    // Delete related QR codes first to avoid FK issues
+    const { error: qrDelError } = await supabase
+      .from('qr_codes')
+      .delete()
+      .in('party_id', toDeleteIds);
+
+    if (qrDelError) {
+      console.error('Error deleting related QR codes:', qrDelError);
+      throw qrDelError;
+    }
+
+    const { error: deletePartiesError } = await supabase
+      .from('parties')
+      .delete()
+      .in('id', toDeleteIds);
+
+    if (deletePartiesError) {
+      console.error('Error deleting ended parties:', deletePartiesError);
+      throw deletePartiesError;
+    }
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        message: `Deleted ${count || 0} ended parties`,
-        deletedCount: count || 0
-      }),
-      {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          ...corsHeaders,
-        },
-      }
+      JSON.stringify({ success: true, message: `Deleted ${toDeleteIds.length} ended parties`, deletedCount: toDeleteIds.length }),
+      { status: 200, headers: { 'Content-Type': 'application/json', ...corsHeaders } }
     );
 
   } catch (error: any) {
