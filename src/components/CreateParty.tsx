@@ -29,6 +29,8 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
   const [selectedProductionId, setSelectedProductionId] = useState<string>('');
   const [productions, setProductions] = useState<{ id: string; name: string }[]>([]);
   const [ticketCount, setTicketCount] = useState<string>('');
+  const [startTime, setStartTime] = useState<string>('');
+  const [endTime, setEndTime] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
@@ -135,7 +137,9 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
           is_free: isFree,
           required_socials: requiredSocials,
           production_id: selectedProductionId || null,
-          ticket_count: ticketCount ? Number(ticketCount) : null
+          ticket_count: ticketCount ? Number(ticketCount) : null,
+          start_time: startTime || null,
+          end_time: endTime || null
         });
 
       if (error) {
@@ -154,6 +158,8 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
         setPartyDate('');
         setSelectedPhoto(null);
         setTicketCount('');
+        setStartTime('');
+        setEndTime('');
         onBack();
       }
     } catch (error) {
@@ -220,6 +226,24 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
                 value={partyDate}
                 onChange={(e) => setPartyDate(e.target.value)}
               />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium">Start Time</label>
+                <Input
+                  type="time"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">End Time</label>
+                <Input
+                  type="time"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                />
+              </div>
             </div>
             <div>
               <label className="text-sm font-medium">Description</label>

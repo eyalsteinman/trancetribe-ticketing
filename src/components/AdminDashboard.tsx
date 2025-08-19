@@ -356,7 +356,16 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   }
 
   if (currentView === 'my-productions') {
-    return <AdminProductions onBack={() => setCurrentView('dashboard')} />;
+    return <AdminProductions 
+      onBack={() => setCurrentView('dashboard')} 
+      onEdit={(productionId: string) => {
+        setCurrentView('manage-productions');
+        setTimeout(() => {
+          const editButton = document.querySelector(`[data-production-id="${productionId}"] button[aria-label*="Edit"]`) as HTMLButtonElement;
+          if (editButton) editButton.click();
+        }, 100);
+      }}
+    />;
   }
 
   if (currentView === 'manage-productions') {
@@ -377,9 +386,6 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
       >
         <div className="max-w-md mx-auto space-y-6 text-left">
           <div className="relative">
-            <Button variant="outline" size="icon" className="absolute top-4 right-4 z-[9999] on-color back-button" onClick={() => setCurrentView('dashboard')} aria-label="Back">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
             <h1 className="text-2xl font-bold">QR Scanner</h1>
           </div>
           
@@ -559,52 +565,54 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           })()}
 
           {(() => {
-            // Find the next upcoming party (soonest party)
+            // Find upcoming parties (chronological order)
             const now = new Date();
-            const upcomingParties = parties.filter(p => new Date(p.date) >= now);
-            const nextParty = upcomingParties.length > 0 ? upcomingParties.reduce((earliest, current) => 
-              new Date(current.date) < new Date(earliest.date) ? current : earliest
-            ) : null;
+            const upcomingParties = parties
+              .filter(p => new Date(p.date) >= now)
+              .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
             
-            return nextParty && (
+            return upcomingParties.length > 0 && (
                 <Card>
                   <CardHeader>
                     <CardTitle>Upcoming Parties</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3 max-h-64 overflow-y-auto">
-                      {upcomingParties.length === 0 ? (
-                        <p className="text-center text-muted-foreground">No upcoming parties</p>
-                      ) : (
-                        upcomingParties
-                          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-                          .map((party) => (
-                            <div
-                              key={party.id}
-                              className="border rounded-lg p-3 cursor-pointer hover:bg-accent transition-colors"
-                              onClick={() => {
-                                setCurrentView('edit-parties');
-                                // Pass the party ID to edit parties component
-                                setTimeout(() => {
-                                  const editButton = document.querySelector(`[data-party-id="${party.id}"] button[aria-label*="Edit"]`) as HTMLButtonElement;
-                                  if (editButton) editButton.click();
-                                }, 100);
-                              }}
-                            >
-                              <div className="flex justify-between items-center">
-                                <div>
-                                  <div className="font-semibold">{party.name}</div>
-                                  <div className="text-sm text-muted-foreground">
-                                    {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                                  </div>
-                                </div>
-                                {party === nextParty && (
-                                  <div className="text-xs text-green-600 font-medium">Next</div>
-                                )}
+                      {upcomingParties.map((party, index) => (
+                        <div
+                          key={party.id}
+                          className="border rounded-lg p-3 cursor-pointer hover:bg-accent transition-colors"
+                          onClick={() => {
+                            setCurrentView('edit-parties');
+                            // Pass the party ID to edit parties component
+                            setTimeout(() => {
+                              const editButton = document.querySelector(`[data-party-id="${party.id}"] button[aria-label*="Edit"]`) as HTMLButtonElement;
+                              if (editButton) editButton.click();
+                            }, 100);
+                          }}
+                        >
+                          <div className="flex items-center gap-3">
+                            {party.photo_url && (
+                              <div className="w-12 h-12">
+                                <img 
+                                  src={party.photo_url} 
+                                  alt={party.name}
+                                  className="w-full h-full object-cover rounded-md"
+                                />
                               </div>
+                            )}
+                            <div className="flex-1">
+                              <div className="font-semibold">{party.name}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                              </div>
+                              {index === 0 && (
+                                <div className="text-xs text-green-600 font-medium">Soonest</div>
+                              )}
                             </div>
-                          ))
-                      )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>

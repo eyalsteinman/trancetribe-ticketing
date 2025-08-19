@@ -280,8 +280,6 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           description: "Party deleted successfully!",
         });
         loadParties();
-  // Remove duplicate loadParties call
-  // loadParties();
       }
     } catch (error) {
       toast({
@@ -523,17 +521,17 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
 
         <Card>
           <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle>All Parties</CardTitle>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSortAscending(!sortAscending)}
-                className="flex items-center gap-2"
-              >
-                {sortAscending ? "Latest First" : "Soonest First"}
-              </Button>
-            </div>
+              <div className="flex justify-between items-center">
+                <CardTitle>All Parties</CardTitle>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSortAscending(!sortAscending)}
+                  className="flex items-center gap-2"
+                >
+                  {sortAscending ? "Latest First" : "Soonest First"}
+                </Button>
+              </div>
           </CardHeader>
           <CardContent className="space-y-4">
             {loadingParties ? (
@@ -578,6 +576,15 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                           <div className="text-xs text-red-600 font-medium mt-1">Ended</div>
                         )}
                       </div>
+                      {party.photo_url && (
+                        <div className="w-16 h-16">
+                          <img 
+                            src={party.photo_url} 
+                            alt={party.name}
+                            className="w-full h-full object-cover rounded-md"
+                          />
+                        </div>
+                      )}
                     <div className="flex gap-2">
                       <Button
                         variant="outline"

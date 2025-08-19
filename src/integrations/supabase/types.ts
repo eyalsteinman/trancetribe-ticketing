@@ -83,6 +83,7 @@ export type Database = {
           created_by: string
           date: string
           description: string | null
+          end_time: string | null
           id: string
           is_active: boolean
           is_free: boolean
@@ -91,6 +92,7 @@ export type Database = {
           price: number | null
           production_id: string | null
           required_socials: string[]
+          start_time: string | null
           ticket_count: number | null
           updated_at: string
         }
@@ -99,6 +101,7 @@ export type Database = {
           created_by: string
           date: string
           description?: string | null
+          end_time?: string | null
           id?: string
           is_active?: boolean
           is_free?: boolean
@@ -107,6 +110,7 @@ export type Database = {
           price?: number | null
           production_id?: string | null
           required_socials?: string[]
+          start_time?: string | null
           ticket_count?: number | null
           updated_at?: string
         }
@@ -115,6 +119,7 @@ export type Database = {
           created_by?: string
           date?: string
           description?: string | null
+          end_time?: string | null
           id?: string
           is_active?: boolean
           is_free?: boolean
@@ -123,6 +128,7 @@ export type Database = {
           price?: number | null
           production_id?: string | null
           required_socials?: string[]
+          start_time?: string | null
           ticket_count?: number | null
           updated_at?: string
         }

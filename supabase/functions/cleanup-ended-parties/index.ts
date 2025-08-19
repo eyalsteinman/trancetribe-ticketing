@@ -18,17 +18,17 @@ const handler = async (req: Request): Promise<Response> => {
     
     const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
-    // Calculate the date 24 hours ago
-    const twentyFourHoursAgo = new Date();
-    twentyFourHoursAgo.setDate(twentyFourHoursAgo.getDate() - 1);
+    // Calculate the date 12 hours ago  
+    const twelveHoursAgo = new Date();
+    twelveHoursAgo.setHours(twelveHoursAgo.getHours() - 12);
 
-    console.log('Cleaning up parties that ended before:', twentyFourHoursAgo.toISOString());
+    console.log('Cleaning up parties that ended before:', twelveHoursAgo.toISOString());
 
-    // Delete parties that ended more than 24 hours ago
+    // Delete parties that ended more than 12 hours ago
     const { error, count } = await supabase
       .from('parties')
       .delete()
-      .lt('date', twentyFourHoursAgo.toISOString().split('T')[0]);
+      .lt('date', twelveHoursAgo.toISOString().split('T')[0]);
 
     if (error) {
       console.error('Error deleting ended parties:', error);

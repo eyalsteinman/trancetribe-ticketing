@@ -9,6 +9,7 @@ import { ArrowLeft, Plus, Upload } from 'lucide-react';
 
 interface AdminProductionsProps {
   onBack: () => void;
+  onEdit?: (productionId: string) => void;
 }
 
 interface Production {
@@ -19,7 +20,7 @@ interface Production {
   vip_description: string | null;
 }
 
-const AdminProductions = ({ onBack }: AdminProductionsProps) => {
+const AdminProductions = ({ onBack, onEdit }: AdminProductionsProps) => {
   const [hasProductions, setHasProductions] = useState<boolean | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [name, setName] = useState('');
@@ -144,12 +145,15 @@ const AdminProductions = ({ onBack }: AdminProductionsProps) => {
         {!isCreating && productions.length > 0 && (
           <div className="space-y-4">
             {productions.map((p) => (
-              <Card key={p.id}>
+              <Card key={p.id} data-production-id={p.id}>
                 <CardContent className="p-4 flex items-center gap-3">
                   {p.logo_url && (
                     <img src={p.logo_url} alt={`${p.name} logo`} className="h-12 w-12 rounded object-cover" />
                   )}
-                  <div className="flex-1">
+                  <div 
+                    className="flex-1 cursor-pointer" 
+                    onClick={() => onEdit?.(p.id)}
+                  >
                     <div className="font-medium">{p.name}</div>
                     {p.description && (
                       <div className="text-sm text-muted-foreground">{p.description}</div>
