@@ -77,7 +77,21 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         .order('created_at', { ascending: false });
 
       if (data && !error) {
-        setUserQRCodes(data);
+        // Remove duplicates by party_id - keep only the latest QR code per party
+        const uniqueQRCodes = data.reduce((acc: any[], current: any) => {
+          const existingIndex = acc.findIndex(qr => qr.party_id === current.party_id);
+          if (existingIndex === -1) {
+            acc.push(current);
+          } else {
+            // Keep the more recent one (or the approved one if exists)
+            if (new Date(current.created_at) > new Date(acc[existingIndex].created_at) || 
+                (current.is_approved && !acc[existingIndex].is_approved)) {
+              acc[existingIndex] = current;
+            }
+          }
+          return acc;
+        }, []);
+        setUserQRCodes(uniqueQRCodes);
       }
     } catch (error) {
       console.error('Error loading user QR codes:', error);
@@ -290,7 +304,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                       {new Date(qrCode.parties?.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      {qrCode.is_scanned ? 'qr used' : 'qr generated but not scanned yet'}
+                      {qrCode.is_scanned ? 'qr used' : qrCode.is_approved ? 'qr approved! Enjoy the party!' : 'qr pending approval'}
                     </div>
                   </div>
                   {qrCode.is_scanned && (

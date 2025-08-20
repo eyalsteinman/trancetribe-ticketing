@@ -17,6 +17,7 @@ interface Production {
   description: string | null;
   logo_url: string | null;
   vip_description: string | null;
+  vip_price: number | null;
 }
 
 const ManageProductions = ({ onBack }: ManageProductionsProps) => {
@@ -25,6 +26,7 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
   const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [editVipDescription, setEditVipDescription] = useState('');
+  const [editVipPrice, setEditVipPrice] = useState('');
   const [editLogo, setEditLogo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -33,7 +35,7 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
   const loadProductions = async () => {
     const { data, error } = await (supabase as any)
       .from('productions')
-      .select('id, name, description, logo_url, vip_description')
+      .select('id, name, description, logo_url, vip_description, vip_price')
       .order('created_at', { ascending: false });
     if (error) {
       console.error(error);
@@ -50,6 +52,7 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
     setEditName(p.name);
     setEditDescription(p.description || '');
     setEditVipDescription(p.vip_description || '');
+    setEditVipPrice(p.vip_price?.toString() || '');
     setEditLogo(null);
   };
 
@@ -72,7 +75,8 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
       const update: any = { 
         name: editName.trim(), 
         description: editDescription.trim() || null,
-        vip_description: editVipDescription.trim() || null
+        vip_description: editVipDescription.trim() || null,
+        vip_price: editVipPrice ? parseFloat(editVipPrice) : null
       };
       if (logoUrl !== undefined) update.logo_url = logoUrl;
       const { error } = await (supabase as any)
@@ -133,21 +137,22 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
           productions.map((p) => (
             <Card key={p.id}>
               <CardHeader>
-                <CardTitle className="flex items-center justify-between">
+                <CardTitle>
                   {editingId === p.id ? (
-                    <Input value={editName} onChange={(e) => setEditName(e.target.value)} />
-                  ) : (
-                    <span>{p.name}</span>
-                  )}
-                  {editingId === p.id ? (
-                    <div className="flex gap-2">
-                      <Button size="sm" onClick={saveEdit} disabled={loading}><Save className="h-4 w-4 mr-1" />Save</Button>
-                      <Button size="sm" variant="outline" onClick={() => setEditingId(null)}><X className="h-4 w-4 mr-1" />Cancel</Button>
+                    <div className="space-y-4">
+                      <div className="text-lg font-bold">{editName}</div>
+                      <div className="flex gap-2 justify-end">
+                        <Button size="sm" onClick={saveEdit} disabled={loading}><Save className="h-4 w-4 mr-1" />Save</Button>
+                        <Button size="sm" variant="outline" onClick={() => setEditingId(null)}><X className="h-4 w-4 mr-1" />Cancel</Button>
+                      </div>
                     </div>
                   ) : (
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" aria-label="Edit production" onClick={() => startEdit(p)}><Edit className="h-4 w-4 mr-1" />Edit</Button>
-                      <Button size="sm" className="bg-red-600 hover:bg-red-700 border-red-600 text-white" onClick={() => deleteProduction(p.id)}><Trash2 className="h-4 w-4 mr-1 text-white" /><span className="text-white">Delete</span></Button>
+                    <div className="flex items-center justify-between">
+                      <span>{p.name}</span>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" aria-label="Edit production" onClick={() => startEdit(p)}><Edit className="h-4 w-4 mr-1" />Edit</Button>
+                        <Button size="sm" className="bg-red-600 hover:bg-red-700 border-red-600 text-white" onClick={() => deleteProduction(p.id)}><Trash2 className="h-4 w-4 mr-1 text-white" /><span className="text-white">Delete</span></Button>
+                      </div>
                     </div>
                   )}
                 </CardTitle>
@@ -155,6 +160,10 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
               <CardContent className="space-y-4">
                 {editingId === p.id ? (
                   <>
+                    <div>
+                      <label className="text-sm font-medium">Production Name</label>
+                      <Input value={editName} onChange={(e) => setEditName(e.target.value)} />
+                    </div>
                     <div>
                       <label className="text-sm font-medium">Description</label>
                       <textarea
@@ -175,6 +184,17 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
                       />
                     </div>
                     <div>
+                      <label className="text-sm font-medium">VIP Subscription Price (ILS)</label>
+                      <Input 
+                        type="number"
+                        min="0"
+                        step="0.5"
+                        value={editVipPrice}
+                        onChange={(e) => setEditVipPrice(e.target.value)}
+                        placeholder="Enter price for VIP subscription"
+                      />
+                    </div>
+                    <div>
                       <label className="text-sm font-medium">Logo</label>
                       <div className="flex items-center gap-2">
                         <Input id={`logo-${p.id}`} type="file" accept="image/*" onChange={(e) => setEditLogo(e.target.files?.[0] || null)} className="hidden" />
@@ -186,17 +206,31 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
                           <Button type="button" variant="ghost" onClick={() => setEditLogo(null)} className="text-destructive">Remove</Button>
                         )}
                       </div>
+                      {(editLogo || p.logo_url) && (
+                        <div className="mt-2">
+                          <img 
+                            src={editLogo ? URL.createObjectURL(editLogo) : p.logo_url} 
+                            alt="Production logo preview" 
+                            className="w-full h-auto object-contain rounded border max-h-32"
+                          />
+                        </div>
+                      )}
                     </div>
                   </>
                 ) : (
                   <>
                     {p.logo_url && (
-                      <img src={p.logo_url} alt={`${p.name} logo`} className="w-full h-auto object-contain rounded" />
+                      <img src={p.logo_url} alt={`${p.name} logo`} className="w-full h-auto object-contain rounded max-h-32" />
                     )}
                     <div className="text-sm text-muted-foreground whitespace-pre-wrap">{p.description || 'No description.'}</div>
                     {p.vip_description && (
                       <div className="text-sm text-muted-foreground whitespace-pre-wrap border-t pt-2">
                         <strong>VIP Benefits:</strong> {p.vip_description}
+                      </div>
+                    )}
+                    {p.vip_price && (
+                      <div className="text-sm text-muted-foreground border-t pt-2">
+                        <strong>VIP Price:</strong> ₪{p.vip_price}
                       </div>
                     )}
                   </>
