@@ -228,6 +228,25 @@ All colors MUST be HSL.
     color: hsl(0 0% 100%) !important;
   }
 
+  /* Red/destructive dialogs and popups: white text */
+  [data-radix-popper-content-wrapper][data-state="open"] .bg-destructive,
+  [data-radix-popper-content-wrapper][data-state="open"] .bg-red-600,
+  [data-radix-popper-content-wrapper][data-state="open"] [class*="destructive"],
+  [data-radix-popper-content-wrapper][data-state="open"] [class*="bg-red"],
+  .destructive-popup,
+  .red-popup {
+    --foreground: 0 0% 100% !important;
+    color: hsl(var(--foreground)) !important;
+  }
+  [data-radix-popper-content-wrapper][data-state="open"] .bg-destructive *,
+  [data-radix-popper-content-wrapper][data-state="open"] .bg-red-600 *,
+  [data-radix-popper-content-wrapper][data-state="open"] [class*="destructive"] *,
+  [data-radix-popper-content-wrapper][data-state="open"] [class*="bg-red"] *,
+  .destructive-popup *,
+  .red-popup * {
+    color: hsl(0 0% 100%) !important;
+  }
+
   /* Ensure popover/dialog content is properly centered */
   [data-radix-popper-content-wrapper] {
     z-index: 50 !important;

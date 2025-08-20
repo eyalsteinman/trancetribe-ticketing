@@ -11,6 +11,7 @@ interface VIPProductionProps {
     name: string;
     logo_url: string | null;
     vip_description: string | null;
+    vip_price: number | null;
   };
   onBack: () => void;
 }
@@ -40,7 +41,9 @@ const VIPProduction = ({ production, onBack }: VIPProductionProps) => {
         </div>
 
         <h2 className="text-center text-lg font-semibold">Purchase VIP</h2>
-        <p className="text-center text-sm text-muted-foreground">Price: To be decided</p>
+        <p className="text-center text-sm text-muted-foreground">
+          Price: {production.vip_price ? `₪${production.vip_price}` : 'To be decided'}
+        </p>
 
         <Button size="lg" className="w-full" aria-label="Buy VIP">
           BUY

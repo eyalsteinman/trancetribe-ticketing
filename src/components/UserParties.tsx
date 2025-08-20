@@ -7,9 +7,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { useToast } from '@/hooks/use-toast';
 import { QRCodeSVG } from 'qrcode.react';
 import { User } from '@supabase/supabase-js';
-import { ArrowLeft, ArrowUpDown } from 'lucide-react';
+import { ArrowLeft, ArrowUpDown, X } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
+import BuyTicketsForFriends from './BuyTicketsForFriends';
 
 interface Party {
   id: string;
@@ -35,6 +36,8 @@ interface UserPartiesProps {
 const platformLabels: Record<string, string> = { facebook: 'Facebook', instagram: 'Instagram', tiktok: 'TikTok', x: 'X (Twitter)' };
 
 const UserParties = ({ user, onBack }: UserPartiesProps) => {
+  const [currentView, setCurrentView] = useState<'parties' | 'buy-tickets'>('parties');
+  const [selectedPartyForTickets, setSelectedPartyForTickets] = useState<Party | null>(null);
   const [parties, setParties] = useState<Party[]>([]);
   const [selectedParty, setSelectedParty] = useState<Party | null>(null);
   const [qrCode, setQrCode] = useState<string | null>(null);
@@ -439,14 +442,44 @@ useEffect(() => {
     }
   };
 
-  const selectParty = (party: Party) => {
-    setSelectedParty(party);
+  const selectParty = async (party: Party) => {
+    // Check if user already has a QR code for this party
+    const { data: existingQR } = await supabase
+      .from('qr_codes')
+      .select('id, is_approved, is_scanned')
+      .eq('user_id', user.id)
+      .eq('party_id', party.id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (existingQR) {
+      // User already has a QR code, show buy tickets for friends option
+      setSelectedPartyForTickets(party);
+      setCurrentView('buy-tickets');
+    } else {
+      // User doesn't have a QR code, proceed normally
+      setSelectedParty(party);
+    }
   };
 
   const goBackToPartyList = () => {
     setSelectedParty(null);
     setQrCode(null);
   };
+
+  if (currentView === 'buy-tickets' && selectedPartyForTickets) {
+    return (
+      <BuyTicketsForFriends 
+        user={user} 
+        party={selectedPartyForTickets} 
+        onBack={() => {
+          setCurrentView('parties');
+          setSelectedPartyForTickets(null);
+        }}
+      />
+    );
+  }
 
   if (selectedParty) {
     return (
@@ -493,6 +526,16 @@ useEffect(() => {
                   <p className="text-sm text-muted-foreground">
                     Show this QR code to the admin for scanning
                   </p>
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedPartyForTickets(selectedParty);
+                      setCurrentView('buy-tickets');
+                    }}
+                    className="w-full"
+                  >
+                    Buy Tickets for Friends
+                  </Button>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -514,6 +557,16 @@ useEffect(() => {
                       {loading ? "Generating..." : "Generate QR Code"}
                     </Button>
                   )}
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      setSelectedPartyForTickets(selectedParty);
+                      setCurrentView('buy-tickets');
+                    }}
+                    className="w-full"
+                  >
+                    Buy Tickets for Friends
+                  </Button>
                 </div>
               )}
             </CardContent>

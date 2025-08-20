@@ -10,7 +10,7 @@ interface VIPHubProps {
   user: User;
   nickname?: string;
   onBack: () => void;
-  onSelectProduction: (production: { id: string; name: string; logo_url: string | null; vip_description: string | null }) => void;
+  onSelectProduction: (production: { id: string; name: string; logo_url: string | null; vip_description: string | null; vip_price: number | null }) => void;
 }
 
 interface Production {
@@ -18,6 +18,7 @@ interface Production {
   name: string;
   logo_url: string | null;
   vip_description: string | null;
+  vip_price: number | null;
 }
 
 const VIPHub = ({ user, nickname, onBack, onSelectProduction }: VIPHubProps) => {
@@ -33,7 +34,7 @@ const VIPHub = ({ user, nickname, onBack, onSelectProduction }: VIPHubProps) => 
     try {
       const { data, error } = await supabase
         .from('productions')
-        .select('id, name, logo_url, vip_description')
+        .select('id, name, logo_url, vip_description, vip_price')
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -106,6 +107,9 @@ const VIPHub = ({ user, nickname, onBack, onSelectProduction }: VIPHubProps) => 
                       />
                     )}
                     <CardTitle className="text-center text-sm">{p.name}</CardTitle>
+                    {p.vip_price && (
+                      <p className="text-xs text-muted-foreground mt-1">₪{p.vip_price}</p>
+                    )}
                   </CardHeader>
                 </Card>
               ))}

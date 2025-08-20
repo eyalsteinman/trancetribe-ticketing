@@ -582,56 +582,47 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                           <div className="text-xs text-red-600 font-medium mt-1">Ended</div>
                         )}
                       </div>
-                      {party.photo_url && (
-                        <div className="w-16 h-16">
-                          <img 
-                            src={party.photo_url} 
-                            alt={party.name}
-                            className="w-full h-full object-cover rounded-md"
-                          />
-                        </div>
-                      )}
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEditParty(party)}
-                        className="flex items-center gap-1"
-                      >
-                        <Edit className="h-3 w-3" />
-                        Edit
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
-                          >
-                            <Trash2 className="h-3 w-3 text-white" />
-                            <span className="text-white">Delete</span>
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Party</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete {party.name}? This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => deleteParty(party.id)}
-                              disabled={loading}
-                      className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditParty(party)}
+                          className="flex items-center gap-1"
+                        >
+                          <Edit className="h-3 w-3" />
+                          Edit
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
                             >
-                              {loading ? "Deleting..." : <span className="text-white">Delete</span>}
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
+                              <Trash2 className="h-3 w-3 text-white" />
+                              <span className="text-white">Delete</span>
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle className="text-white">Delete Party</AlertDialogTitle>
+                              <AlertDialogDescription className="text-white">
+                                Are you sure you want to delete {party.name}? This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel className="text-white">Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => deleteParty(party.id)}
+                                disabled={loading}
+                                className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
+                              >
+                                {loading ? "Deleting..." : <span className="text-white">Delete</span>}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </div>
                     
                     {party.photo_url && (
@@ -639,7 +630,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                         <img 
                           src={party.photo_url} 
                           alt={party.name}
-                          className="w-full h-32 object-cover rounded-md"
+                          className="w-full h-auto object-contain rounded-md max-h-48"
                         />
                       </div>
                     )}

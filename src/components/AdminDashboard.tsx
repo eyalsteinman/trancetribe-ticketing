@@ -74,16 +74,24 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     try {
       const { data, error } = await (supabase as any)
         .from('parties')
-        .select('*')
+        .select(`
+          *,
+          qr_codes!inner(is_approved)
+        `)
         .order('date', { ascending: sortAscending });
 
       if (error) {
         console.error('Error loading parties:', error);
       } else {
-        setParties(data || []);
+        // Add approved guest count to each party
+        const partiesWithCounts = (data || []).map((party: any) => ({
+          ...party,
+          approved_count: party.qr_codes?.filter((qr: any) => qr.is_approved).length || 0
+        }));
+        setParties(partiesWithCounts);
         // Set the first party as selected by default
-        if (data && data.length > 0 && !selectedParty) {
-          setSelectedParty(data[0].id);
+        if (partiesWithCounts && partiesWithCounts.length > 0 && !selectedParty) {
+          setSelectedParty(partiesWithCounts[0].id);
         }
       }
     } catch (error) {
@@ -574,7 +582,17 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             return upcomingParties.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle>Upcoming Parties</CardTitle>
+                    <CardTitle className="flex justify-between items-center">
+                      Upcoming Parties
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSortAscending(!sortAscending)}
+                        className="text-xs"
+                      >
+                        {sortAscending ? "Latest First" : "Soonest First"}
+                      </Button>
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3 max-h-64 overflow-y-auto">
@@ -593,18 +611,26 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
                         >
                           <div className="flex items-center gap-3">
                             {party.photo_url && (
-                              <div className="w-12 h-12">
-                                <img 
-                                  src={party.photo_url} 
-                                  alt={party.name}
-                                  className="w-full h-full object-cover rounded-md"
-                                />
-                              </div>
+                              <img 
+                                src={party.photo_url} 
+                                alt={party.name}
+                                className="w-16 h-16 object-cover rounded"
+                              />
                             )}
                             <div className="flex-1">
                               <div className="font-semibold">{party.name}</div>
                               <div className="text-sm text-muted-foreground">
                                 {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                {(party.start_time || party.end_time) && (
+                                  <span className="block text-xs mt-1">
+                                    {party.start_time && `Start: ${party.start_time}`}
+                                    {party.start_time && party.end_time && ' | '}
+                                    {party.end_time && `End: ${party.end_time}`}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="text-xs text-blue-600 font-medium mt-1">
+                                Guests arriving: {party.approved_count || 0}
                               </div>
                               {index === 0 && (
                                 <div className="text-xs text-green-600 font-medium">Soonest</div>

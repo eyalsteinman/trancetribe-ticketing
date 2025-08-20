@@ -196,6 +196,7 @@ export type Database = {
           name: string
           updated_at: string
           vip_description: string | null
+          vip_price: number | null
         }
         Insert: {
           created_at?: string
@@ -206,6 +207,7 @@ export type Database = {
           name: string
           updated_at?: string
           vip_description?: string | null
+          vip_price?: number | null
         }
         Update: {
           created_at?: string
@@ -216,6 +218,7 @@ export type Database = {
           name?: string
           updated_at?: string
           vip_description?: string | null
+          vip_price?: number | null
         }
         Relationships: []
       }
