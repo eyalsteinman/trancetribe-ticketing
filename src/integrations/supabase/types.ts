@@ -87,6 +87,7 @@ export type Database = {
           id: string
           is_active: boolean
           is_free: boolean
+          max_tickets_per_user: number | null
           name: string
           photo_url: string | null
           price: number | null
@@ -105,6 +106,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_free?: boolean
+          max_tickets_per_user?: number | null
           name: string
           photo_url?: string | null
           price?: number | null
@@ -123,6 +125,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_free?: boolean
+          max_tickets_per_user?: number | null
           name?: string
           photo_url?: string | null
           price?: number | null
@@ -277,6 +280,7 @@ export type Database = {
           party_id: string
           scanned_at: string | null
           scanned_by: string | null
+          ticket_type_id: string | null
           updated_at: string
           user_id: string
         }
@@ -292,6 +296,7 @@ export type Database = {
           party_id: string
           scanned_at?: string | null
           scanned_by?: string | null
+          ticket_type_id?: string | null
           updated_at?: string
           user_id: string
         }
@@ -307,6 +312,7 @@ export type Database = {
           party_id?: string
           scanned_at?: string | null
           scanned_by?: string | null
+          ticket_type_id?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -319,11 +325,59 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "qr_codes_ticket_type_id_fkey"
+            columns: ["ticket_type_id"]
+            isOneToOne: false
+            referencedRelation: "ticket_types"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "qr_codes_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      ticket_types: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          party_id: string
+          price: number
+          quantity: number
+          sold: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          party_id: string
+          price?: number
+          quantity?: number
+          sold?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          party_id?: string
+          price?: number
+          quantity?: number
+          sold?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_ticket_types_party"
+            columns: ["party_id"]
+            isOneToOne: false
+            referencedRelation: "parties"
+            referencedColumns: ["id"]
           },
         ]
       }
