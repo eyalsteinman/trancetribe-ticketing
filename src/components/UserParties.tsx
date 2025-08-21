@@ -720,7 +720,7 @@ useEffect(() => {
 
         {/* Info Dialog */}
         {infoParty && (
-          <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50" onClick={(e) => e.stopPropagation()}>
+            <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50" onClick={() => setInfoParty(null)}>
             <div className="bg-white text-black rounded-lg w-11/12 max-w-md p-4 relative max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               <button className="absolute top-2 right-2 text-black text-3xl w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded" onClick={() => setInfoParty(null)} aria-label="Close">×</button>
               {infoProduction?.logo_url && (

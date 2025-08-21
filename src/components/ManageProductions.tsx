@@ -29,6 +29,7 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
   const [editVipPrice, setEditVipPrice] = useState('');
   const [editLogo, setEditLogo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [sortAscending, setSortAscending] = useState(true);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
@@ -36,7 +37,7 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
     const { data, error } = await (supabase as any)
       .from('productions')
       .select('id, name, description, logo_url, vip_description, vip_price')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: sortAscending });
     if (error) {
       console.error(error);
       toast({ title: 'Error', description: 'Failed to load productions', variant: 'destructive' });
@@ -45,7 +46,7 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
     }
   };
 
-  useEffect(() => { loadProductions(); }, []);
+  useEffect(() => { loadProductions(); }, [sortAscending]);
 
   const startEdit = (p: Production) => {
     setEditingId(p.id);
@@ -117,7 +118,7 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
   return (
     <div className="min-h-screen p-4" style={{ backgroundColor }}>
       <div className="max-w-md mx-auto space-y-6 text-left">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center justify-between">
           <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -127,6 +128,14 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
           >
             Manage Productions
           </h1>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setSortAscending(!sortAscending)}
+            className="text-xs"
+          >
+            {sortAscending ? "Latest First" : "Oldest First"}
+          </Button>
         </div>
 
         {productions.length === 0 ? (

@@ -573,11 +573,14 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           })()}
 
           {(() => {
-            // Find upcoming parties (chronological order)
+            // Find upcoming parties
             const now = new Date();
             const upcomingParties = parties
               .filter(p => new Date(p.date) >= now)
-              .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+              .sort((a, b) => sortAscending ? 
+                new Date(a.date).getTime() - new Date(b.date).getTime() :
+                new Date(b.date).getTime() - new Date(a.date).getTime()
+              );
             
             return upcomingParties.length > 0 && (
                 <Card>
