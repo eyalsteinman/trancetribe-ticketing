@@ -36,6 +36,8 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
   const [editingParty, setEditingParty] = useState<Party | null>(null);
   const [editName, setEditName] = useState('');
   const [editDate, setEditDate] = useState('');
+  const [editStartTime, setEditStartTime] = useState('');
+  const [editEndTime, setEditEndTime] = useState('');
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingParties, setLoadingParties] = useState(true);
@@ -96,6 +98,8 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
     setEditingParty(party);
     setEditName(party.name);
     setEditDate(party.date);
+    setEditStartTime((party as any).start_time || '');
+    setEditEndTime((party as any).end_time || '');
     setEditRequiredSocials(Array.isArray((party as any).required_socials) ? (party as any).required_socials : []);
     setSelectedPhoto(null);
     
@@ -178,6 +182,8 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
         .update({
           name: editName.trim(),
           date: editDate,
+          start_time: editStartTime || null,
+          end_time: editEndTime || null,
           photo_url: photoUrl,
           description: (editingParty as any).description ?? null,
           price: (editingParty as any).price ?? null,
@@ -375,6 +381,25 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                   value={editDate}
                   onChange={(e) => setEditDate(e.target.value)}
                 />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Start Time</label>
+                  <Input
+                    type="time"
+                    value={editStartTime}
+                    onChange={(e) => setEditStartTime(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">End Time</label>
+                  <Input
+                    type="time"
+                    value={editEndTime}
+                    onChange={(e) => setEditEndTime(e.target.value)}
+                  />
+                </div>
               </div>
 
               <div>

@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft, Upload } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
+import TicketManager from './TicketManager';
 
 const socialOptions = [
   { key: 'facebook', label: 'Facebook' },
@@ -31,6 +32,8 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
   const [ticketCount, setTicketCount] = useState<string>('');
   const [startTime, setStartTime] = useState<string>('');
   const [endTime, setEndTime] = useState<string>('');
+  const [ticketTypes, setTicketTypes] = useState<any[]>([]);
+  const [maxTicketsPerUser, setMaxTicketsPerUser] = useState<number>(1);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
@@ -139,7 +142,8 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
           production_id: selectedProductionId || null,
           ticket_count: ticketCount ? Number(ticketCount) : null,
           start_time: startTime || null,
-          end_time: endTime || null
+          end_time: endTime || null,
+          max_tickets_per_user: maxTicketsPerUser
         });
 
       if (error) {
@@ -306,6 +310,13 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
                 onChange={(e) => setTicketCount(e.target.value)}
               />
             </div>
+
+            <TicketManager
+              tickets={ticketTypes}
+              onChange={setTicketTypes}
+              maxTicketsPerUser={maxTicketsPerUser}
+              onMaxTicketsChange={setMaxTicketsPerUser}
+            />
 
             <div>
               <label className="text-sm font-medium">Required Social Networks</label>
