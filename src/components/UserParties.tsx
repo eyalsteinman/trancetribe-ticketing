@@ -11,6 +11,7 @@ import { ArrowLeft, ArrowUpDown, X } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
 import BuyTicketsForFriends from './BuyTicketsForFriends';
+import RtlText from './RtlText';
 
 interface Party {
   id: string;
@@ -680,11 +681,11 @@ useEffect(() => {
                       </div>
                     )}
                     <div className="w-full text-center space-y-1 relative">
-                    <div className="font-semibold flex items-center justify-center gap-2">
-                        {party.name}
+                      <div className="font-semibold relative">
+                        <RtlText text={party.name} className="font-semibold" />
                         <button
                           type="button"
-                          className="absolute right-2 top-2 h-8 w-8 rounded-full border flex items-center justify-center text-sm"
+                          className="absolute right-0 top-0 h-6 w-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold hover:bg-blue-600 transition-colors"
                           onClick={(e) => { 
                             e.stopPropagation(); 
                             e.preventDefault();
@@ -729,8 +730,8 @@ useEffect(() => {
               {infoProduction?.description && (
                 <div className="text-sm text-gray-800 whitespace-pre-wrap mb-3">{infoProduction.description}</div>
               )}
-              <h2 className="text-lg font-semibold mb-2 text-black">{infoParty.name}</h2>
-              <div className="text-sm text-gray-700 whitespace-pre-wrap">{infoParty.description || 'No additional information provided.'}</div>
+              <RtlText text={infoParty.name} className="text-lg font-semibold mb-2 text-black" />
+              <RtlText text={infoParty.description || 'No additional information provided.'} className="text-sm text-gray-700 whitespace-pre-wrap" />
             </div>
           </div>
         )}

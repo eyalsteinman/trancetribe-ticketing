@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
-import { ArrowLeft, Edit, Trash2, Upload, Save, X } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Upload, Save, X, ArrowUpDown } from 'lucide-react';
 
 interface ManageProductionsProps {
   onBack: () => void;
@@ -134,6 +134,7 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
             onClick={() => setSortAscending(!sortAscending)}
             className="text-xs"
           >
+            <ArrowUpDown className="h-4 w-4 mr-1" />
             {sortAscending ? "Latest First" : "Oldest First"}
           </Button>
         </div>

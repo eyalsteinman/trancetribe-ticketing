@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Slider } from '@/components/ui/slider';
 import { Trash2, Plus } from 'lucide-react';
+import RtlText from './RtlText';
 
 interface TicketType {
   id: string;
@@ -51,8 +53,9 @@ const TicketManager = ({ tickets, onChange, maxTicketsPerUser, onMaxTicketsChang
           <Input
             type="number"
             min="1"
-            value={maxTicketsPerUser}
-            onChange={(e) => onMaxTicketsChange(Number(e.target.value))}
+            value={maxTicketsPerUser || ""}
+            onChange={(e) => onMaxTicketsChange(Number(e.target.value) || 1)}
+            placeholder="Enter max tickets per user"
           />
         </div>
 
@@ -85,33 +88,67 @@ const TicketManager = ({ tickets, onChange, maxTicketsPerUser, onMaxTicketsChang
                 </Button>
               </div>
               
-              <div className="grid grid-cols-3 gap-2">
+              <div className="space-y-4">
                 <div>
-                  <label className="text-xs">Label</label>
+                  <label className="text-sm font-medium">Label</label>
                   <Input
-                    placeholder="e.g. Early Bird"
+                    placeholder="e.g. Early Bird, VIP, General"
                     value={ticket.label}
                     onChange={(e) => updateTicket(ticket.id, 'label', e.target.value)}
+                    className="text-base"
                   />
+                  {ticket.label && (
+                    <div className="mt-1">
+                      <RtlText text={ticket.label} className="text-sm text-muted-foreground" />
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <label className="text-xs">Price (ILS)</label>
-                  <Input
-                    type="number"
-                    min="0"
-                    step="0.5"
-                    value={ticket.price}
-                    onChange={(e) => updateTicket(ticket.id, 'price', Number(e.target.value))}
-                  />
-                </div>
-                <div>
-                  <label className="text-xs">Quantity</label>
-                  <Input
-                    type="number"
-                    min="0"
-                    value={ticket.quantity}
-                    onChange={(e) => updateTicket(ticket.id, 'quantity', Number(e.target.value))}
-                  />
+                
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <label className="text-sm font-medium">Price (ILS): {ticket.price || 0}</label>
+                    <div className="space-y-3">
+                      <Slider
+                        value={[ticket.price || 0]}
+                        onValueChange={(value) => updateTicket(ticket.id, 'price', value[0])}
+                        max={600}
+                        min={0}
+                        step={5}
+                        className="w-full"
+                      />
+                      <Input
+                        type="number"
+                        min="0"
+                        max="600"
+                        step="5"
+                        value={ticket.price || ""}
+                        onChange={(e) => updateTicket(ticket.id, 'price', Number(e.target.value) || 0)}
+                        placeholder="Enter price"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm font-medium">Quantity: {ticket.quantity || 0}</label>
+                    <div className="space-y-3">
+                      <Slider
+                        value={[ticket.quantity || 0]}
+                        onValueChange={(value) => updateTicket(ticket.id, 'quantity', value[0])}
+                        max={600}
+                        min={0}
+                        step={1}
+                        className="w-full"
+                      />
+                      <Input
+                        type="number"
+                        min="0"
+                        max="600"
+                        value={ticket.quantity || ""}
+                        onChange={(e) => updateTicket(ticket.id, 'quantity', Number(e.target.value) || 0)}
+                        placeholder="Enter quantity"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

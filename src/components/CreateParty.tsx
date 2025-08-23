@@ -23,7 +23,7 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
   const [partyName, setPartyName] = useState('');
   const [partyDate, setPartyDate] = useState('');
   const [description, setDescription] = useState('');
-  const [price, setPrice] = useState<string>('');
+  
   const [isFree, setIsFree] = useState<boolean>(false);
   const [requiredSocials, setRequiredSocials] = useState<string[]>([]);
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
@@ -88,28 +88,7 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
       return;
     }
 
-    // Validate free/price logic
-    if (isFree && price && Number(price) > 0) {
-      toast({
-        title: "Error",
-        description: "Deselect free or remove price",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!isFree && price && Number(price) > 0) {
-      // Price is set and not free - this is valid
-    } else if (isFree) {
-      // Free party - this is valid
-    } else if (price && Number(price) > 0) {
-      toast({
-        title: "Error", 
-        description: "Delete price to select free",
-        variant: "destructive"
-      });
-      return;
-    }
+    // Price validation is now handled by ticket types
 
     setLoading(true);
     try {
@@ -136,7 +115,7 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
           is_active: true,
           photo_url: photoUrl,
           description: description.trim() || null,
-          price: price ? Number(price) : null,
+          price: null, // Price now handled by ticket types
           is_free: isFree,
           required_socials: requiredSocials,
           production_id: selectedProductionId || null,
@@ -259,46 +238,15 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
                 onChange={(e) => setDescription(e.target.value)}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium">Price (ILS)</label>
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.5"
-                  placeholder="e.g. 50"
-                  value={price}
-                  onChange={(e) => {
-                    setPrice(e.target.value);
-                    if (e.target.value && Number(e.target.value) > 0 && isFree) {
-                      toast({
-                        title: "Error",
-                        description: "Deselect free to enter price",
-                        variant: "destructive"
-                      });
-                    }
-                  }}
-                />
-              </div>
-              <div className="flex items-end gap-2">
-                <input
-                  id="isFree"
-                  type="checkbox"
-                  checked={isFree}
-                  onChange={(e) => {
-                    setIsFree(e.target.checked);
-                    if (e.target.checked && price && Number(price) > 0) {
-                      toast({
-                        title: "Error", 
-                        description: "Delete price to select free",
-                        variant: "destructive"
-                      });
-                    }
-                  }}
-                  className="h-4 w-4"
-                />
-                <label htmlFor="isFree" className="text-sm">Free Party</label>
-              </div>
+            <div className="flex items-center gap-2">
+              <input
+                id="isFree"
+                type="checkbox"
+                checked={isFree}
+                onChange={(e) => setIsFree(e.target.checked)}
+                className="h-4 w-4"
+              />
+              <label htmlFor="isFree" className="text-sm">Free Party</label>
             </div>
             <div>
               <label className="text-sm font-medium">Number of Tickets Available</label>

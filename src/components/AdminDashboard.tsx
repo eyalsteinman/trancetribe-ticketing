@@ -648,6 +648,14 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             );
           })()}
         </div>
+        
+        {/* Footer */}
+        <div className="mt-8 pt-4 border-t text-center space-y-2">
+          <h3 className="font-bold text-lg">Trance Tribes Tickets</h3>
+          <p className="text-xs text-muted-foreground">
+            Created by Eyal Steinman, all rights reserved 2025
+          </p>
+        </div>
       </div>
     </div>
   );

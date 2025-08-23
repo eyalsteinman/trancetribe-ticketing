@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Edit, Trash2, Upload, X } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Upload, X, ArrowUpDown } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useBackground } from '@/contexts/BackgroundContext';
+import TicketManager from './TicketManager';
 
 interface EditPartiesProps {
   onBack: () => void;
@@ -39,6 +40,8 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
   const [editStartTime, setEditStartTime] = useState('');
   const [editEndTime, setEditEndTime] = useState('');
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
+  const [editTicketTypes, setEditTicketTypes] = useState<any[]>([]);
+  const [editMaxTicketsPerUser, setEditMaxTicketsPerUser] = useState<number>(1);
   const [loading, setLoading] = useState(false);
   const [loadingParties, setLoadingParties] = useState(true);
   const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
@@ -102,6 +105,8 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
     setEditEndTime((party as any).end_time || '');
     setEditRequiredSocials(Array.isArray((party as any).required_socials) ? (party as any).required_socials : []);
     setSelectedPhoto(null);
+    setEditTicketTypes([]); // Load from ticket_types table if needed
+    setEditMaxTicketsPerUser((party as any).max_tickets_per_user || 1);
     
     // Load production logo if party has a production
     if ((party as any).production_id) {
@@ -412,28 +417,23 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Price (ILS)</label>
-                  <Input
-                    type="number"
-                    min="0"
-                    step="0.5"
-                    defaultValue={(editingParty as any).price ?? ''}
-                    onChange={(e) => setEditingParty((p) => p ? { ...p, price: e.target.value ? Number(e.target.value) : null } as any : p)}
-                  />
-                </div>
-                <div className="flex items-end gap-2">
-                  <input
-                    id="editIsFree"
-                    type="checkbox"
-                    defaultChecked={(editingParty as any).is_free || false}
-                    onChange={(e) => setEditingParty((p) => p ? { ...p, is_free: e.target.checked } as any : p)}
-                    className="h-4 w-4"
-                  />
-                  <label htmlFor="editIsFree" className="text-sm">Free Party</label>
-                </div>
+              <div className="flex items-center gap-2">
+                <input
+                  id="editIsFree"
+                  type="checkbox"
+                  defaultChecked={(editingParty as any).is_free || false}
+                  onChange={(e) => setEditingParty((p) => p ? { ...p, is_free: e.target.checked } as any : p)}
+                  className="h-4 w-4"
+                />
+                <label htmlFor="editIsFree" className="text-sm">Free Party</label>
               </div>
+
+              <TicketManager
+                tickets={editTicketTypes}
+                onChange={setEditTicketTypes}
+                maxTicketsPerUser={editMaxTicketsPerUser}
+                onMaxTicketsChange={setEditMaxTicketsPerUser}
+              />
 
               <div>
                 <label className="text-sm font-medium">Required Social Networks</label>
@@ -560,6 +560,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                   onClick={() => setSortAscending(!sortAscending)}
                   className="flex items-center gap-2"
                 >
+                  <ArrowUpDown className="h-4 w-4" />
                   {sortAscending ? "Latest First" : "Soonest First"}
                 </Button>
               </div>
