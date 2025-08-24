@@ -685,7 +685,7 @@ useEffect(() => {
                         <RtlText text={party.name} className="font-semibold" />
                         <button
                           type="button"
-                          className="absolute right-0 top-0 h-6 w-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold hover:bg-blue-600 transition-colors"
+                          className="absolute right-0 top-0 h-6 w-6 rounded-full bg-white text-black flex items-center justify-center text-xs font-bold hover:bg-gray-100 transition-colors border border-gray-300"
                           onClick={(e) => { 
                             e.stopPropagation(); 
                             e.preventDefault();

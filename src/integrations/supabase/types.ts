@@ -14,6 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
+      bar_tab_transactions: {
+        Row: {
+          amount_spent: number
+          bar_tab_id: string
+          created_at: string
+          created_by: string | null
+          id: string
+          quantity: number
+          transaction_type: string
+          user_bar_tab_id: string
+        }
+        Insert: {
+          amount_spent?: number
+          bar_tab_id: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          quantity?: number
+          transaction_type?: string
+          user_bar_tab_id: string
+        }
+        Update: {
+          amount_spent?: number
+          bar_tab_id?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          quantity?: number
+          transaction_type?: string
+          user_bar_tab_id?: string
+        }
+        Relationships: []
+      }
+      bar_tabs: {
+        Row: {
+          created_at: string
+          created_by: string
+          discounted_price: number
+          id: string
+          is_active: boolean
+          item_name: string
+          production_id: string
+          regular_price: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          discounted_price?: number
+          id?: string
+          is_active?: boolean
+          item_name: string
+          production_id: string
+          regular_price?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          discounted_price?: number
+          id?: string
+          is_active?: boolean
+          item_name?: string
+          production_id?: string
+          regular_price?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       friends: {
         Row: {
           created_at: string
@@ -380,6 +449,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_bar_tabs: {
+        Row: {
+          barcode: string
+          created_at: string
+          id: string
+          production_id: string
+          remaining_amount: number
+          status: string
+          total_amount: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          barcode: string
+          created_at?: string
+          id?: string
+          production_id: string
+          remaining_amount?: number
+          status?: string
+          total_amount?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          barcode?: string
+          created_at?: string
+          id?: string
+          production_id?: string
+          remaining_amount?: number
+          status?: string
+          total_amount?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {

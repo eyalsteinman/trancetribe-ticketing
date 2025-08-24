@@ -95,7 +95,7 @@ const TicketManager = ({ tickets, onChange, maxTicketsPerUser, onMaxTicketsChang
                     placeholder="e.g. Early Bird, VIP, General"
                     value={ticket.label}
                     onChange={(e) => updateTicket(ticket.id, 'label', e.target.value)}
-                    className="text-base"
+                    className="text-base w-full"
                   />
                   {ticket.label && (
                     <div className="mt-1">
@@ -104,7 +104,7 @@ const TicketManager = ({ tickets, onChange, maxTicketsPerUser, onMaxTicketsChang
                   )}
                 </div>
                 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-6">
                   <div>
                     <label className="text-sm font-medium">Price (ILS): {ticket.price || 0}</label>
                     <div className="space-y-3">
@@ -121,9 +121,10 @@ const TicketManager = ({ tickets, onChange, maxTicketsPerUser, onMaxTicketsChang
                         min="0"
                         max="600"
                         step="5"
-                        value={ticket.price || ""}
+                        value={ticket.price === 0 ? "0" : ticket.price || ""}
                         onChange={(e) => updateTicket(ticket.id, 'price', Number(e.target.value) || 0)}
                         placeholder="Enter price"
+                        className="w-full"
                       />
                     </div>
                   </div>
@@ -143,9 +144,10 @@ const TicketManager = ({ tickets, onChange, maxTicketsPerUser, onMaxTicketsChang
                         type="number"
                         min="0"
                         max="600"
-                        value={ticket.quantity || ""}
+                        value={ticket.quantity === 0 ? "0" : ticket.quantity || ""}
                         onChange={(e) => updateTicket(ticket.id, 'quantity', Number(e.target.value) || 0)}
                         placeholder="Enter quantity"
+                        className="w-full"
                       />
                     </div>
                   </div>

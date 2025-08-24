@@ -20,13 +20,14 @@ import ReorderableTiles from './ReorderableTiles';
 import Insurance from './Insurance';
 import PersonalCode from './PersonalCode';
 import FriendsCodes from './FriendsCodes';
+import UserBarTab from './UserBarTab';
 
 interface UserDashboardProps {
   user: User;
 }
 
 const UserDashboard = ({ user }: UserDashboardProps) => {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance' | 'personal-code' | 'friends-codes'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance' | 'personal-code' | 'friends-codes' | 'bar-tab'>('dashboard');
   const [nickname, setNickname] = useState<string>('');
   const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
   const [selectedProduction, setSelectedProduction] = useState<{id: string; name: string; logo_url: string | null; vip_description: string | null; vip_price: number | null} | null>(null);
@@ -196,6 +197,10 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     return <FriendsCodes user={user} onBack={() => setCurrentView('dashboard')} />;
   }
 
+  if (currentView === 'bar-tab') {
+    return <UserBarTab user={user} onBack={() => setCurrentView('dashboard')} />;
+  }
+
   return (
     <div 
       className="min-h-screen p-4 transition-colors duration-500"
@@ -271,6 +276,12 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 title: 'Friends Codes',
                 icon: <UserIcon className="h-12 w-12" />,
                 onClick: () => setCurrentView('friends-codes' as const),
+              },
+              {
+                id: 'bar-tab',
+                title: 'Bar Tab',
+                icon: <UserIcon className="h-12 w-12" />,
+                onClick: () => setCurrentView('bar-tab' as const),
               },
             ];
             return (
