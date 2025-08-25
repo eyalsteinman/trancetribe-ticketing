@@ -45,7 +45,22 @@ export type Database = {
           transaction_type?: string
           user_bar_tab_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_bar_tab_transactions_bar_tab"
+            columns: ["bar_tab_id"]
+            isOneToOne: false
+            referencedRelation: "bar_tabs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_bar_tab_transactions_user_bar_tab"
+            columns: ["user_bar_tab_id"]
+            isOneToOne: false
+            referencedRelation: "user_bar_tabs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       bar_tabs: {
         Row: {
@@ -81,7 +96,15 @@ export type Database = {
           regular_price?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_bar_tabs_production"
+            columns: ["production_id"]
+            isOneToOne: false
+            referencedRelation: "productions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       friends: {
         Row: {
@@ -484,7 +507,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_user_bar_tabs_production"
+            columns: ["production_id"]
+            isOneToOne: false
+            referencedRelation: "productions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
