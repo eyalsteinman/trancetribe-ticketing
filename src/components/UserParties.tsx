@@ -665,11 +665,18 @@ useEffect(() => {
                 const showEnded = hasEnded;
 
                 return (
-                  <Button
+                  <div
                     key={party.id}
-                    variant="outline"
-                    className="w-full p-4 h-auto flex-col space-y-3"
+                    role="button"
+                    tabIndex={0}
+                    className="w-full p-4 h-auto flex-col space-y-3 border rounded-md hover:bg-accent/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
                     onClick={() => selectParty(party)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        selectParty(party);
+                      }
+                    }}
                   >
                     {party.photo_url && (
                       <div className="w-full">
@@ -683,16 +690,19 @@ useEffect(() => {
                     <div className="w-full text-center space-y-1 relative">
                       <div className="font-semibold relative">
                         <RtlText text={party.name} className="font-semibold" />
-                        <button
-                          type="button"
-                          className="absolute right-0 top-0 h-6 w-6 rounded-full bg-white text-black flex items-center justify-center text-xs font-bold hover:bg-gray-100 transition-colors border border-gray-300"
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="absolute right-0 top-0 h-6 w-6"
                           onClick={(e) => { 
                             e.stopPropagation(); 
                             e.preventDefault();
                             setInfoParty(party); 
                           }}
                           aria-label="Party info"
-                        >i</button>
+                        >
+                          i
+                        </Button>
                       </div>
                       <div className="text-sm text-muted-foreground">
                         {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -712,7 +722,7 @@ useEffect(() => {
                         <div className="text-xs text-red-600 font-medium">Ended</div>
                       )}
                     </div>
-                  </Button>
+                  </div>
                 );
               })
             )}
