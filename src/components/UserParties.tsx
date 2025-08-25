@@ -691,6 +691,7 @@ useEffect(() => {
                       <div className="font-semibold relative">
                         <RtlText text={party.name} className="font-semibold" />
                         <Button
+                          type="button"
                           variant="outline"
                           size="icon"
                           className="absolute right-0 top-0 h-6 w-6"
@@ -730,8 +731,8 @@ useEffect(() => {
         </Card>
 
         {/* Info Dialog */}
-        {infoParty && (
-            <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/50" onClick={() => setInfoParty(null)}>
+        <Dialog open={!!infoParty} onOpenChange={(open) => { if (!open) setInfoParty(null); }}>
+          <DialogContent className="sm:max-w-md">
             <div className="bg-white text-black rounded-lg w-11/12 max-w-md p-4 relative max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               <button className="absolute top-2 right-2 text-black text-3xl w-10 h-10 flex items-center justify-center hover:bg-gray-100 rounded" onClick={() => setInfoParty(null)} aria-label="Close">×</button>
               {infoProduction?.logo_url && (
