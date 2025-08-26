@@ -734,13 +734,17 @@ useEffect(() => {
         <Dialog open={!!infoParty} onOpenChange={(open) => { if (!open) setInfoParty(null); }}>
           <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
             {infoProduction?.logo_url && (
-              <img src={infoProduction.logo_url} alt={`${infoProduction.name} logo`} className="w-full h-auto object-contain rounded mb-3" />
+              <img src={infoProduction.logo_url} alt={`${infoProduction?.name || 'Production'} logo`} className="w-full h-auto object-contain rounded mb-3" />
             )}
             {infoProduction?.description && (
               <div className="text-sm text-muted-foreground whitespace-pre-wrap mb-3">{infoProduction.description}</div>
             )}
-            <RtlText text={infoParty.name} className="text-lg font-semibold mb-2" />
-            <RtlText text={infoParty.description || 'No additional information provided.'} className="text-sm text-muted-foreground whitespace-pre-wrap" />
+            {infoParty && (
+              <>
+                <RtlText text={infoParty.name} className="text-lg font-semibold mb-2" />
+                <RtlText text={infoParty.description || 'No additional information provided.'} className="text-sm text-muted-foreground whitespace-pre-wrap" />
+              </>
+            )}
           </DialogContent>
         </Dialog>
 
