@@ -732,7 +732,19 @@ useEffect(() => {
 
         {/* Info Dialog */}
         <Dialog open={!!infoParty} onOpenChange={(open) => { if (!open) setInfoParty(null); }}>
-          <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+          <DialogContent 
+            className="max-w-md max-h-[80vh] overflow-y-auto relative"
+            onEscapeKeyDown={(e) => e.preventDefault()}
+            onPointerDownOutside={(e) => e.preventDefault()}
+          >
+            <button
+              type="button"
+              aria-label="Close"
+              className="absolute right-3 top-3 inline-flex h-6 w-6 items-center justify-center rounded-md border"
+              onClick={() => setInfoParty(null)}
+            >
+              <X className="h-4 w-4" />
+            </button>
             {infoProduction?.logo_url && (
               <img src={infoProduction.logo_url} alt={`${infoProduction?.name || 'Production'} logo`} className="w-full h-auto object-contain rounded mb-3" />
             )}
