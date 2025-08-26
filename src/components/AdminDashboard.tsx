@@ -24,6 +24,8 @@ import AdminProductions from './AdminProductions';
 import ManageProductions from './ManageProductions';
 import AdminGuestList from './AdminGuestList';
 import BarTabManager from './BarTabManager';
+import BarTabScanner from './BarTabScanner';
+import { useDarkMode } from '@/hooks/useDarkMode';
 
 interface AdminDashboardProps {
   user: User;
@@ -48,13 +50,14 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
-  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'nickname' | 'my-productions' | 'manage-productions' | 'guest-list' | 'bar-tab'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'nickname' | 'my-productions' | 'manage-productions' | 'guest-list' | 'bar-tab' | 'bar-tab-scanner'>('dashboard');
   const [adminNickname, setAdminNickname] = useState('');
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [nicknameInput, setNicknameInput] = useState('');
   
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   useEffect(() => {
     loadParties();
@@ -389,6 +392,10 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     return <BarTabManager user={user} onBack={() => setCurrentView('dashboard')} />;
   }
 
+  if (currentView === 'bar-tab-scanner') {
+    return <BarTabScanner user={user} onBack={() => setCurrentView('dashboard')} />;
+  }
+
   if (currentView === 'scanner') {
     return (
       <div 
@@ -572,6 +579,8 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
               { id: 'admin-games', title: 'Admin Games', icon: <Gamepad2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('admin-games' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'nickname', title: 'Choose Nickname', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('nickname' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'bar-tab', title: 'Bar Tab', icon: <Building2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab' as const); setTimeout(() => loadParties(), 100); } },
+              { id: 'bar-tab-scanner', title: 'Bar Tab Scanner', icon: <Camera className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab-scanner' as const); setTimeout(() => loadParties(), 100); } },
+              { id: 'dark-mode', title: isDarkMode ? 'Light Mode' : 'Dark Mode', icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: toggleDarkMode },
             ];
             return (
               <ReorderableTiles items={tiles} orderKey={`dashboard-order-admin-${user.id}`} />

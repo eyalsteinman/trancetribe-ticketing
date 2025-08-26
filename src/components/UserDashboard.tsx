@@ -21,6 +21,7 @@ import Insurance from './Insurance';
 import PersonalCode from './PersonalCode';
 import FriendsCodes from './FriendsCodes';
 import UserBarTab from './UserBarTab';
+import { useDarkMode } from '@/hooks/useDarkMode';
 
 interface UserDashboardProps {
   user: User;
@@ -33,6 +34,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   const [selectedProduction, setSelectedProduction] = useState<{id: string; name: string; logo_url: string | null; vip_description: string | null; vip_price: number | null} | null>(null);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   useEffect(() => {
     loadUserQRCodes();
@@ -282,6 +284,12 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 title: 'Bar Tab',
                 icon: <UserIcon className="h-12 w-12" />,
                 onClick: () => setCurrentView('bar-tab' as const),
+              },
+              {
+                id: 'dark-mode',
+                title: isDarkMode ? 'Light Mode' : 'Dark Mode',
+                icon: <UserIcon className="h-12 w-12" />,
+                onClick: toggleDarkMode,
               },
             ];
             return (

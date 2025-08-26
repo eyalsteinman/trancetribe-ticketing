@@ -44,9 +44,11 @@ const UserBarTab = ({ user, onBack }: UserBarTabProps) => {
   const [productions, setProductions] = useState<Production[]>([]);
   const [selectedProduction, setSelectedProduction] = useState<string>('');
   const [barTabItems, setBarTabItems] = useState<BarTabItem[]>([]);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [userBarTabs, setUserBarTabs] = useState<UserBarTabData[]>([]);
   const [loading, setLoading] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
+  const [deletingQR, setDeletingQR] = useState<string | null>(null);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
@@ -176,7 +178,45 @@ const UserBarTab = ({ user, onBack }: UserBarTabProps) => {
   };
 
   const calculateTotal = () => {
-    return barTabItems.reduce((total, item) => total + item.discounted_price, 0);
+    return selectedItems.reduce((total, itemId) => {
+      const item = barTabItems.find(i => i.id === itemId);
+      return total + (item ? item.discounted_price : 0);
+    }, 0);
+  };
+
+  const handleItemSelection = (itemId: string, selected: boolean) => {
+    setSelectedItems(prev => 
+      selected 
+        ? [...prev, itemId]
+        : prev.filter(id => id !== itemId)
+    );
+  };
+
+  const deleteQRCode = async (barTabId: string) => {
+    try {
+      const { error } = await supabase
+        .from('user_bar_tabs')
+        .delete()
+        .eq('id', barTabId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "QR code deleted successfully!",
+      });
+
+      loadUserBarTabs();
+    } catch (error) {
+      console.error('Error deleting QR code:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete QR code",
+        variant: "destructive"
+      });
+    } finally {
+      setDeletingQR(null);
+    }
   };
 
   return (
@@ -236,6 +276,37 @@ const UserBarTab = ({ user, onBack }: UserBarTabProps) => {
                     <p>Total purchased: {barTab.total_amount} ILS</p>
                     <p>Remaining: {barTab.remaining_amount} ILS</p>
                   </div>
+                  
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => setDeletingQR(barTab.id)}
+                    className="w-full mt-2"
+                  >
+                    Delete QR Code
+                  </Button>
+
+                  {deletingQR === barTab.id && (
+                    <div className="mt-2 p-3 border rounded bg-yellow-50 dark:bg-yellow-900/20">
+                      <p className="text-sm font-medium mb-2">Are you sure you want to delete this QR code?</p>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => deleteQRCode(barTab.id)}
+                        >
+                          Yes, Delete
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setDeletingQR(null)}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </CardContent>
@@ -267,11 +338,20 @@ const UserBarTab = ({ user, onBack }: UserBarTabProps) => {
             {selectedProduction && barTabItems.length > 0 && (
               <>
                 <div>
-                  <h4 className="font-medium mb-2">Available Drinks</h4>
+                  <h4 className="font-medium mb-2">Select Drinks</h4>
                   <div className="space-y-2">
                     {barTabItems.map((item) => (
-                      <div key={item.id} className="flex justify-between items-center p-2 border rounded">
-                        <span>{item.item_name}</span>
+                      <div key={item.id} className="flex items-center gap-3 p-2 border rounded">
+                        <input
+                          type="checkbox"
+                          id={`item-${item.id}`}
+                          checked={selectedItems.includes(item.id)}
+                          onChange={(e) => handleItemSelection(item.id, e.target.checked)}
+                          className="w-4 h-4"
+                        />
+                        <label htmlFor={`item-${item.id}`} className="flex-1 cursor-pointer">
+                          <span>{item.item_name}</span>
+                        </label>
                         <div className="text-right">
                           <div className="text-sm line-through text-muted-foreground">
                             {item.regular_price} ILS
@@ -285,20 +365,22 @@ const UserBarTab = ({ user, onBack }: UserBarTabProps) => {
                   </div>
                 </div>
 
-                <div className="border-t pt-4">
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="font-medium">Total for all drinks:</span>
-                    <span className="font-bold text-lg">{calculateTotal()} ILS</span>
+                {selectedItems.length > 0 && (
+                  <div className="border-t pt-4">
+                    <div className="flex justify-between items-center mb-4">
+                      <span className="font-medium">Total for selected drinks:</span>
+                      <span className="font-bold text-lg">{calculateTotal()} ILS</span>
+                    </div>
+                    
+                    <Button
+                      onClick={() => purchaseBarTab(calculateTotal())}
+                      disabled={loading}
+                      className="w-full"
+                    >
+                      {loading ? "Processing..." : `Purchase Bar Tab (${calculateTotal()} ILS)`}
+                    </Button>
                   </div>
-                  
-                  <Button
-                    onClick={() => purchaseBarTab(calculateTotal())}
-                    disabled={loading}
-                    className="w-full"
-                  >
-                    {loading ? "Processing..." : `Purchase Bar Tab (${calculateTotal()} ILS)`}
-                  </Button>
-                </div>
+                )}
               </>
             )}
 

@@ -408,77 +408,85 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
         </Card>
 
         {/* G. Ticket Options Container */}
-        {!userQR && (
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                {party.is_free ? 'Get Your Free Ticket' : 'Purchase Ticket'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {ticketTypes.length > 0 ? (
-                <div className="space-y-3">
-                  {ticketTypes.map((ticketType) => {
-                    const status = getTicketStatus(ticketType);
-                    const remaining = ticketType.quantity - ticketType.sold;
-                    return (
-                      <div key={ticketType.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-center mb-3">
-                          <div>
-                            <div className="font-medium">{ticketType.label}</div>
-                            <div className="text-sm text-muted-foreground">
-                              {ticketType.price === 0 ? 'Free' : `${ticketType.price} ILS`}
-                            </div>
-                            <div className="text-xs text-blue-600">
-                              {remaining} tickets remaining
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              {party.is_free ? 'Get Your Free Ticket' : 'Purchase Ticket'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {!userQR && (
+              <>
+                {ticketTypes.length > 0 ? (
+                  <div className="space-y-3">
+                    {ticketTypes.map((ticketType) => {
+                      const status = getTicketStatus(ticketType);
+                      const remaining = ticketType.quantity - ticketType.sold;
+                      return (
+                        <div key={ticketType.id} className="border rounded-lg p-4">
+                          <div className="flex justify-between items-center mb-3">
+                            <div>
+                              <div className="font-medium">{ticketType.label}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {ticketType.price === 0 ? 'Free' : `${ticketType.price} ILS`}
+                              </div>
+                              <div className="text-xs text-blue-600">
+                                {remaining} tickets remaining
+                              </div>
                             </div>
                           </div>
+                          {ticketType.price > 0 && !hasPaid ? (
+                            <Button
+                              onClick={() => handlePayment(ticketType)}
+                              disabled={loading || status === 'sold-out'}
+                              className="w-full"
+                            >
+                              {loading ? "Processing..." : status === 'sold-out' ? 'Sold Out' : `Pay ${ticketType.price} ILS`}
+                            </Button>
+                          ) : (
+                            <Button
+                              onClick={() => generateQR(ticketType)}
+                              disabled={loading || status === 'sold-out'}
+                              className="w-full"
+                            >
+                              {loading ? "Generating..." : status === 'sold-out' ? 'Sold Out' : 'Get Ticket'}
+                            </Button>
+                          )}
                         </div>
-                        {ticketType.price > 0 && !hasPaid ? (
-                          <Button
-                            onClick={() => handlePayment(ticketType)}
-                            disabled={loading || status === 'sold-out'}
-                            className="w-full"
-                          >
-                            {loading ? "Processing..." : status === 'sold-out' ? 'Sold Out' : `Pay ${ticketType.price} ILS`}
-                          </Button>
-                        ) : (
-                          <Button
-                            onClick={() => generateQR(ticketType)}
-                            disabled={loading || status === 'sold-out'}
-                            className="w-full"
-                          >
-                            {loading ? "Generating..." : status === 'sold-out' ? 'Sold Out' : 'Get Ticket'}
-                          </Button>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div>
-                  {!party.is_free && party.price && !hasPaid ? (
-                    <Button
-                      onClick={() => handlePayment()}
-                      disabled={loading}
-                      className="w-full"
-                    >
-                      {loading ? "Processing..." : `Pay ${party.price} ILS`}
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={() => generateQR()}
-                      disabled={loading}
-                      className="w-full"
-                    >
-                      {loading ? "Generating..." : (party.is_free ? 'Get Free Ticket' : 'Get Ticket')}
-                    </Button>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div>
+                    {!party.is_free && party.price && !hasPaid ? (
+                      <Button
+                        onClick={() => handlePayment()}
+                        disabled={loading}
+                        className="w-full"
+                      >
+                        {loading ? "Processing..." : `Pay ${party.price} ILS`}
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => generateQR()}
+                        disabled={loading}
+                        className="w-full"
+                      >
+                        {loading ? "Generating..." : (party.is_free ? 'Get Free Ticket' : 'Get Ticket')}
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+            
+            {userQR && (
+              <div className="text-center text-green-600 font-medium">
+                ✓ You already have a ticket for this party
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* H. Buy for Friends Container - Always Available */}
         <Card>
