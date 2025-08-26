@@ -17,8 +17,8 @@ interface Party {
   price: number | null;
   is_free: boolean;
   production_id: string | null;
-  ticket_types?: TicketType[];
-  max_tickets_per_user?: number;
+  start_time?: string | null;
+  end_time?: string | null;
 }
 
 interface TicketType {
@@ -52,16 +52,17 @@ interface PartyDetailsProps {
 
 const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
   const [production, setProduction] = useState<Production | null>(null);
+  const [ticketTypes, setTicketTypes] = useState<TicketType[]>([]);
   const [userQR, setUserQR] = useState<QRCodeData | null>(null);
   const [friendQRs, setFriendQRs] = useState<QRCodeData[]>([]);
   const [loading, setLoading] = useState(false);
   const [showBuyForFriends, setShowBuyForFriends] = useState(false);
-  const [selectedTicketType, setSelectedTicketType] = useState<TicketType | null>(null);
   const [hasPaid, setHasPaid] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     loadProduction();
+    loadTicketTypes();
     checkExistingQRs();
     checkPaymentStatus();
   }, [party.id]);
@@ -73,10 +74,22 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
       .from('productions')
       .select('id, name, description, logo_url')
       .eq('id', party.production_id)
-      .single();
+      .maybeSingle();
 
     if (!error && data) {
       setProduction(data);
+    }
+  };
+
+  const loadTicketTypes = async () => {
+    const { data, error } = await supabase
+      .from('ticket_types')
+      .select('*')
+      .eq('party_id', party.id)
+      .order('price', { ascending: true });
+
+    if (!error && data) {
+      setTicketTypes(data);
     }
   };
 
@@ -93,7 +106,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
       setUserQR(userQRData);
     }
 
-    // Check friend QRs (assuming there's a way to identify friend tickets)
+    // Check friend QRs - get QRs purchased by this user for friends
     const { data: friendQRData, error: friendError } = await supabase
       .from('qr_codes')
       .select(`
@@ -124,11 +137,16 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
       .eq('status', 'paid')
       .maybeSingle();
     
-    setHasPaid(!!data && !error);
+    const hasPaidStatus = !!data && !error;
+    setHasPaid(hasPaidStatus);
+
+    // Auto-generate QR if payment exists but no QR found
+    if (hasPaidStatus && !userQR) {
+      await autoGenerateQR();
+    }
   };
 
-  const generateQR = async (ticketType?: TicketType) => {
-    setLoading(true);
+  const autoGenerateQR = async () => {
     try {
       const qrData = `${user.id}-${party.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
@@ -138,26 +156,34 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
           user_id: user.id,
           party_id: party.id,
           code: qrData,
-          is_approved: false,
-          ticket_type_id: ticketType?.id
+          is_approved: false
         });
 
-      if (error) throw error;
+      if (!error) {
+        // Check for auto-approval
+        const { data: existingApproval } = await supabase
+          .from('qr_codes')
+          .select('auto_approved')
+          .eq('user_id', user.id)
+          .eq('auto_approved', true)
+          .limit(1)
+          .maybeSingle();
 
-      toast({
-        title: "QR Code Generated",
-        description: "Your QR code has been submitted for approval."
-      });
-      
-      checkExistingQRs();
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
+        if (existingApproval) {
+          await supabase
+            .from('qr_codes')
+            .update({
+              is_approved: true,
+              auto_approved: true,
+              approved_at: new Date().toISOString()
+            })
+            .eq('code', qrData);
+        }
+
+        checkExistingQRs();
+      }
+    } catch (error) {
+      console.error('Auto QR generation error:', error);
     }
   };
 
@@ -178,8 +204,70 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
       setHasPaid(true);
       toast({
         title: "Payment Successful",
-        description: "You can now generate your QR code."
+        description: "Your QR code is being generated..."
       });
+
+      // Auto-generate QR after payment
+      await autoGenerateQR();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const generateQR = async (ticketType?: TicketType) => {
+    setLoading(true);
+    try {
+      const qrData = `${user.id}-${party.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      const { error } = await supabase
+        .from('qr_codes')
+        .insert({
+          user_id: user.id,
+          party_id: party.id,
+          code: qrData,
+          is_approved: false,
+          ticket_type_id: ticketType?.id
+        });
+
+      if (error) throw error;
+
+      // Check for auto-approval
+      const { data: existingApproval } = await supabase
+        .from('qr_codes')
+        .select('auto_approved')
+        .eq('user_id', user.id)
+        .eq('auto_approved', true)
+        .limit(1)
+        .maybeSingle();
+
+      if (existingApproval) {
+        await supabase
+          .from('qr_codes')
+          .update({
+            is_approved: true,
+            auto_approved: true,
+            approved_at: new Date().toISOString()
+          })
+          .eq('code', qrData);
+        
+        toast({
+          title: "QR Code Generated & Approved",
+          description: "Your ticket is ready!"
+        });
+      } else {
+        toast({
+          title: "QR Code Generated",
+          description: "Your QR code has been submitted for approval."
+        });
+      }
+      
+      checkExistingQRs();
     } catch (error: any) {
       toast({
         title: "Error",
@@ -193,12 +281,32 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
 
   const sendQRCode = async (qrCode: string, method: 'email' | 'whatsapp', friendName?: string) => {
     if (method === 'email') {
-      // TODO: Implement email sending via edge function
-      toast({
-        title: "Email Feature",
-        description: "Email sending will be implemented with Resend integration.",
-        variant: "default"
-      });
+      try {
+        setLoading(true);
+        const { data, error } = await supabase.functions.invoke('send-qr-code', {
+          body: {
+            qrCode,
+            partyName: party.name,
+            friendName,
+            recipientEmail: 'friend@example.com' // You'll need to get this from user input
+          }
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Email Sent",
+          description: `QR code sent via email${friendName ? ` for ${friendName}` : ''}`
+        });
+      } catch (error: any) {
+        toast({
+          title: "Email Error",
+          description: error.message,
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
     } else {
       // WhatsApp sharing
       const message = `Here's your QR code for ${party.name}${friendName ? ` (for ${friendName})` : ''}: ${qrCode}`;
@@ -241,22 +349,12 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
         {/* D. Production Photo Container */}
         {production?.logo_url && (
           <Card>
-            <CardHeader>
-              <CardTitle>
-                <RtlText text={production.name} />
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+            <CardContent className="p-0">
               <img 
                 src={production.logo_url} 
                 alt={`${production.name} logo`}
                 className="w-full h-auto object-contain rounded-md"
               />
-              {production.description && (
-                <div className="mt-4">
-                  <RtlText text={production.description} className="text-sm text-muted-foreground whitespace-pre-wrap" />
-                </div>
-              )}
             </CardContent>
           </Card>
         )}
@@ -264,10 +362,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
         {/* E. Party Photo Container */}
         {party.photo_url && (
           <Card>
-            <CardHeader>
-              <CardTitle>Party Photo</CardTitle>
-            </CardHeader>
-            <CardContent>
+            <CardContent className="p-0">
               <img 
                 src={party.photo_url} 
                 alt={party.name}
@@ -282,19 +377,31 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
           <CardHeader>
             <CardTitle>Party Details</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent className="space-y-3">
             <div className="text-sm">
               <strong>Date:</strong> {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
             </div>
+            {(party.start_time || party.end_time) && (
+              <div className="text-sm">
+                <strong>Time:</strong> 
+                {party.start_time && ` From ${party.start_time}`}
+                {party.end_time && ` to ${party.end_time}`}
+              </div>
+            )}
             {party.description && (
               <div className="text-sm">
                 <strong>Description:</strong>
-                <RtlText text={party.description} className="text-sm text-muted-foreground whitespace-pre-wrap mt-1" />
+                <div className="mt-1">
+                  <RtlText text={party.description} className="text-sm text-muted-foreground whitespace-pre-wrap" />
+                </div>
               </div>
             )}
-            {party.price !== null && (
+            {production?.description && (
               <div className="text-sm">
-                <strong>Price:</strong> {party.price} ILS {party.is_free && <span className="text-green-600">(Free)</span>}
+                <strong>Production:</strong>
+                <div className="mt-1">
+                  <RtlText text={production.description} className="text-sm text-muted-foreground whitespace-pre-wrap" />
+                </div>
               </div>
             )}
           </CardContent>
@@ -309,30 +416,31 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {party.ticket_types && party.ticket_types.length > 0 ? (
+              {ticketTypes.length > 0 ? (
                 <div className="space-y-3">
-                  {party.ticket_types.map((ticketType) => {
+                  {ticketTypes.map((ticketType) => {
                     const status = getTicketStatus(ticketType);
+                    const remaining = ticketType.quantity - ticketType.sold;
                     return (
                       <div key={ticketType.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-center mb-2">
+                        <div className="flex justify-between items-center mb-3">
                           <div>
                             <div className="font-medium">{ticketType.label}</div>
                             <div className="text-sm text-muted-foreground">
                               {ticketType.price === 0 ? 'Free' : `${ticketType.price} ILS`}
                             </div>
-                            <div className="text-xs">
-                              {ticketType.quantity - ticketType.sold} tickets remaining
+                            <div className="text-xs text-blue-600">
+                              {remaining} tickets remaining
                             </div>
                           </div>
                         </div>
-                        {!party.is_free && ticketType.price > 0 && !hasPaid ? (
+                        {ticketType.price > 0 && !hasPaid ? (
                           <Button
                             onClick={() => handlePayment(ticketType)}
                             disabled={loading || status === 'sold-out'}
                             className="w-full"
                           >
-                            {status === 'sold-out' ? 'Sold Out' : `Pay ${ticketType.price} ILS`}
+                            {loading ? "Processing..." : status === 'sold-out' ? 'Sold Out' : `Pay ${ticketType.price} ILS`}
                           </Button>
                         ) : (
                           <Button
@@ -340,7 +448,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
                             disabled={loading || status === 'sold-out'}
                             className="w-full"
                           >
-                            {status === 'sold-out' ? 'Sold Out' : 'Get Ticket'}
+                            {loading ? "Generating..." : status === 'sold-out' ? 'Sold Out' : 'Get Ticket'}
                           </Button>
                         )}
                       </div>
@@ -372,7 +480,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
           </Card>
         )}
 
-        {/* H. Buy for Friends Container */}
+        {/* H. Buy for Friends Container - Always Available */}
         <Card>
           <CardHeader>
             <CardTitle>Buy Tickets for Friends</CardTitle>
@@ -399,10 +507,17 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
               <div className="bg-white p-4 rounded-lg inline-block">
                 <QRCodeSVG value={userQR.code} size={200} />
               </div>
-              <p className="text-xs text-muted-foreground">
-                Status: {userQR.is_approved ? 'Approved' : 'Pending Approval'}
-                {userQR.is_scanned && ' • Scanned'}
-              </p>
+              <div className="space-y-1">
+                <p className="text-sm font-medium">
+                  Status: {userQR.is_approved ? '✅ Approved' : '⏳ Pending Approval'}
+                </p>
+                {userQR.is_scanned && (
+                  <p className="text-xs text-green-600">✓ Scanned</p>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  Show this QR code to the admin for scanning
+                </p>
+              </div>
             </CardContent>
           </Card>
         )}
@@ -423,16 +538,21 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
                     <div className="bg-white p-3 rounded-lg inline-block">
                       <QRCodeSVG value={friendQR.code} size={150} />
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Status: {friendQR.is_approved ? 'Approved' : 'Pending Approval'}
-                      {friendQR.is_scanned && ' • Scanned'}
-                    </p>
+                    <div className="space-y-1">
+                      <p className="text-xs font-medium">
+                        Status: {friendQR.is_approved ? '✅ Approved' : '⏳ Pending Approval'}
+                      </p>
+                      {friendQR.is_scanned && (
+                        <p className="text-xs text-green-600">✓ Scanned</p>
+                      )}
+                    </div>
                     <div className="flex gap-2 justify-center">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => sendQRCode(friendQR.code, 'email', friendQR.friend_display_name)}
                         className="flex items-center gap-1"
+                        disabled={loading}
                       >
                         <Mail className="h-4 w-4" />
                         Email
