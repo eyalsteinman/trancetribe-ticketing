@@ -307,18 +307,21 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
               {userQRCodes.map((qrCode) => (
                 <div 
                   key={qrCode.id} 
-                  className="flex items-center gap-4 p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
+                  className="border rounded-lg p-4 space-y-3 cursor-pointer hover:bg-muted/50 transition-colors"
                   onClick={() => setCurrentView('parties')}
                 >
+                  {/* Party Photo */}
                   {qrCode.parties?.photo_url && (
                     <img 
                       src={qrCode.parties.photo_url} 
                       alt={qrCode.parties.name}
-                      className="w-16 h-16 object-cover rounded"
+                      className="w-full h-48 object-cover rounded"
                     />
                   )}
-                  <div className="flex-1">
-                    <div className="font-semibold">{qrCode.parties?.name}</div>
+                  
+                  {/* Party Info */}
+                  <div>
+                    <div className="font-semibold text-lg">{qrCode.parties?.name}</div>
                     <div className="text-sm text-muted-foreground">
                       {new Date(qrCode.parties?.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </div>
@@ -326,8 +329,19 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                       {qrCode.is_scanned ? 'qr used' : qrCode.is_approved ? 'qr approved! Enjoy the party!' : 'qr pending approval'}
                     </div>
                   </div>
+                  
+                  {/* QR Code Display for Approved */}
+                  {qrCode.is_approved && !qrCode.is_scanned && (
+                    <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded border">
+                      <div className="text-green-600 text-sm font-medium mb-2">✓ QR Code Ready</div>
+                      <div className="text-xs text-muted-foreground">
+                        Your QR code is approved and ready for use!
+                      </div>
+                    </div>
+                  )}
+                  
                   {qrCode.is_scanned && (
-                    <div className="text-green-600 text-sm">✓</div>
+                    <div className="text-green-600 text-sm text-center font-medium">✓ Used</div>
                   )}
                 </div>
               ))}

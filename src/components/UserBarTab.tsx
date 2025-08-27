@@ -196,7 +196,7 @@ const UserBarTab = ({ user, onBack }: UserBarTabProps) => {
     try {
       const { error } = await supabase
         .from('user_bar_tabs')
-        .delete()
+        .update({ status: 'deleted' })
         .eq('id', barTabId);
 
       if (error) throw error;
@@ -379,6 +379,12 @@ const UserBarTab = ({ user, onBack }: UserBarTabProps) => {
                     >
                       {loading ? "Processing..." : `Purchase Bar Tab (${calculateTotal()} ILS)`}
                     </Button>
+                  </div>
+                )}
+                
+                {selectedItems.length === 0 && (
+                  <div className="text-center text-muted-foreground py-4">
+                    Please select one or more drinks to see the total price.
                   </div>
                 )}
               </>

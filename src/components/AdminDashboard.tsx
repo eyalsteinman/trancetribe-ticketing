@@ -650,7 +650,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
                               <div className="text-xs text-blue-600 font-medium mt-1">
                                 Guests arriving: {party.approved_count || 0}
                               </div>
-                              {upcomingParties.length > 0 && upcomingParties[0].id === party.id && (
+                              {index === 0 && sortAscending && (
                                 <div className="text-xs text-green-600 font-medium">Soonest</div>
                               )}
                             </div>

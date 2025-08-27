@@ -55,7 +55,7 @@ const TicketManager = ({ tickets, onChange, maxTicketsPerUser, onMaxTicketsChang
             min="1"
             value={maxTicketsPerUser || ""}
             onChange={(e) => onMaxTicketsChange(Number(e.target.value) || 1)}
-            placeholder="Enter max tickets per user"
+            placeholder="Enter amount"
           />
         </div>
 
