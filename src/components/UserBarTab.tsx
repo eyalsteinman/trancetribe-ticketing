@@ -122,7 +122,7 @@ const UserBarTab = ({ user, onBack }: UserBarTabProps) => {
           )
         `)
         .eq('user_id', user.id)
-        .eq('status', 'active');
+        .neq('status', 'deleted');
 
       if (error) throw error;
       setUserBarTabs((data as UserBarTabData[]) || []);
