@@ -1,795 +1,211 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { useToast } from '@/hooks/use-toast';
-import { QRCodeSVG } from 'qrcode.react';
-import { User } from '@supabase/supabase-js';
-import { ArrowLeft, ArrowUpDown, X } from 'lucide-react';
-import { useBackground } from '@/contexts/BackgroundContext';
-import { useBackNavigation } from '@/hooks/useBackNavigation';
-import BuyTicketsForFriends from './BuyTicketsForFriends';
-import RtlText from './RtlText';
+import React, { useEffect, useState, useCallback } from "react";
+import { supabase } from "../lib/supabase";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowLeft } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import QRCode from "react-qr-code";
 
-interface Party {
-  id: string;
-  name: string;
-  date: string;
-  is_active: boolean;
-  photo_url: string | null;
-  description: string | null;
-  price: number | null;
-  is_free: boolean;
-  required_socials: string[];
-  production_id: string | null;
-  ticket_count: number | null;
-  start_time: string | null;
-  end_time: string | null;
-}
-
-interface UserPartiesProps {
-  user: User;
-  onBack: () => void;
-}
-
-const platformLabels: Record<string, string> = { facebook: 'Facebook', instagram: 'Instagram', tiktok: 'TikTok', x: 'X (Twitter)' };
-
-const UserParties = ({ user, onBack }: UserPartiesProps) => {
-  const [currentView, setCurrentView] = useState<'parties' | 'buy-tickets'>('parties');
-  const [selectedPartyForTickets, setSelectedPartyForTickets] = useState<Party | null>(null);
-  const [parties, setParties] = useState<Party[]>([]);
-  const [selectedParty, setSelectedParty] = useState<Party | null>(null);
-  const [qrCode, setQrCode] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [loadingParties, setLoadingParties] = useState(true);
-  const [sortAscending, setSortAscending] = useState(true);
-  const [infoParty, setInfoParty] = useState<Party | null>(null);
-  const [hasPaid, setHasPaid] = useState(false);
-  const [userSocials, setUserSocials] = useState<Record<string, string>>({});
+export default function UserParties({ user }) {
+  const [parties, setParties] = useState([]);
+  const [selectedParty, setSelectedParty] = useState(null);
+  const [qrCode, setQrCode] = useState(null);
   const [showSocialsDialog, setShowSocialsDialog] = useState(false);
-  const [missingPlatforms, setMissingPlatforms] = useState<string[]>([]);
-  const [socialInputs, setSocialInputs] = useState<Record<string, string>>({});
-  const [pendingAction, setPendingAction] = useState<null | 'pay' | 'qr'>(null);
-  const [infoProduction, setInfoProduction] = useState<{ name: string; description: string | null; logo_url: string | null } | null>(null);
-  const [partyTicketCounts, setPartyTicketCounts] = useState<Record<string, number>>({});
-  const { toast } = useToast();
-  const { backgroundColor, isBackgroundDark } = useBackground();
+  const [loading, setLoading] = useState(false);
 
-  // Auto-close dialogs on back navigation - prevent back navigation when dialogs are open
-  useBackNavigation({
-    onBackNavigation: () => {
-      if (showSocialsDialog) {
-        setShowSocialsDialog(false);
-        setPendingAction(null);
-      }
-      if (infoParty) {
-        setInfoParty(null);
-      }
-    },
-    isActive: showSocialsDialog || !!infoParty,
-    preventBackNavigation: true
-  });
+  // Ticket purchase states
+  const [step, setStep] = useState("partyList"); // partyList, ticketSelection, friendDetails, review, payment, confirmation
+  const [ticketCount, setTicketCount] = useState(1);
+  const [friends, setFriends] = useState([]);
+  const [paymentProcessing, setPaymentProcessing] = useState(false);
+
+  const loadParties = useCallback(async () => {
+    const { data, error } = await supabase.from("parties").select("*");
+    if (!error) setParties(data);
+  }, []);
 
   useEffect(() => {
     loadParties();
-    loadTicketCounts();
-    
-    const channel = supabase
-      .channel('public:parties-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'parties' }, (payload: any) => {
-        if (payload.eventType === 'DELETE') {
-          setParties((prev) => prev.filter((p) => p.id !== (payload.old as any).id));
-        } else {
-          loadParties();
+
+    const subscription = supabase
+      .channel("public:parties")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "parties" },
+        (payload) => {
+          if (payload.eventType === "DELETE") {
+            setParties((prev) => prev.filter((p) => p.id !== payload.old.id));
+          } else if (payload.eventType === "INSERT") {
+            setParties((prev) => [...prev, payload.new]);
+          } else if (payload.eventType === "UPDATE") {
+            setParties((prev) =>
+              prev.map((p) => (p.id === payload.new.id ? payload.new : p))
+            );
+          }
         }
-      })
+      )
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(subscription);
     };
-  }, []);
+  }, [loadParties]);
 
-useEffect(() => { loadUserSocials(); }, []);
-
-useEffect(() => {
-  loadParties();
-}, [sortAscending]);
-
-useEffect(() => {
-  const loadProduction = async () => {
-    if (infoParty?.production_id) {
-      const { data } = await (supabase as any)
-        .from('productions')
-        .select('name, description, logo_url')
-        .eq('id', infoParty.production_id)
-        .maybeSingle();
-      setInfoProduction((data as any) || null);
-    } else {
-      setInfoProduction(null);
-    }
-  };
-  loadProduction();
-}, [infoParty]);
-
-  useEffect(() => {
-    if (selectedParty) {
-      loadExistingQR();
-      loadPaymentStatus();
-      const required = Array.isArray(selectedParty.required_socials) ? selectedParty.required_socials : [];
-      const missing = required.filter((p) => !userSocials[p]);
-      if (missing.length > 0) {
-        setMissingPlatforms(missing);
-        setSocialInputs((prev) => {
-          const inputs: Record<string, string> = { ...prev };
-          missing.forEach((p) => { inputs[p] = userSocials[p] || ''; });
-          return inputs;
-        });
-        setShowSocialsDialog(true);
-      } else {
-        setMissingPlatforms([]);
-        setShowSocialsDialog(false);
-      }
-    } else {
-      setQrCode(null);
-      setHasPaid(false);
-      setShowSocialsDialog(false);
-      setMissingPlatforms([]);
-    }
-  }, [selectedParty, userSocials]);
-
-  const loadParties = async () => {
-    setLoadingParties(true);
-    try {
-      const { data, error } = await (supabase as any)
-        .from('parties')
-        .select('*')
-        .order('date', { ascending: sortAscending });
-
-      if (data && !error) {
-        const normalized = (data as any[]).map((p) => ({
-          id: p.id,
-          name: p.name,
-          date: p.date,
-          is_active: p.is_active,
-          photo_url: p.photo_url ?? null,
-          description: p.description ?? null,
-          price: p.price ?? null,
-          is_free: p.is_free ?? false,
-          required_socials: Array.isArray(p.required_socials) ? p.required_socials : [],
-          production_id: p.production_id ?? null,
-          ticket_count: p.ticket_count ?? null,
-          start_time: p.start_time ?? null,
-          end_time: p.end_time ?? null
-        }));
-        setParties(normalized);
-      } else {
-        console.log('No parties found');
-      }
-    } catch (error) {
-      console.error('Error loading parties:', error);
-    } finally {
-      setLoadingParties(false);
-    }
-  };
-
-  const loadTicketCounts = async () => {
-    try {
-      const { data, error } = await (supabase as any)
-        .from('qr_codes')
-        .select('party_id');
-      
-      if (!error && data) {
-        const counts: Record<string, number> = {};
-        (data as any[]).forEach((qr) => {
-          counts[qr.party_id] = (counts[qr.party_id] || 0) + 1;
-        });
-        setPartyTicketCounts(counts);
-      }
-    } catch (error) {
-      console.error('Error loading ticket counts:', error);
-    }
-  };
-
-  const loadUserSocials = async () => {
-    try {
-      const { data, error } = await (supabase as any)
-        .from('user_socials')
-        .select('platform, url')
-        .eq('user_id', user.id);
-      if (!error && data) {
-        const map: Record<string, string> = {};
-        (data as any[]).forEach((row) => {
-          map[row.platform] = row.url || '';
-        });
-        setUserSocials(map);
-      }
-    } catch (e) {
-      console.error('Error loading user socials:', e);
-    }
-  };
-
-  const loadExistingQR = async () => {
-    if (!selectedParty) return;
-    
-    try {
-      const { data, error } = await supabase
-        .from('qr_codes')
-        .select('code, is_approved, is_scanned')
-        .eq('user_id', user.id)
-        .eq('party_id', selectedParty.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (data && !error && data.is_scanned) {
-        // QR was scanned
-        toast({
-          title: "QR Used",
-          description: "qr used",
-          variant: "default"
-        });
-      } else if (data && !error && data.is_approved) {
-        setQrCode(data.code);
-        toast({
-          title: "QR Approved! Enjoy the party!",
-          description: "qr approved! Enjoy the party!",
-          variant: "default"
-        });
-      } else if (data && !error && !data.is_approved) {
-        toast({
-          title: "QR Pending Approval",
-          description: "qr pending approval",
-          variant: "default"
-        });
-      }
-    } catch (error) {
-      console.error('Error loading existing QR code:', error);
-    }
-  };
-
-  const ensureRequiredSocials = (action: 'pay' | 'qr'): boolean => {
-    if (!selectedParty) return false;
-    const required = Array.isArray(selectedParty.required_socials) ? selectedParty.required_socials : [];
-    const missing = required.filter((p) => !userSocials[p]);
-    if (missing.length > 0) {
-      setMissingPlatforms(missing);
-      const inputs: Record<string, string> = {};
-      missing.forEach((p) => { inputs[p] = userSocials[p] || ''; });
-      setSocialInputs(inputs);
-      setPendingAction(action);
-      setShowSocialsDialog(true);
-      return false;
-    }
-    return true;
-  };
-
-  const handlePayNow = async () => {
-    if (!selectedParty) return;
-    if (!ensureRequiredSocials('pay')) return;
+  const generateQRCode = async (party) => {
     setLoading(true);
-    try {
-      const { error } = await (supabase as any)
-        .from('payments')
-        .insert({
-          user_id: user.id,
-          party_id: selectedParty.id,
-          amount: selectedParty.price || 0,
-          status: 'paid'
-        });
-      if (error) {
-        toast({ title: 'Error', description: error.message, variant: 'destructive' });
-        return;
-      }
-      setHasPaid(true);
-      toast({ title: 'Payment successful', description: 'You can now generate a QR code.' });
-    } catch (e) {
-      console.error('Payment error', e);
-      toast({ title: 'Error', description: 'Payment failed. Try again.', variant: 'destructive' });
-    } finally {
-      setLoading(false);
+    const qrData = `${user.id}-${party.id}`;
+
+    const { error } = await supabase.from("qr_codes").upsert(
+      {
+        user_id: user.id,
+        party_id: party.id,
+        code: qrData,
+        is_approved: false,
+      },
+      { onConflict: "user_id,party_id" }
+    );
+
+    if (!error) {
+      setQrCode(qrData);
     }
-  };
-  const loadPaymentStatus = async () => {
-    if (!selectedParty) return;
-    try {
-      const { data, error } = await (supabase as any)
-        .from('payments')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('party_id', selectedParty.id)
-        .eq('status', 'paid')
-        .maybeSingle();
-      setHasPaid(!!data && !error);
-    } catch (e) {
-      console.error('Error checking payment status:', e);
-      setHasPaid(false);
-    }
-  };
-  
-  const saveMissingSocials = async () => {
-    setLoading(true);
-    try {
-      if (missingPlatforms.length === 0) {
-        setShowSocialsDialog(false);
-        return;
-      }
-      const platformsToSave = missingPlatforms.filter((p) => (socialInputs[p] || '').trim());
-      if (platformsToSave.length !== missingPlatforms.length) {
-        toast({ title: 'Missing info', description: 'Please fill all required socials.', variant: 'destructive' });
-        setLoading(false);
-        return;
-      }
-      const { error: delErr } = await (supabase as any)
-        .from('user_socials')
-        .delete()
-        .eq('user_id', user.id)
-        .in('platform', platformsToSave);
-      if (delErr) throw delErr;
-      const rows = platformsToSave.map((p) => ({ user_id: user.id, platform: p, url: socialInputs[p].trim() }));
-      const { error: insErr } = await (supabase as any)
-        .from('user_socials')
-        .insert(rows);
-      if (insErr) throw insErr;
-
-      const updated = { ...userSocials };
-      platformsToSave.forEach((p) => { updated[p] = socialInputs[p].trim(); });
-      setUserSocials(updated);
-      setShowSocialsDialog(false);
-      setMissingPlatforms([]);
-      const action = pendingAction;
-      setPendingAction(null);
-      if (action === 'pay') {
-        handlePayNow();
-      } else if (action === 'qr') {
-        generateQRCode();
-      }
-    } catch (e: any) {
-      console.error('Save required socials error', e);
-      toast({ title: 'Error', description: e.message || 'Failed to save socials', variant: 'destructive' });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const generateQRCode = async () => {
-    if (!selectedParty) {
-      toast({
-        title: "Error",
-        description: "No party selected.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!ensureRequiredSocials('qr')) {
-      return;
-    }
-
-    if (selectedParty.price && !selectedParty.is_free && !hasPaid) {
-      toast({
-        title: "Payment required",
-        description: "Please complete payment before generating a QR code.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const qrData = `${user.id}-${selectedParty.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
-      const { error } = await supabase
-        .from('qr_codes')
-        .insert({
-          user_id: user.id,
-          party_id: selectedParty.id,
-          code: qrData,
-          is_approved: false
-        });
-
-      if (error) {
-        console.error('QR Code generation error:', error);
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive"
-        });
-      } else {
-        // Check if this user has auto-approval
-        const { data: existingApproval } = await supabase
-          .from('qr_codes')
-          .select('auto_approved')
-          .eq('user_id', user.id)
-          .eq('auto_approved', true)
-          .limit(1)
-          .maybeSingle();
-
-        if (existingApproval) {
-          // Auto-approve this QR code
-          await supabase
-            .from('qr_codes')
-            .update({
-              is_approved: true,
-              auto_approved: true,
-              approved_at: new Date().toISOString()
-            })
-            .eq('code', qrData);
-          
-          setQrCode(qrData);
-          toast({
-            title: "QR Approved! Enjoy the party!",
-            description: "qr approved! Enjoy the party!",
-          });
-        } else {
-          toast({
-            title: "QR Pending Approval",
-            description: "qr pending approval",
-            variant: "default"
-          });
-        }
-      }
-    } catch (error) {
-      console.error('QR Code generation catch error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to generate QR code",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const selectParty = async (party: Party) => {
-    // Check if user already has a QR code for this party
-    const { data: existingQR } = await supabase
-      .from('qr_codes')
-      .select('id, is_approved, is_scanned')
-      .eq('user_id', user.id)
-      .eq('party_id', party.id)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (existingQR) {
-      // User already has a QR code, show buy tickets for friends option
-      setSelectedPartyForTickets(party);
-      setCurrentView('buy-tickets');
-    } else {
-      // User doesn't have a QR code, proceed normally
-      setSelectedParty(party);
-    }
+    setLoading(false);
   };
 
   const goBackToPartyList = () => {
     setSelectedParty(null);
     setQrCode(null);
+    setStep("partyList");
   };
 
-  if (currentView === 'buy-tickets' && selectedPartyForTickets) {
-    return (
-      <BuyTicketsForFriends 
-        user={user} 
-        party={selectedPartyForTickets} 
-        onBack={() => {
-          setCurrentView('parties');
-          setSelectedPartyForTickets(null);
-        }}
-      />
-    );
-  }
+  const handlePurchase = async () => {
+    setPaymentProcessing(true);
+    // Simulate payment logic
+    setTimeout(() => {
+      setPaymentProcessing(false);
+      setStep("confirmation");
+      generateQRCode(selectedParty);
+    }, 2000);
+  };
 
-  if (selectedParty) {
-    return (
-      <div 
-        className="min-h-screen p-4 transition-colors duration-500"
-        style={{ 
-          backgroundColor
-        }}
-      >
-        <div className="max-w-md mx-auto space-y-6 text-left">
-          <div className="flex justify-between items-center">
-            <Button variant="outline" size="icon" onClick={goBackToPartyList} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          </div>
+  return (
+    <div className="relative w-full max-w-3xl mx-auto p-4">
+      {step === "partyList" && (
+        <div className="grid grid-cols-1 gap-4">
+          {parties.map((party) => (
+            <Card
+              key={party.id}
+              onClick={() => {
+                setSelectedParty(party);
+                setStep("ticketSelection");
+              }}
+              className="cursor-pointer hover:shadow-lg transition"
+            >
+              <CardContent>
+                <h2 className="text-lg font-semibold">{party.name}</h2>
+                <p className="text-sm text-muted-foreground">{party.date}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Your QR Code</CardTitle>
-              <div className="text-center space-y-1">
-                <div className="text-lg font-semibold">{selectedParty.name}</div>
-                <div className="text-sm text-muted-foreground">
-                  {new Date(selectedParty.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                </div>
-                {(selectedParty.start_time || selectedParty.end_time) && (
-                  <div className="text-sm text-muted-foreground">
-                    {selectedParty.start_time ? `Starts: ${selectedParty.start_time}` : ''}
-                    {selectedParty.end_time ? ` • Ends: ${selectedParty.end_time}` : ''}
-                  </div>
-                )}
-                {selectedParty.price !== null && (
-                  <div className="text-sm font-medium">
-                    Price: {selectedParty.price} ILS {selectedParty.is_free && <span className="text-xs text-green-600">(Free)</span>}
-                  </div>
-                )}
-              </div>
-            </CardHeader>
-            <CardContent className="text-center space-y-4">
-              {qrCode ? (
-                <div className="flex flex-col items-center space-y-4">
-                  <div className="bg-white p-4 rounded-lg">
-                    <QRCodeSVG value={qrCode} size={200} />
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Show this QR code to the admin for scanning
-                  </p>
-                  <Button 
-                    variant="outline"
-                    onClick={() => {
-                      setSelectedPartyForTickets(selectedParty);
-                      setCurrentView('buy-tickets');
-                    }}
-                    className="w-full"
-                  >
-                    Buy Tickets for Friends
-                  </Button>
-                </div>
-              ) : (
+      {selectedParty && step !== "partyList" && (
+        <>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={goBackToPartyList}
+            aria-label="Back"
+            className="absolute top-4 left-4 z-[9999] on-color back-button"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+
+          <Card className="mt-12">
+            <CardContent>
+              <h2 className="text-xl font-bold mb-4">{selectedParty.name}</h2>
+
+              {step === "ticketSelection" && (
                 <div className="space-y-4">
-                  {!selectedParty.is_free && selectedParty.price && !hasPaid ? (
-                    <>
-                      <Button onClick={handlePayNow} disabled={loading} className="w-full py-4 text-lg">
-                        {loading ? "Processing..." : `Pay Now (${selectedParty.price} ILS)`}
-                      </Button>
-                      <p className="text-sm text-muted-foreground">
-                        Complete payment to generate your QR code.
-                      </p>
-                    </>
-                  ) : (
-                    <Button
-                      onClick={generateQRCode}
-                      disabled={loading}
-                      className="w-full py-4 text-lg"
-                    >
-                      {loading ? "Generating..." : "Generate QR Code"}
-                    </Button>
-                  )}
-                  <Button 
-                    variant="outline"
-                    onClick={() => {
-                      setSelectedPartyForTickets(selectedParty);
-                      setCurrentView('buy-tickets');
-                    }}
-                    className="w-full"
-                  >
-                    Buy Tickets for Friends
+                  <label>Number of Tickets:</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={ticketCount}
+                    onChange={(e) => setTicketCount(Number(e.target.value))}
+                    className="border rounded p-2 w-20"
+                  />
+                  <Button onClick={() => setStep("friendDetails")}>
+                    Continue
                   </Button>
+                </div>
+              )}
+
+              {step === "friendDetails" && (
+                <div className="space-y-4">
+                  <h3 className="font-semibold">Assign tickets to friends</h3>
+                  {[...Array(ticketCount)].map((_, i) => (
+                    <input
+                      key={i}
+                      type="text"
+                      placeholder={`Friend ${i + 1} name`}
+                      className="border rounded p-2 w-full"
+                      onChange={(e) => {
+                        const newFriends = [...friends];
+                        newFriends[i] = e.target.value;
+                        setFriends(newFriends);
+                      }}
+                    />
+                  ))}
+                  <Button onClick={() => setStep("review")}>Review Order</Button>
+                </div>
+              )}
+
+              {step === "review" && (
+                <div className="space-y-4">
+                  <h3 className="font-semibold">Review your order</h3>
+                  <p>Event: {selectedParty.name}</p>
+                  <p>Date: {selectedParty.date}</p>
+                  <p>Tickets: {ticketCount}</p>
+                  <ul className="list-disc ml-5">
+                    {friends.map((f, i) => (
+                      <li key={i}>{f || `Friend ${i + 1}`}</li>
+                    ))}
+                  </ul>
+                  <Button onClick={() => setStep("payment")}>Proceed to Payment</Button>
+                </div>
+              )}
+
+              {step === "payment" && (
+                <div className="space-y-4">
+                  <h3 className="font-semibold">Payment</h3>
+                  <Button onClick={handlePurchase} disabled={paymentProcessing}>
+                    {paymentProcessing ? "Processing..." : "Pay Now"}
+                  </Button>
+                </div>
+              )}
+
+              {step === "confirmation" && (
+                <div className="flex flex-col items-center space-y-4">
+                  {qrCode && <QRCode value={qrCode} />}
+                  <p className="text-sm text-muted-foreground">
+                    Tickets confirmed! Share with your friends.
+                  </p>
                 </div>
               )}
             </CardContent>
           </Card>
+        </>
+      )}
 
-            <Dialog open={showSocialsDialog} onOpenChange={setShowSocialsDialog}>
-              <DialogContent className="text-black">
-                <DialogHeader>
-                  <DialogTitle className="text-black">Social profile required</DialogTitle>
-                  <DialogDescription className="text-black">
-                    This event requires the following social profile(s). Please provide URLs to continue.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-3">
-                  {missingPlatforms.map((p) => (
-                    <div key={p}>
-                      <label className="text-sm font-medium text-black">{platformLabels[p] || p}</label>
-                      <Input
-                        placeholder={`Enter your ${platformLabels[p] || p} profile URL`}
-                        value={socialInputs[p] || ''}
-                        onChange={(e) => setSocialInputs((prev) => ({ ...prev, [p]: e.target.value }))}
-                        inputMode="url"
-                        className="text-black"
-                      />
-                    </div>
-                  ))}
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => { setShowSocialsDialog(false); setPendingAction(null); }}>Cancel</Button>
-                  <Button onClick={saveMissingSocials} disabled={loading}>{loading ? 'Saving...' : 'Save & Continue'}</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div 
-      className="min-h-screen p-4 transition-colors duration-500"
-      style={{ 
-        backgroundColor
-      }}
-    >
-      <div className="max-w-md mx-auto space-y-6 text-left">
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 
-            className="text-xl font-bold"
-            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-          >
-            Parties
-          </h1>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle>Select a Party</CardTitle>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSortAscending(!sortAscending)}
-                className="flex items-center gap-2"
-              >
-                <ArrowUpDown className="h-4 w-4" />
-                {sortAscending ? "Oldest First" : "Newest First"}
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {loadingParties ? (
-              <p className="text-center text-muted-foreground">Loading parties...</p>
-            ) : parties.length === 0 ? (
-              <p className="text-center text-muted-foreground">
-                No parties found. Please wait for an admin to create a party.
-              </p>
-            ) : (
-              parties.map((party) => {
-                const partyDate = new Date(party.date);
-                const now = new Date();
-                const isToday = partyDate.toDateString() === now.toDateString();
-                const isWithin24Hours = partyDate.getTime() > now.getTime() - 24 * 60 * 60 * 1000 && partyDate.getTime() <= now.getTime();
-                const hasEnded = partyDate.getTime() < now.getTime() - 24 * 60 * 60 * 1000;
-                
-                const upcomingParties = parties.filter(p => new Date(p.date).getTime() >= now.getTime() - 24 * 60 * 60 * 1000);
-                const soonestParty = upcomingParties.length > 0 ? upcomingParties.reduce((earliest, current) => 
-                  new Date(current.date) < new Date(earliest.date) ? current : earliest
-                ) : null;
-                
-                const showActive = soonestParty?.id === party.id && (isToday || isWithin24Hours);
-                const showEnded = hasEnded;
-
-                return (
-                  <div
-                    key={party.id}
-                    role="button"
-                    tabIndex={0}
-                    className="w-full p-4 h-auto flex-col space-y-3 border rounded-md hover:bg-accent/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
-                    onClick={() => selectParty(party)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        selectParty(party);
-                      }
-                    }}
-                  >
-                    {party.photo_url && (
-                      <div className="w-full">
-                        <img 
-                          src={party.photo_url} 
-                          alt={party.name}
-                          className="w-full h-auto object-contain rounded-md"
-                        />
-                      </div>
-                    )}
-                    <div className="w-full text-center space-y-1 relative">
-                      <div className="font-semibold relative">
-                        <RtlText text={party.name} className="font-semibold" />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          className="absolute right-0 top-0 h-6 w-6"
-                          onClick={(e) => { 
-                            e.stopPropagation(); 
-                            e.preventDefault();
-                            setInfoParty(party); 
-                          }}
-                          aria-label="Party info"
-                        >
-                          i
-                        </Button>
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                      </div>
-                      {party.price !== null && (
-                        <div className="text-xs font-medium">Price: {party.price} ILS {party.is_free && <span className="text-green-600">(Free)</span>}</div>
-                      )}
-                      {party.ticket_count !== null && (
-                        <div className="text-xs text-blue-600 font-medium">
-                          Tickets: {Math.max(0, party.ticket_count - (partyTicketCounts[party.id] || 0))} left of {party.ticket_count}
-                        </div>
-                      )}
-                      {showActive && (
-                        <div className="text-xs text-green-600 font-medium">Active</div>
-                      )}
-                      {showEnded && (
-                        <div className="text-xs text-red-600 font-medium">Ended</div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Info Dialog */}
-        <Dialog open={!!infoParty} onOpenChange={() => setInfoParty(null)}>
-          <DialogContent 
-            className="max-w-md max-h-[80vh] overflow-y-auto relative"
-            hideClose
-          >
-            <button
-              type="button"
-              aria-label="Close"
-              className="absolute right-3 top-3 inline-flex h-6 w-6 items-center justify-center rounded-md border"
-              onClick={() => setInfoParty(null)}
-            >
-              <X className="h-4 w-4" />
-            </button>
-            {infoProduction?.logo_url && (
-              <img src={infoProduction.logo_url} alt={`${infoProduction?.name || 'Production'} logo`} className="w-full h-auto object-contain rounded mb-3" />
-            )}
-            {infoProduction?.description && (
-              <div className="text-sm text-muted-foreground whitespace-pre-wrap mb-3">{infoProduction.description}</div>
-            )}
-            {infoParty && (
-              <>
-                <RtlText text={infoParty.name} className="text-lg font-semibold mb-2" />
-                <RtlText text={infoParty.description || 'No additional information provided.'} className="text-sm text-muted-foreground whitespace-pre-wrap" />
-              </>
-            )}
-          </DialogContent>
-        </Dialog>
-
-        <Dialog open={showSocialsDialog} onOpenChange={setShowSocialsDialog}>
-          <DialogContent className="text-black">
-            <DialogHeader>
-              <DialogTitle className="text-black">Social profile required</DialogTitle>
-              <DialogDescription className="text-black">
-                This event requires the following social profile(s). Please provide URLs to continue.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-3">
-              {missingPlatforms.map((p) => (
-                <div key={p}>
-                  <label className="text-sm font-medium text-black">{platformLabels[p] || p}</label>
-                  <Input
-                    placeholder={`Enter your ${platformLabels[p] || p} profile URL`}
-                    value={socialInputs[p] || ''}
-                    onChange={(e) => setSocialInputs((prev) => ({ ...prev, [p]: e.target.value }))}
-                    inputMode="url"
-                    className="text-black"
-                  />
-                </div>
-              ))}
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => { setShowSocialsDialog(false); setPendingAction(null); }}>Cancel</Button>
-              <Button onClick={saveMissingSocials} disabled={loading}>{loading ? 'Saving...' : 'Save & Continue'}</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
+      <Dialog open={showSocialsDialog} onOpenChange={setShowSocialsDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Update your socials</DialogTitle>
+          </DialogHeader>
+          <p>Please add missing social links to continue.</p>
+        </DialogContent>
+      </Dialog>
     </div>
   );
-};
-
-export default UserParties;
+}
