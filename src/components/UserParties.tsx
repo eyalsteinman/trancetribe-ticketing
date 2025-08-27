@@ -731,11 +731,12 @@ useEffect(() => {
         </Card>
 
         {/* Info Dialog */}
-        <Dialog open={!!infoParty} onOpenChange={(open) => { if (!open) setInfoParty(null); }}>
+        <Dialog open={!!infoParty} onOpenChange={() => {}}>
           <DialogContent 
             className="max-w-md max-h-[80vh] overflow-y-auto relative"
             onEscapeKeyDown={(e) => e.preventDefault()}
             onPointerDownOutside={(e) => e.preventDefault()}
+            hideClose
           >
             <button
               type="button"
