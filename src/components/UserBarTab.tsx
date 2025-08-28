@@ -38,6 +38,7 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, selectedProduction, onB
       .from("user_bar_tabs")
       .select("*")
       .eq("user_id", userId)
+      .neq("status", "deleted")
       .order("created_at");
 
     if (error) {
