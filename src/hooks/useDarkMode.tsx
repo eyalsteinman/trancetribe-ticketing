@@ -3,32 +3,55 @@ import { createContext, useContext, useEffect, useState } from 'react';
 interface DarkModeContextType {
   isDarkMode: boolean;
   toggleDarkMode: () => void;
+  isSystemDark: boolean;
 }
 
 const DarkModeContext = createContext<DarkModeContextType | undefined>(undefined);
 
 export const DarkModeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    const stored = localStorage.getItem('darkMode');
-    return stored ? JSON.parse(stored) : false;
+  const [isSystemDark, setIsSystemDark] = useState(() => 
+    window.matchMedia('(prefers-color-scheme: dark)').matches
+  );
+  
+  const [userPreference, setUserPreference] = useState<'light' | 'dark' | 'system'>(() => {
+    const stored = localStorage.getItem('darkMode-preference');
+    return stored as 'light' | 'dark' | 'system' || 'system';
   });
 
+  const isDarkMode = userPreference === 'system' ? isSystemDark : userPreference === 'dark';
+
   useEffect(() => {
-    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      setIsSystemDark(e.matches);
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('darkMode-preference', userPreference);
     
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
-  }, [isDarkMode]);
+  }, [isDarkMode, userPreference]);
 
   const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
+    if (userPreference === 'system') {
+      setUserPreference(isSystemDark ? 'light' : 'dark');
+    } else if (userPreference === 'light') {
+      setUserPreference('dark');
+    } else {
+      setUserPreference('system');
+    }
   };
 
   return (
-    <DarkModeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
+    <DarkModeContext.Provider value={{ isDarkMode, toggleDarkMode, isSystemDark }}>
       {children}
     </DarkModeContext.Provider>
   );
