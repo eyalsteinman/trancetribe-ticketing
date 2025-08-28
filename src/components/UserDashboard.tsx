@@ -200,7 +200,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   if (currentView === 'bar-tab') {
-    return <UserBarTab userId={user.id} selectedProduction={null} onBack={() => setCurrentView('dashboard')} />;
+    return <UserBarTab userId={user.id} onBack={() => setCurrentView('dashboard')} />;
   }
 
   return (

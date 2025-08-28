@@ -335,7 +335,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
   return (
     <div className="min-h-screen p-4">
       <div className="max-w-md mx-auto space-y-6">
-        {/* Header */}
+        {/* Header with Back Button */}
         <div className="flex items-center justify-between">
           <Button variant="outline" size="icon" onClick={onBack}>
             <ArrowLeft className="h-4 w-4" />
