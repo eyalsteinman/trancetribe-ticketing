@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import QRCode from "qrcode";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,13 +7,14 @@ import { ArrowLeft } from "lucide-react";
 
 interface BarTabItem {
   id: string;
+  user_id: string;
   production_id: string;
-  item_name: string;
-  regular_price: number;
-  friend_price?: number;
+  total_amount: number;
+  remaining_amount: number;
   barcode: string;
-  is_active: boolean;
   status: string;
+  created_at: string;
+  updated_at: string;
 }
 
 interface UserBarTabProps {
@@ -28,18 +29,16 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, selectedProduction, onB
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (selectedProduction) {
-      loadBarTabItems();
-    }
-  }, [selectedProduction]);
+    loadBarTabItems();
+  }, [userId]);
 
   const loadBarTabItems = async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from("bar_tab_items")
+      .from("user_bar_tabs")
       .select("*")
-      .eq("production_id", selectedProduction)
-      .order("item_name");
+      .eq("user_id", userId)
+      .order("created_at");
 
     if (error) {
       console.error("Error loading bar tab items:", error.message);
@@ -62,7 +61,7 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, selectedProduction, onB
 
   const deleteBarTab = async (barTabId: string) => {
     const { error } = await supabase
-      .from("bar_tab_items")
+      .from("user_bar_tabs")
       .update({ status: "deleted" })
       .eq("id", barTabId);
 
@@ -102,11 +101,11 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, selectedProduction, onB
         {barTabs.map((barTab) => (
           <Card key={barTab.id} className="shadow-md">
             <CardHeader>
-              <CardTitle>{barTab.item_name}</CardTitle>
+              <CardTitle>Bar Tab #{barTab.id.slice(-6)}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p>Regular Price: ₪{barTab.regular_price}</p>
-              {barTab.friend_price && <p>Friend Price: ₪{barTab.friend_price}</p>}
+              <p>Total Amount: ₪{barTab.total_amount}</p>
+              <p>Remaining: ₪{barTab.remaining_amount}</p>
 
               {qrDataUrls[barTab.id] && (
                 <img

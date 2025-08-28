@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { supabase } from "../lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
