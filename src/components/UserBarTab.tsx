@@ -125,19 +125,21 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
   };
 
   const deleteBarTab = async (barTabId: string) => {
+    console.log("Attempting to delete bar tab:", barTabId);
     const { error } = await supabase
       .from("user_bar_tabs")
       .delete()
       .eq("id", barTabId);
 
     if (error) {
-      console.error("Error deleting bar tab:", error.message);
+      console.error("Error deleting bar tab:", error.message, error);
       toast({
         title: "Error",
-        description: "Failed to delete bar tab",
+        description: `Failed to delete bar tab: ${error.message}`,
         variant: "destructive"
       });
     } else {
+      console.log("Bar tab deleted successfully");
       setUserBarTabs((prev) => prev.filter((tab) => tab.id !== barTabId));
       setQrDataUrls((prev) => {
         const updated = { ...prev };
