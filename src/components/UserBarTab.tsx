@@ -127,7 +127,7 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
   const deleteBarTab = async (barTabId: string) => {
     const { error } = await supabase
       .from("user_bar_tabs")
-      .update({ status: "deleted" })
+      .delete()
       .eq("id", barTabId);
 
     if (error) {
@@ -166,8 +166,8 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
 
     const amount = parseFloat(purchaseAmount);
     const price = useDiscount ? selectedItem.discounted_price : selectedItem.regular_price;
-    const totalAmount = amount;
-    const remainingAmount = useDiscount ? amount / selectedItem.discounted_price * selectedItem.regular_price : amount;
+    const totalAmount = useDiscount ? amount : amount;
+    const remainingAmount = amount;
 
     const barcode = `${userId}-${selectedProduction}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
@@ -252,18 +252,24 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
           <CardContent className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2">Select Item</label>
-              <Select value={selectedBarTab} onValueChange={setSelectedBarTab}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select bar tab item..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableBarTabs.map((item) => (
-                    <SelectItem key={item.id} value={item.id}>
-                      {item.item_name} - Regular: ₪{item.regular_price}, Discounted: ₪{item.discounted_price}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="space-y-2">
+                {availableBarTabs.map((item) => (
+                  <div 
+                    key={item.id}
+                    className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                      selectedBarTab === item.id 
+                        ? 'border-primary bg-primary/10' 
+                        : 'border-border hover:border-primary/50'
+                    }`}
+                    onClick={() => setSelectedBarTab(item.id)}
+                  >
+                    <div className="font-medium">{item.item_name}</div>
+                    <div className="text-sm text-muted-foreground">
+                      Regular: ₪{item.regular_price} | Discounted: ₪{item.discounted_price}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {selectedBarTab && (
