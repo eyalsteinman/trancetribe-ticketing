@@ -47,6 +47,7 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
   const [qrDataUrls, setQrDataUrls] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [selectedBarTab, setSelectedBarTab] = useState<string>('');
+  const [productionsMap, setProductionsMap] = useState<Record<string, Production>>({});
   const { toast } = useToast();
 
   useEffect(() => {
@@ -73,6 +74,12 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
 
     if (data) {
       setProductions(data);
+      // Create productions map for quick lookup
+      const prodMap: Record<string, Production> = {};
+      data.forEach(prod => {
+        prodMap[prod.id] = prod;
+      });
+      setProductionsMap(prodMap);
     }
   };
 
@@ -228,6 +235,7 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
               <SelectValue placeholder="Select a production..." />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="">None</SelectItem>
               {productions.map((production) => (
                 <SelectItem key={production.id} value={production.id}>
                   {production.name}
@@ -287,49 +295,63 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
       )}
 
       <div className="grid gap-4">
-        {userBarTabs.map((barTab) => (
-          <Card key={barTab.id} className="shadow-md">
-            <CardHeader>
-              <CardTitle>Bar Tab #{barTab.id.slice(-6)}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p>Total Amount: ₪{barTab.total_amount}</p>
-              <p>Remaining: ₪{barTab.remaining_amount}</p>
+        {userBarTabs.map((barTab) => {
+          const production = productionsMap[barTab.production_id];
+          const purchaseDate = new Date(barTab.created_at);
+          
+          return (
+            <Card key={barTab.id} className="shadow-md">
+              <CardHeader>
+                <CardTitle>Bar Tab #{barTab.id.slice(-6)}</CardTitle>
+                {production && (
+                  <p className="text-sm text-muted-foreground">{production.name}</p>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  {purchaseDate.toLocaleDateString()} {purchaseDate.toLocaleTimeString()}
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-4 relative">
+                <div>
+                  <p>Total Amount: ₪{barTab.total_amount}</p>
+                  <p>Remaining: ₪{barTab.remaining_amount}</p>
+                  <p className="text-sm text-muted-foreground">Bar Tab Cost: ₪{barTab.total_amount}</p>
+                </div>
 
-              {qrDataUrls[barTab.id] && (
-                <img
-                  src={qrDataUrls[barTab.id]}
-                  alt="Bar Tab QR"
-                  className="mx-auto w-48 h-48"
-                />
-              )}
+                {qrDataUrls[barTab.id] && (
+                  <img
+                    src={qrDataUrls[barTab.id]}
+                    alt="Bar Tab QR"
+                    className="mx-auto w-48 h-48"
+                  />
+                )}
 
-              <div className="flex justify-between">
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="destructive">
-                      Delete
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Bar Tab</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to delete this bar tab? This action cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => deleteBarTab(barTab.id)}>
+                <div className="absolute bottom-4 right-4">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" size="sm">
                         Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Bar Tab</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to delete this bar tab? This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => deleteBarTab(barTab.id)}>
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );
