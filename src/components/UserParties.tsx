@@ -3,9 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ArrowLeft } from "lucide-react";
 import PartyDetails from "./PartyDetails";
 
-export default function UserParties({ user }) {
+export default function UserParties({ user, onBack }) {
   const [parties, setParties] = useState([]);
   const [selectedParty, setSelectedParty] = useState<any>(null);
   const [showSocialsDialog, setShowSocialsDialog] = useState(false);
@@ -52,20 +53,48 @@ export default function UserParties({ user }) {
   return (
     <div className="relative w-full max-w-3xl mx-auto p-4">
       {!selectedParty && (
-        <div className="grid grid-cols-1 gap-4">
-          {parties.map((party) => (
-            <Card
-              key={party.id}
-              onClick={() => setSelectedParty(party)}
-              className="cursor-pointer hover:shadow-lg transition"
-            >
-              <CardContent>
-                <h2 className="text-lg font-semibold">{party.name}</h2>
-                <p className="text-sm text-muted-foreground">{party.date}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={onBack}
+            aria-label="Back to Dashboard"
+            className="absolute top-4 left-4 z-50"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          
+          <h2 className="text-xl font-bold mb-4 text-center mt-12">Parties</h2>
+          
+          <div className="grid grid-cols-1 gap-4">
+            {parties.map((party) => (
+              <Card
+                key={party.id}
+                onClick={() => setSelectedParty(party)}
+                className="cursor-pointer hover:shadow-lg transition overflow-hidden"
+              >
+                <CardContent className="p-0">
+                  {party.photo_url && (
+                    <div className="w-full h-48 overflow-hidden">
+                      <img
+                        src={party.photo_url}
+                        alt={party.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                  <div className="p-4">
+                    <h2 className="text-lg font-semibold">{party.name}</h2>
+                    <p className="text-sm text-muted-foreground">{party.date}</p>
+                    {party.description && (
+                      <p className="text-sm text-muted-foreground mt-2">{party.description}</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </>
       )}
 
       {selectedParty && (

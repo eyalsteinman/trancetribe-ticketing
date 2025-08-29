@@ -46,9 +46,7 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
   const [userBarTabs, setUserBarTabs] = useState<BarTabItem[]>([]);
   const [qrDataUrls, setQrDataUrls] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-  const [purchaseAmount, setPurchaseAmount] = useState<string>('');
   const [selectedBarTab, setSelectedBarTab] = useState<string>('');
-  const [useDiscount, setUseDiscount] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -154,10 +152,10 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
   };
 
   const purchaseBarTab = async () => {
-    if (!selectedBarTab || !purchaseAmount || !selectedProduction) {
+    if (!selectedBarTab || !selectedProduction) {
       toast({
         title: "Error",
-        description: "Please select a bar tab item and enter amount",
+        description: "Please select a bar tab item",
         variant: "destructive"
       });
       return;
@@ -166,12 +164,12 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
     const selectedItem = availableBarTabs.find(tab => tab.id === selectedBarTab);
     if (!selectedItem) return;
 
-    const amount = parseFloat(purchaseAmount);
-    const price = useDiscount ? selectedItem.discounted_price : selectedItem.regular_price;
-    const totalAmount = useDiscount ? amount : amount;
-    const remainingAmount = amount;
-
-    const barcode = `${userId}-${selectedProduction}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const amount = selectedItem.regular_price;
+    
+    // Generate unique barcode with timestamp and random string
+    const timestamp = Date.now();
+    const randomPart = Math.random().toString(36).substring(2, 15);
+    const barcode = `${userId}-${selectedProduction}-${timestamp}-${randomPart}`;
 
     setLoading(true);
     const { error } = await supabase
@@ -179,8 +177,8 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
       .insert({
         user_id: userId,
         production_id: selectedProduction,
-        total_amount: totalAmount,
-        remaining_amount: remainingAmount,
+        total_amount: amount,
+        remaining_amount: amount,
         barcode: barcode,
         status: "active"
       });
@@ -197,18 +195,13 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
         title: "Success",
         description: "Bar tab purchased successfully"
       });
-      setPurchaseAmount('');
       setSelectedBarTab('');
-      setUseDiscount(false);
       loadUserBarTabs();
     }
     setLoading(false);
   };
 
   const selectedBarTabItem = availableBarTabs.find(tab => tab.id === selectedBarTab);
-  const calculatedPrice = selectedBarTabItem 
-    ? (useDiscount ? selectedBarTabItem.discounted_price : selectedBarTabItem.regular_price)
-    : 0;
 
   return (
     <div className="relative min-h-screen p-4">
@@ -275,41 +268,13 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
             </div>
 
             {selectedBarTab && (
-              <>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="useDiscount"
-                    checked={useDiscount}
-                    onChange={(e) => setUseDiscount(e.target.checked)}
-                    className="rounded"
-                  />
-                  <label htmlFor="useDiscount" className="text-sm">
-                    Use discounted price (₪{selectedBarTabItem?.discounted_price})
-                  </label>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Amount (₪{calculatedPrice} per unit)
-                  </label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    placeholder="Enter amount"
-                    value={purchaseAmount}
-                    onChange={(e) => setPurchaseAmount(e.target.value)}
-                  />
-                </div>
-
-                <Button
-                  onClick={purchaseBarTab}
-                  disabled={loading || !purchaseAmount}
-                  className="w-full"
-                >
-                  {loading ? "Processing..." : `Purchase ₪${purchaseAmount} Bar Tab`}
-                </Button>
-              </>
+              <Button
+                onClick={purchaseBarTab}
+                disabled={loading}
+                className="w-full"
+              >
+                {loading ? "Processing..." : `Purchase ₪${selectedBarTabItem?.regular_price} Bar Tab`}
+              </Button>
             )}
           </CardContent>
         </Card>

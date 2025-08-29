@@ -129,7 +129,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
   // Handle different views
   if (currentView === 'parties') {
-    return <UserParties user={user} />;
+    return <UserParties user={user} onBack={() => setCurrentView('dashboard')} />;
   }
 
   if (currentView === 'nickname') {
