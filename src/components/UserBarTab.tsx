@@ -56,7 +56,7 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
   }, [userId]);
 
   useEffect(() => {
-    if (selectedProduction) {
+    if (selectedProduction && selectedProduction !== 'none') {
       loadAvailableBarTabs();
     }
   }, [selectedProduction]);
@@ -235,7 +235,7 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
               <SelectValue placeholder="Select a production..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">None</SelectItem>
+              <SelectItem value="none">None</SelectItem>
               {productions.map((production) => (
                 <SelectItem key={production.id} value={production.id}>
                   {production.name}
