@@ -6,6 +6,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
 import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut, Users, IdCard, Heart, Wine, Moon, Sun } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { QRCodeSVG } from 'qrcode.react';
 import UserParties from './UserParties';
 import UserGames from './UserGames';
 import NicknameManager from './NicknameManager';
@@ -32,6 +34,8 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   const [nickname, setNickname] = useState<string>('');
   const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
   const [selectedProduction, setSelectedProduction] = useState<{id: string; name: string; logo_url: string | null; vip_description: string | null; vip_price: number | null} | null>(null);
+  const [showQRDialog, setShowQRDialog] = useState(false);
+  const [selectedQRCode, setSelectedQRCode] = useState<any>(null);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
@@ -308,7 +312,11 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 <div 
                   key={qrCode.id} 
                   className="border rounded-lg p-4 space-y-3 cursor-pointer hover:bg-muted/50 transition-colors"
-                  onClick={() => setCurrentView('parties')}
+                  onClick={() => {
+                    // Store party ID and navigate to specific party
+                    localStorage.setItem('selectedPartyId', qrCode.party_id);
+                    setCurrentView('parties');
+                  }}
                 >
                   {/* Party Photo */}
                   {qrCode.parties?.photo_url && (
@@ -332,10 +340,18 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                   
                   {/* QR Code Display for Approved */}
                   {qrCode.is_approved && !qrCode.is_scanned && (
-                    <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded border">
+                    <div 
+                      className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded border cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Show QR code popup
+                        setSelectedQRCode(qrCode);
+                        setShowQRDialog(true);
+                      }}
+                    >
                       <div className="text-green-600 text-sm font-medium mb-2">✓ QR Code Ready</div>
                       <div className="text-xs text-muted-foreground">
-                        Your QR code is approved and ready for use!
+                        Your QR code is approved and ready for use! Click here to view.
                       </div>
                     </div>
                   )}
@@ -348,6 +364,31 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
             </CardContent>
           </Card>
         )}
+        
+        {/* QR Code Dialog */}
+        <Dialog open={showQRDialog} onOpenChange={setShowQRDialog}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle>Your QR Code</DialogTitle>
+            </DialogHeader>
+            <div className="text-center space-y-4">
+              {selectedQRCode && (
+                <>
+                  <div className="bg-white p-4 rounded-lg inline-block">
+                    <QRCodeSVG value={selectedQRCode.code} size={200} />
+                  </div>
+                  <div className="space-y-2">
+                    <p className="font-medium">{selectedQRCode.parties?.name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {new Date(selectedQRCode.parties?.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </p>
+                    <p className="text-xs text-green-600">✓ Approved - Show this QR code at the entrance</p>
+                  </div>
+                </>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
         
         {/* Footer */}
         <div className="mt-8 pt-4 border-t text-center space-y-2">

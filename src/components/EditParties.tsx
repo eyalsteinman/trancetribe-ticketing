@@ -97,7 +97,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
     }
   };
 
-  const handleEditParty = (party: Party) => {
+  const handleEditParty = async (party: Party) => {
     setEditingParty(party);
     setEditName(party.name);
     setEditDate(party.date);
@@ -105,8 +105,28 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
     setEditEndTime((party as any).end_time || '');
     setEditRequiredSocials(Array.isArray((party as any).required_socials) ? (party as any).required_socials : []);
     setSelectedPhoto(null);
-    setEditTicketTypes([]); // Load from ticket_types table if needed
     setEditMaxTicketsPerUser((party as any).max_tickets_per_user || 1);
+    
+    // Load existing ticket types for this party
+    try {
+      const { data: ticketTypesData, error } = await supabase
+        .from('ticket_types')
+        .select('*')
+        .eq('party_id', party.id)
+        .order('price', { ascending: true });
+      
+      if (!error && ticketTypesData) {
+        setEditTicketTypes(ticketTypesData.map(tt => ({
+          id: tt.id,
+          label: tt.label,
+          price: tt.price,
+          quantity: tt.quantity,
+          sold: tt.sold
+        })));
+      }
+    } catch (error) {
+      console.error('Error loading ticket types:', error);
+    }
     
     // Load production logo if party has a production
     if ((party as any).production_id) {
@@ -428,12 +448,23 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                 <label htmlFor="editIsFree" className="text-sm">Free Party</label>
               </div>
 
-              <TicketManager
-                tickets={editTicketTypes}
-                onChange={setEditTicketTypes}
-                maxTicketsPerUser={editMaxTicketsPerUser}
-                onMaxTicketsChange={setEditMaxTicketsPerUser}
+            <div>
+              <label className="text-sm font-medium">Number of Tickets Available</label>
+              <Input
+                type="number"
+                min="1"
+                placeholder="e.g. 100"
+                value={(editingParty as any).ticket_count || ''}
+                onChange={(e) => setEditingParty((p) => p ? { ...p, ticket_count: Number(e.target.value) || null } as any : p)}
               />
+            </div>
+
+            <TicketManager
+              tickets={editTicketTypes}
+              onChange={setEditTicketTypes}
+              maxTicketsPerUser={editMaxTicketsPerUser}
+              onMaxTicketsChange={setEditMaxTicketsPerUser}
+            />
 
               <div>
                 <label className="text-sm font-medium">Required Social Networks</label>

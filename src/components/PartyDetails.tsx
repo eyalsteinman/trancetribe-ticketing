@@ -431,7 +431,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
                                 {ticketType.price === 0 ? 'Free' : `${ticketType.price} ILS`}
                               </div>
                               <div className="text-xs text-blue-600">
-                                {remaining} tickets remaining
+                                {status === 'sold-out' ? 'Sold Out' : `${remaining} tickets remaining`}
                               </div>
                             </div>
                           </div>

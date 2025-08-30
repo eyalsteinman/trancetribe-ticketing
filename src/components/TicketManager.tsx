@@ -50,13 +50,15 @@ const TicketManager = ({ tickets, onChange, maxTicketsPerUser, onMaxTicketsChang
       <CardContent className="space-y-4">
         <div>
           <label className="text-sm font-medium">Max Tickets Per User</label>
-          <Input
-            type="number"
-            min="1"
-            value={maxTicketsPerUser || ""}
-            onChange={(e) => onMaxTicketsChange(Number(e.target.value) || 1)}
-            placeholder="Enter amount"
-          />
+          <select
+            className="w-full p-2 border rounded-md"
+            value={maxTicketsPerUser || 1}
+            onChange={(e) => onMaxTicketsChange(Number(e.target.value))}
+          >
+            {[1,2,3,4,5,6,7,8,9,10].map(num => (
+              <option key={num} value={num}>{num}</option>
+            ))}
+          </select>
         </div>
 
         <div className="space-y-3">
@@ -121,7 +123,7 @@ const TicketManager = ({ tickets, onChange, maxTicketsPerUser, onMaxTicketsChang
                         min="0"
                         max="600"
                         step="5"
-                        value={ticket.price === 0 ? "0" : ticket.price || ""}
+                        value={ticket.price || ""}
                         onChange={(e) => updateTicket(ticket.id, 'price', Number(e.target.value) || 0)}
                         placeholder="Enter price"
                         className="w-full"
@@ -144,7 +146,7 @@ const TicketManager = ({ tickets, onChange, maxTicketsPerUser, onMaxTicketsChang
                         type="number"
                         min="0"
                         max="600"
-                        value={ticket.quantity === 0 ? "0" : ticket.quantity || ""}
+                        value={ticket.quantity || ""}
                         onChange={(e) => updateTicket(ticket.id, 'quantity', Number(e.target.value) || 0)}
                         placeholder="Enter quantity"
                         className="w-full"

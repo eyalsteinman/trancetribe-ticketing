@@ -247,10 +247,14 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
       </Card>
 
       {/* Purchase Bar Tab */}
-      {selectedProduction && availableBarTabs.length > 0 && (
+      {selectedProduction && selectedProduction !== 'none' && availableBarTabs.length > 0 && (
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Purchase Bar Tab</CardTitle>
+            <CardTitle>
+              {productionsMap[selectedProduction] 
+                ? `Purchase Bar Tab for ${productionsMap[selectedProduction].name}` 
+                : 'Purchase Bar Tab'}
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
@@ -314,7 +318,8 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
                 <div>
                   <p>Total Amount: ₪{barTab.total_amount}</p>
                   <p>Remaining: ₪{barTab.remaining_amount}</p>
-                  <p className="text-sm text-muted-foreground">Bar Tab Cost: ₪{barTab.total_amount}</p>
+                  {/* Show discounted price instead of total amount */}
+                  <p className="text-sm text-muted-foreground">Bar Tab Cost: ₪{Math.round(barTab.total_amount * 0.9)}</p>
                 </div>
 
                 {qrDataUrls[barTab.id] && (
@@ -325,7 +330,7 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
                   />
                 )}
 
-                <div className="absolute bottom-4 right-4">
+                <div className="absolute top-4 right-4">
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button variant="destructive" size="sm">

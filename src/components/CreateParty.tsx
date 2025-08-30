@@ -88,7 +88,18 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
       return;
     }
 
-    // Price validation is now handled by ticket types
+    // Validate ticket types don't exceed total tickets
+    if (ticketCount && ticketTypes.length > 0) {
+      const totalTicketTypesQuantity = ticketTypes.reduce((sum, ticket) => sum + (ticket.quantity || 0), 0);
+      if (totalTicketTypesQuantity > Number(ticketCount)) {
+        toast({
+          title: "Error",
+          description: `Total ticket types quantity (${totalTicketTypesQuantity}) exceeds the total tickets available (${ticketCount})`,
+          variant: "destructive"
+        });
+        return;
+      }
+    }
 
     setLoading(true);
     try {
