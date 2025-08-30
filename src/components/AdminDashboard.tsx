@@ -7,7 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
 import { Badge } from '@/components/ui/badge';
-import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ArrowLeft } from 'lucide-react';
+import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ArrowLeft, ScanBarcode, Wine, Cog } from 'lucide-react';
 import CreateParty from './CreateParty';
 import EditParties from './EditParties';
 import QRScanner from './QRScanner';
@@ -578,9 +578,9 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
               { id: 'registered-users', title: 'Registered Users', icon: <UserCheck className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('registered-users' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'admin-games', title: 'Admin Games', icon: <Gamepad2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('admin-games' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'nickname', title: 'Choose Nickname', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('nickname' as const); setTimeout(() => loadParties(), 100); } },
-              { id: 'bar-tab', title: 'Bar Tab', icon: <Building2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab' as const); setTimeout(() => loadParties(), 100); } },
-              { id: 'bar-tab-scanner', title: 'Bar Tab Scanner', icon: <Camera className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab-scanner' as const); setTimeout(() => loadParties(), 100); } },
-              { id: 'dark-mode', title: isDarkMode ? 'Light Mode' : 'Dark Mode', icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: toggleDarkMode },
+              { id: 'bar-tab', title: 'Bar Tab', icon: <Wine className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab' as const); setTimeout(() => loadParties(), 100); } },
+              { id: 'bar-tab-scanner', title: 'Bartab Scanner', icon: <ScanBarcode className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab-scanner' as const); setTimeout(() => loadParties(), 100); } },
+              { id: 'dark-mode', title: isDarkMode ? 'Light Mode' : 'Dark Mode', icon: <Cog className="h-8 w-8 mb-2" />, onClick: toggleDarkMode },
             ];
             return (
               <ReorderableTiles items={tiles} orderKey={`dashboard-order-admin-${user.id}`} />

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
-import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut } from 'lucide-react';
+import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut, Users, IdCard, Heart, Wine, Moon, Sun } from 'lucide-react';
 import UserParties from './UserParties';
 import UserGames from './UserGames';
 import NicknameManager from './NicknameManager';
@@ -252,7 +252,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
               {
                 id: 'social',
                 title: 'Social Networks',
-                icon: <UserIcon className="h-12 w-12" />,
+                icon: <Users className="h-12 w-12" />,
                 onClick: () => setCurrentView('social' as const),
               },
               {
@@ -270,25 +270,25 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
               {
                 id: 'personal-code',
                 title: 'Personal Code',
-                icon: <UserIcon className="h-12 w-12" />,
+                icon: <IdCard className="h-12 w-12" />,
                 onClick: () => setCurrentView('personal-code' as const),
               },
               {
                 id: 'friends-codes',
                 title: 'Friends Codes',
-                icon: <UserIcon className="h-12 w-12" />,
+                icon: <Heart className="h-12 w-12" />,
                 onClick: () => setCurrentView('friends-codes' as const),
               },
               {
                 id: 'bar-tab',
                 title: 'Bar Tab',
-                icon: <UserIcon className="h-12 w-12" />,
+                icon: <Wine className="h-12 w-12" />,
                 onClick: () => setCurrentView('bar-tab' as const),
               },
               {
                 id: 'dark-mode',
                 title: isDarkMode ? 'Light Mode' : 'Dark Mode',
-                icon: <UserIcon className="h-12 w-12" />,
+                icon: isDarkMode ? <Sun className="h-12 w-12" /> : <Moon className="h-12 w-12" />,
                 onClick: toggleDarkMode,
               },
             ];
