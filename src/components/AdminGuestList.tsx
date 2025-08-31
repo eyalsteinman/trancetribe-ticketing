@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { ArrowLeft, Check, UserCheck, Mail } from 'lucide-react';
+import { ArrowLeft, Check, UserCheck, Mail, MessageCircle } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
 import {
@@ -35,6 +35,7 @@ interface ArrivingGuest {
     first_name: string;
     last_name: string;
     email: string;
+    phone_number: string;
   } | null;
 }
 
@@ -47,6 +48,7 @@ interface ScannedGuest {
     first_name: string;
     last_name: string;
     email: string;
+    phone_number: string;
   } | null;
 }
 
@@ -125,7 +127,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
         const userIds = qrData.map(qr => qr.user_id);
         const { data: profilesData, error: profilesError } = await supabase
           .from('profiles')
-          .select('user_id, display_name, first_name, last_name, email')
+          .select('user_id, display_name, first_name, last_name, email, phone_number')
           .in('user_id', userIds);
 
         if (profilesError) {
@@ -165,7 +167,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
         const userIds = qrData.map(qr => qr.user_id);
         const { data: profilesData, error: profilesError } = await supabase
           .from('profiles')
-          .select('user_id, display_name, first_name, last_name, email')
+          .select('user_id, display_name, first_name, last_name, email, phone_number')
           .in('user_id', userIds);
 
         if (profilesError) {
@@ -210,9 +212,27 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
         return;
       }
 
+      // Send QR code email to the user
+      const guest = arrivingGuests.find(g => g.id === qrId);
+      if (guest && guest.profiles?.email) {
+        try {
+          await supabase.functions.invoke('send-qr-code-email', {
+            body: {
+              to: guest.profiles.email,
+              qrCode: guest.code,
+              partyName: parties.find(p => p.id === selectedParty)?.name || 'Your Party',
+              userName: guest.profiles.first_name,
+              partyDate: parties.find(p => p.id === selectedParty)?.date
+            }
+          });
+        } catch (emailError) {
+          console.error('Error sending QR code email:', emailError);
+        }
+      }
+
       toast({
         title: "Success",
-        description: "QR code approved successfully",
+        description: "QR code approved successfully and email sent to user",
       });
       
       loadGuests();
@@ -328,6 +348,53 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
     setEmailMessage('');
   };
 
+  const createWhatsAppGroup = async () => {
+    if (!selectedParty) return;
+    
+    const phoneNumbers = arrivingGuests
+      .filter(guest => guest.profiles?.phone_number)
+      .map(guest => guest.profiles!.phone_number);
+    
+    if (phoneNumbers.length === 0) {
+      toast({
+        title: "Error",
+        description: "No phone numbers found for arriving guests",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const party = parties.find(p => p.id === selectedParty);
+      if (!party) return;
+
+      const { data, error } = await supabase.functions.invoke('create-whatsapp-group', {
+        body: {
+          partyName: party.name,
+          partyDate: party.date,
+          productionName: party.production_name || 'Party',
+          phoneNumbers
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "Success",
+        description: `WhatsApp group created with ${phoneNumbers.length} guests`,
+      });
+    } catch (error: any) {
+      console.error('Error creating WhatsApp group:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create WhatsApp group. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div 
       className="min-h-screen p-4 transition-colors duration-500"
@@ -393,9 +460,39 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
               <CardTitle>
                 {activeTab === 'scanned' ? 'Scanned Guests' : 'Arriving Guests'}
               </CardTitle>
-              <Badge variant="secondary">
-                {activeTab === 'scanned' ? scannedGuests.length : arrivingGuests.length} guests
-              </Badge>
+              <div className="flex items-center gap-2">
+                {activeTab === 'arriving' && arrivingGuests.length > 0 && (
+                  <>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={createWhatsAppGroup}
+                      className="flex items-center gap-1"
+                    >
+                      <MessageCircle className="h-4 w-4" />
+                      Create WhatsApp Group
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        const emails = arrivingGuests
+                          .filter(guest => guest.profiles?.email)
+                          .map(guest => guest.profiles!.email)
+                          .join(', ');
+                        setEmailDialog({ open: true, guestId: 'all', email: emails });
+                      }}
+                      className="flex items-center gap-1"
+                    >
+                      <Mail className="h-4 w-4" />
+                      Email All
+                    </Button>
+                  </>
+                )}
+                <Badge variant="secondary">
+                  {activeTab === 'scanned' ? scannedGuests.length : arrivingGuests.length} guests
+                </Badge>
+              </div>
             </div>
           </CardHeader>
           <CardContent>

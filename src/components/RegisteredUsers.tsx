@@ -19,6 +19,7 @@ interface RegisteredUser {
   first_name: string;
   last_name: string;
   email: string;
+  phone_number: string;
   created_at: string;
   roles: string[];
 }
@@ -30,7 +31,8 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
   const [editForm, setEditForm] = useState({
     first_name: '',
     last_name: '',
-    email: ''
+    email: '',
+    phone_number: ''
   });
   
   const { toast } = useToast();
@@ -145,7 +147,8 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
     setEditForm({
       first_name: user.first_name || '',
       last_name: user.last_name || '',
-      email: user.email || ''
+      email: user.email || '',
+      phone_number: user.phone_number || ''
     });
   };
 
@@ -157,6 +160,7 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
           first_name: editForm.first_name,
           last_name: editForm.last_name,
           email: editForm.email,
+          phone_number: editForm.phone_number,
           display_name: `${editForm.first_name} ${editForm.last_name}`.trim()
         })
         .eq('user_id', userId);
@@ -187,7 +191,8 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
     setEditForm({
       first_name: '',
       last_name: '',
-      email: ''
+      email: '',
+      phone_number: ''
     });
   };
 
@@ -279,6 +284,7 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                         <th className="text-left p-3 font-medium">First Name</th>
                         <th className="text-left p-3 font-medium">Last Name</th>
                         <th className="text-left p-3 font-medium">Email</th>
+                        <th className="text-left p-3 font-medium">Phone</th>
                         <th className="text-left p-3 font-medium">Roles</th>
                         <th className="text-left p-3 font-medium">Registered</th>
                         <th className="text-left p-3 font-medium">Actions</th>
@@ -311,6 +317,15 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                                 onChange={(e) => setEditForm({...editForm, email: e.target.value})}
                                 placeholder="Email"
                                 type="email"
+                                className="w-full"
+                              />
+                            </td>
+                            <td className="p-3">
+                              <Input
+                                value={editForm.phone_number}
+                                onChange={(e) => setEditForm({...editForm, phone_number: e.target.value})}
+                                placeholder="Phone Number"
+                                type="tel"
                                 className="w-full"
                               />
                             </td>
@@ -354,6 +369,7 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                             <td className="p-3">{user.first_name || 'N/A'}</td>
                             <td className="p-3">{user.last_name || 'N/A'}</td>
                             <td className="p-3 text-sm">{user.email || 'N/A'}</td>
+                            <td className="p-3 text-sm">{user.phone_number || 'N/A'}</td>
                             <td className="p-3">
                               <div className="flex flex-wrap gap-1">
                                 {user.roles.map(role => (
