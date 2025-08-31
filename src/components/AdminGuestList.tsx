@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { ArrowLeft, Check, UserCheck, Mail, MessageCircle } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
@@ -663,6 +663,9 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
           <DialogContent>
             <DialogHeader>
               <DialogTitle className="text-black">Send Message</DialogTitle>
+              <DialogDescription className="text-gray-600">
+                Send a custom message to the selected guest(s) about their party registration.
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
