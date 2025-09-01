@@ -17,7 +17,7 @@ import BoredScreen from './BoredScreen';
 import AdminGames from './AdminGames';
 import DotCircleGame from './DotCircleGame';
 import ExploderGame from './ExploderGame';
-import NicknameManager from './NicknameManager';
+import PersonalizeEdit from './PersonalizeEdit';
 import HayaNinja from './HayaNinja';
 import ReorderableTiles from './ReorderableTiles';
 import AdminProductions from './AdminProductions';
@@ -328,7 +328,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   };
 
   if (currentView === 'nickname') {
-    return <NicknameManager user={user} onBack={() => setCurrentView('dashboard')} />;
+    return <PersonalizeEdit user={user} onBack={() => setCurrentView('dashboard')} />;
   }
 
   if (currentView === 'create-party') {

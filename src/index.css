@@ -316,6 +316,14 @@ All colors MUST be HSL.
   .dark [class*="text-black"] {
     color: hsl(0 0% 100%) !important;
   }
+
+  /* Dark mode: Black background for app */
+  .dark {
+    background-color: hsl(0 0% 0%) !important;
+  }
+  .dark body {
+    background-color: hsl(0 0% 0%) !important;
+  }
 }
 
 @layer utilities {

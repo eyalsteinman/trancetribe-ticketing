@@ -25,7 +25,7 @@ const AuthForm = () => {
     if (!email || !password) {
       toast({
         title: "Error",
-        description: "Please enter email and password",
+        description: "All fields are required",
         variant: "destructive"
       });
       return;
@@ -112,6 +112,15 @@ const AuthForm = () => {
   };
 
   const handleAdminLogin = async () => {
+    if (!email || !password) {
+      toast({
+        title: "Error",
+        description: "All fields are required",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const { error } = await supabase.auth.signInWithPassword({

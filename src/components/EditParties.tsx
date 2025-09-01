@@ -344,12 +344,12 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           backgroundColor
         }}
       >
-          <div className="max-w-md mx-auto space-y-6 text-left">
+          <div className="max-w-md mx-auto space-y-6 text-left mt-16">
             <Button variant="outline" size="icon" onClick={cancelEdit} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <h1 
-              className="text-xl font-bold"
+              className="text-xl font-bold absolute top-4 left-4"
               style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
             >
               Edit Party
@@ -458,6 +458,32 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                 onChange={(e) => setEditingParty((p) => p ? { ...p, ticket_count: Number(e.target.value) || null } as any : p)}
               />
             </div>
+
+            {/* Existing Ticket Types */}
+            {editTicketTypes.length > 0 && (
+              <div>
+                <label className="text-sm font-medium">Existing Ticket Types</label>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {editTicketTypes.map((ticket) => (
+                    <div key={ticket.id} className="border rounded-lg p-3 bg-muted/20">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="font-medium">{ticket.label}</p>
+                          <p className="text-sm text-muted-foreground">
+                            ₪{ticket.price} • {ticket.sold}/{ticket.quantity} sold
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm text-muted-foreground">
+                            {ticket.quantity - ticket.sold} remaining
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <TicketManager
               tickets={editTicketTypes}
@@ -569,20 +595,19 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
       }}
     >
         <div className="max-w-md mx-auto space-y-6 text-left">
-          <div className="flex items-center justify-between">
-            <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <h1 
-              className="text-xl font-bold"
-              style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-            >
-              Edit Parties
-            </h1>
-          </div>
+          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h1 
+            className="text-xl font-bold absolute top-4 left-4"
+            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+          >
+            Edit Parties
+          </h1>
 
-        <Card>
-          <CardHeader>
+          <div className="mt-16">
+          <Card>
+            <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle>All Parties</CardTitle>
                 <Button
@@ -697,6 +722,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
             )}
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   );

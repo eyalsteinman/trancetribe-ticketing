@@ -258,13 +258,14 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h1 
-            className="text-xl font-bold"
+            className="text-xl font-bold absolute top-4 left-4"
             style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
           >
             Registered Users
           </h1>
         </div>
 
+        <div className="mt-16">
         <Card>
           <CardHeader>
             <CardTitle>All Registered Users ({users.length})</CardTitle>
@@ -433,6 +434,7 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
             )}
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   );

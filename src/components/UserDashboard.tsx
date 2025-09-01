@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { QRCodeSVG } from 'qrcode.react';
 import UserParties from './UserParties';
 import UserGames from './UserGames';
-import NicknameManager from './NicknameManager';
+import PersonalizeEdit from './PersonalizeEdit';
 import BoredScreen from './BoredScreen';
 import DotCircleGame from './DotCircleGame';
 import ExploderGame from './ExploderGame';
@@ -137,7 +137,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   if (currentView === 'nickname') {
-    return <NicknameManager user={user} onBack={() => {
+    return <PersonalizeEdit user={user} onBack={() => {
       setCurrentView('dashboard');
       loadUserProfile(); // Refresh nickname after returning
     }} />;
@@ -237,13 +237,13 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
             const items = [
               {
                 id: 'parties',
-                title: 'Parties',
+                title: 'Events and Parties',
                 icon: <Calendar className="h-12 w-12" />,
                 onClick: () => setCurrentView('parties' as const),
               },
               {
                 id: 'nickname',
-                title: 'Choose Nickname',
+                title: 'Personalize and Edit',
                 icon: <UserIcon className="h-12 w-12" />,
                 onClick: () => setCurrentView('nickname' as const),
               },
@@ -313,7 +313,13 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                   key={qrCode.id} 
                   className="border rounded-lg p-4 space-y-3 cursor-pointer hover:bg-muted/50 transition-colors"
                   onClick={() => {
-                    // Store party ID and navigate to specific party
+                    // Navigate directly to specific party details
+                    const party = { 
+                      id: qrCode.party_id, 
+                      name: qrCode.parties?.name, 
+                      date: qrCode.parties?.date,
+                      photo_url: qrCode.parties?.photo_url
+                    };
                     localStorage.setItem('selectedPartyId', qrCode.party_id);
                     setCurrentView('parties');
                   }}

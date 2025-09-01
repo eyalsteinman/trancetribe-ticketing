@@ -119,12 +119,14 @@ export default function UserParties({ user, onBack }) {
             size="icon"
             onClick={onBack}
             aria-label="Back to Dashboard"
-            className="absolute top-4 left-4 z-50"
+            className="absolute top-4 right-4 z-50"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           
-          <h2 className="text-xl font-bold mb-4 text-center mt-12">Parties</h2>
+          <h2 className="text-xl font-bold mb-4 absolute top-4 left-4">Events and Parties</h2>
+          
+          
           
           {/* Horizontal scrollable productions */}
           {productions.length > 0 && (
@@ -181,22 +183,25 @@ export default function UserParties({ user, onBack }) {
                 className="cursor-pointer hover:shadow-lg transition overflow-hidden"
               >
                 <CardContent className="p-0">
-                  {party.photo_url && (
-                    <div className="w-full h-48 overflow-hidden">
+                  {party.photo_url ? (
+                    <div className="w-full h-80 overflow-hidden rounded-lg">
                       <img
                         src={party.photo_url}
                         alt={party.name}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                       />
                     </div>
+                  ) : (
+                    <div className="w-full h-80 bg-muted flex items-center justify-center rounded-lg">
+                      <div className="text-center p-4">
+                        <h2 className="text-lg font-semibold">{party.name}</h2>
+                        <p className="text-sm text-muted-foreground">{party.date}</p>
+                        {party.description && (
+                          <p className="text-sm text-muted-foreground mt-2">{party.description}</p>
+                        )}
+                      </div>
+                    </div>
                   )}
-                  <div className="p-4">
-                    <h2 className="text-lg font-semibold">{party.name}</h2>
-                    <p className="text-sm text-muted-foreground">{party.date}</p>
-                    {party.description && (
-                      <p className="text-sm text-muted-foreground mt-2">{party.description}</p>
-                    )}
-                  </div>
                 </CardContent>
               </Card>
             ))}

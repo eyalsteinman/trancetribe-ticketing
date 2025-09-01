@@ -55,7 +55,10 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Creating WhatsApp group:", { groupName, phoneNumbers: formattedPhoneNumbers });
 
     // Create group using WhatsApp Business API
-    const groupResponse = await fetch('https://graph.facebook.com/v18.0/YOUR_PHONE_NUMBER_ID/groups', {
+    // Note: Replace YOUR_PHONE_NUMBER_ID with actual phone number ID from WhatsApp Business
+    const phoneNumberId = Deno.env.get("WHATSAPP_PHONE_NUMBER_ID") || "YOUR_PHONE_NUMBER_ID";
+    
+    const groupResponse = await fetch(`https://graph.facebook.com/v18.0/${phoneNumberId}/groups`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${whatsappToken}`,

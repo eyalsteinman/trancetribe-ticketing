@@ -408,13 +408,14 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h1 
-            className="text-xl font-bold"
+            className="text-xl font-bold absolute top-4 left-4"
             style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
           >
             Guest List
           </h1>
         </div>
 
+        <div className="mt-16">
         {/* Party Selection */}
         {parties.length > 0 && (
           <Card>
@@ -689,6 +690,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
     </div>
   );

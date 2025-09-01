@@ -91,7 +91,7 @@ const NicknameManager = ({ user, onBack }: NicknameManagerProps) => {
             className="text-xl font-bold"
             style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
           >
-            Choose Nickname
+            Personalize and Edit
           </h1>
         </div>
 
