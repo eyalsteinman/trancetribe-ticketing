@@ -544,15 +544,21 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
       }}
     >
       <div className="max-w-md mx-auto space-y-6 text-left">
-        <div className="flex items-center justify-between">
+        <div className="relative pt-2 pb-6">
           <h1 
-            className="text-xl font-bold"
+            className="text-2xl font-bold"
             style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
           >
             Admin Dashboard
           </h1>
-          <Button variant="outline" onClick={handleSignOut} className="on-color">
-            Sign Out
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={handleSignOut} 
+            className="absolute top-2 right-0 on-color"
+            aria-label="Sign Out"
+          >
+            <ArrowLeft className="h-4 w-4" />
           </Button>
         </div>
         
@@ -577,7 +583,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
               { id: 'manage-admins', title: 'Add Admin', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('manage-admins' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'registered-users', title: 'Registered Users', icon: <UserCheck className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('registered-users' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'admin-games', title: 'Admin Games', icon: <Gamepad2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('admin-games' as const); setTimeout(() => loadParties(), 100); } },
-              { id: 'nickname', title: 'Choose Nickname', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('nickname' as const); setTimeout(() => loadParties(), 100); } },
+              { id: 'nickname', title: 'Personalize and Edit', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('nickname' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'bar-tab', title: 'Bar Tab', icon: <Wine className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'bar-tab-scanner', title: 'Bartab Scanner', icon: <ScanBarcode className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab-scanner' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'dark-mode', title: isDarkMode ? 'Light Mode' : 'Dark Mode', icon: <Cog className="h-8 w-8 mb-2" />, onClick: toggleDarkMode },

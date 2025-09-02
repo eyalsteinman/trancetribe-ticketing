@@ -595,17 +595,25 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
       }}
     >
         <div className="max-w-md mx-auto space-y-6 text-left">
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 
-            className="text-xl font-bold absolute top-4 left-4"
-            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-          >
-            Edit Parties
-          </h1>
+          <div className="relative pt-2 pb-6">
+            <h1 
+              className="text-2xl font-bold"
+              style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+            >
+              Edit Parties
+            </h1>
+            <Button 
+              variant="outline" 
+              size="icon" 
+              onClick={onBack} 
+              className="absolute top-2 right-0 on-color back-button"
+              aria-label="Back"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </div>
 
-          <div className="mt-16">
+          <div>
           <Card>
             <CardHeader>
               <div className="flex justify-between items-center">

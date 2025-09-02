@@ -216,23 +216,21 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     >
       <div className="max-w-md mx-auto p-6 space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between pt-2">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground mb-1">
-              {nickname ? `Welcome back,` : 'User Dashboard'}
-            </h1>
-            {nickname && (
-              <p className="text-lg text-primary font-semibold">{nickname}!</p>
-            )}
-          </div>
+        <div className="relative pt-2 pb-6">
+          <h1 className="text-2xl font-bold text-foreground mb-1">
+            {nickname ? `Welcome back,` : 'User Dashboard'}
+          </h1>
+          {nickname && (
+            <p className="text-lg text-primary font-semibold">{nickname}!</p>
+          )}
           <Button 
             variant="outline" 
-            size="sm"
+            size="icon"
             onClick={handleSignOut} 
-            className="shrink-0"
+            className="absolute top-2 right-0"
+            aria-label="Sign Out"
           >
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
+            <LogOut className="h-4 w-4" />
           </Button>
         </div>
 
@@ -241,7 +239,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
             const items = [
               {
                 id: 'parties',
-                title: 'Events and Parties',
+                title: 'Events & Parties',
                 icon: <Calendar className="h-12 w-12" />,
                 onClick: () => setCurrentView('parties' as const),
               },

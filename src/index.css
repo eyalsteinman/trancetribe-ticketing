@@ -325,6 +325,37 @@ All colors MUST be HSL.
   .dark body {
     background-color: hsl(0 0% 0%) !important;
   }
+  
+  /* Mobile responsiveness - ensure all pages fit phone dimensions */
+  @media (max-width: 768px) {
+    .max-w-md {
+      max-width: 100%;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    
+    .max-w-2xl {
+      max-width: 100%;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    
+    /* Ensure consistent spacing for mobile */
+    .space-y-6 > * + * {
+      margin-top: 1rem;
+    }
+    
+    /* Mobile-friendly buttons and inputs */
+    .h-14 {
+      height: 3rem;
+    }
+    
+    /* Mobile text sizing */
+    .text-2xl {
+      font-size: 1.5rem;
+      line-height: 2rem;
+    }
+  }
 }
 
 @layer utilities {
