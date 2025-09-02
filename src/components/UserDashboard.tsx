@@ -209,23 +209,27 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
   return (
     <div 
-      className="min-h-screen p-4 transition-colors duration-500"
+      className="min-h-screen transition-colors duration-500 bg-gradient-to-br from-background via-background to-muted/20"
       style={{ 
         backgroundColor
       }}
     >
-      <div className="max-w-md mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 
-            className="text-xl font-bold"
-            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-          >
-            {nickname ? `Welcome back, ${nickname}!` : 'User Dashboard'}
-          </h1>
+      <div className="max-w-md mx-auto p-6 space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between pt-2">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground mb-1">
+              {nickname ? `Welcome back,` : 'User Dashboard'}
+            </h1>
+            {nickname && (
+              <p className="text-lg text-primary font-semibold">{nickname}!</p>
+            )}
+          </div>
           <Button 
             variant="outline" 
+            size="sm"
             onClick={handleSignOut} 
-            className="whitespace-nowrap on-color"
+            className="shrink-0"
           >
             <LogOut className="h-4 w-4 mr-2" />
             Sign Out
@@ -302,18 +306,16 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           })()}
         </div>
 
+        {/* QR Codes Section */}
         {userQRCodes.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Your QR Codes</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+          <div className="space-y-4">
+            <h2 className="text-lg font-bold text-foreground">Your Tickets</h2>
+            <div className="space-y-4">
               {userQRCodes.map((qrCode) => (
-                <div 
+                <Card 
                   key={qrCode.id} 
-                  className="border rounded-lg p-4 space-y-3 cursor-pointer hover:bg-muted/50 transition-colors"
+                  className="event-card cursor-pointer group overflow-hidden border-0 bg-gradient-to-r from-card to-card/80"
                   onClick={() => {
-                    // Navigate directly to specific party details
                     const party = { 
                       id: qrCode.party_id, 
                       name: qrCode.parties?.name, 
@@ -324,51 +326,75 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                     setCurrentView('parties');
                   }}
                 >
-                  {/* Party Photo */}
-                  {qrCode.parties?.photo_url && (
-                    <img 
-                      src={qrCode.parties.photo_url} 
-                      alt={qrCode.parties.name}
-                      className="w-full h-48 object-cover rounded"
-                    />
-                  )}
-                  
-                  {/* Party Info */}
-                  <div>
-                    <div className="font-semibold text-lg">{qrCode.parties?.name}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {new Date(qrCode.parties?.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {qrCode.is_scanned ? 'qr used' : qrCode.is_approved ? 'qr approved! Enjoy the party!' : 'qr pending approval'}
-                    </div>
-                  </div>
-                  
-                  {/* QR Code Display for Approved */}
-                  {qrCode.is_approved && !qrCode.is_scanned && (
-                    <div 
-                      className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded border cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        // Show QR code popup
-                        setSelectedQRCode(qrCode);
-                        setShowQRDialog(true);
-                      }}
-                    >
-                      <div className="text-green-600 text-sm font-medium mb-2">✓ QR Code Ready</div>
-                      <div className="text-xs text-muted-foreground">
-                        Your QR code is approved and ready for use! Click here to view.
+                  <CardContent className="p-0">
+                    <div className="relative">
+                      {/* Event Image */}
+                      {qrCode.parties?.photo_url && (
+                        <div className="h-48 w-full overflow-hidden rounded-t-2xl">
+                          <img 
+                            src={qrCode.parties.photo_url} 
+                            alt={qrCode.parties.name}
+                            className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                        </div>
+                      )}
+                      
+                      {/* Status Badge */}
+                      <div className="absolute top-4 right-4">
+                        {qrCode.is_scanned ? (
+                          <div className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            ✓ Used
+                          </div>
+                        ) : qrCode.is_approved ? (
+                          <div className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+                            ✓ Ready
+                          </div>
+                        ) : (
+                          <div className="bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            Pending
+                          </div>
+                        )}
                       </div>
                     </div>
-                  )}
-                  
-                  {qrCode.is_scanned && (
-                    <div className="text-green-600 text-sm text-center font-medium">✓ Used</div>
-                  )}
-                </div>
+                    
+                    {/* Event Info */}
+                    <div className="p-4 space-y-3">
+                      <div>
+                        <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors">
+                          {qrCode.parties?.name}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {new Date(qrCode.parties?.date).toLocaleDateString('en-GB', { 
+                            day: 'numeric', 
+                            month: 'long', 
+                            year: 'numeric',
+                            weekday: 'short'
+                          })}
+                        </p>
+                      </div>
+                      
+                      {/* QR Code Ready Action */}
+                      {qrCode.is_approved && !qrCode.is_scanned && (
+                        <Button 
+                          variant="premium"
+                          size="sm"
+                          className="w-full"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedQRCode(qrCode);
+                            setShowQRDialog(true);
+                          }}
+                        >
+                          Show QR Code
+                        </Button>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
         
         {/* QR Code Dialog */}
@@ -397,9 +423,9 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         </Dialog>
         
         {/* Footer */}
-        <div className="mt-8 pt-4 border-t text-center space-y-2">
-          <h3 className="font-bold text-lg">Trance Tribes Tickets</h3>
-          <p className="text-xs text-muted-foreground">
+        <div className="mt-12 pt-6 border-t border-border/50 text-center space-y-3">
+          <h3 className="font-bold text-xl text-primary">Trance Tribes Tickets</h3>
+          <p className="text-sm text-muted-foreground">
             Created by Eyal Steinman, all rights reserved 2025
           </p>
         </div>
