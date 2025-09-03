@@ -1,7 +1,7 @@
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, Palette, Target, Gamepad2, PenTool } from 'lucide-react';
+import { Palette, Target, Gamepad2, PenTool } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
+import PageHeader from '@/components/ui/page-header';
 
 interface AdminGamesProps {
   onBack: () => void;
@@ -18,18 +18,13 @@ const AdminGames = ({ onBack, onGameSelect }: AdminGamesProps) => {
         backgroundColor
       }}
     >
-      <div className="max-w-md mx-auto space-y-6 text-left">
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 
-            className="text-xl font-bold"
-            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-          >
-            Games Administration
-          </h1>
-        </div>
+      <PageHeader
+        title="Games Administration"
+        onBack={onBack}
+        isBackgroundDark={isBackgroundDark}
+      />
+      
+      <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
 
         <div className="grid grid-cols-2 gap-4">
           <Card className="cursor-pointer hover:bg-accent surface text-black [&_svg]:text-black" onClick={() => onGameSelect('color-changer')}>

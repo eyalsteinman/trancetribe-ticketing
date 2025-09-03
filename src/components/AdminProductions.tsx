@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
-import { ArrowLeft, Plus, Upload } from 'lucide-react';
+import { Plus, Upload } from 'lucide-react';
+import PageHeader from '@/components/ui/page-header';
 
 interface AdminProductionsProps {
   onBack: () => void;
@@ -111,18 +112,13 @@ const AdminProductions = ({ onBack, onEdit }: AdminProductionsProps) => {
 
   return (
     <div className="min-h-screen p-4" style={{ backgroundColor }}>
-      <div className="max-w-md mx-auto space-y-6 text-left">
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 
-            className="text-xl font-bold" 
-            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-          >
-            Productions Administration
-          </h1>
-        </div>
+      <PageHeader
+        title="Productions Administration"
+        onBack={onBack}
+        isBackgroundDark={isBackgroundDark}
+      />
+      
+      <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
 
         {!isCreating && (
           <Card>

@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { User } from '@supabase/supabase-js';
-import { ArrowLeft } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
+import PageHeader from '@/components/ui/page-header';
 
 interface PersonalizeEditProps {
   user: User;
@@ -248,24 +248,13 @@ const PersonalizeEdit = ({ user, onBack }: PersonalizeEditProps) => {
         backgroundColor
       }}
     >
-      <div className="max-w-md mx-auto space-y-6 text-left">
-        <div className="relative pt-2 pb-6">
-          <h1 
-            className="text-2xl font-bold"
-            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-          >
-            Personalize and Edit
-          </h1>
-          <Button 
-            variant="outline" 
-            size="icon" 
-            onClick={onBack} 
-            className="absolute top-2 right-0 on-color back-button"
-            aria-label="Back"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </div>
+      <PageHeader
+        title="Personalize and Edit"
+        onBack={onBack}
+        isBackgroundDark={isBackgroundDark}
+      />
+      
+      <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
 
         <div className="space-y-6">
           {/* Nickname Section */}

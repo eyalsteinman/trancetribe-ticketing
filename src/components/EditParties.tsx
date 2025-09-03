@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Edit, Trash2, Upload, X, ArrowUpDown } from 'lucide-react';
+import PageHeader from '@/components/ui/page-header';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useBackground } from '@/contexts/BackgroundContext';
 import TicketManager from './TicketManager';
@@ -344,16 +345,13 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           backgroundColor
         }}
       >
-          <div className="max-w-md mx-auto space-y-6 text-left mt-16">
-            <Button variant="outline" size="icon" onClick={cancelEdit} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <h1 
-              className="text-xl font-bold absolute top-4 left-4"
-              style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-            >
-              Edit Party
-            </h1>
+          <PageHeader
+            title="Edit Party"
+            onBack={cancelEdit}
+            isBackgroundDark={isBackgroundDark}
+          />
+          
+          <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
 
           <Card>
             <CardHeader>
@@ -594,26 +592,13 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
         backgroundColor
       }}
     >
-        <div className="max-w-md mx-auto space-y-6 text-left">
-          <div className="relative pt-2 pb-6">
-            <h1 
-              className="text-2xl font-bold"
-              style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-            >
-              Edit Parties
-            </h1>
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={onBack} 
-              className="absolute top-2 right-0 on-color back-button"
-              aria-label="Back"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          </div>
-
-          <div>
+        <PageHeader
+          title="Edit Parties"
+          onBack={onBack}
+          isBackgroundDark={isBackgroundDark}
+        />
+        
+        <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
           <Card>
             <CardHeader>
               <div className="flex justify-between items-center">
@@ -731,7 +716,6 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           </CardContent>
         </Card>
         </div>
-      </div>
     </div>
   );
 };

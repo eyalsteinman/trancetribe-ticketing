@@ -435,4 +435,31 @@ All colors MUST be HSL.
     transform: translateY(-2px);
     box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.12);
   }
+
+  /* Fixed header styling */
+  .fixed-header {
+    @apply fixed top-0 left-0 right-0 z-50 p-4 flex items-center justify-between;
+  }
+
+  .page-content-with-header {
+    @apply pt-20;
+  }
+
+  /* Prevent text overlap and ensure proper spacing */
+  .container-spacing {
+    @apply space-y-4;
+  }
+
+  .text-container {
+    @apply break-words overflow-hidden;
+  }
+
+  .headline-consistent {
+    @apply text-2xl font-bold;
+  }
+
+  /* Back button consistency */
+  .back-button-consistent {
+    @apply p-2 rounded-lg border border-border hover:bg-accent transition-colors;
+  }
 }

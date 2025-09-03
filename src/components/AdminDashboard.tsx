@@ -7,7 +7,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
 import { Badge } from '@/components/ui/badge';
-import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ArrowLeft, ScanBarcode, Wine, Cog } from 'lucide-react';
+import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ScanBarcode, Wine, Cog, ArrowLeft } from 'lucide-react';
+import PageHeader from '@/components/ui/page-header';
 import CreateParty from './CreateParty';
 import EditParties from './EditParties';
 import QRScanner from './QRScanner';
@@ -404,10 +405,13 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           backgroundColor
         }}
       >
-        <div className="max-w-md mx-auto space-y-6 text-left">
-          <div className="relative">
-            <h1 className="text-2xl font-bold">QR Scanner</h1>
-          </div>
+        <PageHeader
+          title="QR Scanner"
+          onBack={() => setCurrentView('dashboard')}
+          isBackgroundDark={isBackgroundDark}
+        />
+        
+        <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
           
           {parties.length > 0 && (
             <Card>
@@ -457,13 +461,13 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           backgroundColor
         }}
       >
-        <div className="max-w-md mx-auto space-y-6 text-left">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold">Scanned Guests</h1>
-            <Button variant="outline" className="on-color back-button absolute top-4 right-4" size="icon" onClick={() => setCurrentView('dashboard')} aria-label="Back">
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-          </div>
+        <PageHeader
+          title="Scanned Guests"
+          onBack={() => setCurrentView('dashboard')}
+          isBackgroundDark={isBackgroundDark}
+        />
+        
+        <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
           {parties.length > 0 && (
             <Card>
               <CardHeader>
@@ -543,24 +547,14 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         backgroundColor
       }}
     >
-      <div className="max-w-md mx-auto space-y-6 text-left">
-        <div className="relative pt-2 pb-6">
-          <h1 
-            className="text-2xl font-bold"
-            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-          >
-            Admin Dashboard
-          </h1>
-          <Button 
-            variant="outline" 
-            size="icon"
-            onClick={handleSignOut} 
-            className="absolute top-2 right-0 on-color"
-            aria-label="Sign Out"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </div>
+      <PageHeader
+        title="Admin Dashboard"
+        onBack={handleSignOut}
+        isBackgroundDark={isBackgroundDark}
+        showBackButton={true}
+      />
+      
+      <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
         
         <div className="space-y-4">
           {adminNickname && (

@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Trash2, Edit, UserPlus } from 'lucide-react';
+import { Trash2, Edit, UserPlus } from 'lucide-react';
+import PageHeader from '@/components/ui/page-header';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useBackground } from '@/contexts/BackgroundContext';
 
@@ -336,18 +337,13 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
         backgroundColor
       }}
     >
-      <div className="max-w-2xl mx-auto space-y-6 text-left">
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 
-            className="text-xl font-bold"
-            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-          >
-            Manage Admins
-          </h1>
-        </div>
+      <PageHeader
+        title="Manage Admins"
+        onBack={onBack}
+        isBackgroundDark={isBackgroundDark}
+      />
+      
+      <div className="max-w-2xl mx-auto pt-20 space-y-6 text-left">
 
         <Alert>
           <AlertDescription className="surface">

@@ -105,19 +105,25 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
       style={{ backgroundColor }}
       onContextMenu={(e) => e.preventDefault()}
     >
-      {/* Back button - top right */}
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={onBack}
-        aria-label="Back"
-        className="absolute top-4 right-4 z-[9999] on-color back-button"
-      >
-        <ArrowLeft className="h-4 w-4" />
-      </Button>
 
-      {/* Revert - top left */}
-      <div className="absolute top-4 left-4 z-[9999] flex gap-2">
+      {/* Fixed header for consistency */}
+      <div className="fixed top-0 left-0 right-0 z-50 p-4 flex items-center justify-between">
+        <h1 className="text-2xl font-bold" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>
+          Color Changer
+        </h1>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={onBack}
+          aria-label="Back"
+          className="on-color back-button"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+      </div>
+
+      {/* Revert - top left after header space */}
+      <div className="absolute top-20 left-4 z-[9999] flex gap-2">
         <Button
           onClick={revert}
           size="sm"

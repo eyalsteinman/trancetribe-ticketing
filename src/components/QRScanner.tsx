@@ -33,7 +33,7 @@ const QRScanner = ({ onScan, onClose }: QRScannerProps) => {
         }
 
         // Small delay to ensure video element is ready
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 300));
 
         qrScanner = new QrScanner(
           videoRef.current,
@@ -61,7 +61,7 @@ const QRScanner = ({ onScan, onClose }: QRScannerProps) => {
     };
 
     // Delay initialization to ensure component is fully mounted
-    const timer = setTimeout(initScanner, 200);
+    const timer = setTimeout(initScanner, 500);
 
     return () => {
       clearTimeout(timer);

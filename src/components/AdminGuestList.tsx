@@ -6,8 +6,9 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { ArrowLeft, Check, UserCheck, Mail, MessageCircle } from 'lucide-react';
+import { Check, UserCheck, Mail, MessageCircle } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
+import PageHeader from '@/components/ui/page-header';
 import { User } from '@supabase/supabase-js';
 import {
   Table,
@@ -402,20 +403,15 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
         backgroundColor
       }}
     >
-      <div className="max-w-4xl mx-auto space-y-6 text-left">
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 
-            className="text-xl font-bold absolute top-4 left-4"
-            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-          >
-            Guest List
-          </h1>
-        </div>
+      <PageHeader
+        title="Guest List"
+        onBack={onBack}
+        isBackgroundDark={isBackgroundDark}
+      />
+      
+      <div className="max-w-4xl mx-auto pt-20 space-y-6 text-left">
 
-        <div className="mt-16">
+        <div>
         {/* Party Selection */}
         {parties.length > 0 && (
           <Card>
