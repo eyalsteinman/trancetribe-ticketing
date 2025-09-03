@@ -47,7 +47,7 @@ const handler = async (req: Request): Promise<Response> => {
     );
 
     const emailResponse = await resend.emails.send({
-      from: "Party Admin <admin@resend.dev>",
+      from: "Party Admin <onboarding@resend.dev>",
       to: [to],
       subject: subject || `Message about ${partyName || 'your party registration'}`,
       html,

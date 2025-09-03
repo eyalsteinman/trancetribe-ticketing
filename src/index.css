@@ -116,6 +116,7 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden;
   }
 
   /* Colored background (non-white): direct-on-background text tokens turn white */
@@ -273,6 +274,13 @@ All colors MUST be HSL.
   body[data-colored-bg="true"] button.back-button svg,
   body[data-colored-bg="true"] [role="button"].back-button svg {
     color: hsl(var(--foreground)) !important;
+  }
+
+  /* Reserve header space when a back button is present to avoid overlap */
+  .min-h-screen:has(.back-button),
+  .max-w-md:has(.back-button),
+  .max-w-2xl:has(.back-button) {
+    padding-top: 3.5rem;
   }
 
   /* Dark mode: Override all dashboard tiles, games, and buttons */
