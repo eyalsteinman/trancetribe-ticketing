@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
+import ProductionBrowser from '@/components/ProductionBrowser';
 
 interface LoginPageProps {
   onSuccess: () => void;
@@ -18,6 +19,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [showLoginForm, setShowLoginForm] = useState(false);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
@@ -90,6 +92,16 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
       style={{ backgroundColor }}
     >
       <div className="w-full max-w-md space-y-6">
+        {/* Production Browser Section */}
+        {!showLoginForm && (
+          <Card>
+            <CardContent className="p-6">
+              <ProductionBrowser onLoginPrompt={() => setShowLoginForm(true)} />
+            </CardContent>
+          </Card>
+        )}
+        
+        {/* Login Form */}
         <Card>
           <CardHeader>
             <CardTitle 
@@ -98,6 +110,17 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
             >
               {isSignUp ? 'Sign Up' : 'Welcome Back'}
             </CardTitle>
+            {showLoginForm && (
+              <div className="text-center">
+                <Button 
+                  variant="link" 
+                  onClick={() => setShowLoginForm(false)}
+                  className="text-sm"
+                >
+                  ← Back to Browse Productions
+                </Button>
+              </div>
+            )}
           </CardHeader>
           <CardContent className="space-y-4">
             {isSignUp && (
