@@ -462,4 +462,39 @@ All colors MUST be HSL.
   .back-button-consistent {
     @apply p-2 rounded-lg border border-border hover:bg-accent transition-colors;
   }
+
+  /* Fixed positioning for headers and back buttons */
+  .page-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  .back-button {
+    position: fixed !important;
+    top: 16px !important;
+    right: 16px !important;
+    z-index: 9999 !important;
+  }
+
+  /* Ensure content doesn't go under fixed headers */
+  .pt-20 {
+    padding-top: 5rem !important;
+  }
+
+  .mt-20 {
+    margin-top: 5rem !important;
+  }
 }

@@ -249,7 +249,7 @@ const PersonalizeEdit = ({ user, onBack }: PersonalizeEditProps) => {
       }}
     >
       <PageHeader
-        title="Personalize and Edit"
+        title="My Info"
         onBack={onBack}
         isBackgroundDark={isBackgroundDark}
       />

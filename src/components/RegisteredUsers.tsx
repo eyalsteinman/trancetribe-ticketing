@@ -252,20 +252,20 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
         backgroundColor
       }}
     >
-      <div className="max-w-4xl mx-auto space-y-6 text-left">
+        <div className="max-w-4xl mx-auto space-y-6 text-left">
         <div className="flex items-center space-x-4">
           <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h1 
-            className="text-xl font-bold absolute top-4 left-4"
+            className="text-2xl font-bold absolute top-4 left-4"
             style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
           >
             Registered Users
           </h1>
         </div>
 
-        <div className="mt-16">
+        <div className="mt-20">
         <Card>
           <CardHeader>
             <CardTitle>All Registered Users ({users.length})</CardTitle>

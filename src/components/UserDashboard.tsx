@@ -227,7 +227,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
             variant="outline" 
             size="icon"
             onClick={handleSignOut} 
-            className="absolute top-2 right-0"
+            className="absolute top-2 right-0 z-50 on-color back-button"
             aria-label="Sign Out"
           >
             <LogOut className="h-4 w-4" />
@@ -245,7 +245,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
               },
               {
                 id: 'nickname',
-                title: 'Personalize and Edit',
+                title: 'My Info',
                 icon: <UserIcon className="h-12 w-12" />,
                 onClick: () => setCurrentView('nickname' as const),
               },

@@ -27,3 +27,6 @@ verify_jwt = false
 
 [functions.send-qr-code]
 verify_jwt = false
+
+[functions.send-qr-email-with-admin]
+verify_jwt = false

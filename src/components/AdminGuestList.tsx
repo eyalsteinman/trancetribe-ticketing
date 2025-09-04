@@ -213,17 +213,14 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
         return;
       }
 
-      // Send QR code email to the user
+      // Send QR code email to the user with admin email
       const guest = arrivingGuests.find(g => g.id === qrId);
       if (guest && guest.profiles?.email) {
         try {
-          await supabase.functions.invoke('send-qr-code-email', {
+          await supabase.functions.invoke('send-qr-email-with-admin', {
             body: {
-              to: guest.profiles.email,
-              qrCode: guest.code,
-              partyName: parties.find(p => p.id === selectedParty)?.name || 'Your Party',
-              userName: guest.profiles.first_name,
-              partyDate: parties.find(p => p.id === selectedParty)?.date
+              qrCodeId: qrId,
+              adminEmail: user.email || 'admin@example.com'
             }
           });
         } catch (emailError) {

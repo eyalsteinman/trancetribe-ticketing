@@ -311,19 +311,26 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
 
   const handleSignOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
+      const { error } = await supabase.auth.signOut({ scope: 'local' });
+      
+      if (error && !error.message.includes('Session not found')) {
+        console.error('Sign out error:', error);
         toast({
-          title: "Error",
-          description: "Failed to sign out",
+          title: "Warning",
+          description: "Logged out locally, but server logout failed.",
           variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Signed out successfully!",
         });
       }
     } catch (error) {
+      console.error('Sign out catch error:', error);
       toast({
-        title: "Error", 
-        description: "Failed to sign out",
-        variant: "destructive"
+        title: "Info", 
+        description: "Logged out locally.",
       });
     }
   };
@@ -577,7 +584,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
               { id: 'manage-admins', title: 'Add Admin', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('manage-admins' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'registered-users', title: 'Registered Users', icon: <UserCheck className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('registered-users' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'admin-games', title: 'Admin Games', icon: <Gamepad2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('admin-games' as const); setTimeout(() => loadParties(), 100); } },
-              { id: 'nickname', title: 'Personalize and Edit', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('nickname' as const); setTimeout(() => loadParties(), 100); } },
+              { id: 'nickname', title: 'My Info', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('nickname' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'bar-tab', title: 'Bar Tab', icon: <Wine className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'bar-tab-scanner', title: 'Bartab Scanner', icon: <ScanBarcode className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab-scanner' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'dark-mode', title: isDarkMode ? 'Light Mode' : 'Dark Mode', icon: <Cog className="h-8 w-8 mb-2" />, onClick: toggleDarkMode },
