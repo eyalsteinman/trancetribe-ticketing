@@ -91,25 +91,27 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
       className="min-h-screen flex items-center justify-center p-4 transition-colors duration-500"
       style={{ backgroundColor }}
     >
-      <div className="w-full max-w-md space-y-6">
-        {/* Production Browser Section */}
-        {!showLoginForm && (
-          <Card>
-            <CardContent className="p-6">
-              <ProductionBrowser onLoginPrompt={() => setShowLoginForm(true)} />
-            </CardContent>
-          </Card>
-        )}
+      <div className="w-full max-w-4xl space-y-6">
+        {/* Production Browser Section - Always visible */}
+        <Card>
+          <CardContent className="p-6">
+            <ProductionBrowser onLoginPrompt={() => setShowLoginForm(true)} />
+          </CardContent>
+        </Card>
         
         {/* Login Form */}
-        <Card>
+        <div className="max-w-md mx-auto">
+          <Card>
           <CardHeader>
             <CardTitle 
               className="text-center text-2xl font-bold"
               style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
             >
-              {isSignUp ? 'Sign Up' : 'Welcome Back'}
+              Trance Tribe - Choose your access type
             </CardTitle>
+            <p className="text-center text-muted-foreground">
+              {isSignUp ? 'Create your account' : 'Welcome back'}
+            </p>
             {showLoginForm && (
               <div className="text-center">
                 <Button 
@@ -200,6 +202,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
             </div>
           </CardContent>
         </Card>
+        </div>
 
         {/* Footer */}
         <div className="text-center space-y-1">
