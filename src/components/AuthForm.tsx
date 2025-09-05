@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import AdminPasswordForm from './AdminPasswordForm';
+import ProductionBrowser from '@/components/ProductionBrowser';
 
 const AuthForm = () => {
   const [email, setEmail] = useState('');
@@ -317,11 +318,18 @@ const AuthForm = () => {
         color: isBackgroundDark ? '#ffffff' : '#000000'
       }}
     >
-      <div className="w-full max-w-md space-y-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold">TRANCE TRIBE</h1>
-          <p className="opacity-75 mt-2">Choose your access type</p>
-        </div>
+      <div className="w-full max-w-4xl space-y-6">
+        <Card>
+          <CardContent className="p-6">
+            <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} />
+          </CardContent>
+        </Card>
+
+        <div className="max-w-md mx-auto">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold">TRANCE TRIBE</h1>
+            <p className="opacity-75 mt-2">Choose your access type</p>
+          </div>
 
         <Tabs defaultValue="user" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
@@ -464,6 +472,7 @@ const AuthForm = () => {
             </Card>
           </TabsContent>
         </Tabs>
+        </div>
       </div>
     </div>
   );
