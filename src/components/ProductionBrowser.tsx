@@ -99,6 +99,7 @@ const ProductionBrowser = ({ onLoginPrompt }: ProductionBrowserProps) => {
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-foreground">Browse by Production</h2>
       
+      {/* Featured Productions */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {productions.slice(0, 3).map((production) => (
           <Card
@@ -126,6 +127,7 @@ const ProductionBrowser = ({ onLoginPrompt }: ProductionBrowserProps) => {
         ))}
       </div>
 
+      {/* Search Bar */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
         <Input
@@ -137,7 +139,8 @@ const ProductionBrowser = ({ onLoginPrompt }: ProductionBrowserProps) => {
         />
       </div>
 
-      {searchQuery && (
+      {/* Search Results or All Productions */}
+      {searchQuery ? (
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-foreground">Search Results</h3>
           {filteredProductions.length > 0 ? (
@@ -171,6 +174,38 @@ const ProductionBrowser = ({ onLoginPrompt }: ProductionBrowserProps) => {
             <p className="text-muted-foreground text-center">No productions found</p>
           )}
         </div>
+      ) : (
+        productions.length > 3 && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-foreground">All Productions</h3>
+            <div className="grid grid-cols-2 gap-4">
+              {productions.slice(3).map((production) => (
+                <Card
+                  key={production.id}
+                  onClick={() => handleProductionClick(production.id)}
+                  className="cursor-pointer group border-0 bg-gradient-to-r from-card to-card/80 hover-lift"
+                >
+                  <CardContent className="p-4">
+                    <div className="aspect-square rounded-lg overflow-hidden mb-3">
+                      {production.logo_url ? (
+                        <img
+                          src={production.logo_url}
+                          alt={production.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-muted">
+                          <span className="text-sm text-center px-2 font-semibold">{production.name}</span>
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-sm text-center font-medium text-foreground truncate">{production.name}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )
       )}
     </div>
   );
