@@ -395,7 +395,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
 
   return (
     <div 
-      className="min-h-screen p-4 transition-colors duration-500"
+      className="min-h-screen transition-colors duration-500"
       style={{ 
         backgroundColor
       }}
@@ -406,18 +406,16 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
         isBackgroundDark={isBackgroundDark}
       />
       
-      <div className="max-w-4xl mx-auto pt-20 space-y-6 text-left">
-
-        <div>
+      <div className="px-4 pt-20 pb-4 space-y-4">
         {/* Party Selection */}
         {parties.length > 0 && (
           <Card>
-            <CardHeader>
-              <CardTitle>Select Party</CardTitle>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg">Select Party</CardTitle>
             </CardHeader>
             <CardContent>
               <select 
-                className="w-full p-2 border rounded-md text-black"
+                className="w-full p-2 border rounded-md text-black bg-white"
                 value={selectedParty || ''}
                 onChange={(e) => setSelectedParty(e.target.value)}
               >
@@ -436,12 +434,14 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
           <Button
             variant={activeTab === 'scanned' ? 'default' : 'outline'}
             onClick={() => setActiveTab('scanned')}
+            className="flex-1 text-sm"
           >
             Scanned ({scannedGuests.length})
           </Button>
           <Button
             variant={activeTab === 'arriving' ? 'default' : 'outline'}
             onClick={() => setActiveTab('arriving')}
+            className="flex-1 text-sm"
           >
             Arriving ({arrivingGuests.length})
           </Button>
@@ -449,41 +449,13 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
 
         {/* Guest Tables */}
         <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle>
-                {activeTab === 'scanned' ? 'Scanned Guests' : 'Arriving Guests'}
-              </CardTitle>
-              <div className="flex items-center gap-2">
-                {activeTab === 'arriving' && arrivingGuests.length > 0 && (
-                  <>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={createWhatsAppGroup}
-                      className="flex items-center gap-1"
-                    >
-                      <MessageCircle className="h-4 w-4" />
-                      Create WhatsApp Group
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        const emails = arrivingGuests
-                          .filter(guest => guest.profiles?.email)
-                          .map(guest => guest.profiles!.email)
-                          .join(', ');
-                        setEmailDialog({ open: true, guestId: 'all', email: emails });
-                      }}
-                      className="flex items-center gap-1"
-                    >
-                      <Mail className="h-4 w-4" />
-                      Email All
-                    </Button>
-                  </>
-                )}
-                <Badge variant="secondary">
+          <CardHeader className="pb-3">
+            <div className="flex flex-col space-y-2">
+              <div className="flex justify-between items-center">
+                <CardTitle className="text-lg">
+                  {activeTab === 'scanned' ? 'Scanned Guests' : 'Arriving Guests'}
+                </CardTitle>
+                <Badge variant="secondary" className="text-xs">
                   {activeTab === 'scanned' ? scannedGuests.length : arrivingGuests.length} guests
                 </Badge>
               </div>
@@ -683,7 +655,6 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-        </div>
       </div>
     </div>
   );
