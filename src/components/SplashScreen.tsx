@@ -32,7 +32,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         <h1 className="text-6xl font-bold font-sans leading-tight">
           TRANCE
           <br />
-          TRIBE
+          TRIBES
         </h1>
         <p className="text-lg font-light mt-4">ticket generator</p>
       </div>

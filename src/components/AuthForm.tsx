@@ -319,15 +319,11 @@ const AuthForm = () => {
       }}
     >
       <div className="w-full max-w-4xl space-y-6">
-        <Card>
-          <CardContent className="p-6">
-            <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} />
-          </CardContent>
-        </Card>
+        <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} />
 
         <div className="max-w-md mx-auto">
           <div className="text-center">
-            <h1 className="text-3xl font-bold">TRANCE TRIBE</h1>
+            <h1 className="text-3xl font-bold">TRANCE TRIBES</h1>
             <p className="opacity-75 mt-2">Choose your access type</p>
           </div>
 
@@ -425,7 +421,7 @@ const AuthForm = () => {
                     variant="outline"
                     className="w-full"
                   >
-                    {isUserLogin ? "Don't have an account? Create Account" : "Already have an account? Sign In"}
+                    {isUserLogin ? "No account? Create one" : "Already have an account? Sign In"}
                   </Button>
                 </div>
               </CardContent>

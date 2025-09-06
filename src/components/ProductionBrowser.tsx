@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import PartyPreview from "./PartyPreview";
+import BrowseMenu from "./BrowseMenu";
 
 interface Production {
   id: string;
@@ -37,7 +38,9 @@ const ProductionBrowser = ({ onLoginPrompt }: ProductionBrowserProps) => {
   const [productions, setProductions] = useState<Production[]>([]);
   const [parties, setParties] = useState<Party[]>([]);
   const [selectedParty, setSelectedParty] = useState<Party | null>(null);
+  const [selectedProduction, setSelectedProduction] = useState<Production | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [browseMode, setBrowseMode] = useState("production");
 
   const filteredProductions = productions.filter(production =>
     production.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -77,135 +80,191 @@ const ProductionBrowser = ({ onLoginPrompt }: ProductionBrowserProps) => {
     }
   };
 
-  const handleProductionClick = (productionId: string) => {
-    const productionParties = parties.filter(p => p.production_id === productionId);
-    if (productionParties.length > 0) {
-      setSelectedParty(productionParties[0]);
-    }
+  const handleProductionClick = (production: Production) => {
+    setSelectedProduction(production);
+  };
+
+  const handlePartyClick = (party: Party) => {
+    setSelectedParty(party);
   };
 
 
   if (selectedParty) {
     return (
-      <PartyPreview 
-        party={selectedParty} 
-        onBack={() => setSelectedParty(null)}
-        onLoginRequired={onLoginPrompt}
-      />
+      <div className="min-h-screen w-full p-4">
+        <PartyPreview 
+          party={selectedParty} 
+          onBack={() => setSelectedParty(null)}
+          onLoginRequired={onLoginPrompt}
+        />
+      </div>
     );
   }
 
-  return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-foreground">Browse by Production</h2>
-      
-      {/* Featured Productions */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {productions.slice(0, 3).map((production) => (
-          <Card
-            key={production.id}
-            onClick={() => handleProductionClick(production.id)}
-            className="cursor-pointer group border-0 bg-gradient-to-r from-card to-card/80 hover-lift"
-          >
-            <CardContent className="p-4">
-              <div className="aspect-square rounded-lg overflow-hidden mb-3">
-                {production.logo_url ? (
-                  <img
-                    src={production.logo_url}
-                    alt={production.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-muted">
-                    <span className="text-sm text-center px-2 font-semibold">{production.name}</span>
-                  </div>
-                )}
+  if (selectedProduction) {
+    const productionParties = parties.filter(p => p.production_id === selectedProduction.id);
+    return (
+      <div className="min-h-screen w-full p-4">
+        <div className="mb-6 text-center">
+          {selectedProduction.logo_url ? (
+            <img
+              src={selectedProduction.logo_url}
+              alt={selectedProduction.name}
+              className="w-32 h-32 object-cover mx-auto mb-4"
+            />
+          ) : (
+            <div className="w-32 h-32 bg-muted flex items-center justify-center mx-auto mb-4">
+              <span className="font-semibold">{selectedProduction.name}</span>
+            </div>
+          )}
+          <h2 className="text-2xl font-bold">{selectedProduction.name}</h2>
+        </div>
+        
+        <div className="flex overflow-x-auto gap-4 pb-4">
+          {productionParties.map((party) => (
+            <div
+              key={party.id}
+              onClick={() => handlePartyClick(party)}
+              className="flex-shrink-0 cursor-pointer w-64"
+            >
+              {party.photo_url ? (
+                <img
+                  src={party.photo_url}
+                  alt={party.name}
+                  className="w-full h-48 object-cover"
+                />
+              ) : (
+                <div className="w-full h-48 bg-muted flex items-center justify-center">
+                  <span className="text-center p-4">{party.name}</span>
+                </div>
+              )}
+              <div className="p-2">
+                <h3 className="font-semibold">{party.name}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {new Date(party.date).toLocaleDateString()}
+                </p>
               </div>
-              <p className="text-sm text-center font-medium text-foreground truncate">{production.name}</p>
-            </CardContent>
-          </Card>
-        ))}
+            </div>
+          ))}
+        </div>
+        
+        <button
+          onClick={() => setSelectedProduction(null)}
+          className="mt-4 px-4 py-2 bg-primary text-white rounded"
+        >
+          Back
+        </button>
+      </div>
+    );
+  }
+
+  const getDisplayItems = () => {
+    if (browseMode === "production") {
+      return searchQuery ? filteredProductions : productions;
+    } else if (browseMode === "party") {
+      return parties.filter(party => 
+        !searchQuery || party.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    } else { // date
+      return parties
+        .filter(party => 
+          !searchQuery || party.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    }
+  };
+
+  const displayItems = getDisplayItems();
+
+  return (
+    <div className="w-full p-4">
+      <BrowseMenu value={browseMode} onValueChange={setBrowseMode} />
+      
+      <div className="flex overflow-x-auto gap-4 pb-4 mb-6">
+        {browseMode === "production" ? (
+          productions.map((production) => (
+            <div
+              key={production.id}
+              onClick={() => handleProductionClick(production)}
+              className="flex-shrink-0 cursor-pointer w-24"
+            >
+              {production.logo_url ? (
+                <img
+                  src={production.logo_url}
+                  alt={production.name}
+                  className="w-24 h-24 object-cover"
+                />
+              ) : (
+                <div className="w-24 h-24 bg-muted flex items-center justify-center">
+                  <span className="text-xs text-center font-semibold">{production.name}</span>
+                </div>
+              )}
+              <p className="text-xs text-center mt-2 truncate">{production.name}</p>
+            </div>
+          ))
+        ) : (
+          parties.map((party) => (
+            <div
+              key={party.id}
+              onClick={() => handlePartyClick(party)}
+              className="flex-shrink-0 cursor-pointer w-32"
+            >
+              {party.photo_url ? (
+                <img
+                  src={party.photo_url}
+                  alt={party.name}
+                  className="w-32 h-24 object-cover"
+                />
+              ) : (
+                <div className="w-32 h-24 bg-muted flex items-center justify-center">
+                  <span className="text-xs text-center p-2">{party.name}</span>
+                </div>
+              )}
+              <p className="text-xs text-center mt-2 truncate">{party.name}</p>
+            </div>
+          ))
+        )}
       </div>
 
-      {/* Search Bar */}
-      <div className="relative">
+      <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
         <Input
           type="text"
           placeholder="Search events by name or production"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 py-6 text-lg rounded-full bg-background/50 border-muted focus:bg-background"
+          className="pl-10 py-6 text-lg bg-background/50 border-muted focus:bg-background"
         />
       </div>
 
-      {/* Search Results or All Productions */}
-      {searchQuery ? (
+      {browseMode === "party" && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-foreground">Search Results</h3>
-          {filteredProductions.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4">
-              {filteredProductions.map((production) => (
-                <Card
-                  key={production.id}
-                  onClick={() => handleProductionClick(production.id)}
-                  className="cursor-pointer group border-0 bg-gradient-to-r from-card to-card/80 hover-lift"
-                >
-                  <CardContent className="p-4">
-                    <div className="aspect-square rounded-lg overflow-hidden mb-3">
-                      {production.logo_url ? (
-                        <img
-                          src={production.logo_url}
-                          alt={production.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-muted">
-                          <span className="text-sm text-center px-2 font-semibold">{production.name}</span>
-                        </div>
-                      )}
-                    </div>
-                    <p className="text-sm text-center font-medium text-foreground truncate">{production.name}</p>
-                  </CardContent>
-                </Card>
-              ))}
+          {(displayItems as Party[]).map((party) => (
+            <div
+              key={party.id}
+              onClick={() => handlePartyClick(party)}
+              className="cursor-pointer w-full"
+            >
+              {party.photo_url ? (
+                <img
+                  src={party.photo_url}
+                  alt={party.name}
+                  className="w-full h-48 object-cover"
+                />
+              ) : (
+                <div className="w-full h-48 bg-muted flex items-center justify-center">
+                  <span className="text-center p-4">{party.name}</span>
+                </div>
+              )}
+              <div className="p-4">
+                <h3 className="font-semibold">{party.name}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {new Date(party.date).toLocaleDateString()}
+                </p>
+              </div>
             </div>
-          ) : (
-            <p className="text-muted-foreground text-center">No productions found</p>
-          )}
+          ))}
         </div>
-      ) : (
-        productions.length > 3 && (
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-foreground">All Productions</h3>
-            <div className="grid grid-cols-2 gap-4">
-              {productions.slice(3).map((production) => (
-                <Card
-                  key={production.id}
-                  onClick={() => handleProductionClick(production.id)}
-                  className="cursor-pointer group border-0 bg-gradient-to-r from-card to-card/80 hover-lift"
-                >
-                  <CardContent className="p-4">
-                    <div className="aspect-square rounded-lg overflow-hidden mb-3">
-                      {production.logo_url ? (
-                        <img
-                          src={production.logo_url}
-                          alt={production.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-muted">
-                          <span className="text-sm text-center px-2 font-semibold">{production.name}</span>
-                        </div>
-                      )}
-                    </div>
-                    <p className="text-sm text-center font-medium text-foreground truncate">{production.name}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )
       )}
     </div>
   );
