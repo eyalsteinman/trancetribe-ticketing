@@ -578,25 +578,38 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
 
   return (
     <div 
-      className={`min-h-screen p-4 transition-colors duration-500 ${isDarkMode ? 'bg-black' : ''}`}
-      style={{ 
-        backgroundColor: isDarkMode ? '#000000' : backgroundColor
-      }}
+      className={`min-h-screen transition-all duration-700 ease-out ${
+        isDarkMode 
+          ? 'bg-black' 
+          : 'bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900'
+      }`}
     >
-        <div className="flex items-center justify-between p-4">
-          <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
-          <Button 
-            variant="outline" 
-            size="icon"
-            onClick={handleSignOut} 
-            className="on-color back-button"
-            aria-label="Sign Out"
-          >
-            <LogOut className="h-4 w-4" />
-          </Button>
+      <div className="max-w-md mx-auto p-6 space-y-8">
+        
+        {/* Header with modern styling */}
+        <div className="relative pt-4 pb-8">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <h1 className="text-3xl font-black text-white">
+                {adminNickname ? `Hey ${adminNickname},` : 'Admin Dashboard'}
+              </h1>
+              <p className="text-white/70 text-sm font-medium">
+                How can I help you?
+              </p>
+            </div>
+            <Button 
+              variant="outline" 
+              size="icon"
+              onClick={handleSignOut}
+              className="glass border-white/20 text-white hover:bg-white/10 transition-all duration-300"
+              aria-label="Sign Out"
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
-      
-        <div className="max-w-md mx-auto pt-6 space-y-6 text-left">
+        
+        <div className="space-y-6">
         
         <div className="space-y-4">
           {adminNickname && (
@@ -713,11 +726,12 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             );
           })()}
         </div>
+      </div>
         
         {/* Footer */}
-        <div className="mt-8 pt-4 border-t text-center space-y-2">
-          <h3 className="font-bold text-lg">Trance Tribes Tickets</h3>
-          <p className="text-xs text-muted-foreground">
+        <div className="mt-8 pt-4 border-t border-white/20 text-center space-y-2">
+          <h3 className="font-bold text-lg text-white">Trance Tribes Tickets</h3>
+          <p className="text-xs text-white/70">
             Created by Eyal Steinman, all rights reserved 2025
           </p>
         </div>
