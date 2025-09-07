@@ -159,8 +159,8 @@ export default function UserParties({ user, onBack }) {
                       <p className="text-xs text-center mt-2 truncate w-24 font-medium text-muted-foreground">{production.name}</p>
                     </div>
                   ))
-                ) : browseMode === "party" ? (
-                  parties.map((party) => (
+                 ) : browseMode === "party" ? (
+                  [...parties].map((party) => (
                     <div
                       key={party.id}
                       onClick={() => setSelectedParty(party)}
@@ -183,7 +183,7 @@ export default function UserParties({ user, onBack }) {
                     </div>
                   ))
                 ) : (
-                  parties.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).map((party) => (
+                  [...parties].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).map((party) => (
                     <div
                       key={party.id}
                       onClick={() => setSelectedParty(party)}

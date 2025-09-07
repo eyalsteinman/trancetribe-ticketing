@@ -334,7 +334,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
 
   return (
     <div className="min-h-screen p-4">
-      <div className="max-w-md mx-auto space-y-6">
+      <div className="w-full max-w-none mx-auto space-y-6 px-4">
         {/* Header with Back Button */}
         <div className="flex items-center justify-between">
           <Button variant="outline" size="icon" onClick={onBack}>
@@ -348,36 +348,29 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
 
         {/* D. Production Photo Container */}
         {production?.logo_url && (
-          <Card>
-            <CardContent className="p-0">
-              <img 
-                src={production.logo_url} 
-                alt={`${production.name} logo`}
-                className="w-full h-auto object-contain rounded-md"
-              />
-            </CardContent>
-          </Card>
+          <div className="w-full">
+            <img 
+              src={production.logo_url} 
+              alt={`${production.name} logo`}
+              className="w-full h-auto object-contain"
+            />
+          </div>
         )}
 
         {/* E. Party Photo Container */}
         {party.photo_url && (
-          <Card>
-            <CardContent className="p-0">
-              <img 
-                src={party.photo_url} 
-                alt={party.name}
-                className="w-full h-auto object-contain rounded-md"
-              />
-            </CardContent>
-          </Card>
+          <div className="w-full">
+            <img 
+              src={party.photo_url} 
+              alt={party.name}
+              className="w-full h-auto object-cover"
+            />
+          </div>
         )}
 
         {/* F. Party Details Container */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Party Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
+        <div className="w-full p-4 space-y-3 bg-card">
+          <h2 className="text-lg font-bold">Party Details</h2>
             <div className="text-sm">
               <strong>Date:</strong> {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
             </div>
@@ -404,17 +397,13 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
                 </div>
               </div>
             )}
-          </CardContent>
-        </Card>
+        </div>
 
         {/* G. Ticket Options Container */}
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              {party.is_free ? 'Get Your Free Ticket' : 'Purchase Ticket'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <div className="w-full p-4 space-y-4 bg-card">
+          <h2 className="text-lg font-bold">
+            {party.is_free ? 'Get Your Free Ticket' : 'Purchase Ticket'}
+          </h2>
             {!userQR && (
               <>
                 {ticketTypes.length > 0 ? (
@@ -485,25 +474,20 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
                 ✓ You already have a ticket for this party
               </div>
             )}
-          </CardContent>
-        </Card>
+        </div>
 
         {/* H. Buy for Friends Container - Always Available */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Buy Tickets for Friends</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Button
-              variant="outline"
-              onClick={() => setShowBuyForFriends(true)}
-              className="w-full flex items-center gap-2"
-            >
-              <Users className="h-4 w-4" />
-              Buy Tickets for Friends
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="w-full p-4 bg-card">
+          <h2 className="text-lg font-bold mb-4">Buy Tickets for Friends</h2>
+          <Button
+            variant="outline"
+            onClick={() => setShowBuyForFriends(true)}
+            className="w-full flex items-center gap-2"
+          >
+            <Users className="h-4 w-4" />
+            Buy Tickets for Friends
+          </Button>
+        </div>
 
         {/* User's QR Code Container */}
         {userQR && (

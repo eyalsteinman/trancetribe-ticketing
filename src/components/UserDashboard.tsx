@@ -19,18 +19,20 @@ import SocialNetworks from './SocialNetworks';
 import VIPHub from './VIP/VIPHub';
 import VIPProduction from './VIP/VIPProduction';
 import ReorderableTiles from './ReorderableTiles';
+import ReorderableTilesLogic from './ReorderableTilesLogic';
 import Insurance from './Insurance';
 import PersonalCode from './PersonalCode';
 import FriendsCodes from './FriendsCodes';
 import UserBarTab from './UserBarTab';
 import { useDarkMode } from '@/hooks/useDarkMode';
+import PageHeader from './ui/page-header';
 
 interface UserDashboardProps {
   user: User;
 }
 
 const UserDashboard = ({ user }: UserDashboardProps) => {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance' | 'personal-code' | 'friends-codes' | 'bar-tab'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance' | 'personal-code' | 'friends-codes' | 'bar-tab' | 'faq'>('dashboard');
   const [nickname, setNickname] = useState<string>('');
   const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
   const [selectedProduction, setSelectedProduction] = useState<{id: string; name: string; logo_url: string | null; vip_description: string | null; vip_price: number | null} | null>(null);
@@ -207,11 +209,36 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     return <UserBarTab userId={user.id} onBack={() => setCurrentView('dashboard')} />;
   }
 
+  if (currentView === 'faq') {
+    return (
+      <div className="min-h-screen p-4">
+        <div className="max-w-md mx-auto space-y-6">
+          <PageHeader
+            title="FAQ & Contact"
+            onBack={() => setCurrentView('dashboard')}
+            showBackButton={true}
+          />
+          <div className="space-y-4 pt-6">
+            <div className="p-4 border rounded-lg">
+              <h3 className="font-bold mb-2">How do I get my QR code?</h3>
+              <p className="text-sm text-muted-foreground">After purchasing a ticket, your QR code will be generated and needs admin approval.</p>
+            </div>
+            <div className="p-4 border rounded-lg">
+              <h3 className="font-bold mb-2">Contact Support</h3>
+              <p className="text-sm text-muted-foreground">Email: support@trancetribes.com</p>
+              <p className="text-sm text-muted-foreground">Phone: +972-123-456-789</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div 
-      className="min-h-screen transition-colors duration-500 bg-gradient-to-br from-background via-background to-muted/20"
+      className={`min-h-screen transition-colors duration-500 ${isDarkMode ? 'bg-black' : 'bg-gradient-to-br from-background via-background to-muted/20'}`}
       style={{ 
-        backgroundColor
+        backgroundColor: isDarkMode ? '#000000' : backgroundColor
       }}
     >
       <div className="max-w-md mx-auto p-6 space-y-8">
@@ -226,7 +253,12 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           <Button 
             variant="outline" 
             size="icon"
-            onClick={handleSignOut} 
+            onClick={async () => {
+              await handleSignOut();
+              setTimeout(() => {
+                window.location.reload();
+              }, 2000);
+            }} 
             className="absolute top-2 right-0 z-50 on-color back-button"
             aria-label="Sign Out"
           >
@@ -239,7 +271,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
             const items = [
               {
                 id: 'parties',
-                title: 'Events & Parties',
+                title: 'Events\n& Parties',
                 icon: <Calendar className="h-12 w-12" />,
                 onClick: () => setCurrentView('parties' as const),
               },
@@ -292,6 +324,12 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 onClick: () => setCurrentView('bar-tab' as const),
               },
               {
+                id: 'faq',
+                title: 'FAQ & Contact',
+                icon: <Users className="h-12 w-12" />,
+                onClick: () => setCurrentView('faq' as const),
+              },
+              {
                 id: 'dark-mode',
                 title: isDarkMode ? 'Light Mode' : 'Dark Mode',
                 icon: isDarkMode ? <Sun className="h-12 w-12" /> : <Moon className="h-12 w-12" />,
@@ -299,7 +337,14 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
               },
             ];
             return (
-              <ReorderableTiles items={items} orderKey={`dashboard-order-user-${user.id}`} />
+              <ReorderableTilesLogic 
+                items={items} 
+                orderKey={`dashboard-order-user-${user.id}`}
+                onLongPress={(id) => {
+                  // Handle long press for reordering
+                  console.log('Long press on:', id);
+                }} 
+              />
             );
           })()}
         </div>
@@ -373,11 +418,10 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                       </div>
                       
                       {/* QR Code Ready Action */}
-                      {qrCode.is_approved && !qrCode.is_scanned && (
+                        {qrCode.is_approved && !qrCode.is_scanned && (
                         <Button 
-                          variant="premium"
                           size="sm"
-                          className="w-full"
+                          className="w-full bg-primary text-white hover:bg-primary/90"
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedQRCode(qrCode);
@@ -397,9 +441,9 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         
         {/* QR Code Dialog */}
         <Dialog open={showQRDialog} onOpenChange={setShowQRDialog}>
-          <DialogContent className="max-w-sm">
+          <DialogContent className="max-w-sm z-[9999] bg-black/95 backdrop-blur-sm">
             <DialogHeader>
-              <DialogTitle>Your QR Code</DialogTitle>
+              <DialogTitle className="text-white">Your QR Code</DialogTitle>
             </DialogHeader>
             <div className="text-center space-y-4">
               {selectedQRCode && (

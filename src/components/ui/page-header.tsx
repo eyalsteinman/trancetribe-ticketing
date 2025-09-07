@@ -12,9 +12,7 @@ interface PageHeaderProps {
 }
 
 const PageHeader = ({ title, onBack, showBackButton = true, titleColor, isBackgroundDark, fixed = false }: PageHeaderProps) => {
-  const headerClasses = fixed 
-    ? "fixed top-0 left-0 right-0 z-50 p-4 flex items-center justify-between bg-background/80 backdrop-blur-sm"
-    : "relative p-4 flex items-center justify-between";
+  const headerClasses = "relative p-4 flex items-center justify-between";
 
   return (
     <div className={headerClasses}>

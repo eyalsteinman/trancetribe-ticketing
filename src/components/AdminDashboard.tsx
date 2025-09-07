@@ -7,7 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
 import { Badge } from '@/components/ui/badge';
-import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ScanBarcode, Wine, Cog, ArrowLeft } from 'lucide-react';
+import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ScanBarcode, Wine, Cog, ArrowLeft, LogOut } from 'lucide-react';
 import PageHeader from '@/components/ui/page-header';
 import CreateParty from './CreateParty';
 import EditParties from './EditParties';
@@ -21,6 +21,7 @@ import ExploderGame from './ExploderGame';
 import PersonalizeEdit from './PersonalizeEdit';
 import HayaNinja from './HayaNinja';
 import ReorderableTiles from './ReorderableTiles';
+import ReorderableTilesLogic from './ReorderableTilesLogic';
 import AdminProductions from './AdminProductions';
 import ManageProductions from './ManageProductions';
 import AdminGuestList from './AdminGuestList';
@@ -51,7 +52,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
-  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'nickname' | 'my-productions' | 'manage-productions' | 'guest-list' | 'bar-tab' | 'bar-tab-scanner'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'nickname' | 'my-productions' | 'manage-productions' | 'guest-list' | 'bar-tab' | 'bar-tab-scanner' | 'faq'>('dashboard');
   const [adminNickname, setAdminNickname] = useState('');
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [nicknameInput, setNicknameInput] = useState('');
@@ -333,6 +334,9 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         description: "Logged out locally.",
       });
     }
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
   };
 
   if (currentView === 'nickname') {
@@ -402,6 +406,31 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
 
   if (currentView === 'bar-tab-scanner') {
     return <BarTabScanner user={user} onBack={() => setCurrentView('dashboard')} />;
+  }
+
+  if (currentView === 'faq') {
+    return (
+      <div className="min-h-screen p-4">
+        <div className="max-w-md mx-auto space-y-6">
+          <PageHeader
+            title="FAQ & Contact"
+            onBack={() => setCurrentView('dashboard')}
+            showBackButton={true}
+          />
+          <div className="space-y-4 pt-6">
+            <div className="p-4 border rounded-lg">
+              <h3 className="font-bold mb-2">How do I approve QR codes?</h3>
+              <p className="text-sm text-muted-foreground">Go to Guest List to approve pending QR codes for parties.</p>
+            </div>
+            <div className="p-4 border rounded-lg">
+              <h3 className="font-bold mb-2">Admin Contact</h3>
+              <p className="text-sm text-muted-foreground">Email: admin@trancetribes.com</p>
+              <p className="text-sm text-muted-foreground">Phone: +972-123-456-789</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (currentView === 'scanner') {
@@ -549,19 +578,25 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
 
   return (
     <div 
-      className="min-h-screen p-4 transition-colors duration-500"
+      className={`min-h-screen p-4 transition-colors duration-500 ${isDarkMode ? 'bg-black' : ''}`}
       style={{ 
-        backgroundColor
+        backgroundColor: isDarkMode ? '#000000' : backgroundColor
       }}
     >
-      <PageHeader
-        title="Admin Dashboard"
-        onBack={handleSignOut}
-        isBackgroundDark={isBackgroundDark}
-        showBackButton={true}
-      />
+        <div className="flex items-center justify-between p-4">
+          <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={handleSignOut} 
+            className="on-color back-button"
+            aria-label="Sign Out"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
+        </div>
       
-      <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
+        <div className="max-w-md mx-auto pt-6 space-y-6 text-left">
         
         <div className="space-y-4">
           {adminNickname && (
@@ -587,10 +622,18 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
               { id: 'nickname', title: 'My Info', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('nickname' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'bar-tab', title: 'Bar Tab', icon: <Wine className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'bar-tab-scanner', title: 'Bartab Scanner', icon: <ScanBarcode className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab-scanner' as const); setTimeout(() => loadParties(), 100); } },
+              { id: 'faq', title: 'FAQ & Contact', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('faq' as const); setTimeout(() => loadParties(), 100); } },
               { id: 'dark-mode', title: isDarkMode ? 'Light Mode' : 'Dark Mode', icon: <Cog className="h-8 w-8 mb-2" />, onClick: toggleDarkMode },
             ];
             return (
-              <ReorderableTiles items={tiles} orderKey={`dashboard-order-admin-${user.id}`} />
+              <ReorderableTilesLogic 
+                items={tiles} 
+                orderKey={`dashboard-order-admin-${user.id}`}
+                onLongPress={(id) => {
+                  // Handle long press for reordering
+                  console.log('Long press on:', id);
+                }} 
+              />
             );
           })()}
 

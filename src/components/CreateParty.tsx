@@ -155,7 +155,11 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
         setTicketCount('');
         setStartTime('');
         setEndTime('');
-        onBack();
+        
+        // Show success popup for 2 seconds, then return
+        setTimeout(() => {
+          onBack();
+        }, 2000);
       }
     } catch (error) {
       toast({
