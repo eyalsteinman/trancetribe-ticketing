@@ -236,39 +236,34 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
   return (
     <div 
-      className={`min-h-screen transition-all duration-700 ease-out ${
-        isDarkMode 
-          ? 'bg-black' 
-          : 'bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900'
-      }`}
+      className={`min-h-screen transition-colors duration-500 ${isDarkMode ? 'bg-black' : 'bg-gradient-to-br from-background via-background to-muted/20'}`}
+      style={{ 
+        backgroundColor: isDarkMode ? '#000000' : backgroundColor
+      }}
     >
       <div className="max-w-md mx-auto p-6 space-y-8">
-        {/* Header with modern styling */}
-        <div className="relative pt-4 pb-8">
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <h1 className="text-3xl font-black text-white">
-                {nickname ? `Hey ${nickname},` : 'User Dashboard'}
-              </h1>
-              <p className="text-white/70 text-sm font-medium">
-                {nickname ? 'How can I help you?' : 'Welcome back'}
-              </p>
-            </div>
-            <Button 
-              variant="outline" 
-              size="icon"
-              onClick={async () => {
-                await handleSignOut();
-                setTimeout(() => {
-                  window.location.reload();
-                }, 2000);
-              }} 
-              className="glass border-white/20 text-white hover:bg-white/10 transition-all duration-300"
-              aria-label="Sign Out"
-            >
-              <LogOut className="h-5 w-5" />
-            </Button>
-          </div>
+        {/* Header */}
+        <div className="relative pt-2 pb-6">
+          <h1 className="text-2xl font-bold text-foreground mb-1">
+            {nickname ? `Welcome back,` : 'User Dashboard'}
+          </h1>
+          {nickname && (
+            <p className="text-lg text-primary font-semibold">{nickname}!</p>
+          )}
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={async () => {
+              await handleSignOut();
+              setTimeout(() => {
+                window.location.reload();
+              }, 2000);
+            }} 
+            className="absolute top-2 right-0 z-50 on-color back-button"
+            aria-label="Sign Out"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
         </div>
 
         <div className="space-y-4">

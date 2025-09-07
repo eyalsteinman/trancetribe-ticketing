@@ -8,40 +8,40 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Modern dark gradient theme inspired by Siri */
-    --background: 220 30% 6%;
-    --foreground: 0 0% 100%;
+    /* Modern light theme with sophisticated colors */
+    --background: 248 50% 98%;
+    --foreground: 220 15% 20%;
 
-    --card: 220 25% 10%;
-    --card-foreground: 0 0% 100%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 20%;
 
-    --popover: 220 25% 8%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 20%;
 
-    /* Vibrant primary system */
+    /* Premium blue gradient system */
     --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
     --primary-hover: 217 91% 55%;
     --primary-light: 217 91% 85%;
 
-    --secondary: 220 20% 15%;
-    --secondary-foreground: 0 0% 100%;
-    --secondary-hover: 220 20% 20%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 15% 20%;
+    --secondary-hover: 220 14% 92%;
 
-    --muted: 220 20% 12%;
-    --muted-foreground: 0 0% 70%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
 
-    --accent: 270 95% 75%;
+    --accent: 217 91% 60%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 20% 20%;
-    --input: 220 20% 15%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
     --ring: 217 91% 60%;
 
-    --radius: 20px;
+    --radius: 12px;
 
     --sidebar-background: 0 0% 98%;
 
@@ -64,7 +64,7 @@ All colors MUST be HSL.
   }
 
   .dark {
-    /* Pure black theme */
+    /* Dark theme - pure black */
     --background: 0 0% 0%;
     --foreground: 0 0% 100%;
 
@@ -74,7 +74,7 @@ All colors MUST be HSL.
     --popover: 0 0% 5%;
     --popover-foreground: 0 0% 100%;
 
-    /* Vibrant primary system */
+    /* Blue system without gradient */
     --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
     --primary-hover: 217 91% 55%;
@@ -87,7 +87,7 @@ All colors MUST be HSL.
     --muted: 0 0% 10%;
     --muted-foreground: 0 0% 70%;
 
-    --accent: 270 95% 75%;
+    --accent: 217 91% 60%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
@@ -117,12 +117,6 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
     overflow-x: hidden;
-    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(220 40% 8%) 50%, hsl(250 50% 12%) 100%);
-    min-height: 100vh;
-  }
-  
-  .dark body {
-    background: hsl(0 0% 0%) !important;
   }
 
   /* Colored background (non-white): direct-on-background text tokens turn white */
@@ -400,16 +394,7 @@ All colors MUST be HSL.
   }
   
   .gradient-card {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  /* Modern tile styles */
-  .modern-tile {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-    backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
   }
   
   /* Modern shadows */
