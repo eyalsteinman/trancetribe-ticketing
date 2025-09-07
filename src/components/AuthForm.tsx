@@ -319,7 +319,7 @@ const AuthForm = () => {
       }}
     >
       <div className="w-full max-w-4xl space-y-6">
-        <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} />
+        <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} carouselOnly />
 
         <div className="max-w-md mx-auto">
           <div className="text-center">

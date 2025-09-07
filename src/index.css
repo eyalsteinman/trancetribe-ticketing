@@ -489,3 +489,62 @@ All colors MUST be HSL.
     }
   }
 }
+
+@layer base {
+  /* Global: remove rounded corners from images and eliminate photo container shadows */
+  img,
+  .event-card img,
+  .card img {
+    border-radius: 0 !important;
+  }
+
+  /* Edge-to-edge: neutralize common max-width containers */
+  .container,
+  .max-w-md,
+  .max-w-2xl,
+  .max-w-4xl {
+    max-width: 100% !important;
+  }
+
+  /* Remove drop shadows from common container classes */
+  .shadow,
+  .shadow-sm,
+  .shadow-md,
+  .shadow-lg,
+  .shadow-xl,
+  .shadow-2xl,
+  .shadow-card,
+  .shadow-premium {
+    box-shadow: none !important;
+  }
+
+  /* Page header: left-aligned back button + title, consistent sizing */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+  .page-header h1,
+  .headline-consistent {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 800;
+    color: hsl(var(--foreground));
+  }
+
+  /* Dark mode: pure black background, white text everywhere */
+  .dark,
+  .dark body {
+    background-color: hsl(0 0% 0%) !important;
+  }
+  .dark {
+    --background: 0 0% 0% !important;
+    --foreground: 0 0% 100% !important;
+  }
+  .dark * {
+    color: hsl(0 0% 100%) !important;
+    border-color: hsl(0 0% 20%) !important;
+  }
+}

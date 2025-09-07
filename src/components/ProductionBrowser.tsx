@@ -32,9 +32,10 @@ interface Party {
 
 interface ProductionBrowserProps {
   onLoginPrompt: () => void;
+  carouselOnly?: boolean;
 }
 
-const ProductionBrowser = ({ onLoginPrompt }: ProductionBrowserProps) => {
+const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBrowserProps) => {
   const [productions, setProductions] = useState<Production[]>([]);
   const [parties, setParties] = useState<Party[]>([]);
   const [selectedParty, setSelectedParty] = useState<Party | null>(null);
@@ -237,7 +238,7 @@ const ProductionBrowser = ({ onLoginPrompt }: ProductionBrowserProps) => {
         />
       </div>
 
-      {browseMode === "party" && (
+      {browseMode === "party" && !carouselOnly && (
         <div className="space-y-4">
           {(displayItems as Party[]).map((party) => (
             <div

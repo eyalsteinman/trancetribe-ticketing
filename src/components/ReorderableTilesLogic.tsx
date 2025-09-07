@@ -87,9 +87,8 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
           key={item.id}
           className={`
             relative p-4 bg-card hover:bg-accent transition-colors duration-200 cursor-pointer
-            border border-border rounded-xl shadow-sm hover:shadow-md
+            border border-border rounded-none shadow-none
             flex flex-col items-center text-center space-y-3
-            ${isReordering ? 'animate-pulse' : ''}
           `}
           onClick={() => {
             if (!isReordering) {
@@ -121,26 +120,8 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
           <span className="text-sm font-medium text-foreground whitespace-pre-line">
             {item.title}
           </span>
-          {isReordering && (
-            <div className="absolute inset-0 bg-primary/10 rounded-xl flex items-center justify-center">
-              <span className="text-xs text-primary font-bold">Drag to reorder</span>
-            </div>
-          )}
         </div>
       ))}
-      {isReordering && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-          <div className="bg-background p-6 rounded-xl text-center">
-            <p className="text-foreground mb-4">Drag tiles to reorder them</p>
-            <button 
-              onClick={() => setIsReordering(false)}
-              className="px-4 py-2 bg-primary text-white rounded-lg"
-            >
-              Done
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
