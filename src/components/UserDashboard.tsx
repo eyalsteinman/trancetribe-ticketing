@@ -24,7 +24,7 @@ import Insurance from './Insurance';
 import PersonalCode from './PersonalCode';
 import FriendsCodes from './FriendsCodes';
 import UserBarTab from './UserBarTab';
-import { useDarkMode } from '@/hooks/useDarkMode';
+import { useTheme } from '@/hooks/useDarkMode';
 import PageHeader from './ui/page-header';
 
 interface UserDashboardProps {
@@ -40,7 +40,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   const [selectedQRCode, setSelectedQRCode] = useState<any>(null);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
-  const { isDarkMode, toggleDarkMode } = useDarkMode();
+  const { currentTheme, cycleTheme, getThemeDisplayName } = useTheme();
 
   useEffect(() => {
     loadUserQRCodes();
@@ -235,12 +235,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   return (
-    <div 
-      className={`min-h-screen transition-colors duration-500 ${isDarkMode ? 'bg-black' : 'bg-gradient-to-br from-background via-background to-muted/20'}`}
-      style={{ 
-        backgroundColor: isDarkMode ? '#000000' : backgroundColor
-      }}
-    >
+    <div className={`min-h-screen transition-colors duration-500`}>
       <div className="w-full">
         {/* Header */}
         <div className="container-section relative pt-2 pb-6">
@@ -330,10 +325,10 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 onClick: () => setCurrentView('faq' as const),
               },
               {
-                id: 'dark-mode',
-                title: isDarkMode ? 'Light Mode' : 'Dark Mode',
-                icon: isDarkMode ? <Sun className="h-12 w-12" /> : <Moon className="h-12 w-12" />,
-                onClick: toggleDarkMode,
+                id: 'theme-changer',
+                title: `Change Theme\n(${getThemeDisplayName(currentTheme)})`,
+                icon: <Sun className="h-12 w-12" />,
+                onClick: cycleTheme,
               },
             ];
             return (

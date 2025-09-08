@@ -1,10 +1,10 @@
 import { Toaster as Sonner, toast } from "sonner"
-import { useDarkMode } from "@/hooks/useDarkMode"
+import { useTheme } from "@/hooks/useDarkMode"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { isDarkMode } = useDarkMode()
+  const { isDarkMode } = useTheme()
   const theme = isDarkMode ? "dark" : "light"
 
   return (

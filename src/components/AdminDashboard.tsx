@@ -27,7 +27,7 @@ import ManageProductions from './ManageProductions';
 import AdminGuestList from './AdminGuestList';
 import BarTabManager from './BarTabManager';
 import BarTabScanner from './BarTabScanner';
-import { useDarkMode } from '@/hooks/useDarkMode';
+import { useTheme } from '@/hooks/useDarkMode';
 
 interface AdminDashboardProps {
   user: User;
@@ -59,7 +59,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
-  const { isDarkMode, toggleDarkMode } = useDarkMode();
+  const { currentTheme, cycleTheme, getThemeDisplayName } = useTheme();
 
   useEffect(() => {
     loadParties();
@@ -575,12 +575,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   }
 
   return (
-    <div 
-      className={`min-h-screen transition-colors duration-500 ${isDarkMode ? 'bg-black' : ''}`}
-      style={{ 
-        backgroundColor: isDarkMode ? '#000000' : backgroundColor
-      }}
-    >
+    <div className={`min-h-screen transition-colors duration-500`}>
       <div className="w-full">
         <div className="container-section flex items-center justify-between">
           <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
@@ -621,7 +616,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             { id: 'bar-tab', title: 'Bar Tab', icon: <Wine className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'bar-tab-scanner', title: 'Bartab Scanner', icon: <ScanBarcode className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab-scanner' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'faq', title: 'FAQ & Contact', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('faq' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'dark-mode', title: isDarkMode ? 'Light Mode' : 'Dark Mode', icon: <Cog className="h-8 w-8 mb-2" />, onClick: toggleDarkMode },
+            { id: 'theme-changer', title: `Change Theme\n(${getThemeDisplayName(currentTheme)})`, icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: cycleTheme },
           ];
           return (
             <ReorderableTilesLogic 
