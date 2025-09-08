@@ -248,7 +248,7 @@ All colors MUST be HSL.
   }
 
   /* Theme-based text color rules */
-  body:not(.theme-revert) {
+  :root:not(.theme-revert) {
     --foreground: 0 0% 100%;
     --muted-foreground: 0 0% 100%;
     --secondary-foreground: 0 0% 100%;
@@ -257,20 +257,20 @@ All colors MUST be HSL.
   }
 
   /* Colored themes: force all text and icons to white */
-  body:not(.theme-revert) * {
+  :root:not(.theme-revert) * {
     color: hsl(0 0% 100%) !important;
   }
-  body:not(.theme-revert) svg {
+  :root:not(.theme-revert) svg {
     color: hsl(0 0% 100%) !important;
   }
 
   /* Exception: primary buttons should have dark text for visibility */
-  body:not(.theme-revert) .bg-primary,
-  body:not(.theme-revert) button.bg-primary {
+  :root:not(.theme-revert) .bg-primary,
+  :root:not(.theme-revert) button.bg-primary {
     color: hsl(0 0% 0%) !important;
   }
-  body:not(.theme-revert) .bg-primary svg,
-  body:not(.theme-revert) button.bg-primary svg {
+  :root:not(.theme-revert) .bg-primary svg,
+  :root:not(.theme-revert) button.bg-primary svg {
     color: hsl(0 0% 0%) !important;
   }
 

@@ -46,11 +46,10 @@ export const useTheme = () => {
   const [currentTheme, setCurrentTheme] = useState<Theme>('revert');
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('app-theme') as Theme;
-    if (savedTheme && themes.includes(savedTheme)) {
-      setCurrentTheme(savedTheme);
-      applyTheme(savedTheme);
-    }
+    const savedTheme = localStorage.getItem('app-theme') as Theme | null;
+    const initialTheme: Theme = savedTheme && themes.includes(savedTheme) ? savedTheme : 'revert';
+    setCurrentTheme(initialTheme);
+    applyTheme(initialTheme);
   }, []);
 
   const applyTheme = (theme: Theme) => {
