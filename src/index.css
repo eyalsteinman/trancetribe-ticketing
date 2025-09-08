@@ -173,6 +173,7 @@ All colors MUST be HSL.
     --border: 35 60% 55%;
     --input: 35 60% 55%;
   }
+}
 
 @layer base {
   * {
@@ -465,4 +466,6 @@ All colors MUST be HSL.
       font-size: 1.25rem;
     }
   }
+}
+
 }
