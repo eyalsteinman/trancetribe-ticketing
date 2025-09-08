@@ -37,7 +37,6 @@ export default function UserParties({ user, onBack }) {
       setFilteredParties(partiesData);
     }
 
-    // Load productions for search
     const { data: productionsData, error: productionsError } = await supabase
       .from("productions")
       .select("id, name, logo_url")
@@ -51,11 +50,9 @@ export default function UserParties({ user, onBack }) {
   useEffect(() => {
     loadParties();
 
-    // Check if a specific party was selected from dashboard
     const selectedPartyId = localStorage.getItem('selectedPartyId');
     if (selectedPartyId) {
       localStorage.removeItem('selectedPartyId');
-      // Wait for parties to load then select the party
       setTimeout(() => {
         const party = parties.find(p => p.id === selectedPartyId);
         if (party) {
@@ -93,7 +90,6 @@ export default function UserParties({ user, onBack }) {
     };
   }, [loadParties]);
 
-  // Filter parties based on search query
   useEffect(() => {
     if (!searchQuery.trim()) {
       setFilteredParties(parties);
@@ -107,29 +103,28 @@ export default function UserParties({ user, onBack }) {
     }
   }, [searchQuery, parties]);
 
-
   const goBackToPartyList = () => {
     setSelectedParty(null);
   };
 
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <div className="relative w-full max-w-2xl mx-auto p-6">
+      <div className="w-full">
         {!selectedParty && (
           <>
-            <PageHeader
-              title="Events & Parties"
-              onBack={onBack}
-              showBackButton={true}
-            />
-          
-          
-          
-            <BrowseMenu value={browseMode} onValueChange={setBrowseMode} />
+            <div className="container-section">
+              <PageHeader
+                title="Events & Parties"
+                onBack={onBack}
+                showBackButton={true}
+              />
+            </div>
             
-            {/* Browse Section */}
-            <div className="mb-8">
+            <div className="container-section">
+              <BrowseMenu value={browseMode} onValueChange={setBrowseMode} />
+            </div>
+            
+            <div className="container-section">
               <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory">
                 {browseMode === "production" ? (
                   productions.map((production) => (
@@ -143,7 +138,7 @@ export default function UserParties({ user, onBack }) {
                       }}
                       className="flex-shrink-0 cursor-pointer group snap-start"
                     >
-                      <div className="w-24 h-24 overflow-hidden bg-card shadow-card hover-lift">
+                      <div className="w-24 h-24 overflow-hidden bg-card hover-lift">
                         {production.logo_url ? (
                           <img
                             src={production.logo_url}
@@ -166,7 +161,7 @@ export default function UserParties({ user, onBack }) {
                       onClick={() => setSelectedParty(party)}
                       className="flex-shrink-0 cursor-pointer group snap-start"
                     >
-                      <div className="w-32 h-24 overflow-hidden bg-card shadow-card hover-lift">
+                      <div className="w-32 h-24 overflow-hidden bg-card hover-lift">
                         {party.photo_url ? (
                           <img
                             src={party.photo_url}
@@ -189,7 +184,7 @@ export default function UserParties({ user, onBack }) {
                       onClick={() => setSelectedParty(party)}
                       className="flex-shrink-0 cursor-pointer group snap-start"
                     >
-                      <div className="w-32 h-24 overflow-hidden bg-card shadow-card hover-lift">
+                      <div className="w-32 h-24 overflow-hidden bg-card hover-lift">
                         {party.photo_url ? (
                           <img
                             src={party.photo_url}
@@ -209,80 +204,81 @@ export default function UserParties({ user, onBack }) {
               </div>
             </div>
 
-            {/* Search bar */}
-            <div className="mb-8 relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-              <Input
-                placeholder="Search events by name or production..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 h-14 text-base rounded-2xl border-2 focus:border-primary bg-card shadow-sm"
-              />
+            <div className="container-section">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                <Input
+                  placeholder="Search events by name or production..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-12 h-14 text-base border-2 focus:border-primary bg-card"
+                />
+              </div>
             </div>
             
-            {/* Events Grid */}
-            <div className="space-y-6">
-              {filteredParties.map((party) => (
-                <div
-                  key={party.id}
-                  onClick={() => setSelectedParty(party)}
-                  className="w-full cursor-pointer group"
-                >
-                  {party.photo_url ? (
-                    <div className="relative w-full h-64 overflow-hidden">
-                      <img
-                        src={party.photo_url}
-                        alt={party.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                      <div className="absolute bottom-4 left-4 right-4">
-                        <h2 className="text-xl font-bold text-white mb-2">{party.name}</h2>
-                        <p className="text-sm text-white/90">
-                          {new Date(party.date).toLocaleDateString('en-GB', { 
-                            day: 'numeric', 
-                            month: 'long', 
-                            year: 'numeric',
-                            weekday: 'long'
-                          })}
-                        </p>
+            <div className="container-section">
+              <div className="space-y-6">
+                {filteredParties.map((party) => (
+                  <div
+                    key={party.id}
+                    onClick={() => setSelectedParty(party)}
+                    className="w-full cursor-pointer group"
+                  >
+                    {party.photo_url ? (
+                      <div className="relative w-full h-64 overflow-hidden">
+                        <img
+                          src={party.photo_url}
+                          alt={party.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                        <div className="absolute bottom-4 left-4 right-4">
+                          <h2 className="text-xl font-bold text-white mb-2">{party.name}</h2>
+                          <p className="text-sm text-white/90">
+                            {new Date(party.date).toLocaleDateString('en-GB', { 
+                              day: 'numeric', 
+                              month: 'long', 
+                              year: 'numeric',
+                              weekday: 'long'
+                            })}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="w-full h-64 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
-                      <div className="text-center p-6">
-                        <h2 className="text-xl font-bold text-foreground mb-2">{party.name}</h2>
-                        <p className="text-base text-muted-foreground mb-3">
-                          {new Date(party.date).toLocaleDateString('en-GB', { 
-                            day: 'numeric', 
-                            month: 'long', 
-                            year: 'numeric',
-                            weekday: 'long'
-                          })}
-                        </p>
-                        {party.description && (
-                          <p className="text-sm text-muted-foreground">{party.description}</p>
-                        )}
+                    ) : (
+                      <div className="w-full h-64 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
+                        <div className="text-center p-6">
+                          <h2 className="text-xl font-bold text-foreground mb-2">{party.name}</h2>
+                          <p className="text-base text-muted-foreground mb-3">
+                            {new Date(party.date).toLocaleDateString('en-GB', { 
+                              day: 'numeric', 
+                              month: 'long', 
+                              year: 'numeric',
+                              weekday: 'long'
+                            })}
+                          </p>
+                          {party.description && (
+                            <p className="text-sm text-muted-foreground">{party.description}</p>
+                          )}
+                        </div>
                       </div>
+                    )}
+                    
+                    <div className="p-4 w-full">
+                      <Button 
+                        variant="default"
+                        size="sm" 
+                        className="w-full bg-primary text-white"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedParty(party);
+                        }}
+                      >
+                        View Event Details
+                      </Button>
                     </div>
-                  )}
-                  
-                  {/* Event Info Footer */}
-                  <div className="p-4 w-full">
-                    <Button 
-                      variant="default"
-                      size="sm" 
-                      className="w-full bg-primary text-white"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedParty(party);
-                      }}
-                    >
-                      View Event Details
-                    </Button>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </>
         )}

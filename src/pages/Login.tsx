@@ -88,20 +88,19 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center p-4 transition-colors duration-500"
+      className="min-h-screen flex items-center justify-center transition-colors duration-500"
       style={{ backgroundColor }}
     >
-      <div className="w-full max-w-4xl space-y-6">
-        {/* Production Browser Section - Always visible */}
-        <Card>
-          <CardContent className="p-6">
-            <ProductionBrowser onLoginPrompt={() => setShowLoginForm(true)} />
-          </CardContent>
-        </Card>
+      <div className="w-full space-y-0">
+        {/* Production Browser Section */}
+        <div className="container-section">
+          <ProductionBrowser onLoginPrompt={() => setShowLoginForm(true)} />
+        </div>
         
         {/* Login Form */}
-        <div className="max-w-md mx-auto">
-          <Card>
+        <div className="container-section">
+          <div className="max-w-md mx-auto">
+            <Card>
           <CardHeader>
             <CardTitle 
               className="text-center text-2xl font-bold"
@@ -203,9 +202,10 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
           </CardContent>
         </Card>
         </div>
+        </div>
 
         {/* Footer */}
-        <div className="text-center space-y-1">
+        <div className="container-section text-center space-y-1">
           <div 
             className="text-sm font-medium"
             style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}

@@ -17,6 +17,7 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
   const [orderedItems, setOrderedItems] = useState<TileItem[]>(items);
   const [isReordering, setIsReordering] = useState(false);
   const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
   useEffect(() => {
     // Load saved order from localStorage
@@ -42,13 +43,15 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
     localStorage.setItem(orderKey, JSON.stringify(orderIds));
   };
 
-  const handleLongPress = (id: string) => {
+  const handleLongPress = (id: string, e: React.TouchEvent | React.MouseEvent) => {
+    if (isReordering) return;
+    
     const timer = setTimeout(() => {
       setIsReordering(true);
       onLongPress?.(id);
       // Disable page refresh during reordering
-      document.body.style.overscrollBehavior = 'none';
-      document.body.style.touchAction = 'none';
+      document.body.classList.add('no-refresh', 'hide-scrollbar');
+      document.body.style.overflow = 'hidden';
     }, 3000); // 3 second long press
     setLongPressTimer(timer);
   };
@@ -62,9 +65,10 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
 
   const exitReorderMode = () => {
     setIsReordering(false);
-    // Re-enable page refresh
-    document.body.style.overscrollBehavior = 'auto';
-    document.body.style.touchAction = 'auto';
+    setDraggedIndex(null);
+    // Re-enable page refresh and scrolling
+    document.body.classList.remove('no-refresh', 'hide-scrollbar');
+    document.body.style.overflow = 'auto';
   };
 
   const moveItem = (fromIndex: number, toIndex: number) => {
@@ -77,28 +81,37 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
 
   return (
     <div className="container-section">
-      <div className={`grid grid-cols-2 gap-4 ${isReordering ? 'pointer-events-none' : ''}`}>
+      <div className="grid grid-cols-2 gap-4">
         {orderedItems.map((item, index) => (
           <div
             key={item.id}
             className={`
               relative p-4 bg-card hover:bg-accent cursor-pointer
               border border-border flex flex-col items-center text-center space-y-3
-              transition-all duration-300 ease-in-out
+              transition-all duration-200 ease-out
               ${isReordering 
-                ? 'animate-pulse scale-105 shadow-lg pointer-events-auto' 
+                ? 'tile-reordering pointer-events-auto' 
                 : 'hover:scale-102'
               }
+              ${draggedIndex === index ? 'tile-dragging' : ''}
             `}
             onClick={() => {
               if (!isReordering) {
                 item.onClick();
               }
             }}
-            onMouseDown={() => handleLongPress(item.id)}
+            onMouseDown={(e) => {
+              if (!isReordering) {
+                handleLongPress(item.id, e);
+              }
+            }}
             onMouseUp={handleEnd}
             onMouseLeave={handleEnd}
-            onTouchStart={() => handleLongPress(item.id)}
+            onTouchStart={(e) => {
+              if (!isReordering) {
+                handleLongPress(item.id, e);
+              }
+            }}
             onTouchEnd={handleEnd}
             onTouchCancel={handleEnd}
             draggable={isReordering}
@@ -107,7 +120,13 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
                 e.preventDefault();
                 return;
               }
+              setDraggedIndex(index);
               e.dataTransfer.setData('text/plain', index.toString());
+              e.currentTarget.style.opacity = '0.5';
+            }}
+            onDragEnd={(e) => {
+              e.currentTarget.style.opacity = '1';
+              setDraggedIndex(null);
             }}
             onDragOver={(e) => {
               if (isReordering) {
@@ -118,10 +137,9 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
               if (!isReordering) return;
               e.preventDefault();
               const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
-              if (fromIndex !== index) {
+              if (fromIndex !== index && !isNaN(fromIndex)) {
                 moveItem(fromIndex, index);
               }
-              exitReorderMode();
             }}
           >
             <div className="text-primary">
@@ -131,22 +149,22 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
               {item.title}
             </span>
             {isReordering && (
-              <div className="absolute inset-0 bg-primary/10 border-2 border-primary animate-pulse" />
+              <div className="absolute top-1 right-1 bg-primary text-primary-foreground text-xs px-1 animate-pulse">
+                Drag to reorder
+              </div>
             )}
           </div>
         ))}
       </div>
       {isReordering && (
-        <div className="fixed inset-0 bg-black/20 z-40 flex items-center justify-center">
-          <div className="bg-card p-4 shadow-lg">
-            <p className="text-foreground text-center">Drag tiles to reorder</p>
-            <button 
-              className="mt-2 w-full bg-primary text-primary-foreground p-2"
-              onClick={exitReorderMode}
-            >
-              Done
-            </button>
-          </div>
+        <div className="fixed bottom-4 left-4 right-4 z-50 bg-card border border-border p-4 animate-slide-up">
+          <p className="text-foreground text-center text-sm mb-2">Drag tiles to reorder them</p>
+          <button 
+            className="w-full bg-primary text-primary-foreground p-2 font-medium"
+            onClick={exitReorderMode}
+          >
+            Done Reordering
+          </button>
         </div>
       )}
     </div>

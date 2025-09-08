@@ -131,16 +131,19 @@ const AdminSignup = ({ onBack }: AdminSignupProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-md mx-auto space-y-6 text-left pt-20">
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 className="text-2xl font-bold absolute top-4 left-4">Admin Signup</h1>
+    <div className="min-h-screen bg-background">
+      <div className="w-full">
+        <div className="container-section">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold">Admin Signup</h1>
+            <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="on-color back-button">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
-        <Card>
+        <div className="container-section">
+          <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <UserPlus className="h-5 w-5" />
@@ -216,6 +219,7 @@ const AdminSignup = ({ onBack }: AdminSignupProps) => {
             </Button>
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   );
