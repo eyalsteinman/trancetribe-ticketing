@@ -1,139 +1,142 @@
-import * as React from "react"
-import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
+import React, { useState } from 'react';
 
-import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
+// A simple utility to conditionally join Tailwind CSS classes.
+function cn(...classes) {
+  return classes.filter(Boolean).join(' ');
+}
 
-const AlertDialog = AlertDialogPrimitive.Root
+// Simple button styles, replicating the component library's variants.
+const buttonVariants = (variant = 'default') => {
+  const base = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2";
+  const variants = {
+    default: "bg-gray-900 text-gray-50 shadow hover:bg-gray-900/90",
+    outline: "border border-gray-200 bg-white shadow-sm hover:bg-gray-100 hover:text-gray-900",
+  };
+  return cn(base, variants[variant]);
+};
 
-const AlertDialogTrigger = AlertDialogPrimitive.Trigger
+// The main AlertDialog component that manages the open state.
+const AlertDialog = ({ children }) => {
+  const [open, setOpen] = useState(false);
+  const clones = React.Children.map(children, (child) => {
+    if (React.isValidElement(child)) {
+      return React.cloneElement(child, {
+        open,
+        setOpen,
+      });
+    }
+    return child;
+  });
 
-const AlertDialogPortal = AlertDialogPrimitive.Portal
+  return <>{clones}</>;
+};
 
-const AlertDialogOverlay = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Overlay>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Overlay>
->(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Overlay
-    className={cn(
-      "fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-      className
-    )}
-    {...props}
-    ref={ref}
-  />
-))
-AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName
+// The trigger button that opens the dialog.
+const AlertDialogTrigger = ({ children, setOpen }) => (
+  <button onClick={() => setOpen(true)} className={buttonVariants()}>
+    {children}
+  </button>
+);
+AlertDialogTrigger.displayName = "AlertDialogTrigger";
 
-const AlertDialogContent = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>
->(({ className, ...props }, ref) => (
-  <AlertDialogPortal>
-    <AlertDialogOverlay />
-    <AlertDialogPrimitive.Content
-      ref={ref}
-      className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
-        className
-      )}
-      {...props}
-    />
-  </AlertDialogPortal>
-))
-AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName
+// The overlay and content container for the dialog.
+const AlertDialogContent = ({ open, setOpen, children }) => {
+  if (!open) return null;
 
-const AlertDialogHeader = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      "flex flex-col space-y-2 text-center sm:text-left",
-      className
-    )}
-    {...props}
-  />
-)
-AlertDialogHeader.displayName = "AlertDialogHeader"
+  // Clone children to pass down the setOpen function to action/cancel buttons.
+  const clonedChildren = React.Children.map(children, (child) => {
+    if (React.isValidElement(child) && ['AlertDialogAction', 'AlertDialogCancel'].includes(child.type.displayName)) {
+      return React.cloneElement(child, { setOpen });
+    }
+    return child;
+  });
 
-const AlertDialogFooter = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
-      className
-    )}
-    {...props}
-  />
-)
-AlertDialogFooter.displayName = "AlertDialogFooter"
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Overlay */}
+      <div className="fixed inset-0 bg-black/80 animate-in fade-in-0" onClick={() => setOpen(false)} />
+      
+      {/* Content */}
+      <div className="relative z-50 grid w-full max-w-lg gap-4 rounded-lg border bg-white p-6 shadow-lg animate-in zoom-in-95 data-[state=open]:slide-in-from-top-[48%]">
+        {clonedChildren}
+      </div>
+    </div>
+  );
+};
+AlertDialogContent.displayName = "AlertDialogContent";
 
-const AlertDialogTitle = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Title>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Title>
->(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Title
-    ref={ref}
-    className={cn("text-lg font-semibold text-black", className)}
-    {...props}
-  />
-))
-AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName
+// Header for the dialog content.
+const AlertDialogHeader = ({ className, children }) => (
+  <div className={cn("flex flex-col space-y-2 text-center sm:text-left", className)}>
+    {children}
+  </div>
+);
+AlertDialogHeader.displayName = "AlertDialogHeader";
 
-const AlertDialogDescription = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Description>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Description>
->(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Description
-    ref={ref}
-    className={cn("text-sm text-black", className)}
-    {...props}
-  />
-))
-AlertDialogDescription.displayName =
-  AlertDialogPrimitive.Description.displayName
+// Footer for the dialog content.
+const AlertDialogFooter = ({ className, children }) => (
+  <div className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)}>
+    {children}
+  </div>
+);
+AlertDialogFooter.displayName = "AlertDialogFooter";
 
-const AlertDialogAction = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Action>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>
->(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Action
-    ref={ref}
-    className={cn(buttonVariants(), className)}
-    {...props}
-  />
-))
-AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName
+// Title for the dialog.
+const AlertDialogTitle = ({ className, children }) => (
+  <h2 className={cn("text-lg font-semibold text-black", className)}>
+    {children}
+  </h2>
+);
+AlertDialogTitle.displayName = "AlertDialogTitle";
 
-const AlertDialogCancel = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Cancel>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel>
->(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Cancel
-    ref={ref}
-    className={cn(
-      buttonVariants({ variant: "outline" }),
-      "mt-2 sm:mt-0",
-      className
-    )}
-    {...props}
-  />
-))
-AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName
+// Description for the dialog.
+const AlertDialogDescription = ({ className, children }) => (
+  <p className={cn("text-sm text-black", className)}>
+    {children}
+  </p>
+);
+AlertDialogDescription.displayName = "AlertDialogDescription";
 
-export {
-  AlertDialog,
-  AlertDialogPortal,
-  AlertDialogOverlay,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogAction,
-  AlertDialogCancel,
+// Action button for the dialog.
+const AlertDialogAction = ({ className, children, setOpen }) => (
+  <button onClick={() => setOpen(false)} className={cn(buttonVariants(), className)}>
+    {children}
+  </button>
+);
+AlertDialogAction.displayName = "AlertDialogAction";
+
+// Cancel button for the dialog.
+const AlertDialogCancel = ({ className, children, setOpen }) => (
+  <button onClick={() => setOpen(false)} className={cn(buttonVariants('outline'), "mt-2 sm:mt-0", className)}>
+    {children}
+  </button>
+);
+AlertDialogCancel.displayName = "AlertDialogCancel";
+
+// Main application component to demonstrate the AlertDialog.
+export default function App() {
+  const handleAction = () => {
+    console.log("Action confirmed!");
+    // In a real app, you would perform an action here.
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+      <AlertDialog>
+        <AlertDialogTrigger>Show Alert Dialog</AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleAction}>Continue</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
 }
