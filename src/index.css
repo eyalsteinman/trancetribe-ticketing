@@ -504,6 +504,26 @@ All colors MUST be HSL.
   .max-w-2xl,
   .max-w-4xl {
     max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Container sections: individual blocks with spacing */
+  .container-section {
+    margin: 0 16px 16px 16px;
+    border-radius: 0 !important;
+  }
+
+  /* All content containers: remove rounded corners, add spacing */
+  .card,
+  .bg-card,
+  .bg-white,
+  .bg-secondary,
+  .bg-muted,
+  .bg-accent,
+  .bg-popover,
+  .border {
+    border-radius: 0 !important;
   }
 
   /* Remove drop shadows from common container classes */

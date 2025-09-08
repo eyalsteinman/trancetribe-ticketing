@@ -241,9 +241,9 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         backgroundColor: isDarkMode ? '#000000' : backgroundColor
       }}
     >
-      <div className="max-w-md mx-auto p-6 space-y-8">
+      <div className="w-full">
         {/* Header */}
-        <div className="relative pt-2 pb-6">
+        <div className="container-section relative pt-2 pb-6">
           <h1 className="text-2xl font-bold text-foreground mb-1">
             {nickname ? `Welcome back,` : 'User Dashboard'}
           </h1>
@@ -266,8 +266,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           </Button>
         </div>
 
-        <div className="space-y-4">
-          {(() => {
+        {(() => {
             const items = [
               {
                 id: 'parties',
@@ -351,13 +350,13 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
         {/* QR Codes Section */}
         {userQRCodes.length > 0 && (
-          <div className="space-y-4">
-            <h2 className="text-lg font-bold text-foreground">Your Tickets</h2>
+          <div className="container-section">
+            <h2 className="text-lg font-bold text-foreground mb-4">Your Tickets</h2>
             <div className="space-y-4">
               {userQRCodes.map((qrCode) => (
-                <Card 
+                <div 
                   key={qrCode.id} 
-                  className="event-card cursor-pointer group overflow-hidden border-0 bg-gradient-to-r from-card to-card/80"
+                  className="cursor-pointer group overflow-hidden border border-border bg-card"
                   onClick={() => {
                     const party = { 
                       id: qrCode.party_id, 
@@ -369,11 +368,11 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                     setCurrentView('parties');
                   }}
                 >
-                  <CardContent className="p-0">
+                  <div className="p-0">
                     <div className="relative">
                       {/* Event Image */}
                       {qrCode.parties?.photo_url && (
-                        <div className="h-48 w-full overflow-hidden rounded-t-2xl">
+                        <div className="h-48 w-full overflow-hidden">
                           <img 
                             src={qrCode.parties.photo_url} 
                             alt={qrCode.parties.name}
@@ -386,15 +385,15 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                       {/* Status Badge */}
                       <div className="absolute top-4 right-4">
                         {qrCode.is_scanned ? (
-                          <div className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                          <div className="bg-green-500 text-white px-3 py-1 text-xs font-semibold">
                             ✓ Used
                           </div>
                         ) : qrCode.is_approved ? (
-                          <div className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+                          <div className="bg-primary text-primary-foreground px-3 py-1 text-xs font-semibold">
                             ✓ Ready
                           </div>
                         ) : (
-                          <div className="bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                          <div className="bg-orange-500 text-white px-3 py-1 text-xs font-semibold">
                             Pending
                           </div>
                         )}
@@ -432,8 +431,8 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                         </Button>
                       )}
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -465,7 +464,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         </Dialog>
         
         {/* Footer */}
-        <div className="mt-12 pt-6 border-t border-border/50 text-center space-y-3">
+        <div className="container-section mt-12 pt-6 border-t border-border/50 text-center space-y-3">
           <h3 className="font-bold text-xl text-primary">Trance Tribes Tickets</h3>
           <p className="text-sm text-muted-foreground">
             Created by Eyal Steinman, all rights reserved 2025

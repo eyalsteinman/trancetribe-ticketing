@@ -42,34 +42,29 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
     localStorage.setItem(orderKey, JSON.stringify(orderIds));
   };
 
-  const handleMouseDown = (id: string) => {
+  const handleLongPress = (id: string) => {
     const timer = setTimeout(() => {
       setIsReordering(true);
       onLongPress?.(id);
-    }, 800); // 800ms long press
+      // Disable page refresh during reordering
+      document.body.style.overscrollBehavior = 'none';
+      document.body.style.touchAction = 'none';
+    }, 3000); // 3 second long press
     setLongPressTimer(timer);
   };
 
-  const handleMouseUp = () => {
+  const handleEnd = () => {
     if (longPressTimer) {
       clearTimeout(longPressTimer);
       setLongPressTimer(null);
     }
   };
 
-  const handleTouchStart = (id: string) => {
-    const timer = setTimeout(() => {
-      setIsReordering(true);
-      onLongPress?.(id);
-    }, 800);
-    setLongPressTimer(timer);
-  };
-
-  const handleTouchEnd = () => {
-    if (longPressTimer) {
-      clearTimeout(longPressTimer);
-      setLongPressTimer(null);
-    }
+  const exitReorderMode = () => {
+    setIsReordering(false);
+    // Re-enable page refresh
+    document.body.style.overscrollBehavior = 'auto';
+    document.body.style.touchAction = 'auto';
   };
 
   const moveItem = (fromIndex: number, toIndex: number) => {
@@ -81,47 +76,79 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
   };
 
   return (
-    <div className="grid grid-cols-2 gap-4">
-      {orderedItems.map((item, index) => (
-        <div
-          key={item.id}
-          className={`
-            relative p-4 bg-card hover:bg-accent transition-colors duration-200 cursor-pointer
-            border border-border rounded-none shadow-none
-            flex flex-col items-center text-center space-y-3
-          `}
-          onClick={() => {
-            if (!isReordering) {
-              item.onClick();
-            }
-          }}
-          onMouseDown={() => handleMouseDown(item.id)}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          onTouchStart={() => handleTouchStart(item.id)}
-          onTouchEnd={handleTouchEnd}
-          draggable={isReordering}
-          onDragStart={(e) => {
-            e.dataTransfer.setData('text/plain', index.toString());
-          }}
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => {
-            e.preventDefault();
-            const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
-            if (fromIndex !== index) {
-              moveItem(fromIndex, index);
-            }
-            setIsReordering(false);
-          }}
-        >
-          <div className="text-primary">
-            {item.icon}
+    <div className="container-section">
+      <div className={`grid grid-cols-2 gap-4 ${isReordering ? 'pointer-events-none' : ''}`}>
+        {orderedItems.map((item, index) => (
+          <div
+            key={item.id}
+            className={`
+              relative p-4 bg-card hover:bg-accent cursor-pointer
+              border border-border flex flex-col items-center text-center space-y-3
+              transition-all duration-300 ease-in-out
+              ${isReordering 
+                ? 'animate-pulse scale-105 shadow-lg pointer-events-auto' 
+                : 'hover:scale-102'
+              }
+            `}
+            onClick={() => {
+              if (!isReordering) {
+                item.onClick();
+              }
+            }}
+            onMouseDown={() => handleLongPress(item.id)}
+            onMouseUp={handleEnd}
+            onMouseLeave={handleEnd}
+            onTouchStart={() => handleLongPress(item.id)}
+            onTouchEnd={handleEnd}
+            onTouchCancel={handleEnd}
+            draggable={isReordering}
+            onDragStart={(e) => {
+              if (!isReordering) {
+                e.preventDefault();
+                return;
+              }
+              e.dataTransfer.setData('text/plain', index.toString());
+            }}
+            onDragOver={(e) => {
+              if (isReordering) {
+                e.preventDefault();
+              }
+            }}
+            onDrop={(e) => {
+              if (!isReordering) return;
+              e.preventDefault();
+              const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+              if (fromIndex !== index) {
+                moveItem(fromIndex, index);
+              }
+              exitReorderMode();
+            }}
+          >
+            <div className="text-primary">
+              {item.icon}
+            </div>
+            <span className="text-sm font-medium text-foreground whitespace-pre-line">
+              {item.title}
+            </span>
+            {isReordering && (
+              <div className="absolute inset-0 bg-primary/10 border-2 border-primary animate-pulse" />
+            )}
           </div>
-          <span className="text-sm font-medium text-foreground whitespace-pre-line">
-            {item.title}
-          </span>
+        ))}
+      </div>
+      {isReordering && (
+        <div className="fixed inset-0 bg-black/20 z-40 flex items-center justify-center">
+          <div className="bg-card p-4 shadow-lg">
+            <p className="text-foreground text-center">Drag tiles to reorder</p>
+            <button 
+              className="mt-2 w-full bg-primary text-primary-foreground p-2"
+              onClick={exitReorderMode}
+            >
+              Done
+            </button>
+          </div>
         </div>
-      ))}
+      )}
     </div>
   );
 };
