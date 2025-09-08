@@ -266,7 +266,8 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           </Button>
         </div>
 
-        {(() => {
+        <div className="container-section">
+          {(() => {
             const items = [
               {
                 id: 'parties',
