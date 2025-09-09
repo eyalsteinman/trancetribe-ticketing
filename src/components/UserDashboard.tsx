@@ -24,6 +24,7 @@ import Insurance from './Insurance';
 import PersonalCode from './PersonalCode';
 import FriendsCodes from './FriendsCodes';
 import UserBarTab from './UserBarTab';
+import FAQContact from './FAQContact';
 import { useTheme } from '@/hooks/useDarkMode';
 import PageHeader from './ui/page-header';
 
@@ -210,28 +211,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   if (currentView === 'faq') {
-    return (
-      <div className="min-h-screen p-4">
-        <div className="max-w-md mx-auto space-y-6">
-          <PageHeader
-            title="FAQ & Contact"
-            onBack={() => setCurrentView('dashboard')}
-            showBackButton={true}
-          />
-          <div className="space-y-4 pt-6">
-            <div className="p-4 border rounded-lg">
-              <h3 className="font-bold mb-2">How do I get my QR code?</h3>
-              <p className="text-sm text-muted-foreground">After purchasing a ticket, your QR code will be generated and needs admin approval.</p>
-            </div>
-            <div className="p-4 border rounded-lg">
-              <h3 className="font-bold mb-2">Contact Support</h3>
-              <p className="text-sm text-muted-foreground">Email: support@trancetribes.com</p>
-              <p className="text-sm text-muted-foreground">Phone: +972-123-456-789</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <FAQContact user={user} onBack={() => setCurrentView('dashboard')} isAdmin={false} />;
   }
 
   return (

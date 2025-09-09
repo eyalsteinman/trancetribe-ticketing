@@ -27,6 +27,7 @@ import ManageProductions from './ManageProductions';
 import AdminGuestList from './AdminGuestList';
 import BarTabManager from './BarTabManager';
 import BarTabScanner from './BarTabScanner';
+import FAQContact from './FAQContact';
 import { useTheme } from '@/hooks/useDarkMode';
 
 interface AdminDashboardProps {
@@ -409,30 +410,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   }
 
   if (currentView === 'faq') {
-    return (
-      <div className="min-h-screen">
-        <div className="w-full">
-          <PageHeader
-            title="FAQ & Contact"
-            onBack={() => setCurrentView('dashboard')}
-            showBackButton={true}
-          />
-          <div className="container-section pt-6">
-            <div className="space-y-4">
-              <div className="p-4 border border-border bg-card">
-                <h3 className="font-bold mb-2">How do I approve QR codes?</h3>
-                <p className="text-sm text-muted-foreground">Go to Guest List to approve pending QR codes for parties.</p>
-              </div>
-              <div className="p-4 border border-border bg-card">
-                <h3 className="font-bold mb-2">Admin Contact</h3>
-                <p className="text-sm text-muted-foreground">Email: admin@trancetribes.com</p>
-                <p className="text-sm text-muted-foreground">Phone: +972-123-456-789</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <FAQContact user={user} onBack={() => setCurrentView('dashboard')} isAdmin={true} />;
   }
 
   if (currentView === 'scanner') {
