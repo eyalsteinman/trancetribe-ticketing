@@ -270,12 +270,13 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
               />
             </div>
 
-            <TicketManager
-              tickets={ticketTypes}
-              onChange={setTicketTypes}
-              maxTicketsPerUser={maxTicketsPerUser}
-              onMaxTicketsChange={setMaxTicketsPerUser}
-            />
+<TicketManager
+  tickets={ticketTypes}
+  onChange={setTicketTypes}
+  maxTicketsPerUser={maxTicketsPerUser}
+  onMaxTicketsChange={setMaxTicketsPerUser}
+  totalTickets={ticketCount ? Number(ticketCount) : undefined}
+/>
 
             <div>
               <label className="text-sm font-medium">Required Social Networks</label>

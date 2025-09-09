@@ -1,4 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface TileItem {
   id: string;
@@ -12,6 +25,59 @@ interface ReorderableTilesLogicProps {
   orderKey: string;
   onLongPress?: (id: string) => void;
 }
+
+// Simple array move helper
+const arrayMove = <T,>(array: T[], from: number, to: number) => {
+  const newArray = array.slice();
+  const [item] = newArray.splice(from, 1);
+  newArray.splice(to, 0, item);
+  return newArray;
+};
+
+const SortableTile: React.FC<{
+  item: TileItem;
+  index: number;
+  isReordering: boolean;
+  tiltedTileId: string | null;
+  onTileClick: () => void;
+}> = ({ item, index, isReordering, tiltedTileId, onTileClick }) => {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    cursor: isReordering ? 'grab' : 'pointer',
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      data-tile="true"
+      data-index={index}
+      data-id={item.id}
+      style={style}
+      className={`
+        relative p-4 bg-card select-none
+        border border-border flex flex-col items-center text-center space-y-3
+        transition-transform duration-200 ease-out
+        ${!isReordering ? 'hover:scale-102' : ''}
+        ${tiltedTileId === item.id ? 'animate-[tilt_0.3s_ease-in-out] rotate-12' : ''}
+        ${isDragging ? 'z-10' : ''}
+      `}
+      onClick={() => {
+        if (!isReordering) onTileClick();
+      }}
+      {...(isReordering ? { ...attributes, ...listeners } : {})}
+    >
+      <div className="text-primary">
+        {item.icon}
+      </div>
+      <span className="text-sm font-medium text-foreground whitespace-pre-line">
+        {item.title}
+      </span>
+    </div>
+  );
+};
 
 const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTilesLogicProps) => {
   const [orderedItems, setOrderedItems] = useState<TileItem[]>(items);
@@ -56,7 +122,7 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
       document.body.classList.add('no-refresh', 'hide-scrollbar');
       document.body.style.overflow = 'hidden';
     }, 3000); // 3 second long press
-    setLongPressTimer(timer);
+    setLongPressTimer(timer as unknown as NodeJS.Timeout);
   };
 
   const handleEnd = () => {
@@ -74,114 +140,78 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
     document.body.style.overflow = 'auto';
   };
 
-  const moveItem = (fromIndex: number, toIndex: number) => {
-    const newItems = [...orderedItems];
-    const [movedItem] = newItems.splice(fromIndex, 1);
-    newItems.splice(toIndex, 0, movedItem);
-    setOrderedItems(newItems);
-    saveOrder(newItems);
-  };
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    })
+  );
 
-  const getTileIndexFromPoint = (x: number, y: number): number | null => {
-    const el = document.elementFromPoint(x, y) as HTMLElement | null;
-    if (!el) return null;
-    const tileEl = el.closest('[data-tile="true"]') as HTMLElement | null;
-    if (!tileEl) return null;
-    const idx = tileEl.getAttribute('data-index');
-    return idx ? parseInt(idx) : null;
+  const itemIds = useMemo(() => orderedItems.map(it => it.id), [orderedItems]);
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!active?.id || !over?.id) {
+      exitReorderMode();
+      return;
+    }
+
+    const oldIndex = orderedItems.findIndex(i => i.id === active.id);
+    const newIndex = orderedItems.findIndex(i => i.id === over.id);
+
+    if (oldIndex !== newIndex && oldIndex >= 0 && newIndex >= 0) {
+      const newItems = arrayMove(orderedItems, oldIndex, newIndex);
+      setOrderedItems(newItems);
+      saveOrder(newItems);
+    }
+
+    // Exit reordering mode after drop
+    exitReorderMode();
   };
 
   return (
     <div className="container-section">
-      <div className="grid grid-cols-2 gap-4">
-        {orderedItems.map((item, index) => (
-          <div
-            key={item.id}
-            data-tile="true"
-            data-index={index}
-            data-id={item.id}
-            className={`
-              relative p-4 bg-card cursor-pointer select-none
-              border border-border flex flex-col items-center text-center space-y-3
-              transition-transform duration-200 ease-out
-              ${!isReordering ? 'hover:scale-102' : ''}
-              ${tiltedTileId === item.id ? 'animate-[tilt_0.3s_ease-in-out] rotate-12' : ''}
-            `}
-            onClick={() => {
-              if (!isReordering) {
-                item.onClick();
-              }
-            }}
-            onMouseDown={(e) => {
-              if (!isReordering) {
-                handleLongPress(item.id, e);
-              }
-            }}
-            onMouseUp={(e) => {
-              // End potential long-press
-              handleEnd();
-            }}
-            onMouseLeave={handleEnd}
-            onTouchStart={(e) => {
-              if (!isReordering) {
-                handleLongPress(item.id, e);
-              }
-            }}
-            onTouchMove={(e) => {
-              if (!isReordering) return;
-              e.preventDefault();
-              const t = e.touches[0];
-              if (!t || tiltedTileId == null) return;
-              const targetIndex = getTileIndexFromPoint(t.clientX, t.clientY);
-              const fromIndex = orderedItems.findIndex((it) => it.id === tiltedTileId);
-              if (targetIndex != null && fromIndex >= 0 && targetIndex !== fromIndex) {
-                moveItem(fromIndex, targetIndex);
-              }
-            }}
-            onTouchEnd={(e) => {
-              handleEnd();
-              if (isReordering) {
-                exitReorderMode();
-              }
-            }}
-            onTouchCancel={handleEnd}
-            draggable={isReordering}
-            onDragStart={(e) => {
-              if (!isReordering) {
-                e.preventDefault();
-                return;
-              }
-              e.dataTransfer.effectAllowed = 'move';
-              e.dataTransfer.setData('text/plain', index.toString());
-            }}
-            onDragOver={(e) => {
-              if (isReordering) {
-                e.preventDefault();
-              }
-            }}
-            onDrop={(e) => {
-              if (!isReordering) return;
-              e.preventDefault();
-              const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
-              if (fromIndex !== index && !isNaN(fromIndex)) {
-                moveItem(fromIndex, index);
-              }
-              exitReorderMode();
-            }}
-            onDragEnd={() => {
-              // Ensure we exit if drop happens outside tiles
-              if (isReordering) exitReorderMode();
-            }}
-          >
-            <div className="text-primary">
-              {item.icon}
-            </div>
-            <span className="text-sm font-medium text-foreground whitespace-pre-line">
-              {item.title}
-            </span>
-          </div>
-        ))}
-      </div>
+      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+        <div className="grid grid-cols-2 gap-4">
+          <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
+            {orderedItems.map((item, index) => (
+              <div
+                key={item.id}
+                onMouseDown={(e) => {
+                  if (!isReordering) {
+                    handleLongPress(item.id, e);
+                  }
+                }}
+                onMouseUp={handleEnd}
+                onMouseLeave={handleEnd}
+                onTouchStart={(e) => {
+                  if (!isReordering) {
+                    handleLongPress(item.id, e);
+                  }
+                }}
+                onTouchEnd={(e) => {
+                  handleEnd();
+                  if (isReordering) {
+                    // Let onDragEnd handle exit when a drop occurs
+                    // If user taps without dragging, exit immediately
+                    exitReorderMode();
+                  }
+                }}
+                onTouchCancel={handleEnd}
+              >
+                <SortableTile
+                  item={item}
+                  index={index}
+                  isReordering={isReordering}
+                  tiltedTileId={tiltedTileId}
+                  onTileClick={() => item.onClick()}
+                />
+              </div>
+            ))}
+          </SortableContext>
+        </div>
+      </DndContext>
     </div>
   );
 };

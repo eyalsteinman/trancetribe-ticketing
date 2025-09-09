@@ -483,12 +483,13 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
               </div>
             )}
 
-            <TicketManager
-              tickets={editTicketTypes}
-              onChange={setEditTicketTypes}
-              maxTicketsPerUser={editMaxTicketsPerUser}
-              onMaxTicketsChange={setEditMaxTicketsPerUser}
-            />
+<TicketManager
+  tickets={editTicketTypes}
+  onChange={setEditTicketTypes}
+  maxTicketsPerUser={editMaxTicketsPerUser}
+  onMaxTicketsChange={setEditMaxTicketsPerUser}
+  totalTickets={(editingParty as any).ticket_count ?? undefined}
+/>
 
               <div>
                 <label className="text-sm font-medium">Required Social Networks</label>
