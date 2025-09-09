@@ -17,7 +17,7 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
   const [orderedItems, setOrderedItems] = useState<TileItem[]>(items);
   const [isReordering, setIsReordering] = useState(false);
   const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [tiltedTileId, setTiltedTileId] = useState<string | null>(null);
 
   useEffect(() => {
     // Load saved order from localStorage
@@ -48,6 +48,7 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
     
     const timer = setTimeout(() => {
       setIsReordering(true);
+      setTiltedTileId(id);
       onLongPress?.(id);
       // Disable page refresh during reordering
       document.body.classList.add('no-refresh', 'hide-scrollbar');
@@ -65,7 +66,7 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
 
   const exitReorderMode = () => {
     setIsReordering(false);
-    setDraggedIndex(null);
+    setTiltedTileId(null);
     // Re-enable page refresh and scrolling
     document.body.classList.remove('no-refresh', 'hide-scrollbar');
     document.body.style.overflow = 'auto';
@@ -77,6 +78,8 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
     newItems.splice(toIndex, 0, movedItem);
     setOrderedItems(newItems);
     saveOrder(newItems);
+    // Exit reordering mode after drop
+    exitReorderMode();
   };
 
   return (
@@ -86,14 +89,11 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
           <div
             key={item.id}
             className={`
-              relative p-4 bg-card hover:bg-accent cursor-pointer
+              relative p-4 bg-card cursor-pointer
               border border-border flex flex-col items-center text-center space-y-3
               transition-all duration-200 ease-out
-              ${isReordering 
-                ? 'tile-reordering pointer-events-auto' 
-                : 'hover:scale-102'
-              }
-              ${draggedIndex === index ? 'tile-dragging' : ''}
+              ${!isReordering ? 'hover:bg-accent hover:scale-102' : ''}
+              ${tiltedTileId === item.id ? 'animate-[tilt_0.3s_ease-in-out] transform rotate-12' : ''}
             `}
             onClick={() => {
               if (!isReordering) {
@@ -120,13 +120,7 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
                 e.preventDefault();
                 return;
               }
-              setDraggedIndex(index);
               e.dataTransfer.setData('text/plain', index.toString());
-              e.currentTarget.style.opacity = '0.5';
-            }}
-            onDragEnd={(e) => {
-              e.currentTarget.style.opacity = '1';
-              setDraggedIndex(null);
             }}
             onDragOver={(e) => {
               if (isReordering) {
@@ -148,25 +142,9 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
             <span className="text-sm font-medium text-foreground whitespace-pre-line">
               {item.title}
             </span>
-            {isReordering && (
-              <div className="absolute top-1 right-1 bg-primary text-primary-foreground text-xs px-1 animate-pulse">
-                Drag to reorder
-              </div>
-            )}
           </div>
         ))}
       </div>
-      {isReordering && (
-        <div className="fixed bottom-4 left-4 right-4 z-50 bg-card border border-border p-4 animate-slide-up">
-          <p className="text-foreground text-center text-sm mb-2">Drag tiles to reorder them</p>
-          <button 
-            className="w-full bg-primary text-primary-foreground p-2 font-medium"
-            onClick={exitReorderMode}
-          >
-            Done Reordering
-          </button>
-        </div>
-      )}
     </div>
   );
 };

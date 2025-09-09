@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes tilt {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(15deg); }
+  100% { transform: rotate(12deg); }
+}
+
 /* Modern Eventim-inspired design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
