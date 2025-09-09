@@ -106,6 +106,63 @@ export type Database = {
           },
         ]
       }
+      contact_info: {
+        Row: {
+          address: string | null
+          created_at: string
+          created_by: string
+          email: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          created_by: string
+          email?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          created_by?: string
+          email?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      faqs: {
+        Row: {
+          answer: string
+          created_at: string
+          created_by: string
+          id: string
+          question: string
+          updated_at: string
+        }
+        Insert: {
+          answer: string
+          created_at?: string
+          created_by: string
+          id?: string
+          question: string
+          updated_at?: string
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          question?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       friends: {
         Row: {
           created_at: string

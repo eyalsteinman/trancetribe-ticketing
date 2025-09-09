@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import PageHeader from './ui/page-header';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface FAQItem {
   id: string;
@@ -25,38 +26,69 @@ interface FAQContactProps {
 }
 
 const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
-  const [faqs, setFaqs] = useState<FAQItem[]>([
-    {
-      id: '1',
-      question: 'How do I get my QR code?',
-      answer: 'After purchasing a ticket, your QR code will be generated and needs admin approval before you can use it.'
-    },
-    {
-      id: '2',
-      question: 'Can I buy tickets for friends?',
-      answer: 'Yes! You can purchase additional tickets for friends through the "Buy for Friends" option on each event page.'
-    },
-    {
-      id: '3',
-      question: 'What if my QR code is not working?',
-      answer: 'Contact support immediately if your approved QR code is not scanning properly at the event entrance.'
-    }
-  ]);
-  
+  const [faqs, setFaqs] = useState<FAQItem[]>([]);
   const [contactInfo, setContactInfo] = useState<ContactInfo>({
-    email: 'support@trancetribes.com',
-    phone: '+972-123-456-789',
-    address: 'Tel Aviv, Israel'
+    email: '',
+    phone: '',
+    address: ''
   });
-
   const [newQuestion, setNewQuestion] = useState('');
   const [newAnswer, setNewAnswer] = useState('');
   const [editingContactInfo, setEditingContactInfo] = useState(false);
   const [tempContactInfo, setTempContactInfo] = useState(contactInfo);
+  const [loading, setLoading] = useState(true);
   
   const { toast } = useToast();
 
-  const addFAQ = () => {
+  useEffect(() => {
+    fetchFAQs();
+    fetchContactInfo();
+  }, []);
+
+  const fetchFAQs = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('faqs')
+        .select('*')
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+      setFaqs(data || []);
+    } catch (error) {
+      console.error('Error fetching FAQs:', error);
+    }
+  };
+
+  const fetchContactInfo = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('contact_info')
+        .select('*')
+        .limit(1)
+        .single();
+
+      if (error && error.code !== 'PGRST116') throw error;
+      
+      if (data) {
+        setContactInfo({
+          email: data.email || '',
+          phone: data.phone || '',
+          address: data.address || ''
+        });
+        setTempContactInfo({
+          email: data.email || '',
+          phone: data.phone || '',
+          address: data.address || ''
+        });
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching contact info:', error);
+      setLoading(false);
+    }
+  };
+
+  const addFAQ = async () => {
     if (!newQuestion.trim() || !newAnswer.trim()) {
       toast({
         title: "Error",
@@ -66,38 +98,126 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
       return;
     }
 
-    const newFAQ: FAQItem = {
-      id: Date.now().toString(),
-      question: newQuestion.trim(),
-      answer: newAnswer.trim()
-    };
+    try {
+      const { data, error } = await supabase
+        .from('faqs')
+        .insert({
+          question: newQuestion.trim(),
+          answer: newAnswer.trim(),
+          created_by: user?.id
+        })
+        .select()
+        .single();
 
-    setFaqs([...faqs, newFAQ]);
-    setNewQuestion('');
-    setNewAnswer('');
-    
-    toast({
-      title: "Success",
-      description: "FAQ added successfully!"
-    });
+      if (error) throw error;
+
+      setFaqs([...faqs, data]);
+      setNewQuestion('');
+      setNewAnswer('');
+      
+      toast({
+        title: "Success",
+        description: "FAQ added successfully!"
+      });
+    } catch (error) {
+      console.error('Error adding FAQ:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add FAQ",
+        variant: "destructive"
+      });
+    }
   };
 
-  const deleteFAQ = (id: string) => {
-    setFaqs(faqs.filter(faq => faq.id !== id));
-    toast({
-      title: "Success",
-      description: "FAQ deleted successfully!"
-    });
+  const deleteFAQ = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('faqs')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setFaqs(faqs.filter(faq => faq.id !== id));
+      toast({
+        title: "Success",
+        description: "FAQ deleted successfully!"
+      });
+    } catch (error) {
+      console.error('Error deleting FAQ:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete FAQ",
+        variant: "destructive"
+      });
+    }
   };
 
-  const saveContactInfo = () => {
-    setContactInfo(tempContactInfo);
-    setEditingContactInfo(false);
-    toast({
-      title: "Success",
-      description: "Contact information updated!"
-    });
+  const saveContactInfo = async () => {
+    try {
+      // Check if contact info exists
+      const { data: existingData } = await supabase
+        .from('contact_info')
+        .select('id')
+        .limit(1)
+        .single();
+
+      if (existingData) {
+        // Update existing
+        const { error } = await supabase
+          .from('contact_info')
+          .update({
+            email: tempContactInfo.email,
+            phone: tempContactInfo.phone,
+            address: tempContactInfo.address
+          })
+          .eq('id', existingData.id);
+
+        if (error) throw error;
+      } else {
+        // Create new
+        const { error } = await supabase
+          .from('contact_info')
+          .insert({
+            email: tempContactInfo.email,
+            phone: tempContactInfo.phone,
+            address: tempContactInfo.address,
+            created_by: user?.id
+          });
+
+        if (error) throw error;
+      }
+
+      setContactInfo(tempContactInfo);
+      setEditingContactInfo(false);
+      toast({
+        title: "Success",
+        description: "Contact information updated!"
+      });
+    } catch (error) {
+      console.error('Error saving contact info:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save contact information",
+        variant: "destructive"
+      });
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen p-4">
+        <div className="max-w-md mx-auto space-y-6">
+          <PageHeader
+            title="FAQ & Contact"
+            onBack={onBack}
+            showBackButton={true}
+          />
+          <div className="text-center py-8">Loading...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-4">
