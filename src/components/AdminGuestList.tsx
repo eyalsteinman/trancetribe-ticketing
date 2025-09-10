@@ -758,36 +758,42 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
             
             {/* Message Actions - Only show for arriving tab */}
             {activeTab === 'arriving' && arrivingGuests.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t">
-                <Button
-                  onClick={sendQRToAll}
-                  disabled={arrivingGuests.length === 0}
-                  className="flex-1 min-w-0 text-xs sm:text-sm"
-                >
-                  Send QR to All
-                  Send QR to All ({arrivingGuests.length})
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setEmailDialog({
-                    open: true,
-                    guestId: 'all',
-                    email: 'all-guests'
-                  })}
-                  className="flex-1 min-w-0 text-xs sm:text-sm"
-                >
-                  <MessageCircle className="h-4 w-4 mr-1" />
-                  Message All ({arrivingGuests.length})
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={messageSelected}
-                  disabled={selectedGuests.size === 0}
-                  className="flex-1 min-w-0 text-xs sm:text-sm"
-                >
-                  <Users className="h-4 w-4 mr-1" />
-                  Message Selected ({selectedGuests.size})
-                </Button>
+              <div className="space-y-3 mt-4 pt-4 border-t">
+                {/* Send QR to All - separate row */}
+                <div className="w-full">
+                  <Button
+                    onClick={sendQRToAll}
+                    disabled={arrivingGuests.length === 0}
+                    className="w-full"
+                  >
+                    Send QR to All ({arrivingGuests.length})
+                  </Button>
+                </div>
+                
+                {/* Message buttons - second row */}
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setEmailDialog({
+                      open: true,
+                      guestId: 'all',
+                      email: 'all-guests'
+                    })}
+                    className="flex-1 min-w-0 text-xs sm:text-sm"
+                  >
+                    <MessageCircle className="h-4 w-4 mr-1" />
+                    Message All ({arrivingGuests.length})
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={messageSelected}
+                    disabled={selectedGuests.size === 0}
+                    className="flex-1 min-w-0 text-xs sm:text-sm"
+                  >
+                    <Users className="h-4 w-4 mr-1" />
+                    Message Selected ({selectedGuests.size})
+                  </Button>
+                </div>
               </div>
             )}
           </CardContent>
