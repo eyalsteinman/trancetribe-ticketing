@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, MessageCircle } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 
 interface Message {
@@ -24,6 +25,7 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState<'date' | 'production'>('date');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -80,6 +82,45 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId }) => {
       console.error('Error marking message as read:', error);
     }
   };
+
+  const deleteMessage = async (messageId: string) => {
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .delete()
+        .eq('id', messageId)
+        .eq('recipient_id', userId);
+
+      if (error) throw error;
+
+      setMessages(prev => prev.filter(msg => msg.id !== messageId));
+      if (selectedMessage?.id === messageId) {
+        setSelectedMessage(null);
+      }
+      
+      toast({
+        title: "Message deleted",
+        description: "The message has been deleted successfully."
+      });
+    } catch (error) {
+      console.error('Error deleting message:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete message. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const sortedMessages = [...messages].sort((a, b) => {
+    if (sortBy === 'production') {
+      const prodA = a.production_name || 'General';
+      const prodB = b.production_name || 'General';
+      return prodA.localeCompare(prodB);
+    }
+    // Default to date sorting (newest first)
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
 
   const handleMessageClick = (message: Message) => {
     setSelectedMessage(message);
@@ -147,6 +188,21 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId }) => {
             </CardTitle>
           </CardHeader>
           <CardContent>
+            {!loading && messages.length > 0 && (
+              <div className="flex justify-between items-center mb-4">
+                <label className="text-sm font-medium">Sort by:</label>
+                <Select value={sortBy} onValueChange={(value: 'date' | 'production') => setSortBy(value)}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="date">Date</SelectItem>
+                    <SelectItem value="production">Production</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
             {loading ? (
               <div className="text-center py-8">Loading messages...</div>
             ) : messages.length === 0 ? (
@@ -155,7 +211,7 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId }) => {
               </div>
             ) : (
               <div className="space-y-4">
-                {messages.map((message) => (
+                {sortedMessages.map((message) => (
                   <Card
                     key={message.id}
                     className={`cursor-pointer transition-colors hover:bg-accent ${
@@ -165,7 +221,7 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId }) => {
                   >
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-semibold text-sm">
+                        <h3 className="font-semibold text-sm flex-1">
                           {message.subject}
                           {!message.is_read && (
                             <Badge variant="destructive" className="ml-2 text-xs">
@@ -173,9 +229,22 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId }) => {
                             </Badge>
                           )}
                         </h3>
-                        <Badge variant="secondary" className="text-xs">
-                          {message.production_name}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary" className="text-xs">
+                            {message.production_name}
+                          </Badge>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteMessage(message.id);
+                            }}
+                            className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
                       </div>
                       <p className="text-xs text-muted-foreground mb-2">
                         {new Date(message.created_at).toLocaleString()}

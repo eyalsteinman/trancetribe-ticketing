@@ -61,6 +61,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
   const [scannedGuests, setScannedGuests] = useState<ScannedGuest[]>([]);
   const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState<'name' | 'surname' | 'recent' | 'approved'>('recent');
+  const [selectedGuests, setSelectedGuests] = useState<Set<string>>(new Set());
   const [emailDialog, setEmailDialog] = useState<{open: boolean; guestId: string; email: string}>({
     open: false,
     guestId: '',
@@ -314,6 +315,10 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
       if (emailDialog.guestId === 'all') {
         // Send to all arriving guests
         const userIds = arrivingGuests.map(guest => guest.user_id);
+      } else if (emailDialog.guestId === 'selected') {
+        // Send to selected guests
+        const selectedGuestsList = arrivingGuests.filter(guest => selectedGuests.has(guest.id));
+        const userIds = selectedGuestsList.map(guest => guest.user_id);
         const messagesToInsert = userIds.map(userId => ({
           created_by: user.id,
           recipient_id: userId,
@@ -332,6 +337,29 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
           title: "Success",
           description: `Message sent to ${userIds.length} guests successfully`,
         });
+      } else if (emailDialog.guestId === 'selected') {
+        // Send to selected guests
+        const selectedGuestsList = arrivingGuests.filter(guest => selectedGuests.has(guest.id));
+        const userIds = selectedGuestsList.map(guest => guest.user_id);
+        const messagesToInsert = userIds.map(userId => ({
+          created_by: user.id,
+          recipient_id: userId,
+          production_id: parties.find(p => p.id === selectedParty)?.production_id || null,
+          subject: `Message about ${parties.find(p => p.id === selectedParty)?.name || 'your party'}`,
+          content: emailMessage.trim()
+        }));
+
+        const { error } = await supabase
+          .from('messages')
+          .insert(messagesToInsert);
+
+        if (error) throw error;
+        
+        toast({
+          title: "Success",
+          description: `Message sent to ${userIds.length} selected guests successfully`,
+        });
+        setSelectedGuests(new Set());
       } else {
         // Send to single guest
         const guest = arrivingGuests.find(g => g.id === emailDialog.guestId);
@@ -382,6 +410,41 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
       guestId: 'all',
       email: 'all-guests'
     });
+  };
+
+  const messageSelected = async () => {
+    if (selectedGuests.size === 0) {
+      toast({
+        title: "No guests selected",
+        description: "Please select guests to send messages to.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setEmailDialog({
+      open: true,
+      guestId: 'selected',
+      email: 'selected-guests'
+    });
+  };
+
+  const toggleGuestSelection = (guestId: string) => {
+    const newSelected = new Set(selectedGuests);
+    if (newSelected.has(guestId)) {
+      newSelected.delete(guestId);
+    } else {
+      newSelected.add(guestId);
+    }
+    setSelectedGuests(newSelected);
+  };
+
+  const selectAllGuests = () => {
+    if (selectedGuests.size === arrivingGuests.length) {
+      setSelectedGuests(new Set());
+    } else {
+      setSelectedGuests(new Set(arrivingGuests.map(g => g.id)));
+    }
   };
 
   return (
@@ -517,22 +580,38 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                       <option value="approved">Approval Status</option>
                     </select>
                   </div>
-                  <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-black">#</TableHead>
-                      <TableHead className="text-black">First Name</TableHead>
-                      <TableHead className="text-black">Last Name</TableHead>
-                      <TableHead className="text-black">Email</TableHead>
-                      <TableHead className="text-black">Phone</TableHead>
-                      <TableHead className="text-black">Status</TableHead>
-                      <TableHead className="text-black">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
+                   <Table>
+                   <TableHeader>
+                     <TableRow>
+                       <TableHead className="text-black">
+                         <input
+                           type="checkbox"
+                           checked={selectedGuests.size === arrivingGuests.length && arrivingGuests.length > 0}
+                           onChange={selectAllGuests}
+                           className="mr-2"
+                         />
+                         #
+                       </TableHead>
+                       <TableHead className="text-black">First Name</TableHead>
+                       <TableHead className="text-black">Last Name</TableHead>
+                       <TableHead className="text-black">Email</TableHead>
+                       <TableHead className="text-black">Phone</TableHead>
+                       <TableHead className="text-black">Status</TableHead>
+                       <TableHead className="text-black">Actions</TableHead>
+                     </TableRow>
+                   </TableHeader>
                   <TableBody>
-                    {sortedArrivingGuests.map((guest, index) => (
-                      <TableRow key={guest.id}>
-                        <TableCell className="text-black font-medium">{index + 1}</TableCell>
+                     {sortedArrivingGuests.map((guest, index) => (
+                       <TableRow key={guest.id}>
+                         <TableCell className="text-black font-medium">
+                           <input
+                             type="checkbox"
+                             checked={selectedGuests.has(guest.id)}
+                             onChange={() => toggleGuestSelection(guest.id)}
+                             className="mr-2"
+                           />
+                           {index + 1}
+                         </TableCell>
                         <TableCell className="text-black">
                           {guest.profiles?.first_name || 'Unknown'}
                         </TableCell>
@@ -600,9 +679,9 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
               )
             )}
             
-            {/* Email All Arriving and WhatsApp Actions - Only show for arriving tab */}
+            {/* Message Actions - Only show for arriving tab */}
             {activeTab === 'arriving' && arrivingGuests.length > 0 && (
-              <div className="flex gap-2 mt-4 pt-4 border-t">
+              <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t">
                 <Button
                   variant="outline"
                   onClick={() => setEmailDialog({
@@ -610,18 +689,19 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                     guestId: 'all',
                     email: 'all-guests'
                   })}
-                  className="flex-1"
+                  className="flex-1 min-w-0 text-xs sm:text-sm"
                 >
-                  <MessageCircle className="h-4 w-4 mr-2" />
+                  <MessageCircle className="h-4 w-4 mr-1" />
                   Message All ({arrivingGuests.length})
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={messageGroup}
-                  className="flex-1"
+                  onClick={messageSelected}
+                  disabled={selectedGuests.size === 0}
+                  className="flex-1 min-w-0 text-xs sm:text-sm"
                 >
-                  <Users className="h-4 w-4 mr-2" />
-                  Message Group
+                  <Users className="h-4 w-4 mr-1" />
+                  Message Selected ({selectedGuests.size})
                 </Button>
               </div>
             )}
@@ -639,7 +719,11 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-black">To: {emailDialog.guestId === 'all' ? 'All arriving guests' : emailDialog.email}</label>
+                <label className="text-sm font-medium text-black">To: {
+                  emailDialog.guestId === 'all' ? 'All arriving guests' : 
+                  emailDialog.guestId === 'selected' ? `${selectedGuests.size} selected guests` : 
+                  emailDialog.email
+                }</label>
               </div>
               <div>
                 <label className="text-sm font-medium text-black">Message</label>

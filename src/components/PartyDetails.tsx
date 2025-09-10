@@ -259,25 +259,28 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
           .eq('code', qrData);
       }
 
-      // Send QR code via email
+      // Send QR code message to message center
       try {
-        await supabase.functions.invoke('send-qr-code-email', {
-          body: {
-            to: user.email,
-            qrCode: qrData,
-            partyName: party.name,
-            userName: user.display_name || user.email,
-            partyDate: new Date(party.date).toLocaleDateString('en-GB'),
-            productionName: production?.name || 'Event'
-          }
-        });
+        const messageContent = `Your QR code for ${party.name} is ready!\n\nParty: ${party.name}\nProduction: ${production?.name || 'Event'}\nDate: ${new Date(party.date).toLocaleDateString('en-GB')}\nStart Time: ${party.start_time || 'TBA'}\n\nQR Code: ${qrData}`;
+        
+        const { error: messageError } = await supabase
+          .from('messages')
+          .insert({
+            created_by: null, // System message
+            recipient_id: user.id,
+            production_id: production?.id || null,
+            subject: `QR Code for ${party.name}`,
+            content: messageContent
+          });
+
+        if (messageError) throw messageError;
         
         toast({
           title: isAutoApproved ? "QR Code Generated & Approved" : "QR Code Generated",
-          description: "Your QR code has been sent to your email!"
+          description: "Your QR code has been sent to your messages!"
         });
-      } catch (emailError) {
-        console.error('Email sending failed:', emailError);
+      } catch (messageError) {
+        console.error('Message sending failed:', messageError);
         toast({
           title: isAutoApproved ? "QR Code Generated & Approved" : "QR Code Generated", 
           description: isAutoApproved ? "Your ticket is ready!" : "Your QR code has been submitted for approval."
