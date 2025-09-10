@@ -440,8 +440,8 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                               </Button>
                             </td>
                             <td className="p-3">
-                              <div className="flex justify-start gap-4">
-                                <div className="flex w-16 flex-col items-center">
+                              <div className="flex justify-start gap-6">
+                                <div className="flex w-20 flex-col items-center">
                                   <Button
                                     size="sm"
                                     variant="outline"
@@ -452,9 +452,9 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                                   >
                                     <Edit2 className="h-4 w-4" />
                                   </Button>
-                                  <span className="mt-1 text-xs text-muted-foreground">Edit</span>
+                                  <span className="mt-1 text-xs text-muted-foreground text-center">Edit</span>
                                 </div>
-                                <div className="flex w-16 flex-col items-center">
+                                <div className="flex w-20 flex-col items-center">
                                   <Button
                                     size="sm"
                                     variant={user.roles.includes('user') ? 'default' : 'outline'}
@@ -465,9 +465,9 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                                   >
                                     <UserCheck className="h-4 w-4" />
                                   </Button>
-                                  <span className="mt-1 text-xs text-muted-foreground">User</span>
+                                  <span className="mt-1 text-xs text-muted-foreground text-center">User</span>
                                 </div>
-                                <div className="flex w-16 flex-col items-center">
+                                <div className="flex w-20 flex-col items-center">
                                   <Button
                                     size="sm"
                                     variant={user.roles.includes('admin') ? 'default' : 'outline'}
@@ -478,9 +478,9 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                                   >
                                     <Shield className="h-4 w-4" />
                                   </Button>
-                                  <span className="mt-1 text-xs text-muted-foreground">Admin</span>
+                                  <span className="mt-1 text-xs text-muted-foreground text-center">Admin</span>
                                 </div>
-                                <div className="flex w-16 flex-col items-center">
+                                <div className="flex w-20 flex-col items-center">
                                   <Button
                                     size="sm"
                                     variant="outline"
@@ -490,7 +490,7 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                                   >
                                     <Trash2 className="h-4 w-4" />
                                   </Button>
-                                  <span className="mt-1 text-xs text-muted-foreground">Delete</span>
+                                  <span className="mt-1 text-xs text-muted-foreground text-center">Delete</span>
                                 </div>
                               </div>
                             </td>
