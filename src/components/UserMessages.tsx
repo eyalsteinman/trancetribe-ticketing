@@ -240,9 +240,7 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId, onOpenTribe
                             variant="ghost"
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (window.confirm('Are you sure you want to delete this message?')) {
-                                deleteMessage(message.id);
-                              }
+                              deleteMessage(message.id);
                             }}
                             className="h-6 w-6 p-0 relative"
                           >

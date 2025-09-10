@@ -218,6 +218,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
     }
   };
 
+
   const approveQR = async (qrId: string) => {
     try {
       const { error } = await supabase
@@ -443,6 +444,31 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
       newSelected.add(guestId);
     }
     setSelectedGuests(newSelected);
+  };
+
+  const sendQRToAll = async () => {
+    try {
+      const { error } = await supabase.functions.invoke('send-qr-to-all', {
+        body: {
+          party_id: selectedParty,
+          guest_list: arrivingGuests
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "QR codes sent to all guests!"
+      });
+    } catch (error: any) {
+      console.error('Error sending QR codes:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send QR codes",
+        variant: "destructive"
+      });
+    }
   };
 
   const viewSocialMedia = async (userId: string) => {
@@ -733,6 +759,14 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
             {/* Message Actions - Only show for arriving tab */}
             {activeTab === 'arriving' && arrivingGuests.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t">
+                <Button
+                  onClick={sendQRToAll}
+                  disabled={arrivingGuests.length === 0}
+                  className="flex-1 min-w-0 text-xs sm:text-sm"
+                >
+                  Send QR to All
+                  Send QR to All ({arrivingGuests.length})
+                </Button>
                 <Button
                   variant="outline"
                   onClick={() => setEmailDialog({
