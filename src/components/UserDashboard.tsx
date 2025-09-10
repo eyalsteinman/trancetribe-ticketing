@@ -26,6 +26,7 @@ import FriendsCodes from './FriendsCodes';
 import UserBarTab from './UserBarTab';
 import FAQContact from './FAQContact';
 import UserMessages from './UserMessages';
+import UserTribes from './UserTribes';
 import { useTheme } from '@/hooks/useDarkMode';
 import PageHeader from './ui/page-header';
 
@@ -34,12 +35,13 @@ interface UserDashboardProps {
 }
 
 const UserDashboard = ({ user }: UserDashboardProps) => {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance' | 'personal-code' | 'friends-codes' | 'bar-tab' | 'faq' | 'messages'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance' | 'personal-code' | 'friends-codes' | 'bar-tab' | 'faq' | 'messages' | 'tribes'>('dashboard');
   const [nickname, setNickname] = useState<string>('');
   const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
   const [selectedProduction, setSelectedProduction] = useState<{id: string; name: string; logo_url: string | null; vip_description: string | null; vip_price: number | null} | null>(null);
   const [showQRDialog, setShowQRDialog] = useState(false);
   const [selectedQRCode, setSelectedQRCode] = useState<any>(null);
+  const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
   const { currentTheme, cycleTheme, getThemeDisplayName } = useTheme();
@@ -47,10 +49,12 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   useEffect(() => {
     loadUserQRCodes();
     loadUserProfile();
+    loadUnreadMessageCount();
     
-    // Set up polling to refresh QR codes every 30 seconds
+    // Set up polling to refresh QR codes and messages every 30 seconds
     const interval = setInterval(() => {
       loadUserQRCodes();
+      loadUnreadMessageCount();
     }, 30000);
 
     return () => clearInterval(interval);
@@ -106,6 +110,24 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
       }
     } catch (error) {
       console.error('Error loading user QR codes:', error);
+    }
+  };
+
+  const loadUnreadMessageCount = async () => {
+    try {
+      const { count, error } = await supabase
+        .from('messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('recipient_id', user.id)
+        .eq('is_read', false);
+
+      if (error) {
+        console.error('Error loading unread message count:', error);
+      } else {
+        setUnreadMessageCount(count || 0);
+      }
+    } catch (error) {
+      console.error('Error loading unread message count:', error);
     }
   };
 
@@ -216,7 +238,14 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   if (currentView === 'messages') {
-    return <UserMessages onBack={() => setCurrentView('dashboard')} userId={user.id} />;
+    return <UserMessages onBack={() => {
+      setCurrentView('dashboard');
+      loadUnreadMessageCount(); // Refresh unread count when returning
+    }} userId={user.id} />;
+  }
+
+  if (currentView === 'tribes') {
+    return <UserTribes user={user} onBack={() => setCurrentView('dashboard')} />;
   }
 
   return (
@@ -260,12 +289,6 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 title: 'My Info',
                 icon: <UserIcon className="h-12 w-12" />,
                 onClick: () => setCurrentView('nickname' as const),
-              },
-              {
-                id: 'games',
-                title: 'Games',
-                icon: <Gamepad2 className="h-12 w-12" />,
-                onClick: () => setCurrentView('games' as const),
               },
               {
                 id: 'social',
@@ -312,15 +335,18 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 {
                   id: 'messages',
                   title: 'Tribe Messages',
-                  icon: <MessageCircle className="h-12 w-12" />,
+                  icon: (
+                    <div className="relative">
+                      <MessageCircle className="h-12 w-12" />
+                      {unreadMessageCount > 0 && (
+                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                          {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
+                        </div>
+                      )}
+                    </div>
+                  ),
                   onClick: () => setCurrentView('messages' as const),
                 },
-              {
-                id: 'theme-changer',
-                title: `Change Theme\n(${getThemeDisplayName(currentTheme)})`,
-                icon: <Sun className="h-12 w-12" />,
-                onClick: cycleTheme,
-              },
             ];
             return (
               <ReorderableTilesLogic 
@@ -359,11 +385,11 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                     <div className="relative">
                       {/* Event Image */}
                       {qrCode.parties?.photo_url && (
-                        <div className="h-48 w-full overflow-hidden">
+                        <div className="h-64 w-full overflow-hidden">
                           <img 
                             src={qrCode.parties.photo_url} 
                             alt={qrCode.parties.name}
-                            className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            className="h-full w-full object-contain group-hover:scale-105 transition-transform duration-500"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                         </div>

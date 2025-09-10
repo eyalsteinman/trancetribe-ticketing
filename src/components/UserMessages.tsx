@@ -84,6 +84,10 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId }) => {
   };
 
   const deleteMessage = async (messageId: string) => {
+    if (!confirm('Are you sure you want to delete this message?')) {
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('messages')
@@ -102,7 +106,7 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId }) => {
         title: "Message deleted",
         description: "The message has been deleted successfully."
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting message:', error);
       toast({
         title: "Error",
@@ -240,7 +244,7 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId }) => {
                               e.stopPropagation();
                               deleteMessage(message.id);
                             }}
-                            className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                            className="h-6 w-6 p-0 text-black hover:text-destructive"
                           >
                             <Trash2 className="h-3 w-3" />
                           </Button>
@@ -256,6 +260,20 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId }) => {
                     </CardContent>
                   </Card>
                 ))}
+              </div>
+            )}
+
+            {!loading && (
+              <div className="mt-6 pt-6 border-t border-border">
+                <Button
+                  onClick={() => {
+                    // Navigate to tribes (will be handled by parent)
+                    window.dispatchEvent(new CustomEvent('navigateToTribes'));
+                  }}
+                  className="w-full bg-primary text-white hover:bg-primary/90"
+                >
+                  Create Your Own Tribe
+                </Button>
               </div>
             )}
           </CardContent>
