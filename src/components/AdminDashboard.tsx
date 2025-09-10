@@ -28,6 +28,7 @@ import AdminGuestList from './AdminGuestList';
 import BarTabManager from './BarTabManager';
 import BarTabScanner from './BarTabScanner';
 import FAQContact from './FAQContact';
+import AdminEmailSender from './AdminEmailSender';
 import { useTheme } from '@/hooks/useDarkMode';
 
 interface AdminDashboardProps {
@@ -53,7 +54,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
-  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'nickname' | 'my-productions' | 'manage-productions' | 'guest-list' | 'bar-tab' | 'bar-tab-scanner' | 'faq'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'nickname' | 'my-productions' | 'manage-productions' | 'guest-list' | 'bar-tab' | 'bar-tab-scanner' | 'faq' | 'email'>('dashboard');
   const [adminNickname, setAdminNickname] = useState('');
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [nicknameInput, setNicknameInput] = useState('');
@@ -411,6 +412,16 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
 
   if (currentView === 'faq') {
     return <FAQContact user={user} onBack={() => setCurrentView('dashboard')} isAdmin={true} />;
+  }
+
+  if (currentView === 'email') {
+    return (
+      <AdminEmailSender 
+        onBack={() => setCurrentView('dashboard')} 
+        adminEmail={user?.email || ''} 
+        adminName={user?.user_metadata?.display_name || user?.user_metadata?.full_name}
+      />
+    );
   }
 
   if (currentView === 'scanner') {
