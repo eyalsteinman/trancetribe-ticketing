@@ -193,7 +193,7 @@ const AdminSignupNew = ({ onBack }: AdminSignupNewProps) => {
         backgroundColor
       }}
     >
-      <div className="w-full">
+      <div className="w-full max-w-none">
         <div className="flex items-center justify-between mb-6">
           <h1 
             className="text-2xl font-bold"
@@ -206,8 +206,7 @@ const AdminSignupNew = ({ onBack }: AdminSignupNewProps) => {
           </Button>
         </div>
 
-        <div className="w-full">
-          <Card>
+        <Card className="w-full max-w-none">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <UserPlus className="h-5 w-5" />
@@ -326,7 +325,6 @@ const AdminSignupNew = ({ onBack }: AdminSignupNewProps) => {
             </Button>
           </CardContent>
         </Card>
-        </div>
       </div>
     </div>
   );

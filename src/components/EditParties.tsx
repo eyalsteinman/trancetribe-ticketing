@@ -352,9 +352,9 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
             isBackgroundDark={isBackgroundDark}
           />
           
-          <div className="w-full pt-20 space-y-6 text-left px-4">
+          <div className="w-full max-w-none pt-20 space-y-6 text-left">
 
-          <Card>
+          <Card className="w-full max-w-none mx-4">
             <CardHeader>
               <CardTitle>Party Details</CardTitle>
             </CardHeader>
@@ -512,7 +512,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                             }}
                             className="h-4 w-4"
                           />
-                          Optional
+                          Optional (either)
                         </label>
                         <label className="flex items-center gap-2 text-sm">
                           <input
@@ -620,8 +620,8 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           isBackgroundDark={isBackgroundDark}
         />
         
-        <div className="w-full pt-20 space-y-6 text-left px-4">
-          <Card>
+        <div className="w-full max-w-none pt-20 space-y-6 text-left">
+          <Card className="w-full max-w-none mx-4">
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle>All Parties</CardTitle>

@@ -186,9 +186,9 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
         isBackgroundDark={isBackgroundDark}
       />
       
-      <div className="w-full pt-20 space-y-6 text-left px-4">
+      <div className="w-full max-w-none pt-20 space-y-6 text-left">
 
-        <Card>
+        <Card className="w-full max-w-none mx-4">
           <CardHeader>
             <CardTitle>Party Details</CardTitle>
           </CardHeader>
@@ -299,7 +299,7 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
                           }}
                           className="h-4 w-4"
                         />
-                        Optional
+                        Optional (either)
                       </label>
                       <label className="flex items-center gap-2 text-sm">
                         <input
