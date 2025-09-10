@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useBackground } from '@/contexts/BackgroundContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import LanguageSelector from './LanguageSelector';
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -8,6 +10,7 @@ interface SplashScreenProps {
 const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const { backgroundColor, isBackgroundDark } = useBackground();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -28,13 +31,12 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
       }}
     >
       <div className="text-center">
-        <p className="text-lg font-light mb-4">welcome to</p>
+        <LanguageSelector />
+        <p className="text-lg font-light mb-4">{t('welcome_to')}</p>
         <h1 className="text-6xl font-bold font-sans leading-tight">
-          TRANCE
-          <br />
-          TRIBES
+          {t('trance_tribes')}
         </h1>
-        <p className="text-lg font-light mt-4">ticket generator</p>
+        <p className="text-lg font-light mt-4">{t('ticket_generator')}</p>
       </div>
     </div>
   );

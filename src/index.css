@@ -189,15 +189,38 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
     overflow-x: hidden;
+    width: 100vw;
+    max-width: 100vw;
   }
 
-  /* Container section styling - full width, separated sections */
+  /* Remove ALL container restrictions for maximum width usage */
+  .container,
+  .container-section,
+  .max-w-md,
+  .max-w-lg,
+  .max-w-xl,
+  .max-w-2xl,
+  .max-w-3xl,
+  .max-w-4xl,
+  .max-w-5xl,
+  .max-w-6xl,
+  .max-w-7xl {
+    max-width: none !important;
+    width: 100% !important;
+  }
+
+  /* Remove visible container boundaries */
   .container-section {
-    @apply w-full px-4 py-6 bg-card border-b border-border/30;
+    @apply w-full px-4 py-6;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 
-  .container-section:last-child {
-    @apply border-b-0;
+  /* Ensure all pages use full width */
+  .min-h-screen {
+    width: 100vw !important;
+    max-width: 100vw !important;
   }
 
   /* Remove all rounded corners */

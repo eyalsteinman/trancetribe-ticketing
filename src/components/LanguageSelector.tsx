@@ -1,0 +1,38 @@
+import React from 'react';
+import { useLanguage, Language } from '@/contexts/LanguageContext';
+
+const LanguageSelector = () => {
+  const { language, setLanguage } = useLanguage();
+
+  const languages: { code: Language; label: string }[] = [
+    { code: 'en', label: 'EN' },
+    { code: 'he', label: 'HE' },
+    { code: 'sp', label: 'SP' },
+    { code: 'fr', label: 'FR' },
+    { code: 'it', label: 'IT' },
+  ];
+
+  return (
+    <div className="flex items-center justify-center gap-2 mb-4">
+      {languages.map((lang, index) => (
+        <React.Fragment key={lang.code}>
+          <button
+            onClick={() => setLanguage(lang.code)}
+            className={`text-sm font-medium transition-colors ${
+              language === lang.code
+                ? 'text-primary font-bold'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            {lang.label}
+          </button>
+          {index < languages.length - 1 && (
+            <span className="text-muted-foreground">/</span>
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+};
+
+export default LanguageSelector;

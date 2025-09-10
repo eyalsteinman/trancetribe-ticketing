@@ -312,16 +312,16 @@ const AuthForm = () => {
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center p-4 transition-colors duration-500"
+      className="min-h-screen w-full flex items-center justify-center p-4 transition-colors duration-500"
       style={{ 
         backgroundColor,
         color: isBackgroundDark ? '#ffffff' : '#000000'
       }}
     >
-      <div className="w-full max-w-4xl space-y-6">
+      <div className="w-full space-y-6">
         <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} carouselOnly />
 
-        <div className="max-w-md mx-auto">
+        <div className="w-full">
           <div className="text-center">
             <h1 className="text-3xl font-bold">TRANCE TRIBES</h1>
             <p className="opacity-75 mt-2">Choose your access type</p>

@@ -283,33 +283,32 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   return (
-    <div className={`min-h-screen transition-colors duration-500`}>
-      <div className="w-full">
-        {/* Header */}
-        <div className="container-section relative pt-2 pb-6">
-          <h1 className="text-2xl font-bold text-foreground mb-1">
-            {nickname ? `Welcome back,` : 'User Dashboard'}
-          </h1>
-          {nickname && (
-            <p className="text-lg text-primary font-semibold">{nickname}!</p>
-          )}
-          <Button 
-            variant="outline" 
-            size="icon"
-            onClick={async () => {
-              await handleSignOut();
-              setTimeout(() => {
-                window.location.reload();
-              }, 2000);
-            }} 
-            className="absolute top-2 right-0 z-50 on-color back-button"
-            aria-label="Sign Out"
-          >
-            <LogOut className="h-4 w-4" />
-          </Button>
-        </div>
+    <div className="min-h-screen w-full transition-colors duration-500 p-4">
+      {/* Header */}
+      <div className="relative pt-2 pb-6">
+        <h1 className="text-2xl font-bold text-foreground mb-1">
+          {nickname ? `Welcome back,` : 'User Dashboard'}
+        </h1>
+        {nickname && (
+          <p className="text-lg text-primary font-semibold">{nickname}!</p>
+        )}
+        <Button 
+          variant="outline" 
+          size="icon"
+          onClick={async () => {
+            await handleSignOut();
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+          }} 
+          className="absolute top-2 right-4 z-50 on-color back-button"
+          aria-label="Sign Out"
+        >
+          <LogOut className="h-4 w-4" />
+        </Button>
+      </div>
 
-        <div className="container-section">
+      <div className="w-full">
           {(() => {
             const items = [
               {
@@ -410,10 +409,10 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           })()}
         </div>
 
-        {/* QR Codes Section */}
-        {userQRCodes.length > 0 && (
-          <div className="container-section">
-            <h2 className="text-lg font-bold text-foreground mb-4">Your Tickets</h2>
+      {/* QR Codes Section */}
+      {userQRCodes.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-lg font-bold text-foreground mb-4">Your Tickets</h2>
             <div className="space-y-4">
               {userQRCodes.map((qrCode) => (
                 <div 
@@ -525,13 +524,12 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           </DialogContent>
         </Dialog>
         
-        {/* Footer */}
-        <div className="container-section mt-12 pt-6 border-t border-border/50 text-center space-y-3">
-          <h3 className="font-bold text-xl text-primary">Trance Tribes Tickets</h3>
-          <p className="text-sm text-muted-foreground">
-            Created by Eyal Steinman, all rights reserved 2025
-          </p>
-        </div>
+      {/* Footer */}
+      <div className="mt-12 pt-6 border-t border-border/50 text-center space-y-3">
+        <h3 className="font-bold text-xl text-primary">Trance Tribes Tickets</h3>
+        <p className="text-sm text-muted-foreground">
+          Created by Eyal Steinman, all rights reserved 2025
+        </p>
       </div>
     </div>
   );
