@@ -7,7 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
 import { Badge } from '@/components/ui/badge';
-import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ScanBarcode, Wine, Cog, ArrowLeft, LogOut } from 'lucide-react';
+import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ScanBarcode, Wine, Cog, ArrowLeft, LogOut, MessageCircle } from 'lucide-react';
 import PageHeader from '@/components/ui/page-header';
 import CreateParty from './CreateParty';
 import EditParties from './EditParties';
@@ -28,7 +28,7 @@ import AdminGuestList from './AdminGuestList';
 import BarTabManager from './BarTabManager';
 import BarTabScanner from './BarTabScanner';
 import FAQContact from './FAQContact';
-import AdminEmailSender from './AdminEmailSender';
+import AdminMessageSender from './AdminMessageSender';
 import { useTheme } from '@/hooks/useDarkMode';
 
 interface AdminDashboardProps {
@@ -54,7 +54,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
-  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'nickname' | 'my-productions' | 'manage-productions' | 'guest-list' | 'bar-tab' | 'bar-tab-scanner' | 'faq' | 'email'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'nickname' | 'my-productions' | 'manage-productions' | 'guest-list' | 'bar-tab' | 'bar-tab-scanner' | 'faq' | 'message'>('dashboard');
   const [adminNickname, setAdminNickname] = useState('');
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [nicknameInput, setNicknameInput] = useState('');
@@ -492,11 +492,11 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     return <FAQContact user={user} onBack={() => setCurrentView('dashboard')} isAdmin={true} />;
   }
 
-  if (currentView === 'email') {
+  if (currentView === 'message') {
     return (
-      <AdminEmailSender 
+      <AdminMessageSender 
         onBack={() => setCurrentView('dashboard')} 
-        adminEmail={user?.email || ''} 
+        adminId={user.id}
         adminName={user?.user_metadata?.display_name || user?.user_metadata?.full_name}
       />
     );
@@ -704,7 +704,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             { id: 'bar-tab-scanner', title: 'Bartab Scanner', icon: <ScanBarcode className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab-scanner' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'faq', title: 'FAQ & Contact', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('faq' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'theme-changer', title: `Change Theme\n(${getThemeDisplayName(currentTheme)})`, icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: cycleTheme },
-            { id: 'email', title: 'Send Email', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('email' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'message', title: 'Message Users', icon: <MessageCircle className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('message' as const); setTimeout(() => loadParties(), 100); } },
           ];
           return (
             <ReorderableTilesLogic 

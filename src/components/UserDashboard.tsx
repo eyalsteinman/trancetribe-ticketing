@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
-import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut, Users, IdCard, Heart, Wine, Moon, Sun } from 'lucide-react';
+import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut, Users, IdCard, Heart, Wine, Moon, Sun, MessageCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { QRCodeSVG } from 'qrcode.react';
 import UserParties from './UserParties';
@@ -25,6 +25,7 @@ import PersonalCode from './PersonalCode';
 import FriendsCodes from './FriendsCodes';
 import UserBarTab from './UserBarTab';
 import FAQContact from './FAQContact';
+import UserMessages from './UserMessages';
 import { useTheme } from '@/hooks/useDarkMode';
 import PageHeader from './ui/page-header';
 
@@ -33,7 +34,7 @@ interface UserDashboardProps {
 }
 
 const UserDashboard = ({ user }: UserDashboardProps) => {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance' | 'personal-code' | 'friends-codes' | 'bar-tab' | 'faq'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance' | 'personal-code' | 'friends-codes' | 'bar-tab' | 'faq' | 'messages'>('dashboard');
   const [nickname, setNickname] = useState<string>('');
   const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
   const [selectedProduction, setSelectedProduction] = useState<{id: string; name: string; logo_url: string | null; vip_description: string | null; vip_price: number | null} | null>(null);
@@ -214,6 +215,10 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     return <FAQContact user={user} onBack={() => setCurrentView('dashboard')} isAdmin={false} />;
   }
 
+  if (currentView === 'messages') {
+    return <UserMessages onBack={() => setCurrentView('dashboard')} userId={user.id} />;
+  }
+
   return (
     <div className={`min-h-screen transition-colors duration-500`}>
       <div className="w-full">
@@ -298,12 +303,18 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 icon: <Wine className="h-12 w-12" />,
                 onClick: () => setCurrentView('bar-tab' as const),
               },
-              {
-                id: 'faq',
-                title: 'FAQ & Contact',
-                icon: <Users className="h-12 w-12" />,
-                onClick: () => setCurrentView('faq' as const),
-              },
+                {
+                  id: 'faq',
+                  title: 'FAQ & Contact',
+                  icon: <Users className="h-12 w-12" />,
+                  onClick: () => setCurrentView('faq' as const),
+                },
+                {
+                  id: 'messages',
+                  title: 'Tribe Messages',
+                  icon: <MessageCircle className="h-12 w-12" />,
+                  onClick: () => setCurrentView('messages' as const),
+                },
               {
                 id: 'theme-changer',
                 title: `Change Theme\n(${getThemeDisplayName(currentTheme)})`,

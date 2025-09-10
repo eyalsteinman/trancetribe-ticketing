@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Check, UserCheck, Mail, MessageCircle } from 'lucide-react';
+import { Check, UserCheck, Users, MessageCircle } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
 import PageHeader from '@/components/ui/page-header';
 import { User } from '@supabase/supabase-js';
@@ -300,7 +300,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
     }
   };
 
-  const sendEmail = async () => {
+  const sendMessage = async () => {
     if (!emailMessage.trim()) {
       toast({
         title: "Error",
@@ -313,40 +313,41 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
     try {
       if (emailDialog.guestId === 'all') {
         // Send to all arriving guests
-        const emails = emailDialog.email.split(', ');
-        const promises = emails.map(email => 
-          supabase.functions.invoke('send-guest-message', {
-            body: {
-              to: email,
-              message: emailMessage,
-              subject: `Message about your party registration`,
-              partyName: parties.find(p => p.id === selectedParty)?.name,
-              replyTo: user.email || undefined,
-            }
-          })
-        );
-        
-        await Promise.all(promises);
+        const userIds = arrivingGuests.map(guest => guest.user_id);
+        const messagesToInsert = userIds.map(userId => ({
+          created_by: user.id,
+          recipient_id: userId,
+          production_id: parties.find(p => p.id === selectedParty)?.production_id || null,
+          subject: `Message about ${parties.find(p => p.id === selectedParty)?.name || 'your party'}`,
+          content: emailMessage.trim()
+        }));
+
+        const { error } = await supabase
+          .from('messages')
+          .insert(messagesToInsert);
+
+        if (error) throw error;
         
         toast({
           title: "Success",
-          description: `Message sent to ${emails.length} guests successfully`,
+          description: `Message sent to ${userIds.length} guests successfully`,
         });
       } else {
         // Send to single guest
-        const { data, error } = await supabase.functions.invoke('send-guest-message', {
-          body: {
-            to: emailDialog.email,
-            message: emailMessage,
-            subject: `Message about your party registration`,
-            partyName: parties.find(p => p.id === selectedParty)?.name,
-            replyTo: user.email || undefined,
-          }
-        });
+        const guest = arrivingGuests.find(g => g.id === emailDialog.guestId);
+        if (!guest) return;
 
-        if (error) {
-          throw error;
-        }
+        const { error } = await supabase
+          .from('messages')
+          .insert({
+            created_by: user.id,
+            recipient_id: guest.user_id,
+            production_id: parties.find(p => p.id === selectedParty)?.production_id || null,
+            subject: `Message about ${parties.find(p => p.id === selectedParty)?.name || 'your party'}`,
+            content: emailMessage.trim()
+          });
+
+        if (error) throw error;
 
         toast({
           title: "Success",
@@ -366,51 +367,21 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
     setEmailMessage('');
   };
 
-  const createWhatsAppGroup = async () => {
-    if (!selectedParty) return;
-    
-    const phoneNumbers = arrivingGuests
-      .filter(guest => guest.profiles?.phone_number)
-      .map(guest => guest.profiles!.phone_number);
-    
-    if (phoneNumbers.length === 0) {
+  const messageGroup = async () => {
+    if (arrivingGuests.length === 0) {
       toast({
-        title: "Error",
-        description: "No phone numbers found for arriving guests",
-        variant: "destructive"
+        title: "No guests to message",
+        description: "There are no arriving guests to send messages to.",
+        variant: "destructive",
       });
       return;
     }
 
-    try {
-      const party = parties.find(p => p.id === selectedParty);
-      if (!party) return;
-
-      const { data, error } = await supabase.functions.invoke('create-whatsapp-group', {
-        body: {
-          partyName: party.name,
-          partyDate: party.date,
-          productionName: party.production_name || 'Party',
-          phoneNumbers
-        }
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      toast({
-        title: "Success",
-        description: `WhatsApp group created with ${phoneNumbers.length} guests`,
-      });
-    } catch (error: any) {
-      console.error('Error creating WhatsApp group:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create WhatsApp group. Please try again.",
-        variant: "destructive"
-      });
-    }
+    setEmailDialog({
+      open: true,
+      guestId: 'all',
+      email: 'all-guests'
+    });
   };
 
   return (
@@ -617,7 +588,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                               className="p-1"
                               title="Send message"
                             >
-                              <Mail className="h-4 w-4" />
+                              <MessageCircle className="h-4 w-4" />
                             </Button>
                           </div>
                         </TableCell>
@@ -634,34 +605,23 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
               <div className="flex gap-2 mt-4 pt-4 border-t">
                 <Button
                   variant="outline"
-                  onClick={() => {
-                    const emails = arrivingGuests
-                      .filter(guest => guest.profiles?.email)
-                      .map(guest => guest.profiles!.email)
-                      .join(', ');
-                    setEmailDialog({
-                      open: true,
-                      guestId: 'all',
-                      email: emails
-                    });
-                  }}
+                  onClick={() => setEmailDialog({
+                    open: true,
+                    guestId: 'all',
+                    email: 'all-guests'
+                  })}
                   className="flex-1"
                 >
-                  <Mail className="h-4 w-4 mr-2" />
-                  Email All ({arrivingGuests.filter(g => g.profiles?.email).length})
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Message All ({arrivingGuests.length})
                 </Button>
                 <Button
                   variant="outline"
-                  onClick={() => {
-                    toast({
-                      title: "WhatsApp Feature",
-                      description: "WhatsApp messaging requires phone numbers to be collected first. This feature will be available once phone numbers are added to user profiles.",
-                      variant: "default"
-                    });
-                  }}
+                  onClick={messageGroup}
                   className="flex-1"
                 >
-                  WhatsApp All
+                  <Users className="h-4 w-4 mr-2" />
+                  Message Group
                 </Button>
               </div>
             )}
@@ -679,7 +639,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-black">To: {emailDialog.email}</label>
+                <label className="text-sm font-medium text-black">To: {emailDialog.guestId === 'all' ? 'All arriving guests' : emailDialog.email}</label>
               </div>
               <div>
                 <label className="text-sm font-medium text-black">Message</label>
@@ -695,7 +655,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
               <Button variant="outline" onClick={() => setEmailDialog({ open: false, guestId: '', email: '' })}>
                 Cancel
               </Button>
-              <Button onClick={sendEmail}>Send Message</Button>
+              <Button onClick={sendMessage}>Send Message</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

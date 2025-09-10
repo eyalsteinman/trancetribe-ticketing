@@ -250,6 +250,50 @@ export type Database = {
         }
         Relationships: []
       }
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string
+          id: string
+          is_read: boolean
+          production_id: string | null
+          recipient_id: string | null
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by: string
+          id?: string
+          is_read?: boolean
+          production_id?: string | null
+          recipient_id?: string | null
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          is_read?: boolean
+          production_id?: string | null
+          recipient_id?: string | null
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_production_id_fkey"
+            columns: ["production_id"]
+            isOneToOne: false
+            referencedRelation: "productions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       parties: {
         Row: {
           created_at: string
