@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_tile_state: {
+        Row: {
+          admin_id: string
+          created_at: string
+          last_opened_at: string
+          tile: string
+          updated_at: string
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string
+          last_opened_at?: string
+          tile: string
+          updated_at?: string
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string
+          last_opened_at?: string
+          tile?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bar_tab_transactions: {
         Row: {
           amount_spent: number

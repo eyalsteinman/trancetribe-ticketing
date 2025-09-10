@@ -120,12 +120,16 @@ const AdminEmailSender: React.FC<AdminEmailSenderProps> = ({ onBack, adminEmail,
             <CardContent className="space-y-6">
               {/* From Section */}
               <div className="space-y-2">
-                <Label>From</Label>
+                <Label htmlFor="from">From</Label>
                 <Input 
+                  id="from"
                   value={`${adminName || 'Admin'} <${adminEmail}>`} 
                   disabled 
                   className="bg-muted"
                 />
+                <p className="text-xs text-muted-foreground">
+                  Recipients will see this as the sender and can reply to {adminEmail}
+                </p>
               </div>
 
               {/* Recipient Selection */}

@@ -47,7 +47,7 @@ const handler = async (req: Request): Promise<Response> => {
         <div style="white-space: pre-wrap;">${message.replace(/\n/g, '<br>')}</div>
         <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
         <p style="font-size: 12px; color: #666;">
-          Sent by ${fromName || "Admin"} (${fromEmail})
+          From: ${fromName || "Admin"} (${fromEmail})
         </p>
       </div>`,
       reply_to: fromEmail,

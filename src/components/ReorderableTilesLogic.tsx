@@ -18,6 +18,7 @@ interface TileItem {
   title: string | React.ReactNode;
   icon: React.ReactNode;
   onClick: () => void;
+  notificationCount?: number;
 }
 
 interface ReorderableTilesLogicProps {
@@ -75,6 +76,11 @@ const SortableTile: React.FC<{
       <span className="text-sm font-medium text-foreground whitespace-pre-line">
         {item.title}
       </span>
+      {item.notificationCount && item.notificationCount > 0 && (
+        <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full min-w-6 h-6 flex items-center justify-center font-bold">
+          {item.notificationCount}
+        </div>
+      )}
     </div>
   );
 };

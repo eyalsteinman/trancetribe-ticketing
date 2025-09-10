@@ -60,6 +60,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
   const [arrivingGuests, setArrivingGuests] = useState<ArrivingGuest[]>([]);
   const [scannedGuests, setScannedGuests] = useState<ScannedGuest[]>([]);
   const [loading, setLoading] = useState(false);
+  const [sortBy, setSortBy] = useState<'name' | 'surname' | 'recent' | 'approved'>('recent');
   const [emailDialog, setEmailDialog] = useState<{open: boolean; guestId: string; email: string}>({
     open: false,
     guestId: '',
@@ -144,7 +145,22 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
           };
         });
 
-        setArrivingGuests(combinedData);
+        // Sort arriving guests based on current sortBy
+        const sortedData = [...combinedData].sort((a, b) => {
+          switch (sortBy) {
+            case 'name':
+              return (a.profiles?.first_name || '').localeCompare(b.profiles?.first_name || '');
+            case 'surname':
+              return (a.profiles?.last_name || '').localeCompare(b.profiles?.last_name || '');
+            case 'approved':
+              return Number(b.is_approved) - Number(a.is_approved);
+            case 'recent':
+            default:
+              return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+          }
+        });
+
+        setArrivingGuests(sortedData);
       } else {
         // Load scanned guests
         const { data: qrData, error: qrError } = await supabase
@@ -479,6 +495,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                       <TableHead className="text-black">First Name</TableHead>
                       <TableHead className="text-black">Last Name</TableHead>
                       <TableHead className="text-black">Email</TableHead>
+                      <TableHead className="text-black">Phone</TableHead>
                       <TableHead className="text-black">Scanned At</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -496,6 +513,9 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                           {guest.profiles?.email || 'No email'}
                         </TableCell>
                         <TableCell className="text-black text-sm">
+                          {guest.profiles?.phone_number || 'No phone'}
+                        </TableCell>
+                        <TableCell className="text-black text-sm">
                           {new Date(guest.scanned_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                         </TableCell>
                       </TableRow>
@@ -509,13 +529,29 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                   No arriving guests yet
                 </p>
               ) : (
-                <Table>
+                <>
+                  {/* Sort dropdown */}
+                  <div className="mb-4">
+                    <label className="text-sm font-medium text-black mr-2">Order by:</label>
+                    <select 
+                      className="p-2 border rounded-md text-black bg-white"
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value as 'name' | 'surname' | 'recent' | 'approved')}
+                    >
+                      <option value="recent">Recently Added</option>
+                      <option value="name">First Name</option>
+                      <option value="surname">Last Name</option>
+                      <option value="approved">Approval Status</option>
+                    </select>
+                  </div>
+                  <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead className="text-black">#</TableHead>
                       <TableHead className="text-black">First Name</TableHead>
                       <TableHead className="text-black">Last Name</TableHead>
                       <TableHead className="text-black">Email</TableHead>
+                      <TableHead className="text-black">Phone</TableHead>
                       <TableHead className="text-black">Status</TableHead>
                       <TableHead className="text-black">Actions</TableHead>
                     </TableRow>
@@ -530,10 +566,13 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                         <TableCell className="text-black">
                           {guest.profiles?.last_name || 'Unknown'}
                         </TableCell>
-                        <TableCell className="text-black text-sm">
-                          {guest.profiles?.email || 'No email'}
-                        </TableCell>
-                        <TableCell>
+                         <TableCell className="text-black text-sm">
+                           {guest.profiles?.email || 'No email'}
+                         </TableCell>
+                         <TableCell className="text-black text-sm">
+                           {guest.profiles?.phone_number || 'No phone'}
+                         </TableCell>
+                         <TableCell>
                           {guest.is_approved ? (
                             <Badge variant="default" className="bg-green-600">Approved</Badge>
                           ) : (
@@ -583,7 +622,8 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                       </TableRow>
                     ))}
                   </TableBody>
-                </Table>
+                 </Table>
+                </>
               )
             )}
             

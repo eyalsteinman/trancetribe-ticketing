@@ -58,6 +58,8 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [adminNickname, setAdminNickname] = useState('');
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [nicknameInput, setNicknameInput] = useState('');
+  const [newRegisteredUsers, setNewRegisteredUsers] = useState(0);
+  const [newArrivingGuests, setNewArrivingGuests] = useState(0);
   
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
@@ -66,6 +68,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   useEffect(() => {
     loadParties();
     loadAdminProfile();
+    loadNotificationCounts();
   }, []);
 
   useEffect(() => {
@@ -309,6 +312,81 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         description: "Failed to save nickname",
         variant: "destructive"
       });
+    }
+  };
+
+  const loadNotificationCounts = async () => {
+    try {
+      // Get last opened timestamps for dashboard tiles
+      const { data: tileStates } = await supabase
+        .from('admin_tile_state')
+        .select('tile, last_opened_at')
+        .eq('admin_id', user.id)
+        .in('tile', ['registered-users', 'guest-list']);
+
+      const registeredUsersLastOpened = tileStates?.find(t => t.tile === 'registered-users')?.last_opened_at;
+      const guestListLastOpened = tileStates?.find(t => t.tile === 'guest-list')?.last_opened_at;
+
+      // Count new registered users
+      if (registeredUsersLastOpened) {
+        const { count: newUsersCount } = await supabase
+          .from('profiles')
+          .select('*', { count: 'exact', head: true })
+          .gt('created_at', registeredUsersLastOpened);
+        setNewRegisteredUsers(newUsersCount || 0);
+      } else {
+        // If never opened, count all users created in last 7 days
+        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+        const { count: newUsersCount } = await supabase
+          .from('profiles')
+          .select('*', { count: 'exact', head: true })
+          .gt('created_at', weekAgo);
+        setNewRegisteredUsers(newUsersCount || 0);
+      }
+
+      // Count new arriving guests
+      if (guestListLastOpened) {
+        const { count: newGuestsCount } = await supabase
+          .from('qr_codes')
+          .select('*', { count: 'exact', head: true })
+          .eq('is_scanned', false)
+          .gt('created_at', guestListLastOpened);
+        setNewArrivingGuests(newGuestsCount || 0);
+      } else {
+        // If never opened, count all arriving guests created in last 7 days
+        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+        const { count: newGuestsCount } = await supabase
+          .from('qr_codes')
+          .select('*', { count: 'exact', head: true })
+          .eq('is_scanned', false)
+          .gt('created_at', weekAgo);
+        setNewArrivingGuests(newGuestsCount || 0);
+      }
+    } catch (error) {
+      console.error('Error loading notification counts:', error);
+    }
+  };
+
+  const markTileAsOpened = async (tileId: string) => {
+    try {
+      await supabase
+        .from('admin_tile_state')
+        .upsert({
+          admin_id: user.id,
+          tile: tileId,
+          last_opened_at: new Date().toISOString()
+        }, {
+          onConflict: 'admin_id,tile'
+        });
+      
+      // Reset notification count for this tile
+      if (tileId === 'registered-users') {
+        setNewRegisteredUsers(0);
+      } else if (tileId === 'guest-list') {
+        setNewArrivingGuests(0);
+      }
+    } catch (error) {
+      console.error('Error marking tile as opened:', error);
     }
   };
 
@@ -593,19 +671,40 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         {(() => {
           const tiles = [
             { id: 'scanner', title: 'Camera Scan', icon: <Camera className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('scanner' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'guests', title: 'Guest List', icon: <List className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('guest-list' as const); setTimeout(() => loadParties(), 100); } },
+            { 
+              id: 'guests', 
+              title: 'Guest List', 
+              icon: <List className="h-8 w-8 mb-2" />, 
+              onClick: () => { 
+                markTileAsOpened('guest-list'); 
+                setCurrentView('guest-list' as const); 
+                setTimeout(() => loadParties(), 100); 
+              },
+              notificationCount: newArrivingGuests
+            },
             { id: 'create-party', title: 'Create Party', icon: <Plus className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('create-party' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'edit-parties', title: 'Edit Parties', icon: <Edit className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('edit-parties' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'my-productions', title: 'My Productions', icon: <Building2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('my-productions' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'manage-productions', title: 'Manage Productions', icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('manage-productions' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'manage-admins', title: 'Add Admin', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('manage-admins' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'registered-users', title: 'Registered Users', icon: <UserCheck className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('registered-users' as const); setTimeout(() => loadParties(), 100); } },
+            { 
+              id: 'registered-users', 
+              title: 'Registered Users', 
+              icon: <UserCheck className="h-8 w-8 mb-2" />, 
+              onClick: () => { 
+                markTileAsOpened('registered-users'); 
+                setCurrentView('registered-users' as const); 
+                setTimeout(() => loadParties(), 100); 
+              },
+              notificationCount: newRegisteredUsers
+            },
             { id: 'admin-games', title: 'Admin Games', icon: <Gamepad2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('admin-games' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'nickname', title: 'My Info', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('nickname' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'bar-tab', title: 'Bar Tab', icon: <Wine className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'bar-tab-scanner', title: 'Bartab Scanner', icon: <ScanBarcode className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab-scanner' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'faq', title: 'FAQ & Contact', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('faq' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'theme-changer', title: `Change Theme\n(${getThemeDisplayName(currentTheme)})`, icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: cycleTheme },
+            { id: 'email', title: 'Send Email', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('email' as const); setTimeout(() => loadParties(), 100); } },
           ];
           return (
             <ReorderableTilesLogic 
