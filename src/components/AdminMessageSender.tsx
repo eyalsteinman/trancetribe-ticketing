@@ -194,7 +194,7 @@ const AdminMessageSender: React.FC<AdminMessageSenderProps> = ({
                   <SelectValue placeholder="Select a production" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">General Message</SelectItem>
+                  <SelectItem value="general">General Message</SelectItem>
                   {productions.map((production) => (
                     <SelectItem key={production.id} value={production.id}>
                       {production.name}
