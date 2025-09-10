@@ -221,6 +221,15 @@ export const translations = {
     'spanish': 'Español',
     'french': 'Français',
     'italian': 'Italiano',
+    
+    // Profile completion
+    'complete_your_profile': 'Complete Your Profile',
+    'profile_completion_required': 'Please complete your profile to purchase tickets',
+    'phone_number': 'Phone Number',
+    'updating': 'Updating...',
+    'complete_profile': 'Complete Profile',
+    'profile_updated_successfully': 'Profile updated successfully',
+    'please_fill_all_fields': 'Please fill in all required fields',
   },
   
   he: {
@@ -445,6 +454,15 @@ export const translations = {
     'spanish': 'Español',
     'french': 'Français',
     'italian': 'Italiano',
+    
+    // Profile completion
+    'complete_your_profile': 'השלם את הפרופיל שלך',
+    'profile_completion_required': 'אנא השלם את הפרופיל שלך כדי לרכוש כרטיסים',
+    'phone_number': 'מספר טלפון',
+    'updating': 'מעדכן...',
+    'complete_profile': 'השלם פרופיל',
+    'profile_updated_successfully': 'הפרופיל עודכן בהצלחה',
+    'please_fill_all_fields': 'אנא מלא את כל השדות הנדרשים',
   },
   
   sp: {
@@ -669,6 +687,15 @@ export const translations = {
     'spanish': 'Español',
     'french': 'Français',
     'italian': 'Italiano',
+    
+    // Profile completion
+    'complete_your_profile': 'Completa tu Perfil',
+    'profile_completion_required': 'Por favor completa tu perfil para comprar boletos',
+    'phone_number': 'Número de Teléfono',
+    'updating': 'Actualizando...',
+    'complete_profile': 'Completar Perfil',
+    'profile_updated_successfully': 'Perfil actualizado exitosamente',
+    'please_fill_all_fields': 'Por favor llena todos los campos requeridos',
   },
   
   fr: {
@@ -893,6 +920,15 @@ export const translations = {
     'spanish': 'Español',
     'french': 'Français',
     'italian': 'Italiano',
+    
+    // Profile completion
+    'complete_your_profile': 'Complétez votre Profil',
+    'profile_completion_required': 'Veuillez compléter votre profil pour acheter des billets',
+    'phone_number': 'Numéro de Téléphone',
+    'updating': 'Mise à jour...',
+    'complete_profile': 'Compléter le Profil',
+    'profile_updated_successfully': 'Profil mis à jour avec succès',
+    'please_fill_all_fields': 'Veuillez remplir tous les champs requis',
   },
   
   it: {
@@ -1117,5 +1153,14 @@ export const translations = {
     'spanish': 'Español',
     'french': 'Français',
     'italian': 'Italiano',
+    
+    // Profile completion
+    'complete_your_profile': 'Completa il tuo Profilo',
+    'profile_completion_required': 'Per favore completa il tuo profilo per acquistare biglietti',
+    'phone_number': 'Numero di Telefono',
+    'updating': 'Aggiornamento...',
+    'complete_profile': 'Completa Profilo',
+    'profile_updated_successfully': 'Profilo aggiornato con successo',
+    'please_fill_all_fields': 'Per favore compila tutti i campi richiesti',
   },
 };

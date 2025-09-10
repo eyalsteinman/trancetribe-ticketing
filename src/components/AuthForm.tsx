@@ -301,6 +301,62 @@ const AuthForm = () => {
     setShowAdminPassword(false);
   };
 
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`
+        }
+      });
+      
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign in with Google",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFacebookLogin = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'facebook',
+        options: {
+          redirectTo: `${window.location.origin}/`
+        }
+      });
+      
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign in with Facebook",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (showAdminPassword) {
     return (
       <AdminPasswordForm 
@@ -417,6 +473,37 @@ const AuthForm = () => {
                       {loading ? "Creating Account..." : "Create Account"}
                     </Button>
                   )}
+                  
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-background px-2 text-muted-foreground">
+                        Or continue with
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={handleGoogleLogin}
+                      disabled={loading}
+                      className="w-full"
+                    >
+                      Google
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={handleFacebookLogin}
+                      disabled={loading}
+                      className="w-full"
+                    >
+                      Facebook
+                    </Button>
+                  </div>
+                  
                   <Button 
                     onClick={() => setIsUserLogin(!isUserLogin)}
                     variant="outline"

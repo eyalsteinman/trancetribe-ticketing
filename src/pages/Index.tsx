@@ -6,6 +6,8 @@ import SplashScreen from '@/components/SplashScreen';
 import AuthForm from '@/components/AuthForm';
 import UserDashboard from '@/components/UserDashboard';
 import AdminDashboard from '@/components/AdminDashboard';
+import ProfileCompletion from '@/components/ProfileCompletion';
+import { useProfileCompletion } from '@/hooks/useProfileCompletion';
 
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -14,6 +16,7 @@ const Index = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const { backgroundColor, isBackgroundDark } = useBackground();
+  const { isProfileComplete, loading: profileLoading, refetchProfile } = useProfileCompletion();
 
   const checkAdminRole = async (userId: string) => {
     try {
@@ -75,8 +78,8 @@ const Index = () => {
     return <SplashScreen onComplete={handleSplashComplete} />;
   }
 
-  if (loading) {
-    console.log('Loading state, user:', user, 'isAdmin:', isAdmin);
+  if (loading || profileLoading) {
+    console.log('Loading state, user:', user, 'isAdmin:', isAdmin, 'profileLoading:', profileLoading);
     return (
       <div 
         className="min-h-screen flex items-center justify-center transition-colors duration-500"
@@ -94,6 +97,12 @@ const Index = () => {
   if (!user) {
     console.log('No user, showing auth form');
     return <AuthForm />;
+  }
+
+  // Check if user profile is incomplete (for non-admin users)
+  if (!isAdmin && !isProfileComplete) {
+    console.log('User profile incomplete, showing profile completion');
+    return <ProfileCompletion onProfileComplete={refetchProfile} />;
   }
 
   if (isAdmin) {
