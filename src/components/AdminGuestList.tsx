@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -70,6 +70,23 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
   
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
+
+  // Sort arriving guests when sortBy changes
+  const sortedArrivingGuests = useMemo(() => {
+    return [...arrivingGuests].sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          return (a.profiles?.first_name || '').localeCompare(b.profiles?.first_name || '');
+        case 'surname':
+          return (a.profiles?.last_name || '').localeCompare(b.profiles?.last_name || '');
+        case 'approved':
+          return Number(b.is_approved) - Number(a.is_approved);
+        case 'recent':
+        default:
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      }
+    });
+  }, [arrivingGuests, sortBy]);
 
   useEffect(() => {
     loadParties();
@@ -145,22 +162,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
           };
         });
 
-        // Sort arriving guests based on current sortBy
-        const sortedData = [...combinedData].sort((a, b) => {
-          switch (sortBy) {
-            case 'name':
-              return (a.profiles?.first_name || '').localeCompare(b.profiles?.first_name || '');
-            case 'surname':
-              return (a.profiles?.last_name || '').localeCompare(b.profiles?.last_name || '');
-            case 'approved':
-              return Number(b.is_approved) - Number(a.is_approved);
-            case 'recent':
-            default:
-              return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-          }
-        });
-
-        setArrivingGuests(sortedData);
+        setArrivingGuests(combinedData);
       } else {
         // Load scanned guests
         const { data: qrData, error: qrError } = await supabase
@@ -557,7 +559,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {arrivingGuests.map((guest, index) => (
+                    {sortedArrivingGuests.map((guest, index) => (
                       <TableRow key={guest.id}>
                         <TableCell className="text-black font-medium">{index + 1}</TableCell>
                         <TableCell className="text-black">

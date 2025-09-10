@@ -175,8 +175,7 @@ const ReorderableTiles: React.FC<ReorderableTilesProps> = ({ items, orderKey }) 
             <CardContent className="flex flex-col items-center justify-center p-6 select-none">
               {item.icon}
               <div className="mt-2 text-center leading-tight select-none">
-                <div className="text-sm font-semibold whitespace-nowrap">{getLabelLines(item.title)[0]}</div>
-                <div className="text-sm font-medium">{getLabelLines(item.title)[1] || "\u00A0"}</div>
+                <div className="text-sm font-semibold whitespace-nowrap">{item.title}</div>
               </div>
             </CardContent>
           </Card>

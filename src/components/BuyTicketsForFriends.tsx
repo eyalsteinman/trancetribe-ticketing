@@ -48,7 +48,7 @@ const BuyTicketsForFriends = ({ user, party, onBack }: BuyTicketsForFriendsProps
       // Verify friend codes exist and get user IDs
       const { data: profiles, error: profileError } = await supabase
         .from('profiles')
-        .select('user_id, personal_code, display_name')
+        .select('user_id, personal_code, display_name, email')
         .in('personal_code', validCodes);
 
       if (profileError || !profiles || profiles.length === 0) {
@@ -102,9 +102,30 @@ const BuyTicketsForFriends = ({ user, party, onBack }: BuyTicketsForFriendsProps
           variant: "destructive"
         });
       } else {
+        // Send QR codes to friends via email
+        for (let i = 0; i < profilesWithoutQRs.length; i++) {
+          const profile = profilesWithoutQRs[i];
+          const qrCode = qrCodes[i];
+          
+          try {
+            await supabase.functions.invoke('send-qr-code-email', {
+              body: {
+                to: profile.email,
+                qrCode: qrCode.code,
+                partyName: party.name,
+                userName: profile.display_name || profile.email,
+                partyDate: new Date(party.date).toLocaleDateString('en-GB'),
+                productionName: 'Event'
+              }
+            });
+          } catch (emailError) {
+            console.error(`Failed to send email to ${profile.email}:`, emailError);
+          }
+        }
+
         toast({
           title: "Success",
-          description: `Generated ${profilesWithoutQRs.length} tickets for friends! They will be sent to admin for approval.`,
+          description: `Generated ${profilesWithoutQRs.length} tickets for friends! QR codes sent to their emails.`,
         });
         onBack();
       }

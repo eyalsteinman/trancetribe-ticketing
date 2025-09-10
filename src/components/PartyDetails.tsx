@@ -246,7 +246,9 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
         .limit(1)
         .maybeSingle();
 
-      if (existingApproval) {
+      const isAutoApproved = existingApproval?.auto_approved;
+
+      if (isAutoApproved) {
         await supabase
           .from('qr_codes')
           .update({
@@ -255,15 +257,30 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
             approved_at: new Date().toISOString()
           })
           .eq('code', qrData);
+      }
+
+      // Send QR code via email
+      try {
+        await supabase.functions.invoke('send-qr-code-email', {
+          body: {
+            to: user.email,
+            qrCode: qrData,
+            partyName: party.name,
+            userName: user.display_name || user.email,
+            partyDate: new Date(party.date).toLocaleDateString('en-GB'),
+            productionName: production?.name || 'Event'
+          }
+        });
         
         toast({
-          title: "QR Code Generated & Approved",
-          description: "Your ticket is ready!"
+          title: isAutoApproved ? "QR Code Generated & Approved" : "QR Code Generated",
+          description: "Your QR code has been sent to your email!"
         });
-      } else {
+      } catch (emailError) {
+        console.error('Email sending failed:', emailError);
         toast({
-          title: "QR Code Generated",
-          description: "Your QR code has been submitted for approval."
+          title: isAutoApproved ? "QR Code Generated & Approved" : "QR Code Generated", 
+          description: isAutoApproved ? "Your ticket is ready!" : "Your QR code has been submitted for approval."
         });
       }
       

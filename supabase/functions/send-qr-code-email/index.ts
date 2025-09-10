@@ -18,6 +18,7 @@ interface QRCodeEmailRequest {
   partyName: string;
   userName?: string;
   partyDate?: string;
+  productionName?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -27,7 +28,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { to, qrCode, partyName, userName, partyDate }: QRCodeEmailRequest = await req.json();
+    const { to, qrCode, partyName, userName, partyDate, productionName }: QRCodeEmailRequest = await req.json();
 
     if (!to || !qrCode || !partyName) {
       return new Response(
@@ -52,7 +53,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "Party Admin <onboarding@resend.dev>",
       to: [to],
-      subject: `Your QR Code for ${partyName} - Approved!`,
+      subject: `Your QR Code for ${partyName}${productionName ? ` - ${productionName}` : ''}`,
       html,
     });
 
