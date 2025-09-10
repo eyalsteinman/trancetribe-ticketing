@@ -31,7 +31,37 @@ const BuyTicketsForFriends = ({ user, party, onBack }: BuyTicketsForFriendsProps
     setFriendCodes(newCodes);
   };
 
+  const checkRequiredSocials = async () => {
+    if (!party.required_socials || party.required_socials.length === 0) {
+      return true;
+    }
+
+    const { data: userSocials } = await supabase
+      .from('user_socials')
+      .select('platform')
+      .eq('user_id', user.id);
+
+    const userPlatforms = userSocials?.map(s => s.platform) || [];
+    const missingSocials = party.required_socials.filter(
+      required => !userPlatforms.includes(required)
+    );
+
+    if (missingSocials.length > 0) {
+      toast({
+        title: "Social Media Required",
+        description: `Please add your ${missingSocials.join(', ')} account(s) in your profile before generating tickets.`,
+        variant: "destructive"
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const generateTicketsForFriends = async () => {
+    const canGenerate = await checkRequiredSocials();
+    if (!canGenerate) return;
+
     const validCodes = friendCodes.filter(code => code.trim().length === 6);
     
     if (validCodes.length === 0) {

@@ -244,9 +244,10 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId, onOpenTribe
                                 deleteMessage(message.id);
                               }
                             }}
-                            className="h-6 w-6 p-0 text-black hover:text-destructive"
+                            className="h-6 w-6 p-0 relative"
                           >
-                            <Trash2 className="h-3 w-3" />
+                            <div className="absolute inset-0 bg-red-500 rounded-sm opacity-80"></div>
+                            <Trash2 className="h-3 w-3 text-white relative z-10" />
                           </Button>
                         </div>
                       </div>

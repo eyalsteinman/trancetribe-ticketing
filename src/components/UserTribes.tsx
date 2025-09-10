@@ -67,21 +67,50 @@ const UserTribes: React.FC<UserTribesProps> = ({ onBack, userId }) => {
 
   const loadTribes = async () => {
     try {
-      const { data, error } = await supabase
+      // First get tribes where user is creator
+      const { data: createdTribes, error: createdError } = await supabase
         .from('tribes')
         .select(`
           *,
-          tribe_members!tribe_members_tribe_id_fkey (
+          tribe_members (
             id,
             user_id,
             role
           )
         `)
-        .or(`created_by.eq.${userId},tribe_members.user_id.eq.${userId}`);
+        .eq('created_by', userId);
 
-      if (error) throw error;
+      if (createdError) throw createdError;
 
-      const formattedTribes = (data || []).map(tribe => ({
+      // Then get tribes where user is a member
+      const { data: memberTribes, error: memberError } = await supabase
+        .from('tribe_members')
+        .select(`
+          tribe_id,
+          tribes!inner (
+            *,
+            tribe_members (
+              id,
+              user_id,
+              role
+            )
+          )
+        `)
+        .eq('user_id', userId);
+
+      if (memberError) throw memberError;
+
+      // Combine and deduplicate tribes
+      const allTribes = [...(createdTribes || [])];
+      
+      memberTribes?.forEach(member => {
+        const tribe = member.tribes;
+        if (!allTribes.find(t => t.id === tribe.id)) {
+          allTribes.push(tribe);
+        }
+      });
+
+      const formattedTribes = allTribes.map(tribe => ({
         ...tribe,
         member_count: tribe.tribe_members?.length || 0,
         is_owner: tribe.created_by === userId
@@ -353,6 +382,33 @@ const UserTribes: React.FC<UserTribesProps> = ({ onBack, userId }) => {
                   onChange={(e) => setNewTribeDescription(e.target.value)}
                   placeholder="Describe your tribe"
                   maxLength={200}
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Tribe Photo (Optional)</label>
+                <Button
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full"
+                >
+                  <Camera className="mr-2 h-4 w-4" />
+                  Choose Photo
+                </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      // For now, just show it's selected
+                      toast({
+                        title: "Photo selected",
+                        description: file.name
+                      });
+                    }
+                  }}
                 />
               </div>
               <Button onClick={createTribe} className="w-full">

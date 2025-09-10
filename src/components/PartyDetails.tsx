@@ -19,6 +19,7 @@ interface Party {
   production_id: string | null;
   start_time?: string | null;
   end_time?: string | null;
+  required_socials?: string[];
 }
 
 interface TicketType {
@@ -187,7 +188,37 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
     }
   };
 
+  const checkRequiredSocials = async () => {
+    if (!party.required_socials || party.required_socials.length === 0) {
+      return true;
+    }
+
+    const { data: userSocials } = await supabase
+      .from('user_socials')
+      .select('platform')
+      .eq('user_id', user.id);
+
+    const userPlatforms = userSocials?.map(s => s.platform) || [];
+    const missingSocials = party.required_socials.filter(
+      required => !userPlatforms.includes(required)
+    );
+
+    if (missingSocials.length > 0) {
+      toast({
+        title: "Social Media Required",
+        description: `Please add your ${missingSocials.join(', ')} account(s) in your profile before purchasing tickets.`,
+        variant: "destructive"
+      });
+      return false;
+    }
+
+    return true;
+  };
+
   const handlePayment = async (ticketType?: TicketType) => {
+    const canPurchase = await checkRequiredSocials();
+    if (!canPurchase) return;
+
     setLoading(true);
     try {
       const { error } = await supabase
@@ -221,6 +252,9 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
   };
 
   const generateQR = async (ticketType?: TicketType) => {
+    const canGenerate = await checkRequiredSocials();
+    if (!canGenerate) return;
+
     setLoading(true);
     try {
       const qrData = `${user.id}-${party.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
