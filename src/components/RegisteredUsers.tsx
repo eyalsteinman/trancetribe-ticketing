@@ -295,7 +295,7 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
           </h1>
         </div>
 
-        <div className="mt-20">
+        <div className="mt-24">
         <Card>
           <CardHeader>
             <CardTitle>All Registered Users ({users.length})</CardTitle>
@@ -318,7 +318,7 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                         <th className="text-left p-3 font-medium">Phone</th>
                         <th className="text-left p-3 font-medium">Roles</th>
                         <th className="text-left p-3 font-medium">Registered</th>
-                        <th className="text-left p-3 font-medium">Social</th>
+                        <th className="text-left p-3 font-medium">Social Profiles</th>
                         <th className="text-left p-3 font-medium">Actions</th>
                       </tr>
                     </thead>
@@ -440,41 +440,50 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                               </Button>
                             </td>
                             <td className="p-3">
-                              <div className="flex flex-wrap gap-1">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => startEditing(user)}
-                                  className="p-1"
-                                >
-                                  <Edit2 className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant={user.roles.includes('user') ? 'default' : 'outline'}
-                                  onClick={() => toggleRole(user.user_id, 'user')}
-                                  className="p-1"
-                                  title={user.roles.includes('user') ? 'Remove user role' : 'Add user role'}
-                                >
-                                  <UserCheck className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant={user.roles.includes('admin') ? 'default' : 'outline'}
-                                  onClick={() => toggleRole(user.user_id, 'admin')}
-                                  className="p-1"
-                                  title={user.roles.includes('admin') ? 'Remove admin role' : 'Add admin role'}
-                                >
-                                  <Shield className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => deleteUser(user.user_id)}
-                                  className="p-1 bg-red-600 hover:bg-red-700 border-red-600 text-white hover:text-white"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
+                              <div className="flex flex-col gap-2">
+                                <div className="flex flex-wrap gap-1">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => startEditing(user)}
+                                    className="p-1"
+                                    title="Edit user"
+                                  >
+                                    <Edit2 className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant={user.roles.includes('user') ? 'default' : 'outline'}
+                                    onClick={() => toggleRole(user.user_id, 'user')}
+                                    className="p-1"
+                                    title={user.roles.includes('user') ? 'Remove user role' : 'Add user role'}
+                                  >
+                                    <UserCheck className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant={user.roles.includes('admin') ? 'default' : 'outline'}
+                                    onClick={() => toggleRole(user.user_id, 'admin')}
+                                    className="p-1"
+                                    title={user.roles.includes('admin') ? 'Remove admin role' : 'Add admin role'}
+                                  >
+                                    <Shield className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => deleteUser(user.user_id)}
+                                    className="p-1 bg-red-600 hover:bg-red-700 border-red-600 text-white hover:text-white"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                                <div className="flex flex-wrap gap-1 text-xs text-muted-foreground">
+                                  <span>Edit</span>
+                                  <span>User Role</span>
+                                  <span>Admin Role</span>
+                                  <span>Delete</span>
+                                </div>
                               </div>
                             </td>
                           </>

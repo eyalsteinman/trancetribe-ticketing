@@ -129,7 +129,8 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
           description: description.trim() || null,
           price: null, // Price now handled by ticket types
           is_free: isFree,
-          required_socials: requiredSocials,
+          optional_socials: requiredSocials.filter(s => s.includes('_optional')).map(s => s.replace('_optional', '')),
+          obligatory_socials: requiredSocials.filter(s => s.includes('_obligatory')).map(s => s.replace('_obligatory', '')),
           production_id: selectedProductionId || null,
           ticket_count: ticketCount ? Number(ticketCount) : null,
           start_time: startTime || null,
@@ -185,7 +186,7 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
         isBackgroundDark={isBackgroundDark}
       />
       
-      <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
+      <div className="w-full pt-20 space-y-6 text-left px-4">
 
         <Card>
           <CardHeader>
@@ -279,24 +280,44 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
 />
 
             <div>
-              <label className="text-sm font-medium">Required Social Networks</label>
-              <div className="grid grid-cols-2 gap-3 mt-2">
+              <label className="text-sm font-medium">Social Networks</label>
+              <div className="grid grid-cols-1 gap-3 mt-2">
                 {socialOptions.map((opt) => (
-                  <label key={opt.key} className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={requiredSocials.includes(opt.key)}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setRequiredSocials([...requiredSocials, opt.key]);
-                        } else {
-                          setRequiredSocials(requiredSocials.filter((s) => s !== opt.key));
-                        }
-                      }}
-                      className="h-4 w-4"
-                    />
-                    {opt.label}
-                  </label>
+                  <div key={opt.key} className="space-y-2">
+                    <div className="font-medium text-sm">{opt.label}</div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <label className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={requiredSocials.includes(`${opt.key}_optional`)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setRequiredSocials([...requiredSocials.filter(s => !s.startsWith(opt.key)), `${opt.key}_optional`]);
+                            } else {
+                              setRequiredSocials(requiredSocials.filter((s) => s !== `${opt.key}_optional`));
+                            }
+                          }}
+                          className="h-4 w-4"
+                        />
+                        Optional
+                      </label>
+                      <label className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={requiredSocials.includes(`${opt.key}_obligatory`)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setRequiredSocials([...requiredSocials.filter(s => !s.startsWith(opt.key)), `${opt.key}_obligatory`]);
+                            } else {
+                              setRequiredSocials(requiredSocials.filter((s) => s !== `${opt.key}_obligatory`));
+                            }
+                          }}
+                          className="h-4 w-4"
+                        />
+                        Obligatory
+                      </label>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>

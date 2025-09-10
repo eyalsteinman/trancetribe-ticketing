@@ -214,7 +214,8 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           description: (editingParty as any).description ?? null,
           price: (editingParty as any).price ?? null,
           is_free: (editingParty as any).is_free ?? false,
-          required_socials: editRequiredSocials,
+          optional_socials: editRequiredSocials.filter(s => s.includes('_optional')).map(s => s.replace('_optional', '')),
+          obligatory_socials: editRequiredSocials.filter(s => s.includes('_obligatory')).map(s => s.replace('_obligatory', '')),
           production_id: (editingParty as any).production_id || null
         })
         .eq('id', editingParty.id);
@@ -351,7 +352,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
             isBackgroundDark={isBackgroundDark}
           />
           
-          <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
+          <div className="w-full pt-20 space-y-6 text-left px-4">
 
           <Card>
             <CardHeader>
@@ -492,24 +493,44 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
 />
 
               <div>
-                <label className="text-sm font-medium">Required Social Networks</label>
-                <div className="grid grid-cols-2 gap-3 mt-2">
+                <label className="text-sm font-medium">Social Networks</label>
+                <div className="grid grid-cols-1 gap-3 mt-2">
                   {['facebook','instagram','tiktok','x'].map((key) => (
-                    <label key={key} className="flex items-center gap-2 text-sm">
-                      <input
-                        type="checkbox"
-                        checked={editRequiredSocials.includes(key)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setEditRequiredSocials([...editRequiredSocials, key]);
-                          } else {
-                            setEditRequiredSocials(editRequiredSocials.filter((s) => s !== key));
-                          }
-                        }}
-                        className="h-4 w-4"
-                      />
-                      {key.charAt(0).toUpperCase() + key.slice(1)}
-                    </label>
+                    <div key={key} className="space-y-2">
+                      <div className="font-medium text-sm">{key.charAt(0).toUpperCase() + key.slice(1)}</div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <label className="flex items-center gap-2 text-sm">
+                          <input
+                            type="checkbox"
+                            checked={editRequiredSocials.includes(`${key}_optional`)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setEditRequiredSocials([...editRequiredSocials.filter(s => !s.startsWith(key)), `${key}_optional`]);
+                              } else {
+                                setEditRequiredSocials(editRequiredSocials.filter((s) => s !== `${key}_optional`));
+                              }
+                            }}
+                            className="h-4 w-4"
+                          />
+                          Optional
+                        </label>
+                        <label className="flex items-center gap-2 text-sm">
+                          <input
+                            type="checkbox"
+                            checked={editRequiredSocials.includes(`${key}_obligatory`)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setEditRequiredSocials([...editRequiredSocials.filter(s => !s.startsWith(key)), `${key}_obligatory`]);
+                              } else {
+                                setEditRequiredSocials(editRequiredSocials.filter((s) => s !== `${key}_obligatory`));
+                              }
+                            }}
+                            className="h-4 w-4"
+                          />
+                          Obligatory
+                        </label>
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -599,7 +620,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           isBackgroundDark={isBackgroundDark}
         />
         
-        <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
+        <div className="w-full pt-20 space-y-6 text-left px-4">
           <Card>
             <CardHeader>
               <div className="flex justify-between items-center">

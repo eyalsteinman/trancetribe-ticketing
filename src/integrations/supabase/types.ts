@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_profiles: {
+        Row: {
+          admin_level: Database["public"]["Enums"]["admin_level"]
+          allowed_tiles: string[]
+          created_at: string
+          created_by: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_level?: Database["public"]["Enums"]["admin_level"]
+          allowed_tiles?: string[]
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_level?: Database["public"]["Enums"]["admin_level"]
+          allowed_tiles?: string[]
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       admin_tile_state: {
         Row: {
           admin_id: string
@@ -336,6 +366,8 @@ export type Database = {
           is_free: boolean
           max_tickets_per_user: number | null
           name: string
+          obligatory_socials: string[] | null
+          optional_socials: string[] | null
           photo_url: string | null
           price: number | null
           production_id: string | null
@@ -355,6 +387,8 @@ export type Database = {
           is_free?: boolean
           max_tickets_per_user?: number | null
           name: string
+          obligatory_socials?: string[] | null
+          optional_socials?: string[] | null
           photo_url?: string | null
           price?: number | null
           production_id?: string | null
@@ -374,6 +408,8 @@ export type Database = {
           is_free?: boolean
           max_tickets_per_user?: number | null
           name?: string
+          obligatory_socials?: string[] | null
+          optional_socials?: string[] | null
           photo_url?: string | null
           price?: number | null
           production_id?: string | null
@@ -839,6 +875,7 @@ export type Database = {
       }
     }
     Enums: {
+      admin_level: "level1" | "level2" | "level3"
       app_role: "admin" | "user"
     }
     CompositeTypes: {
@@ -967,6 +1004,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      admin_level: ["level1", "level2", "level3"],
       app_role: ["admin", "user"],
     },
   },
