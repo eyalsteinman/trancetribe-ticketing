@@ -58,8 +58,8 @@ const SortableTile: React.FC<{
       data-id={item.id}
       style={style}
       className={`
-        relative p-4 bg-card select-none
-        border border-border flex flex-col items-center text-center space-y-3
+        relative p-4 bg-card select-none h-32 min-h-32
+        border border-border flex flex-col items-center justify-center text-center space-y-2
         transition-transform duration-200 ease-out
         ${!isReordering ? 'hover:scale-102' : ''}
         ${tiltedTileId === item.id ? 'animate-[tilt_0.3s_ease-in-out] rotate-12' : ''}
@@ -158,7 +158,8 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    if (!active?.id || !over?.id) {
+    
+    if (!active?.id || !over?.id || active.id === over.id) {
       exitReorderMode();
       return;
     }
