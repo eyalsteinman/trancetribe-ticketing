@@ -5,11 +5,11 @@ const LanguageSelector = () => {
   const { language, setLanguage } = useLanguage();
 
   const languages: { code: Language; label: string }[] = [
-    { code: 'en', label: 'EN' },
-    { code: 'he', label: 'HE' },
-    { code: 'sp', label: 'SP' },
-    { code: 'fr', label: 'FR' },
-    { code: 'it', label: 'IT' },
+    { code: 'en', label: 'en' },
+    { code: 'he', label: 'he' },
+    { code: 'sp', label: 'sp' },
+    { code: 'fr', label: 'fr' },
+    { code: 'it', label: 'it' },
   ];
 
   return (

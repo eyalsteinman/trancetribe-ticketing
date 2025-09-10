@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useBackground } from '@/contexts/BackgroundContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import LanguageSelector from './LanguageSelector';
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -9,7 +7,6 @@ interface SplashScreenProps {
 
 const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const [isVisible, setIsVisible] = useState(true);
-  const { backgroundColor, isBackgroundDark } = useBackground();
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -25,13 +22,9 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
 
   return (
     <div 
-      className="fixed inset-0 flex items-center justify-center z-50 transition-colors duration-500"
-      style={{ 
-        backgroundColor: backgroundColor
-      }}
+      className="fixed inset-0 flex items-center justify-center z-50 transition-colors duration-500 bg-sky-600"
     >
-      <div className="text-center">
-        <LanguageSelector />
+      <div className="text-center text-white">
         <p className="text-lg font-light mb-4">{t('welcome_to')}</p>
         <h1 className="text-6xl font-bold font-sans leading-tight">
           {t('trance_tribes')}

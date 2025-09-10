@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import AdminPasswordForm from './AdminPasswordForm';
 import ProductionBrowser from '@/components/ProductionBrowser';
-
+import LanguageSelector from '@/components/LanguageSelector';
 const AuthForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -323,6 +323,7 @@ const AuthForm = () => {
 
         <div className="w-full">
           <div className="text-center">
+            <LanguageSelector />
             <h1 className="text-3xl font-bold">TRANCE TRIBES</h1>
             <p className="opacity-75 mt-2">Choose your access type</p>
           </div>
