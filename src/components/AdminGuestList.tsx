@@ -302,7 +302,8 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
               to: email,
               message: emailMessage,
               subject: `Message about your party registration`,
-              partyName: parties.find(p => p.id === selectedParty)?.name
+              partyName: parties.find(p => p.id === selectedParty)?.name,
+              replyTo: user.email || undefined,
             }
           })
         );
@@ -320,7 +321,8 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
             to: emailDialog.email,
             message: emailMessage,
             subject: `Message about your party registration`,
-            partyName: parties.find(p => p.id === selectedParty)?.name
+            partyName: parties.find(p => p.id === selectedParty)?.name,
+            replyTo: user.email || undefined,
           }
         });
 

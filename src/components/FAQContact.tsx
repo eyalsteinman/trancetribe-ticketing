@@ -37,6 +37,9 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
   const [editingContactInfo, setEditingContactInfo] = useState(false);
   const [tempContactInfo, setTempContactInfo] = useState(contactInfo);
   const [loading, setLoading] = useState(true);
+  const [editingFaqId, setEditingFaqId] = useState<string | null>(null);
+  const [editQuestion, setEditQuestion] = useState('');
+  const [editAnswer, setEditAnswer] = useState('');
   
   const { toast } = useToast();
 
@@ -204,6 +207,48 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
     }
   };
 
+  const startEditFaq = (faq: FAQItem) => {
+    setEditingFaqId(faq.id);
+    setEditQuestion(faq.question);
+    setEditAnswer(faq.answer);
+  };
+
+  const cancelEditFaq = () => {
+    setEditingFaqId(null);
+    setEditQuestion('');
+    setEditAnswer('');
+  };
+
+  const updateFAQ = async () => {
+    if (!editingFaqId) return;
+    if (!editQuestion.trim() || !editAnswer.trim()) {
+      toast({ title: 'Error', description: 'Please fill in both fields', variant: 'destructive' });
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('faqs')
+        .update({
+          question: editQuestion.trim(),
+          answer: editAnswer.trim(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', editingFaqId)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setFaqs(prev => prev.map(f => f.id === editingFaqId ? { ...f, question: data.question, answer: data.answer } : f));
+      cancelEditFaq();
+      toast({ title: 'Success', description: 'FAQ updated successfully!' });
+    } catch (error) {
+      console.error('Error updating FAQ:', error);
+      toast({ title: 'Error', description: 'Failed to update FAQ', variant: 'destructive' });
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen p-4">
@@ -237,20 +282,42 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
             <CardContent className="space-y-4">
               {faqs.map((faq) => (
                 <div key={faq.id} className="border-b pb-4 last:border-b-0">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold text-sm flex-1">{faq.question}</h3>
-                    {isAdmin && (
-                      <Button
-                        variant="ghost"
-                        size="xs"
-                        onClick={() => deleteFAQ(faq.id)}
-                        className="text-destructive hover:text-destructive ml-2"
-                      >
-                        Delete
-                      </Button>
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground">{faq.answer}</p>
+                  {isAdmin && editingFaqId === faq.id ? (
+                    <div className="space-y-2">
+                      <Input value={editQuestion} onChange={(e) => setEditQuestion(e.target.value)} placeholder="Question" />
+                      <Textarea value={editAnswer} onChange={(e) => setEditAnswer(e.target.value)} rows={3} placeholder="Answer" />
+                      <div className="flex gap-2">
+                        <Button size="sm" onClick={updateFAQ}>Save</Button>
+                        <Button size="sm" variant="outline" onClick={cancelEditFaq}>Cancel</Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="font-semibold text-sm flex-1">{faq.question}</h3>
+                        {isAdmin && (
+                          <div className="flex items-center gap-1">
+                            <Button
+                              variant="outline"
+                              size="xs"
+                              onClick={() => startEditFaq(faq)}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="xs"
+                              onClick={() => deleteFAQ(faq.id)}
+                              className="text-destructive hover:text-destructive"
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-sm text-muted-foreground">{faq.answer}</p>
+                    </>
+                  )}
                 </div>
               ))}
             </CardContent>

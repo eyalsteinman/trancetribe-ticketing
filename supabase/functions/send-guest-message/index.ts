@@ -17,6 +17,7 @@ interface MessageRequest {
   subject: string;
   message: string;
   partyName?: string;
+  replyTo?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -26,7 +27,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { to, subject, message, partyName }: MessageRequest = await req.json();
+    const { to, subject, message, partyName, replyTo }: MessageRequest = await req.json();
 
     if (!to || !message) {
       return new Response(
@@ -51,6 +52,7 @@ const handler = async (req: Request): Promise<Response> => {
       to: [to],
       subject: subject || `Message about ${partyName || 'your party registration'}`,
       html,
+      reply_to: replyTo,
     });
 
     console.log("Message sent successfully:", emailResponse);
