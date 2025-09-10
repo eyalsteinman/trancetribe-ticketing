@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
-import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut, Users, IdCard, Heart, Wine, Moon, Sun, MessageCircle } from 'lucide-react';
+import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut, Users, IdCard, Heart, Wine, Moon, Sun, MessageCircle, ArrowLeft } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { QRCodeSVG } from 'qrcode.react';
 import UserParties from './UserParties';
@@ -26,7 +26,7 @@ import FriendsCodes from './FriendsCodes';
 import UserBarTab from './UserBarTab';
 import FAQContact from './FAQContact';
 import UserMessages from './UserMessages';
-import UserTribes from './UserTribes';
+// import UserTribes from './UserTribes';
 import { useTheme } from '@/hooks/useDarkMode';
 import PageHeader from './ui/page-header';
 
@@ -245,7 +245,25 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   if (currentView === 'tribes') {
-    return <UserTribes user={user} onBack={() => setCurrentView('dashboard')} />;
+    return (
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-md mx-auto">
+          <Button
+            variant="ghost"
+            onClick={() => setCurrentView('dashboard')}
+            className="mb-4"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Dashboard
+          </Button>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <p>Tribes feature coming soon...</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
   }
 
   return (

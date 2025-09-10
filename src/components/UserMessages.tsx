@@ -84,7 +84,7 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId }) => {
   };
 
   const deleteMessage = async (messageId: string) => {
-    if (!confirm('Are you sure you want to delete this message?')) {
+    if (!window.confirm('Are you sure you want to delete this message?')) {
       return;
     }
 
@@ -265,11 +265,8 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId }) => {
 
             {!loading && (
               <div className="mt-6 pt-6 border-t border-border">
-                <Button
-                  onClick={() => {
-                    // Navigate to tribes (will be handled by parent)
-                    window.dispatchEvent(new CustomEvent('navigateToTribes'));
-                  }}
+                <Button 
+                  onClick={() => alert('Tribes feature coming soon!')}
                   className="w-full bg-primary text-white hover:bg-primary/90"
                 >
                   Create Your Own Tribe
