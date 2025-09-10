@@ -440,55 +440,57 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                               </Button>
                             </td>
                             <td className="p-3">
-                              <div className="flex justify-center">
-                                <div className="grid grid-cols-4 gap-2 w-fit">
-                                  <div className="flex flex-col items-center">
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      onClick={() => startEditing(user)}
-                                      className="p-1 mb-1"
-                                      title="Edit user"
-                                    >
-                                      <Edit2 className="h-4 w-4" />
-                                    </Button>
-                                    <span className="text-xs text-muted-foreground">Edit</span>
-                                  </div>
-                                  <div className="flex flex-col items-center">
-                                    <Button
-                                      size="sm"
-                                      variant={user.roles.includes('user') ? 'default' : 'outline'}
-                                      onClick={() => toggleRole(user.user_id, 'user')}
-                                      className="p-1 mb-1"
-                                      title={user.roles.includes('user') ? 'Remove user role' : 'Add user role'}
-                                    >
-                                      <UserCheck className="h-4 w-4" />
-                                    </Button>
-                                    <span className="text-xs text-muted-foreground">User</span>
-                                  </div>
-                                  <div className="flex flex-col items-center">
-                                    <Button
-                                      size="sm"
-                                      variant={user.roles.includes('admin') ? 'default' : 'outline'}
-                                      onClick={() => toggleRole(user.user_id, 'admin')}
-                                      className="p-1 mb-1"
-                                      title={user.roles.includes('admin') ? 'Remove admin role' : 'Add admin role'}
-                                    >
-                                      <Shield className="h-4 w-4" />
-                                    </Button>
-                                    <span className="text-xs text-muted-foreground">Admin</span>
-                                  </div>
-                                  <div className="flex flex-col items-center">
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      onClick={() => deleteUser(user.user_id)}
-                                      className="p-1 mb-1 bg-red-600 hover:bg-red-700 border-red-600 text-white hover:text-white"
-                                    >
-                                      <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                    <span className="text-xs text-muted-foreground">Delete</span>
-                                  </div>
+                              <div className="flex justify-start gap-4">
+                                <div className="flex w-16 flex-col items-center">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => startEditing(user)}
+                                    className="p-2"
+                                    title="Edit user"
+                                    aria-label="Edit user"
+                                  >
+                                    <Edit2 className="h-4 w-4" />
+                                  </Button>
+                                  <span className="mt-1 text-xs text-muted-foreground">Edit</span>
+                                </div>
+                                <div className="flex w-16 flex-col items-center">
+                                  <Button
+                                    size="sm"
+                                    variant={user.roles.includes('user') ? 'default' : 'outline'}
+                                    onClick={() => toggleRole(user.user_id, 'user')}
+                                    className="p-2"
+                                    title={user.roles.includes('user') ? 'Remove user role' : 'Add user role'}
+                                    aria-label="Toggle user role"
+                                  >
+                                    <UserCheck className="h-4 w-4" />
+                                  </Button>
+                                  <span className="mt-1 text-xs text-muted-foreground">User</span>
+                                </div>
+                                <div className="flex w-16 flex-col items-center">
+                                  <Button
+                                    size="sm"
+                                    variant={user.roles.includes('admin') ? 'default' : 'outline'}
+                                    onClick={() => toggleRole(user.user_id, 'admin')}
+                                    className="p-2"
+                                    title={user.roles.includes('admin') ? 'Remove admin role' : 'Add admin role'}
+                                    aria-label="Toggle admin role"
+                                  >
+                                    <Shield className="h-4 w-4" />
+                                  </Button>
+                                  <span className="mt-1 text-xs text-muted-foreground">Admin</span>
+                                </div>
+                                <div className="flex w-16 flex-col items-center">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => deleteUser(user.user_id)}
+                                    className="p-2 bg-red-600 hover:bg-red-700 border-red-600 text-white hover:text-white"
+                                    aria-label="Delete user"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                  <span className="mt-1 text-xs text-muted-foreground">Delete</span>
                                 </div>
                               </div>
                             </td>
