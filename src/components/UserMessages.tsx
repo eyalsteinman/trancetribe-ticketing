@@ -262,16 +262,6 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId, onOpenTribe
               </div>
             )}
 
-            {!loading && (
-              <div className="mt-6 pt-6 border-t border-border">
-                <Button 
-                  onClick={onOpenTribes}
-                  className="w-full bg-primary text-white hover:bg-primary/90"
-                >
-                  Create Your Own Tribe
-                </Button>
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
-import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut, Users, IdCard, Heart, Wine, Moon, Sun, MessageCircle, ArrowLeft } from 'lucide-react';
+import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut, Users, IdCard, Heart, Wine, Moon, Sun, MessageCircle, ArrowLeft, Mail } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { QRCodeSVG } from 'qrcode.react';
 import UserParties from './UserParties';
@@ -42,6 +42,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   const [showQRDialog, setShowQRDialog] = useState(false);
   const [selectedQRCode, setSelectedQRCode] = useState<any>(null);
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
+  const [unreadDirectMessageCount, setUnreadDirectMessageCount] = useState(0);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
   const { currentTheme, cycleTheme, getThemeDisplayName } = useTheme();
@@ -50,11 +51,13 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     loadUserQRCodes();
     loadUserProfile();
     loadUnreadMessageCount();
+    loadUnreadDirectMessageCount();
     
     // Set up polling to refresh QR codes and messages every 30 seconds
     const interval = setInterval(() => {
       loadUserQRCodes();
       loadUnreadMessageCount();
+      loadUnreadDirectMessageCount();
     }, 30000);
 
     return () => clearInterval(interval);
@@ -128,6 +131,24 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
       }
     } catch (error) {
       console.error('Error loading unread message count:', error);
+    }
+  };
+
+  const loadUnreadDirectMessageCount = async () => {
+    try {
+      const { count, error } = await supabase
+        .from('direct_messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('recipient_id', user.id)
+        .eq('is_read', false);
+
+      if (error) {
+        console.error('Error loading unread direct message count:', error);
+      } else {
+        setUnreadDirectMessageCount(count || 0);
+      }
+    } catch (error) {
+      console.error('Error loading unread direct message count:', error);
     }
   };
 
@@ -363,7 +384,16 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 {
                   id: 'direct-messages',
                   title: 'Direct Messages',
-                  icon: <MessageCircle className="h-12 w-12" />,
+                  icon: (
+                    <div className="relative">
+                      <Mail className="h-12 w-12" />
+                      {unreadDirectMessageCount > 0 && (
+                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                          {unreadDirectMessageCount > 9 ? '9+' : unreadDirectMessageCount}
+                        </div>
+                      )}
+                    </div>
+                  ),
                   onClick: () => setCurrentView('direct-messages' as const),
                 },
             ];
