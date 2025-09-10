@@ -41,22 +41,17 @@ const UserMessaging: React.FC<UserMessagingProps> = ({ onBack, userId }) => {
 
   const loadConversations = async () => {
     try {
-      // Get all messages where user is sender or recipient
       const { data, error } = await supabase
-        .from('tribe_messages')
-        .select(`
-          sender_id,
-          tribe_id,
-          profiles!tribe_messages_sender_id_fkey (display_name, first_name)
-        `)
+        .from('direct_messages')
+        .select('sender_id, recipient_id')
         .or(`sender_id.eq.${userId},recipient_id.eq.${userId}`);
 
       if (error) throw error;
 
-      // Extract unique conversation partners
       const partners = new Set<string>();
       data?.forEach(msg => {
         if (msg.sender_id !== userId) partners.add(msg.sender_id);
+        if (msg.recipient_id !== userId) partners.add(msg.recipient_id);
       });
 
       setConversations(Array.from(partners));
@@ -70,24 +65,13 @@ const UserMessaging: React.FC<UserMessagingProps> = ({ onBack, userId }) => {
 
     try {
       const { data, error } = await supabase
-        .from('tribe_messages')
-        .select(`
-          *,
-          sender_profiles:profiles!tribe_messages_sender_id_fkey (display_name, first_name),
-          recipient_profiles:profiles!tribe_messages_recipient_id_fkey (display_name, first_name)
-        `)
+        .from('direct_messages')
+        .select('*')
         .or(`and(sender_id.eq.${userId},recipient_id.eq.${selectedConversation}),and(sender_id.eq.${selectedConversation},recipient_id.eq.${userId})`)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-
-      const formattedMessages = data?.map(msg => ({
-        ...msg,
-        sender_name: msg.sender_profiles?.display_name || msg.sender_profiles?.first_name,
-        recipient_name: msg.recipient_profiles?.display_name || msg.recipient_profiles?.first_name
-      })) || [];
-
-      setMessages(formattedMessages);
+      setMessages(data || []);
     } catch (error: any) {
       console.error('Error loading messages:', error);
     }
@@ -137,12 +121,11 @@ const UserMessaging: React.FC<UserMessagingProps> = ({ onBack, userId }) => {
 
     try {
       const { error } = await supabase
-        .from('tribe_messages')
+        .from('direct_messages')
         .insert({
           sender_id: userId,
           recipient_id: recipientId,
-          content: newMessage.trim(),
-          tribe_id: null // For direct messages
+          content: newMessage.trim()
         });
 
       if (error) throw error;

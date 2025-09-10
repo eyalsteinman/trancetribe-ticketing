@@ -26,7 +26,7 @@ import FriendsCodes from './FriendsCodes';
 import UserBarTab from './UserBarTab';
 import FAQContact from './FAQContact';
 import UserMessages from './UserMessages';
-// import UserTribes from './UserTribes';
+import UserMessaging from './UserMessaging';
 import { useTheme } from '@/hooks/useDarkMode';
 import PageHeader from './ui/page-header';
 
@@ -35,7 +35,7 @@ interface UserDashboardProps {
 }
 
 const UserDashboard = ({ user }: UserDashboardProps) => {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance' | 'personal-code' | 'friends-codes' | 'bar-tab' | 'faq' | 'messages' | 'tribes'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance' | 'personal-code' | 'friends-codes' | 'bar-tab' | 'faq' | 'messages' | 'tribes' | 'direct-messages'>('dashboard');
   const [nickname, setNickname] = useState<string>('');
   const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
   const [selectedProduction, setSelectedProduction] = useState<{id: string; name: string; logo_url: string | null; vip_description: string | null; vip_price: number | null} | null>(null);
@@ -253,6 +253,14 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     );
   }
 
+  if (currentView === 'direct-messages') {
+    return (
+      <React.Suspense fallback={<div className="min-h-screen bg-background p-4"><div className="text-center">Loading...</div></div>}>
+        <UserMessaging onBack={() => setCurrentView('dashboard')} userId={user.id} />
+      </React.Suspense>
+    );
+  }
+
   return (
     <div className={`min-h-screen transition-colors duration-500`}>
       <div className="w-full">
@@ -351,6 +359,12 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                     </div>
                   ),
                   onClick: () => setCurrentView('messages' as const),
+                },
+                {
+                  id: 'direct-messages',
+                  title: 'Direct Messages',
+                  icon: <MessageCircle className="h-12 w-12" />,
+                  onClick: () => setCurrentView('direct-messages' as const),
                 },
             ];
             return (
