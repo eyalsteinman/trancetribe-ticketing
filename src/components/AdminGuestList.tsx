@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Check, UserCheck, Users, MessageCircle } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
 import PageHeader from '@/components/ui/page-header';
+import SocialDialog from './SocialDialog';
 import { User } from '@supabase/supabase-js';
 import {
   Table,
@@ -68,6 +69,11 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
     email: ''
   });
   const [emailMessage, setEmailMessage] = useState('');
+  const [socialDialog, setSocialDialog] = useState<{open: boolean; userId: string; socials: any[]}>({
+    open: false,
+    userId: '',
+    socials: []
+  });
   
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
@@ -439,6 +445,30 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
     setSelectedGuests(newSelected);
   };
 
+  const viewSocialMedia = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('user_socials')
+        .select('*')
+        .eq('user_id', userId);
+
+      if (error) throw error;
+
+      setSocialDialog({
+        open: true,
+        userId,
+        socials: data || []
+      });
+    } catch (error: any) {
+      console.error('Error loading social media:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load social media information",
+        variant: "destructive"
+      });
+    }
+  };
+
   const selectAllGuests = () => {
     if (selectedGuests.size === arrivingGuests.length) {
       setSelectedGuests(new Set());
@@ -533,6 +563,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                       <TableHead className="text-black">Email</TableHead>
                       <TableHead className="text-black">Phone</TableHead>
                       <TableHead className="text-black">Scanned At</TableHead>
+                      <TableHead className="text-black">Social</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -553,6 +584,17 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                         </TableCell>
                         <TableCell className="text-black text-sm">
                           {new Date(guest.scanned_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => viewSocialMedia(guest.user_id)}
+                            className="p-1"
+                            title="View social media"
+                          >
+                            <Users className="h-4 w-4" />
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -669,6 +711,15 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                             >
                               <MessageCircle className="h-4 w-4" />
                             </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => viewSocialMedia(guest.user_id)}
+                              className="p-1"
+                              title="View social media"
+                            >
+                              <Users className="h-4 w-4" />
+                            </Button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -743,6 +794,12 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        <SocialDialog
+          open={socialDialog.open}
+          onOpenChange={(open) => setSocialDialog(prev => ({ ...prev, open }))}
+          socials={socialDialog.socials}
+        />
       </div>
     </div>
   );

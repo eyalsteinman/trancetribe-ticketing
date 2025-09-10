@@ -19,9 +19,10 @@ interface Message {
 interface UserMessagesProps {
   onBack: () => void;
   userId: string;
+  onOpenTribes?: () => void;
 }
 
-const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId }) => {
+const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId, onOpenTribes }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [loading, setLoading] = useState(true);
@@ -45,6 +46,7 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId }) => {
           productions:production_id (name)
         `)
         .eq('recipient_id', userId)
+        .eq('deleted_by_recipient', false)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -84,14 +86,10 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId }) => {
   };
 
   const deleteMessage = async (messageId: string) => {
-    if (!window.confirm('Are you sure you want to delete this message?')) {
-      return;
-    }
-
     try {
       const { error } = await supabase
         .from('messages')
-        .delete()
+        .update({ deleted_by_recipient: true })
         .eq('id', messageId)
         .eq('recipient_id', userId);
 
@@ -242,7 +240,9 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId }) => {
                             variant="ghost"
                             onClick={(e) => {
                               e.stopPropagation();
-                              deleteMessage(message.id);
+                              if (window.confirm('Are you sure you want to delete this message?')) {
+                                deleteMessage(message.id);
+                              }
                             }}
                             className="h-6 w-6 p-0 text-black hover:text-destructive"
                           >
@@ -266,7 +266,7 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId }) => {
             {!loading && (
               <div className="mt-6 pt-6 border-t border-border">
                 <Button 
-                  onClick={() => alert('Tribes feature coming soon!')}
+                  onClick={onOpenTribes}
                   className="w-full bg-primary text-white hover:bg-primary/90"
                 >
                   Create Your Own Tribe

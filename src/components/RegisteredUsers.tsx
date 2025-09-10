@@ -5,8 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Edit2, Save, X, UserCheck, Shield, ArrowLeft } from 'lucide-react';
+import { Trash2, Edit2, Save, X, UserCheck, Shield, ArrowLeft, Users } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
+import SocialDialog from './SocialDialog';
 
 interface RegisteredUsersProps {
   onBack: () => void;
@@ -33,6 +34,11 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
     last_name: '',
     email: '',
     phone_number: ''
+  });
+  const [socialDialog, setSocialDialog] = useState<{open: boolean; userId: string; socials: any[]}>({
+    open: false,
+    userId: '',
+    socials: []
   });
   
   const { toast } = useToast();
@@ -245,6 +251,30 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
     }
   };
 
+  const viewSocialMedia = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('user_socials')
+        .select('*')
+        .eq('user_id', userId);
+
+      if (error) throw error;
+
+      setSocialDialog({
+        open: true,
+        userId,
+        socials: data || []
+      });
+    } catch (error: any) {
+      console.error('Error loading social media:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load social media information",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
   <div 
       className="min-h-screen p-4 transition-colors duration-500"
@@ -288,6 +318,7 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                         <th className="text-left p-3 font-medium">Phone</th>
                         <th className="text-left p-3 font-medium">Roles</th>
                         <th className="text-left p-3 font-medium">Registered</th>
+                        <th className="text-left p-3 font-medium">Social</th>
                         <th className="text-left p-3 font-medium">Actions</th>
                       </tr>
                     </thead>
@@ -346,6 +377,17 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                               {new Date(user.created_at).toLocaleDateString()}
                             </td>
                             <td className="p-3">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => viewSocialMedia(user.user_id)}
+                                className="p-1"
+                                title="View social media"
+                              >
+                                <Users className="h-4 w-4" />
+                              </Button>
+                            </td>
+                            <td className="p-3">
                               <div className="flex gap-2">
                                 <Button
                                   size="sm"
@@ -385,6 +427,17 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                             </td>
                             <td className="p-3 text-sm text-muted-foreground">
                               {new Date(user.created_at).toLocaleDateString()}
+                            </td>
+                            <td className="p-3">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => viewSocialMedia(user.user_id)}
+                                className="p-1"
+                                title="View social media"
+                              >
+                                <Users className="h-4 w-4" />
+                              </Button>
                             </td>
                             <td className="p-3">
                               <div className="flex flex-wrap gap-1">
@@ -435,6 +488,12 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
           </CardContent>
         </Card>
         </div>
+        
+        <SocialDialog
+          open={socialDialog.open}
+          onOpenChange={(open) => setSocialDialog(prev => ({ ...prev, open }))}
+          socials={socialDialog.socials}
+        />
       </div>
     </div>
   );

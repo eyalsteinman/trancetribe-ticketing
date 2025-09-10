@@ -255,6 +255,7 @@ export type Database = {
           content: string
           created_at: string
           created_by: string
+          deleted_by_recipient: boolean
           id: string
           is_read: boolean
           production_id: string | null
@@ -266,6 +267,7 @@ export type Database = {
           content: string
           created_at?: string
           created_by: string
+          deleted_by_recipient?: boolean
           id?: string
           is_read?: boolean
           production_id?: string | null
@@ -277,6 +279,7 @@ export type Database = {
           content?: string
           created_at?: string
           created_by?: string
+          deleted_by_recipient?: boolean
           id?: string
           is_read?: boolean
           production_id?: string | null

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -241,28 +241,15 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     return <UserMessages onBack={() => {
       setCurrentView('dashboard');
       loadUnreadMessageCount(); // Refresh unread count when returning
-    }} userId={user.id} />;
+    }} userId={user.id} onOpenTribes={() => setCurrentView('tribes')} />;
   }
 
   if (currentView === 'tribes') {
+    const UserTribes = React.lazy(() => import('./UserTribes'));
     return (
-      <div className="min-h-screen bg-background p-4">
-        <div className="max-w-md mx-auto">
-          <Button
-            variant="ghost"
-            onClick={() => setCurrentView('dashboard')}
-            className="mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Dashboard
-          </Button>
-          <Card>
-            <CardContent className="p-4 text-center">
-              <p>Tribes feature coming soon...</p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      <React.Suspense fallback={<div className="min-h-screen bg-background p-4"><div className="text-center">Loading...</div></div>}>
+        <UserTribes onBack={() => setCurrentView('dashboard')} userId={user.id} />
+      </React.Suspense>
     );
   }
 
@@ -402,16 +389,16 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                   <div className="p-0">
                     <div className="relative">
                       {/* Event Image */}
-                      {qrCode.parties?.photo_url && (
-                        <div className="h-64 w-full overflow-hidden">
-                          <img 
-                            src={qrCode.parties.photo_url} 
-                            alt={qrCode.parties.name}
-                            className="h-full w-full object-contain group-hover:scale-105 transition-transform duration-500"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                        </div>
-                      )}
+                       {qrCode.parties?.photo_url && (
+                         <div className="h-64 w-full overflow-hidden">
+                           <img 
+                             src={qrCode.parties.photo_url} 
+                             alt={qrCode.parties.name}
+                             className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                           />
+                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                         </div>
+                       )}
                       
                       {/* Status Badge */}
                       <div className="absolute top-4 right-4">
