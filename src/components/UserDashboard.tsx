@@ -283,7 +283,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   return (
-    <div className="dashboard-dark min-h-screen w-full p-4">
+    <div className="min-h-screen w-full transition-colors duration-500 p-4">
       {/* Header */}
       <div className="relative pt-2 pb-6">
         <h1 className="text-2xl font-bold text-foreground mb-1">

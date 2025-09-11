@@ -642,7 +642,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   }
 
   return (
-    <div className="dashboard-dark min-h-screen">
+    <div className={`min-h-screen transition-colors duration-500`}>
       <div className="w-full">
         <div className="container-section flex items-center justify-between">
           <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>

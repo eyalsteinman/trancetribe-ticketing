@@ -495,34 +495,4 @@ All colors MUST be HSL.
       font-size: 1.25rem;
     }
   }
-
-  /* Dashboard dark theme styles */
-  .dashboard-dark {
-    background: hsl(0, 0%, 8%);
-    min-height: 100vh;
-    color: white;
-  }
-
-  .dashboard-tile {
-    background: hsl(0, 0%, 15%);
-    border: 1px solid hsl(0, 0%, 25%);
-    border-radius: 16px;
-    color: white;
-    transition: all 0.2s ease;
-    height: 120px;
-    min-height: 120px;
-  }
-
-  .dashboard-tile:hover {
-    background: hsl(0, 0%, 20%);
-    transform: translateY(-2px);
-  }
-
-  .dashboard-tile svg {
-    color: white !important;
-  }
-
-  .dashboard-tile * {
-    color: white !important;
-  }
 }
