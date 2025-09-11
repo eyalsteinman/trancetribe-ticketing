@@ -173,12 +173,37 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
         throw new Error(result?.error || 'Unknown error from function');
       }
 
+      // Create admin profile with selected permissions
+      try {
+        const currentUserId = (await supabase.auth.getUser()).data.user?.id;
+        const { error: profileInsertError } = await supabase
+          .from('admin_profiles')
+          .insert({
+            user_id: result.user?.id,
+            admin_level: newAdminLevel,
+            allowed_tiles: selectedTiles,
+            created_by: currentUserId,
+          });
+        if (profileInsertError) {
+          console.error('Error creating admin profile (after function success):', profileInsertError);
+          toast({
+            title: 'Warning',
+            description: 'Admin created, but permissions not saved. Edit later.',
+            variant: 'destructive',
+          });
+        }
+      } catch (e) {
+        console.error('Unexpected error inserting admin profile:', e);
+      }
+
       toast({
-        title: "Success",
-        description: "New admin created successfully!",
+        title: 'Success',
+        description: 'New admin created successfully!',
       });
       setNewAdminEmail('');
       setNewAdminPassword('');
+      setNewAdminLevel('level1');
+      setSelectedTiles([]);
       loadAdmins();
 
     } catch (error: any) {

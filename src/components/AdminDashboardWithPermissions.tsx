@@ -72,13 +72,10 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
       }
     } catch (error) {
       console.error('Error loading admin profile:', error);
-      // Fallback to super admin
+      // Fallback to restricted access
       setAdminProfile({
-        admin_level: 'level3',
-        allowed_tiles: [
-          'registered-users', 'guest-list', 'productions', 'parties', 
-          'manage-admins', 'messages', 'games', 'bar-tabs', 'analytics'
-        ]
+        admin_level: 'level1',
+        allowed_tiles: []
       });
     } finally {
       setLoading(false);
