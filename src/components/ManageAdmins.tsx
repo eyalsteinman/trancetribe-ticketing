@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { Trash2, Edit, UserPlus } from 'lucide-react';
 import PageHeader from '@/components/ui/page-header';
@@ -22,6 +24,19 @@ interface AdminUser {
   created_at: string;
 }
 
+const availableTiles = [
+  { id: 'registered-users', name: 'Registered Users' },
+  { id: 'guest-list', name: 'Guest List' },
+  { id: 'parties', name: 'Parties' },
+  { id: 'productions', name: 'Productions' },
+  { id: 'messages', name: 'Messages' },
+  { id: 'games', name: 'Games' },
+  { id: 'bar-tabs', name: 'Bar Tabs' },
+  { id: 'analytics', name: 'Analytics' },
+  { id: 'qr-scanner', name: 'QR Scanner' },
+  { id: 'bar-tab-scanner', name: 'Bar Tab Scanner' }
+];
+
 const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
   const [admins, setAdmins] = useState<AdminUser[]>([]);
   
@@ -32,6 +47,8 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
   const [loading, setLoading] = useState(false);
   const [newAdminEmail, setNewAdminEmail] = useState('');
   const [newAdminPassword, setNewAdminPassword] = useState('');
+  const [newAdminLevel, setNewAdminLevel] = useState<'level1' | 'level2' | 'level3'>('level1');
+  const [selectedTiles, setSelectedTiles] = useState<string[]>([]);
   const [editingAdmin, setEditingAdmin] = useState<string | null>(null);
   const [editEmail, setEditEmail] = useState('');
   const { toast } = useToast();
@@ -107,11 +124,28 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
     }
   };
 
+  const handleTileToggle = (tileId: string) => {
+    setSelectedTiles(prev => 
+      prev.includes(tileId) 
+        ? prev.filter(id => id !== tileId)
+        : [...prev, tileId]
+    );
+  };
+
   const createNewAdmin = async () => {
     if (!newAdminEmail.trim() || !newAdminPassword.trim()) {
       toast({
         title: "Error",
         description: "Please enter both email and password",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (selectedTiles.length === 0) {
+      toast({
+        title: "Error",
+        description: "Please select at least one tile for the admin",
         variant: "destructive"
       });
       return;
@@ -227,12 +261,29 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
           throw new Error('Admin role assignment failed: ' + roleError.message);
         }
 
+        // Create admin profile with permissions
+        const { error: profileError } = await supabase
+          .from('admin_profiles')
+          .insert({
+            user_id: userId,
+            admin_level: newAdminLevel,
+            allowed_tiles: selectedTiles,
+            created_by: (await supabase.auth.getUser()).data.user?.id
+          });
+
+        if (profileError) {
+          console.error('Failed to create admin profile:', profileError);
+          // Continue anyway as the admin role was created
+        }
+
         toast({
           title: "Success",
           description: "Admin privileges granted successfully!",
         });
         setNewAdminEmail('');
         setNewAdminPassword('');
+        setNewAdminLevel('level1');
+        setSelectedTiles([]);
         loadAdmins();
 
       } catch (fallbackError: any) {
@@ -387,6 +438,41 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
                   placeholder="Enter password"
                 />
               </div>
+            </div>
+            
+            <div>
+              <Label htmlFor="adminLevel">Admin Level</Label>
+              <Select value={newAdminLevel} onValueChange={(value: 'level1' | 'level2' | 'level3') => setNewAdminLevel(value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select admin level" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="level1">Level 1 - Basic Access</SelectItem>
+                  <SelectItem value="level2">Level 2 - Extended Access</SelectItem>
+                  <SelectItem value="level3">Level 3 - Super Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label>Accessible Dashboard Tiles</Label>
+              <div className="grid grid-cols-2 gap-3 mt-2 p-4 border rounded-lg">
+                {availableTiles.map((tile) => (
+                  <div key={tile.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={tile.id}
+                      checked={selectedTiles.includes(tile.id)}
+                      onCheckedChange={() => handleTileToggle(tile.id)}
+                    />
+                    <Label htmlFor={tile.id} className="text-sm font-normal cursor-pointer">
+                      {tile.name}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm text-muted-foreground mt-2">
+                Select which dashboard tiles this admin will have access to.
+              </p>
             </div>
             <Button onClick={createNewAdmin} disabled={loading} className="w-full">
               {loading ? 'Creating...' : 'Create Admin'}
