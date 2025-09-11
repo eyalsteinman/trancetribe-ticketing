@@ -26,10 +26,7 @@ export const useBackNavigation = ({ onBackNavigation, isActive, preventBackNavig
 
     return () => {
       window.removeEventListener('popstate', handlePopState);
-      // Clean up history state
-      if (window.history.state?.modal) {
-        window.history.back();
-      }
+      // Do not navigate on unmount; we only listen for OS back while active
     };
   }, [isActive, onBackNavigation, preventBackNavigation]);
 };
