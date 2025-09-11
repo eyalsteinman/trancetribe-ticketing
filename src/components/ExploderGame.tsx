@@ -3,6 +3,7 @@ import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 interface ExploderGameProps {
   onBack: () => void;
@@ -36,6 +37,11 @@ const CUBE_SIZE = 16; // pixels (w-4 h-4)
 const ExploderGame = ({ onBack, scope = 'user', playerNickname = '' }: ExploderGameProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const buildingRef = useRef<HTMLDivElement>(null);
+  
+  useBackNavigation({
+    onBackNavigation: onBack,
+    isActive: true
+  });
 
   // Single small ball
   const SMALL_RADIUS = 20; // diameter 40px

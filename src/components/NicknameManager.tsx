@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { User } from '@supabase/supabase-js';
 import { ArrowLeft } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 interface NicknameManagerProps {
   user: User;
@@ -18,6 +19,11 @@ const NicknameManager = ({ user, onBack }: NicknameManagerProps) => {
   const [nicknameInput, setNicknameInput] = useState('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  
+  useBackNavigation({
+    onBackNavigation: onBack,
+    isActive: true
+  });
   const { backgroundColor, isBackgroundDark } = useBackground();
 
   useEffect(() => {

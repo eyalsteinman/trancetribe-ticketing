@@ -9,6 +9,7 @@ import { Trash2, Edit, UserPlus } from 'lucide-react';
 import PageHeader from '@/components/ui/page-header';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useBackground } from '@/contexts/BackgroundContext';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 interface ManageAdminsProps {
   onBack: () => void;
@@ -23,6 +24,11 @@ interface AdminUser {
 
 const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
   const [admins, setAdmins] = useState<AdminUser[]>([]);
+  
+  useBackNavigation({
+    onBackNavigation: onBack,
+    isActive: true
+  });
   const [loading, setLoading] = useState(false);
   const [newAdminEmail, setNewAdminEmail] = useState('');
   const [newAdminPassword, setNewAdminPassword] = useState('');

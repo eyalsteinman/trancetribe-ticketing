@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 interface HayaNinjaProps {
   onBack: () => void;
@@ -14,6 +15,11 @@ interface Point { x: number; y: number }
 
 const HayaNinja = ({ onBack, scope = 'user', playerNickname = '' }: HayaNinjaProps) => {
   const { backgroundColor } = useBackground();
+  
+  useBackNavigation({
+    onBackNavigation: onBack,
+    isActive: true
+  });
   const [lines, setLines] = useState<number>(0);
   const [path, setPath] = useState<Point[]>([]);
   const [allPaths, setAllPaths] = useState<Point[][]>([]); // persistent scratches

@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
 import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 interface Friend {
   id: string;
@@ -23,6 +24,11 @@ interface FriendsCodesProps {
 
 const FriendsCodes = ({ user, onBack }: FriendsCodesProps) => {
   const [friends, setFriends] = useState<Friend[]>([]);
+  
+  useBackNavigation({
+    onBackNavigation: onBack,
+    isActive: true
+  });
   const [newCode, setNewCode] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const { toast } = useToast();

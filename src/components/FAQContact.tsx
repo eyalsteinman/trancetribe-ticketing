@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import PageHeader from './ui/page-header';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 interface FAQItem {
   id: string;
@@ -27,6 +28,11 @@ interface FAQContactProps {
 
 const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
   const [faqs, setFaqs] = useState<FAQItem[]>([]);
+  
+  useBackNavigation({
+    onBackNavigation: onBack,
+    isActive: true
+  });
   const [contactInfo, setContactInfo] = useState<ContactInfo>({
     email: '',
     phone: '',

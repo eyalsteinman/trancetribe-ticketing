@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ShieldCheck } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 interface InsuranceProps {
   onBack: () => void;
@@ -8,6 +9,11 @@ interface InsuranceProps {
 
 const Insurance = ({ onBack }: InsuranceProps) => {
   const { backgroundColor, isBackgroundDark } = useBackground();
+  
+  useBackNavigation({
+    onBackNavigation: onBack,
+    isActive: true
+  });
 
   return (
     <div
