@@ -59,19 +59,49 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
         .from('admin_profiles')
         .select('admin_level, allowed_tiles')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
-        console.log('No admin profile found; defaulting to restricted access');
-        setAdminProfile({
-          admin_level: 'level1',
-          allowed_tiles: []
-        });
+        console.error('Error querying admin_profiles:', error);
+      }
+
+      if (data) {
+        setAdminProfile(data as AdminProfile);
       } else {
-        setAdminProfile(data);
+        // No explicit admin profile found. If the user is an admin, grant super admin access (backward compatibility)
+        const { data: roles, error: rolesError } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id)
+          .eq('role', 'admin');
+
+        if (rolesError) {
+          console.error('Error checking user_roles:', rolesError);
+        }
+
+        if (roles && roles.length > 0) {
+          setAdminProfile({
+            admin_level: 'level3',
+            allowed_tiles: [
+              'registered-users',
+              'guest-list',
+              'productions',
+              'parties',
+              'messages',
+              'games',
+              'bar-tabs',
+              'manage-admins',
+            ]
+          });
+        } else {
+          setAdminProfile({
+            admin_level: 'level1',
+            allowed_tiles: []
+          });
+        }
       }
     } catch (error) {
-      console.error('Error loading admin profile:', error);
+      console.error('Unexpected error loading admin profile:', error);
       // Fallback to restricted access
       setAdminProfile({
         admin_level: 'level1',
