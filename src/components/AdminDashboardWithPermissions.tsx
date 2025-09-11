@@ -62,14 +62,10 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
         .single();
 
       if (error) {
-        // If no admin profile found, assume super admin (existing admins)
-        console.log('No admin profile found, assuming super admin');
+        console.log('No admin profile found; defaulting to restricted access');
         setAdminProfile({
-          admin_level: 'level3',
-          allowed_tiles: [
-            'registered-users', 'guest-list', 'productions', 'parties', 
-            'manage-admins', 'messages', 'games', 'bar-tabs', 'analytics'
-          ]
+          admin_level: 'level1',
+          allowed_tiles: []
         });
       } else {
         setAdminProfile(data);
