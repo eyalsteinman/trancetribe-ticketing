@@ -95,7 +95,9 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
   };
 
   const isSuperAdmin = () => {
-    return adminProfile?.admin_level === 'level3' || adminProfile?.allowed_tiles.includes('manage-admins');
+    const result = adminProfile?.admin_level === 'level3' || adminProfile?.allowed_tiles.includes('manage-admins');
+    console.log('isSuperAdmin check:', { adminProfile, result });
+    return result;
   };
 
   if (loading) {
@@ -113,6 +115,8 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
     );
   }
 
+  console.log('Current view:', currentView, 'isSuperAdmin:', isSuperAdmin());
+  
   if (currentView === 'manage-admins' && isSuperAdmin()) {
     return <AdminSignupNew onBack={() => setCurrentView('dashboard')} />;
   }
@@ -252,7 +256,10 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
           {isSuperAdmin() && (
             <Card 
               className="cursor-pointer hover:shadow-lg transition-shadow"
-              onClick={() => setCurrentView('manage-admins')}
+              onClick={() => {
+                console.log('Manage Admins clicked, setting currentView to manage-admins');
+                setCurrentView('manage-admins');
+              }}
             >
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center gap-2">
