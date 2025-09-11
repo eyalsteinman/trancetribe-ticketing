@@ -169,13 +169,15 @@ const ReorderableTiles: React.FC<ReorderableTilesProps> = ({ items, orderKey }) 
           }`}
         >
           <Card 
-            className="cursor-pointer hover:bg-accent text-black [&_svg]:text-black" 
+            className="dashboard-tile cursor-pointer" 
             onClick={dragReadyId !== item.id ? item.onClick : undefined}
           >
-            <CardContent className="flex flex-col items-center justify-center p-6 select-none h-32 min-h-32">
-              {item.icon}
-              <div className="mt-2 text-center leading-tight select-none">
-                <div className="text-sm font-semibold whitespace-nowrap">{item.title}</div>
+            <CardContent className="flex flex-col items-center justify-center p-6 select-none h-30 min-h-30">
+              <div className="text-white mb-2">
+                {item.icon}
+              </div>
+              <div className="text-center leading-tight select-none">
+                <div className="text-sm font-semibold whitespace-nowrap text-white">{item.title}</div>
               </div>
             </CardContent>
           </Card>
