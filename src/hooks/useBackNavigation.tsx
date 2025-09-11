@@ -26,9 +26,15 @@ export const useBackNavigation = ({ onBackNavigation, isActive, preventBackNavig
 
     return () => {
       window.removeEventListener('popstate', handlePopState);
-      // Clean up history state
+      // Do not navigate back automatically on cleanup to avoid unintended page navigation
+      // Optionally, clear the modal flag without changing history
       if (window.history.state?.modal) {
-        window.history.back();
+        try {
+          const current = window.history.state;
+          window.history.replaceState({ ...current, modal: false }, '');
+        } catch {
+          // no-op
+        }
       }
     };
   }, [isActive, onBackNavigation, preventBackNavigation]);
