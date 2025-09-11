@@ -59,53 +59,30 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
         .from('admin_profiles')
         .select('admin_level, allowed_tiles')
         .eq('user_id', user.id)
-        .maybeSingle();
+        .single();
 
       if (error) {
-        console.error('Error querying admin_profiles:', error);
-      }
-
-      if (data) {
-        setAdminProfile(data as AdminProfile);
+        // If no admin profile found, assume super admin (existing admins)
+        console.log('No admin profile found, assuming super admin');
+        setAdminProfile({
+          admin_level: 'level3',
+          allowed_tiles: [
+            'registered-users', 'guest-list', 'productions', 'parties', 
+            'manage-admins', 'messages', 'games', 'bar-tabs', 'analytics'
+          ]
+        });
       } else {
-        // No explicit admin profile found. If the user is an admin, grant super admin access (backward compatibility)
-        const { data: roles, error: rolesError } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', user.id)
-          .eq('role', 'admin');
-
-        if (rolesError) {
-          console.error('Error checking user_roles:', rolesError);
-        }
-
-        if (roles && roles.length > 0) {
-          setAdminProfile({
-            admin_level: 'level3',
-            allowed_tiles: [
-              'registered-users',
-              'guest-list',
-              'productions',
-              'parties',
-              'messages',
-              'games',
-              'bar-tabs',
-              'manage-admins',
-            ]
-          });
-        } else {
-          setAdminProfile({
-            admin_level: 'level1',
-            allowed_tiles: []
-          });
-        }
+        setAdminProfile(data);
       }
     } catch (error) {
-      console.error('Unexpected error loading admin profile:', error);
-      // Fallback to restricted access
+      console.error('Error loading admin profile:', error);
+      // Fallback to super admin
       setAdminProfile({
-        admin_level: 'level1',
-        allowed_tiles: []
+        admin_level: 'level3',
+        allowed_tiles: [
+          'registered-users', 'guest-list', 'productions', 'parties', 
+          'manage-admins', 'messages', 'games', 'bar-tabs', 'analytics'
+        ]
       });
     } finally {
       setLoading(false);
@@ -118,9 +95,7 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
   };
 
   const isSuperAdmin = () => {
-    const result = adminProfile?.admin_level === 'level3' || adminProfile?.allowed_tiles.includes('manage-admins');
-    console.log('isSuperAdmin check:', { adminProfile, result });
-    return result;
+    return adminProfile?.admin_level === 'level3' || adminProfile?.allowed_tiles.includes('manage-admins');
   };
 
   if (loading) {
@@ -138,8 +113,6 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
     );
   }
 
-  console.log('Current view:', currentView, 'isSuperAdmin:', isSuperAdmin());
-  
   if (currentView === 'manage-admins' && isSuperAdmin()) {
     return <AdminSignupNew onBack={() => setCurrentView('dashboard')} />;
   }
@@ -279,10 +252,7 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
           {isSuperAdmin() && (
             <Card 
               className="cursor-pointer hover:shadow-lg transition-shadow"
-              onClick={() => {
-                console.log('Manage Admins clicked, setting currentView to manage-admins');
-                setCurrentView('manage-admins');
-              }}
+              onClick={() => setCurrentView('manage-admins')}
             >
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center gap-2">
