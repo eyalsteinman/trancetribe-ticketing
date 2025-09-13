@@ -95,8 +95,21 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
       .eq('party_id', party.id)
       .order('price', { ascending: true });
 
-    if (!error && data) {
+    if (error) {
+      console.error('Error loading ticket types:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load ticket types",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (data) {
       setTicketTypes(data);
+      console.log('Loaded ticket types:', data);
+    } else {
+      console.log('No ticket types found for party:', party.id);
     }
   };
 
@@ -507,16 +520,24 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
                       const status = getTicketStatus(ticketType);
                       const remaining = ticketType.quantity - ticketType.sold;
                       return (
-                        <div key={ticketType.id} className="border rounded-lg p-4">
+                        <div key={ticketType.id} className={`border rounded-lg p-4 ${status === 'sold-out' ? 'bg-muted/50 border-destructive/20' : 'bg-card'}`}>
                           <div className="flex justify-between items-center mb-3">
-                            <div>
-                              <div className="font-medium">{ticketType.label}</div>
-                              <div className="text-sm text-muted-foreground">
+                            <div className="flex-1">
+                              <div className="font-medium text-lg">{ticketType.label}</div>
+                              <div className="text-sm text-muted-foreground mb-1">
                                 {ticketType.price === 0 ? 'Free' : `${ticketType.price} ILS`}
                               </div>
-                              <div className="text-xs text-blue-600">
-                                {status === 'sold-out' ? 'Sold Out' : `${remaining} tickets remaining`}
+                              <div className={`text-xs font-medium ${
+                                status === 'sold-out' ? 'text-destructive' : 
+                                status === 'almost-sold-out' ? 'text-orange-600' : 'text-green-600'
+                              }`}>
+                                {status === 'sold-out' ? '🚫 SOLD OUT' : `✅ ${remaining} tickets remaining`}
                               </div>
+                              {status === 'almost-sold-out' && (
+                                <div className="text-xs text-orange-600 font-medium">
+                                  ⚡ Limited availability
+                                </div>
+                              )}
                             </div>
                           </div>
                           {ticketType.price > 0 && !hasPaid ? (
