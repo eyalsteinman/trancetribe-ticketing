@@ -203,7 +203,8 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
         photoUrl = await uploadPhoto();
       }
 
-      const { error } = await (supabase as any)
+      // Update party details
+      const { error: partyError } = await (supabase as any)
         .from('parties')
         .update({
           name: editName.trim(),
@@ -216,28 +217,64 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           is_free: (editingParty as any).is_free ?? false,
           optional_socials: editRequiredSocials.filter(s => s.includes('_optional')).map(s => s.replace('_optional', '')),
           obligatory_socials: editRequiredSocials.filter(s => s.includes('_obligatory')).map(s => s.replace('_obligatory', '')),
-          production_id: (editingParty as any).production_id || null
+          production_id: (editingParty as any).production_id || null,
+          ticket_count: (editingParty as any).ticket_count || null,
+          max_tickets_per_user: editMaxTicketsPerUser
         })
         .eq('id', editingParty.id);
 
-      if (error) {
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive"
-        });
-      } else {
-        toast({
-          title: "Success",
-          description: "Party updated successfully!",
-        });
-        setEditingParty(null);
-        setSelectedPhoto(null);
-        loadParties();
-  // Remove duplicate loadParties call
-  // loadParties();
+      if (partyError) {
+        throw partyError;
       }
+
+      // Update ticket types - first delete existing ones, then insert new ones
+      const { error: deleteError } = await supabase
+        .from('ticket_types')
+        .delete()
+        .eq('party_id', editingParty.id);
+
+      if (deleteError) {
+        console.error('Error deleting old ticket types:', deleteError);
+      }
+
+      // Insert new ticket types if any
+      if (editTicketTypes.length > 0) {
+        const ticketTypesToInsert = editTicketTypes
+          .filter(ticket => ticket.label && ticket.label.trim()) // Only save tickets with labels
+          .map(ticket => ({
+            party_id: editingParty.id,
+            label: ticket.label.trim(),
+            price: ticket.price || 0,
+            quantity: ticket.quantity || 0
+          }));
+
+        if (ticketTypesToInsert.length > 0) {
+          const { error: ticketTypesError } = await supabase
+            .from('ticket_types')
+            .insert(ticketTypesToInsert);
+
+          if (ticketTypesError) {
+            console.error('Error saving ticket types:', ticketTypesError);
+            toast({
+              title: "Warning", 
+              description: "Party updated but ticket types failed to save",
+              variant: "destructive"
+            });
+            return;
+          }
+        }
+      }
+
+      toast({
+        title: "Success",
+        description: "Party updated successfully!",
+      });
+      setEditingParty(null);
+      setSelectedPhoto(null);
+      setEditTicketTypes([]);
+      loadParties();
     } catch (error) {
+      console.error('Error updating party:', error);
       toast({
         title: "Error",
         description: "Failed to update party",

@@ -118,7 +118,7 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
 
       // Create new party
       const { data: { user } } = await supabase.auth.getUser();
-      const { error } = await (supabase as any)
+      const { data: partyData, error: partyError } = await (supabase as any)
         .from('parties')
         .insert({
           name: partyName.trim(),
@@ -136,32 +136,60 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
           start_time: startTime || null,
           end_time: endTime || null,
           max_tickets_per_user: maxTicketsPerUser
-        });
+        })
+        .select()
+        .single();
 
-      if (error) {
+      if (partyError) {
         toast({
           title: "Error",
-          description: error.message,
+          description: partyError.message,
           variant: "destructive"
         });
-      } else {
-        toast({
-          title: "Success",
-          description: "Party created successfully!",
-        });
-        // Reset form
-        setPartyName('');
-        setPartyDate('');
-        setSelectedPhoto(null);
-        setTicketCount('');
-        setStartTime('');
-        setEndTime('');
-        
-        // Show success popup for 2 seconds, then return
-        setTimeout(() => {
-          onBack();
-        }, 2000);
+        return;
       }
+
+      // Save ticket types if any were created
+      if (ticketTypes.length > 0 && partyData) {
+        const ticketTypesToInsert = ticketTypes.map(ticket => ({
+          party_id: partyData.id,
+          label: ticket.label,
+          price: ticket.price || 0,
+          quantity: ticket.quantity || 0
+        }));
+
+        const { error: ticketTypesError } = await supabase
+          .from('ticket_types')
+          .insert(ticketTypesToInsert);
+
+        if (ticketTypesError) {
+          console.error('Error saving ticket types:', ticketTypesError);
+          toast({
+            title: "Warning",
+            description: "Party created but ticket types failed to save. Please edit the party to add ticket types.",
+            variant: "destructive"
+          });
+        }
+      }
+
+      toast({
+        title: "Success",
+        description: "Party created successfully!",
+      });
+
+      // Reset form
+      setPartyName('');
+      setPartyDate('');
+      setSelectedPhoto(null);
+      setTicketCount('');
+      setStartTime('');
+      setEndTime('');
+      setTicketTypes([]);
+      
+      // Show success popup for 2 seconds, then return
+      setTimeout(() => {
+        onBack();
+      }, 2000);
     } catch (error) {
       toast({
         title: "Error",
