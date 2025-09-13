@@ -118,6 +118,12 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
 
       // Create new party
       const { data: { user } } = await supabase.auth.getUser();
+      
+      const optionalSocials = requiredSocials.filter(s => s.includes('_optional')).map(s => s.replace('_optional', ''));
+      const obligatorySocials = requiredSocials.filter(s => s.includes('_obligatory')).map(s => s.replace('_obligatory', ''));
+      
+      console.log('Saving social networks:', { optionalSocials, obligatorySocials, requiredSocials });
+      
       const { data: partyData, error: partyError } = await (supabase as any)
         .from('parties')
         .insert({
@@ -129,8 +135,8 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
           description: description.trim() || null,
           price: null, // Price now handled by ticket types
           is_free: isFree,
-          optional_socials: requiredSocials.filter(s => s.includes('_optional')).map(s => s.replace('_optional', '')),
-          obligatory_socials: requiredSocials.filter(s => s.includes('_obligatory')).map(s => s.replace('_obligatory', '')),
+          optional_socials: optionalSocials,
+          obligatory_socials: obligatorySocials,
           production_id: selectedProductionId || null,
           ticket_count: ticketCount ? Number(ticketCount) : null,
           start_time: startTime || null,
@@ -308,7 +314,7 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
 />
 
             <div>
-              <label className="text-sm font-medium">Social Networks</label>
+              <label className="text-sm font-medium">Social Networks Required</label>
               <div className="grid grid-cols-1 gap-3 mt-2">
                 {socialOptions.map((opt) => (
                   <div key={opt.key} className="space-y-2">

@@ -25,6 +25,8 @@ interface Party {
   price: number | null;
   is_free: boolean;
   required_socials: string[];
+  optional_socials: string[];
+  obligatory_socials: string[];
 }
 
 interface Production {
@@ -99,12 +101,25 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
   };
 
   const handleEditParty = async (party: Party) => {
+    console.log('Loading party for edit:', party);
     setEditingParty(party);
     setEditName(party.name);
     setEditDate(party.date);
     setEditStartTime((party as any).start_time || '');
     setEditEndTime((party as any).end_time || '');
-    setEditRequiredSocials(Array.isArray((party as any).required_socials) ? (party as any).required_socials : []);
+    
+    // Load social networks properly by reconstructing the format
+    const loadedSocials: string[] = [];
+    const optionalSocials = (party as any).optional_socials || [];
+    const obligatorySocials = (party as any).obligatory_socials || [];
+    
+    console.log('Loading social networks:', { optionalSocials, obligatorySocials });
+    
+    optionalSocials.forEach((social: string) => loadedSocials.push(`${social}_optional`));
+    obligatorySocials.forEach((social: string) => loadedSocials.push(`${social}_obligatory`));
+    
+    console.log('Loaded socials for form:', loadedSocials);
+    setEditRequiredSocials(loadedSocials);
     setSelectedPhoto(null);
     setEditMaxTicketsPerUser((party as any).max_tickets_per_user || 1);
     
@@ -530,7 +545,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
 />
 
               <div>
-                <label className="text-sm font-medium">Social Networks</label>
+                <label className="text-sm font-medium">Social Networks Required</label>
                 <div className="grid grid-cols-1 gap-3 mt-2">
                   {['facebook','instagram','tiktok','x'].map((key) => (
                     <div key={key} className="space-y-2">
