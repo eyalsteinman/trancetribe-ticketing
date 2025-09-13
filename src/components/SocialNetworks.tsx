@@ -9,6 +9,8 @@ import { supabase } from '@/integrations/supabase/client';
 interface SocialNetworksProps {
   userId: string;
   onBack: () => void;
+  onSaved?: () => void;
+  isFromTicketPurchase?: boolean;
 }
 
 type Platform = 'facebook' | 'instagram' | 'tiktok' | 'x';
@@ -20,7 +22,7 @@ const platforms: { key: Platform; label: string; placeholder: string }[] = [
   { key: 'x', label: 'X (Twitter) profile URL', placeholder: 'https://x.com/your-handle' },
 ];
 
-const SocialNetworks = ({ userId, onBack }: SocialNetworksProps) => {
+const SocialNetworks = ({ userId, onBack, onSaved, isFromTicketPurchase }: SocialNetworksProps) => {
   const { toast } = useToast();
   const [values, setValues] = useState<Record<Platform, string>>({
     facebook: '',
@@ -29,6 +31,12 @@ const SocialNetworks = ({ userId, onBack }: SocialNetworksProps) => {
     x: '',
   });
   const [loading, setLoading] = useState(false);
+  const [savingStates, setSavingStates] = useState<Record<Platform, boolean>>({
+    facebook: false,
+    instagram: false,
+    tiktok: false,
+    x: false,
+  });
 
   useEffect(() => {
     const load = async () => {
@@ -123,11 +131,54 @@ const SocialNetworks = ({ userId, onBack }: SocialNetworksProps) => {
       }
 
       toast({ title: 'Saved', description: 'Social links updated.' });
+      
+      // If this was triggered from ticket purchase flow, call onSaved
+      if (isFromTicketPurchase && onSaved) {
+        onSaved();
+      }
     } catch (e: any) {
       console.error('Save socials error', e);
       toast({ title: 'Error', description: e.message || 'Failed to save socials', variant: 'destructive' });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSaveIndividual = async (platform: Platform) => {
+    // Validate URL for this platform
+    if (values[platform]?.trim() && !validateUrl(values[platform], platform)) {
+      toast({ 
+        title: 'Invalid URL', 
+        description: `Please enter a valid URL for ${platforms.find(p => p.key === platform)?.label}`, 
+        variant: 'destructive' 
+      });
+      return;
+    }
+
+    setSavingStates(prev => ({ ...prev, [platform]: true }));
+    try {
+      // Remove existing row for this platform
+      const { error: delErr } = await (supabase as any)
+        .from('user_socials')
+        .delete()
+        .eq('user_id', userId)
+        .eq('platform', platform);
+      if (delErr) throw delErr;
+
+      // Insert new row if URL is not empty
+      if (values[platform]?.trim()) {
+        const { error: insErr } = await (supabase as any)
+          .from('user_socials')
+          .insert({ user_id: userId, platform, url: values[platform].trim() });
+        if (insErr) throw insErr;
+      }
+
+      toast({ title: 'Saved', description: `${platforms.find(p => p.key === platform)?.label} updated.` });
+    } catch (e: any) {
+      console.error('Save individual social error', e);
+      toast({ title: 'Error', description: e.message || 'Failed to save social link', variant: 'destructive' });
+    } finally {
+      setSavingStates(prev => ({ ...prev, [platform]: false }));
     }
   };
 
@@ -146,13 +197,22 @@ const SocialNetworks = ({ userId, onBack }: SocialNetworksProps) => {
             <CardHeader>
               <CardTitle className="text-sm font-normal opacity-80">{p.label}</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-3">
               <Input
                 placeholder={p.placeholder}
                 value={values[p.key]}
                 onChange={(e) => handleChange(p.key, e.target.value)}
                 inputMode="url"
               />
+              <Button 
+                onClick={() => handleSaveIndividual(p.key)}
+                disabled={savingStates[p.key]}
+                size="sm"
+                className="w-full"
+              >
+                <Save className="h-4 w-4 mr-2" />
+                {savingStates[p.key] ? 'Saving...' : 'Save'}
+              </Button>
             </CardContent>
           </Card>
         ))}
@@ -160,7 +220,7 @@ const SocialNetworks = ({ userId, onBack }: SocialNetworksProps) => {
         <div className="flex justify-center">
           <Button onClick={handleSave} disabled={loading} className="flex items-center gap-2">
             <Save className="h-4 w-4" />
-            {loading ? 'Saving...' : 'Save'}
+            {loading ? 'Saving All...' : 'Save All'}
           </Button>
         </div>
       </div>

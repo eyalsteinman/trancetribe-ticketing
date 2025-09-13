@@ -6,6 +6,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { QRCodeSVG } from 'qrcode.react';
 import BuyTicketsForFriends from './BuyTicketsForFriends';
+import SocialNetworksDialog from './SocialNetworksDialog';
+import SocialNetworks from './SocialNetworks';
 import RtlText from './RtlText';
 
 interface Party {
@@ -59,6 +61,10 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
   const [loading, setLoading] = useState(false);
   const [showBuyForFriends, setShowBuyForFriends] = useState(false);
   const [hasPaid, setHasPaid] = useState(false);
+  const [showSocialDialog, setShowSocialDialog] = useState(false);
+  const [missingSocials, setMissingSocials] = useState<string[]>([]);
+  const [showSocialNetworks, setShowSocialNetworks] = useState(false);
+  const [pendingTicketAction, setPendingTicketAction] = useState<{ type: 'payment' | 'generate'; ticketType?: TicketType } | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -188,7 +194,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
     }
   };
 
-  const checkRequiredSocials = async () => {
+  const checkRequiredSocials = async (ticketAction: { type: 'payment' | 'generate'; ticketType?: TicketType }) => {
     if (!party.required_socials || party.required_socials.length === 0) {
       return true;
     }
@@ -199,16 +205,14 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
       .eq('user_id', user.id);
 
     const userPlatforms = userSocials?.map(s => s.platform) || [];
-    const missingSocials = party.required_socials.filter(
+    const missing = party.required_socials.filter(
       required => !userPlatforms.includes(required)
     );
 
-    if (missingSocials.length > 0) {
-      toast({
-        title: "Social Media Required",
-        description: `Please add your ${missingSocials.join(', ')} account(s) in your profile before purchasing tickets.`,
-        variant: "destructive"
-      });
+    if (missing.length > 0) {
+      setMissingSocials(missing);
+      setPendingTicketAction(ticketAction);
+      setShowSocialDialog(true);
       return false;
     }
 
@@ -216,7 +220,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
   };
 
   const handlePayment = async (ticketType?: TicketType) => {
-    const canPurchase = await checkRequiredSocials();
+    const canPurchase = await checkRequiredSocials({ type: 'payment', ticketType });
     if (!canPurchase) return;
 
     setLoading(true);
@@ -252,7 +256,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
   };
 
   const generateQR = async (ticketType?: TicketType) => {
-    const canGenerate = await checkRequiredSocials();
+    const canGenerate = await checkRequiredSocials({ type: 'generate', ticketType });
     if (!canGenerate) return;
 
     setLoading(true);
@@ -375,6 +379,43 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
     if (remaining <= ticketType.quantity * 0.1) return 'almost-sold-out';
     return 'available';
   };
+
+  const handleSocialDialogFillNow = () => {
+    setShowSocialDialog(false);
+    setShowSocialNetworks(true);
+  };
+
+  const handleSocialNetworksBack = () => {
+    setShowSocialNetworks(false);
+    setPendingTicketAction(null);
+  };
+
+  const handleSocialNetworksSaved = () => {
+    setShowSocialNetworks(false);
+    
+    // Execute the pending ticket action
+    if (pendingTicketAction) {
+      const { type, ticketType } = pendingTicketAction;
+      setPendingTicketAction(null);
+      
+      if (type === 'payment') {
+        handlePayment(ticketType);
+      } else if (type === 'generate') {
+        generateQR(ticketType);
+      }
+    }
+  };
+
+  if (showSocialNetworks) {
+    return (
+      <SocialNetworks
+        userId={user.id}
+        onBack={handleSocialNetworksBack}
+        onSaved={handleSocialNetworksSaved}
+        isFromTicketPurchase={!!pendingTicketAction}
+      />
+    );
+  }
 
   if (showBuyForFriends) {
     return (
@@ -619,6 +660,14 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
             </CardContent>
           </Card>
         )}
+
+        {/* Social Networks Dialog */}
+        <SocialNetworksDialog
+          isOpen={showSocialDialog}
+          onClose={() => setShowSocialDialog(false)}
+          missingSocials={missingSocials}
+          onFillNow={handleSocialDialogFillNow}
+        />
       </div>
     </div>
   );
