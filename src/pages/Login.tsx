@@ -177,9 +177,15 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                     variant="link"
                     onClick={() => setIsSignUp(!isSignUp)}
                     className="text-sm hover:no-underline bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded force-black-text"
-                    style={{ color: 'black !important' }}
+                    style={{ 
+                      color: 'black !important',
+                      backgroundColor: '#2563eb',
+                      textDecoration: 'none'
+                    }}
                   >
-                    {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
+                    <span style={{ color: 'black' }}>
+                      {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
+                    </span>
                   </Button>
                 </div>
 
@@ -191,7 +197,10 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                   <Button 
                     variant="default"
                     className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 border-blue-600 force-black-text"
-                    style={{ color: 'black' }}
+                    style={{ 
+                      color: 'black',
+                      backgroundColor: '#2563eb'
+                    }}
                     onClick={async () => {
                       const { error } = await supabase.auth.signInWithOAuth({
                         provider: 'google',
@@ -208,13 +217,16 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                       }
                     }}
                   >
-                    Continue with Google
+                    <span style={{ color: 'black' }}>Continue with Google</span>
                   </Button>
                   
                   <Button 
                     variant="default"
                     className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 border-blue-600 force-black-text"
-                    style={{ color: 'black' }}
+                    style={{ 
+                      color: 'black',
+                      backgroundColor: '#2563eb'
+                    }}
                     onClick={async () => {
                       const { error } = await supabase.auth.signInWithOAuth({
                         provider: 'facebook',
@@ -231,7 +243,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                       }
                     }}
                   >
-                    Continue with Facebook
+                    <span style={{ color: 'black' }}>Continue with Facebook</span>
                   </Button>
                 </div>
               </CardContent>

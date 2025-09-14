@@ -550,7 +550,7 @@ const AuthForm = () => {
                     className="w-full force-black-text"
                     style={{ color: 'black' }}
                   >
-                    Create Admin Account
+                    <span style={{ color: 'black' }}>Create Admin Account</span>
                   </Button>
                 </div>
               </CardContent>

@@ -202,6 +202,20 @@ All colors MUST be HSL.
   .force-black-text * {
     color: hsl(0 0% 0%) !important;
   }
+
+  /* Override button variant text colors specifically */
+  .login-page-force-black .force-black-text,
+  .login-page-force-black .force-black-text *,
+  button.force-black-text,
+  button.force-black-text * {
+    color: hsl(0 0% 0%) !important;
+    text-decoration: none !important;
+  }
+
+  .login-page-force-black button.force-black-text:hover,
+  .login-page-force-black button.force-black-text:hover * {
+    color: hsl(0 0% 0%) !important;
+  }
 }
 
 @layer base {
