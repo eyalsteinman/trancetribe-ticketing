@@ -184,16 +184,71 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                     {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
                   </Button>
                 </div>
+
+                <div className="text-center py-4">
+                  <p className="text-sm" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>or continue with</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Button 
+                    variant="outline"
+                    className="w-full flex items-center justify-center gap-2"
+                    style={{ 
+                      color: isBackgroundDark ? '#ffffff' : '#000000',
+                      borderColor: isBackgroundDark ? '#ffffff' : '#000000'
+                    }}
+                    onClick={async () => {
+                      const { error } = await supabase.auth.signInWithOAuth({
+                        provider: 'google',
+                        options: {
+                          redirectTo: window.location.origin
+                        }
+                      });
+                      if (error) {
+                        toast({
+                          title: "Error",
+                          description: error.message,
+                          variant: "destructive"
+                        });
+                      }
+                    }}
+                  >
+                    Continue with Google
+                  </Button>
+                  
+                  <Button 
+                    variant="outline"
+                    className="w-full flex items-center justify-center gap-2"
+                    style={{ 
+                      color: isBackgroundDark ? '#ffffff' : '#000000',
+                      borderColor: isBackgroundDark ? '#ffffff' : '#000000'
+                    }}
+                    onClick={async () => {
+                      const { error } = await supabase.auth.signInWithOAuth({
+                        provider: 'facebook',
+                        options: {
+                          redirectTo: window.location.origin
+                        }
+                      });
+                      if (error) {
+                        toast({
+                          title: "Error",
+                          description: error.message,
+                          variant: "destructive"
+                        });
+                      }
+                    }}
+                  >
+                    Continue with Facebook
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
         </div>
 
-        {/* Or Continue With Section */}
+        {/* Production Browser Section - Remove the duplicate "or continue with" */}
         <div className="container-section">
-          <div className="text-center mb-4">
-            <p className="text-lg font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>or continue with</p>
-          </div>
           <ProductionBrowser onLoginPrompt={() => {}} />
         </div>
 
