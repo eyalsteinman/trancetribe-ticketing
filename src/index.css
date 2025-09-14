@@ -268,7 +268,6 @@ All colors MUST be HSL.
     font-weight: bold;
     color: hsl(var(--foreground));
   }
-}
 
 @layer base {
   * {
