@@ -91,121 +91,110 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
       className="min-h-screen flex items-center justify-center transition-colors duration-500"
       style={{ backgroundColor }}
     >
-      <div className="w-full space-y-0">
+      <div className="w-full space-y-6">
         {/* Login Form */}
         <div className="container-section">
           <div className="max-w-md mx-auto">
             <Card>
-          <CardHeader>
-            <CardTitle 
-              className="text-center text-2xl font-bold"
-              style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-            >
-              Trance Tribe - Choose your access type
-            </CardTitle>
-            <p className="text-center" style={{ color: isBackgroundDark ? '#888888' : '#666666' }}>
-              {isSignUp ? 'Create your account' : 'Welcome back'}
-            </p>
-            {showLoginForm && (
-              <div className="text-center">
-                <Button 
-                  variant="link" 
-                  onClick={() => setShowLoginForm(false)}
-                  className="text-sm"
+              <CardHeader>
+                <CardTitle 
+                  className="text-center text-2xl font-bold"
+                  style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
                 >
-                  ← Back to Browse Productions
-                </Button>
-              </div>
-            )}
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {isSignUp && (
-              <>
-                <div className="grid grid-cols-2 gap-4">
+                  Trance Tribe - Choose your access type
+                </CardTitle>
+                <p className="text-center" style={{ color: isBackgroundDark ? '#888888' : '#666666' }}>
+                  {isSignUp ? 'Create your account' : 'Welcome back'}
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {isSignUp && (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>First Name *</label>
+                        <Input
+                          type="text"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          placeholder="Enter first name"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>Last Name *</label>
+                        <Input
+                          type="text"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          placeholder="Enter last name"
+                          required
+                        />
+                      </div>
+                    </div>
                     <div>
-                    <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>First Name *</label>
-                    <Input
-                      type="text"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      placeholder="Enter first name"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>Last Name *</label>
-                    <Input
-                      type="text"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      placeholder="Enter last name"
-                      required
-                    />
-                  </div>
-                </div>
+                      <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>Phone Number</label>
+                      <Input
+                        type="tel"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        placeholder="Enter phone number"
+                      />
+                    </div>
+                  </>
+                )}
+                
                 <div>
-                  <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>Phone Number</label>
+                  <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>Email *</label>
                   <Input
-                    type="tel"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    placeholder="Enter phone number"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    required
                   />
                 </div>
-              </>
-            )}
-            
-            <div>
-              <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>Email *</label>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>Password *</label>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                required
-              />
-            </div>
+                
+                <div>
+                  <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>Password *</label>
+                  <Input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter your password"
+                    required
+                  />
+                </div>
 
-            <Button 
-              onClick={handleAuth}
-              disabled={loading}
-              className="w-full"
-            >
-              {loading ? "Processing..." : (isSignUp ? "Sign Up" : "Sign In")}
-            </Button>
+                <Button 
+                  onClick={handleAuth}
+                  disabled={loading}
+                  className="w-full"
+                >
+                  {loading ? "Processing..." : (isSignUp ? "Create Account" : "Sign In")}
+                </Button>
 
-            <div className="text-center">
-              <Button
-                variant="link"
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="text-sm"
-                style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-              >
-                {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-        </div>
+                <div className="text-center">
+                  <Button
+                    variant="link"
+                    onClick={() => setIsSignUp(!isSignUp)}
+                    className="text-sm"
+                    style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+                  >
+                    {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
-        {/* Production Browser Section */}
+        {/* Or Continue With Section */}
         <div className="container-section">
           <div className="text-center mb-4">
-            <p style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>or continue with</p>
+            <p className="text-lg font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>or continue with</p>
           </div>
-          <ProductionBrowser onLoginPrompt={() => setShowLoginForm(true)} />
+          <ProductionBrowser onLoginPrompt={() => {}} />
         </div>
 
         {/* Footer */}
