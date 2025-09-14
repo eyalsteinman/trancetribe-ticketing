@@ -533,8 +533,7 @@ All colors MUST be HSL.
 }
 
 /* CRITICAL: Login page black text override - highest specificity */
-.login-page-force-black *,
-.login-page-force-black button,
+.login-page-force-black *:not(button):not(.bg-blue-600),
 .login-page-force-black p,
 .login-page-force-black label,
 .login-page-force-black h1,
@@ -548,4 +547,11 @@ All colors MUST be HSL.
 .login-page-force-black .text-xl,
 .login-page-force-black .text-2xl {
   color: #000000 !important;
+}
+
+/* Blue buttons should keep white text */
+.login-page-force-black .bg-blue-600,
+.login-page-force-black button.bg-blue-600 {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
 }
