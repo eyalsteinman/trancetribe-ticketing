@@ -95,16 +95,23 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
               <CardTitle className="text-center text-2xl font-bold text-black">
                 User Login/Registration
               </CardTitle>
-              {/* Sign In Button - Top Right */}
-              {!isSignUp && (
-                <button
-                  onClick={() => setIsSignUp(true)}
-                  className="absolute top-4 right-4 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-xs font-medium leading-tight"
-                >
-                  <div>Already have an account?</div>
-                  <div>Sign In</div>
-                </button>
-              )}
+              {/* Toggle Button - Top Right */}
+              <button
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="absolute top-4 right-4 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-xs font-medium leading-tight"
+              >
+                {isSignUp ? (
+                  <>
+                    <div>Already have an account?</div>
+                    <div>Sign In</div>
+                  </>
+                ) : (
+                  <>
+                    <div>Don't have an account?</div>
+                    <div>Sign Up</div>
+                  </>
+                )}
+              </button>
               <p className="text-center text-black">
                 {isSignUp ? 'Create your account' : 'Welcome back'}
               </p>
@@ -188,20 +195,6 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
             </CardContent>
           </Card>
 
-          {/* Account Toggle Container - Only show Sign Up option when in Sign In mode */}
-          {isSignUp && (
-            <div className="account-toggle-container bg-white p-4 rounded-lg border border-gray-200 shadow-md">
-              <div className="text-center">
-                <button
-                  onClick={() => setIsSignUp(false)}
-                  className="text-sm px-6 py-3 rounded font-medium border border-gray-300 hover:bg-gray-50"
-                  style={{ color: '#000000', backgroundColor: '#ffffff' }}
-                >
-                  Already have an account? Sign In
-                </button>
-              </div>
-            </div>
-          )}
 
           {/* Social Login Container */}
           <div className="social-login-container bg-white p-6 rounded-lg border border-gray-200 shadow-md">
