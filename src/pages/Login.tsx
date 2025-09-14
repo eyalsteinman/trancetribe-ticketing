@@ -195,59 +195,6 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
             </CardContent>
           </Card>
 
-
-          {/* Social Login Container */}
-          <div className="social-login-container bg-white p-6 rounded-lg border border-gray-200 shadow-md">
-            <div className="text-center py-4">
-              <p className="text-sm font-medium text-black">or continue with</p>
-            </div>
-
-            <div className="space-y-3">
-              <button 
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded font-medium border border-gray-300 hover:bg-gray-50"
-                style={{ color: '#000000', backgroundColor: '#ffffff' }}
-                onClick={async () => {
-                  const { error } = await supabase.auth.signInWithOAuth({
-                    provider: 'google',
-                    options: {
-                      redirectTo: window.location.origin
-                    }
-                  });
-                  if (error) {
-                    toast({
-                      title: "Error",
-                      description: error.message,
-                      variant: "destructive"
-                    });
-                  }
-                }}
-              >
-                Continue with Google
-              </button>
-              
-              <button 
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded font-medium border border-gray-300 hover:bg-gray-50"
-                style={{ color: '#000000', backgroundColor: '#ffffff' }}
-                onClick={async () => {
-                  const { error } = await supabase.auth.signInWithOAuth({
-                    provider: 'facebook',
-                    options: {
-                      redirectTo: window.location.origin
-                    }
-                  });
-                  if (error) {
-                    toast({
-                      title: "Error",
-                      description: error.message,
-                      variant: "destructive"
-                    });
-                  }
-                }}
-              >
-                Continue with Facebook
-              </button>
-            </div>
-          </div>
         </div>
       </div>
 
