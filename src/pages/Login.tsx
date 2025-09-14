@@ -173,13 +173,19 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                 </Button>
 
                 <div className="text-center">
-                  <Button
-                    variant="blackText"
+                  <button
                     onClick={() => setIsSignUp(!isSignUp)}
-                    className="text-sm px-4 py-2"
+                    data-black-text="true"
+                    className="text-sm px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded"
+                    style={{ 
+                      color: '#000000 !important',
+                      backgroundColor: '#2563eb',
+                      border: 'none',
+                      fontWeight: '500'
+                    }}
                   >
                     {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
-                  </Button>
+                  </button>
                 </div>
 
                 <div className="text-center py-4">
@@ -187,9 +193,15 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                 </div>
 
                 <div className="space-y-2">
-                  <Button 
-                    variant="blackText"
-                    className="w-full flex items-center justify-center gap-2"
+                  <button 
+                    data-black-text="true"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded"
+                    style={{ 
+                      color: '#000000',
+                      backgroundColor: '#2563eb',
+                      border: 'none',
+                      fontWeight: '500'
+                    }}
                     onClick={async () => {
                       const { error } = await supabase.auth.signInWithOAuth({
                         provider: 'google',
@@ -207,11 +219,17 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                     }}
                   >
                     Continue with Google
-                  </Button>
+                  </button>
                   
-                  <Button 
-                    variant="blackText"
-                    className="w-full flex items-center justify-center gap-2"
+                  <button 
+                    data-black-text="true"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded"
+                    style={{ 
+                      color: '#000000',
+                      backgroundColor: '#2563eb',
+                      border: 'none',
+                      fontWeight: '500'
+                    }}
                     onClick={async () => {
                       const { error } = await supabase.auth.signInWithOAuth({
                         provider: 'facebook',
@@ -229,7 +247,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                     }}
                   >
                     Continue with Facebook
-                  </Button>
+                  </button>
                 </div>
               </CardContent>
             </Card>

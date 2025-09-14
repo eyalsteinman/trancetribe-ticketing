@@ -543,14 +543,19 @@ const AuthForm = () => {
                   >
                     {loading ? "Signing in..." : "Sign In as Admin"}
                   </Button>
-                  <Button 
+                  <button 
                     onClick={handleCreateAdminClick}
-                    variant="blackText"
                     disabled={!email || !password}
-                    className="w-full"
+                    data-black-text="true"
+                    className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded border border-blue-600"
+                    style={{ 
+                      color: '#000000',
+                      backgroundColor: '#2563eb',
+                      fontWeight: '500'
+                    }}
                   >
                     Create Admin Account
-                  </Button>
+                  </button>
                 </div>
               </CardContent>
             </Card>

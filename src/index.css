@@ -194,27 +194,30 @@ All colors MUST be HSL.
     border-color: hsl(217 91% 60%) !important;
   }
 
-  /* Force specific button texts to always be black */
-  .force-black-text {
-    color: hsl(0 0% 0%) !important;
-  }
-
-  .force-black-text * {
-    color: hsl(0 0% 0%) !important;
-  }
-
-  /* Override button variant text colors specifically */
-  .login-page-force-black .force-black-text,
-  .login-page-force-black .force-black-text *,
+  /* Force specific button texts to always be black - AGGRESSIVE OVERRIDE */
+  .force-black-text,
+  .force-black-text *,
   button.force-black-text,
-  button.force-black-text * {
-    color: hsl(0 0% 0%) !important;
+  button.force-black-text *,
+  [data-black-text="true"],
+  [data-black-text="true"] * {
+    color: #000000 !important;
     text-decoration: none !important;
   }
 
-  .login-page-force-black button.force-black-text:hover,
-  .login-page-force-black button.force-black-text:hover * {
-    color: hsl(0 0% 0%) !important;
+  /* Override ALL possible button text colors */
+  .login-page-force-black button[data-black-text="true"],
+  .login-page-force-black button[data-black-text="true"] *,
+  button[data-black-text="true"],
+  button[data-black-text="true"] *,
+  button[data-black-text="true"]:hover,
+  button[data-black-text="true"]:hover *,
+  button[data-black-text="true"]:focus,
+  button[data-black-text="true"]:focus *,
+  button[data-black-text="true"]:active,
+  button[data-black-text="true"]:active * {
+    color: #000000 !important;
+    fill: #000000 !important;
   }
 }
 
