@@ -547,7 +547,8 @@ const AuthForm = () => {
                     onClick={handleCreateAdminClick}
                     variant="outline"
                     disabled={!email || !password}
-                    className="w-full"
+                    className="w-full force-black-text"
+                    style={{ color: 'black' }}
                   >
                     Create Admin Account
                   </Button>
