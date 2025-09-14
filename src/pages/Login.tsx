@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,6 +23,14 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
   const [showLoginForm, setShowLoginForm] = useState(false);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
+
+  // Force theme-revert for login page to ensure black text
+  useEffect(() => {
+    document.documentElement.classList.add('theme-revert');
+    return () => {
+      document.documentElement.classList.remove('theme-revert');
+    };
+  }, []);
 
   const handleAuth = async () => {
     if (!email || !password) {
@@ -89,7 +97,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center transition-colors duration-500"
+      className="min-h-screen flex items-center justify-center transition-colors duration-500 theme-revert"
       style={{ backgroundColor }}
     >
       <div className="w-full space-y-6">
