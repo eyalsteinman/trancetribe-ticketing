@@ -543,14 +543,22 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
           <Button
             variant={activeTab === 'scanned' ? 'default' : 'outline'}
             onClick={() => setActiveTab('scanned')}
-            className="flex-1 text-sm"
+            className={`flex-1 text-sm ${
+              activeTab === 'scanned' 
+                ? 'bg-primary text-primary-foreground' 
+                : 'theme-revert:text-foreground theme-revert:border-foreground theme-revert:hover:bg-foreground/10'
+            }`}
           >
             Scanned ({scannedGuests.length})
           </Button>
           <Button
             variant={activeTab === 'arriving' ? 'default' : 'outline'}
             onClick={() => setActiveTab('arriving')}
-            className="flex-1 text-sm"
+            className={`flex-1 text-sm ${
+              activeTab === 'arriving' 
+                ? 'bg-primary text-primary-foreground' 
+                : 'theme-revert:text-foreground theme-revert:border-foreground theme-revert:hover:bg-foreground/10'
+            }`}
           >
             Arriving ({arrivingGuests.length})
           </Button>
