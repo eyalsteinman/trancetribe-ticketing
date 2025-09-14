@@ -198,12 +198,6 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
         </div>
       </div>
 
-      {/* Production Browser Section */}
-      <div className="bg-white py-8 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4">
-          <ProductionBrowser onLoginPrompt={() => {}} />
-        </div>
-      </div>
 
       {/* Footer Container */}
       <div className="footer-container bg-white border-t border-gray-200 py-4">
