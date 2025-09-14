@@ -439,8 +439,7 @@ All colors MUST be HSL.
   }
 
   /* Consistent page header styling */
-  .page-header,
-  [class*="PageHeader"] {
+  .page-header {
     display: flex;
     align-items: center;
     justify-between;
@@ -448,8 +447,7 @@ All colors MUST be HSL.
     padding: 1rem 0;
   }
 
-  .page-header h1,
-  [class*="PageHeader"] h1 {
+  .page-header h1 {
     font-size: 1.5rem;
     font-weight: bold;
     color: hsl(var(--foreground));
