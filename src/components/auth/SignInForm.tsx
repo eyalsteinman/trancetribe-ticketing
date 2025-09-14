@@ -4,11 +4,9 @@ import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-interface SignInFormProps {
-  onToggleMode: () => void;
-}
+interface SignInFormProps {}
 
-export const SignInForm = ({ onToggleMode }: SignInFormProps) => {
+export const SignInForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -166,14 +164,6 @@ export const SignInForm = ({ onToggleMode }: SignInFormProps) => {
           Facebook
         </Button>
       </div>
-      
-      <Button 
-        onClick={onToggleMode}
-        variant="outline"
-        className="w-full"
-      >
-        No account? Create one
-      </Button>
     </div>
   );
 };

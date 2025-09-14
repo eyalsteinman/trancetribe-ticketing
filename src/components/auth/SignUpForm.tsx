@@ -4,11 +4,9 @@ import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-interface SignUpFormProps {
-  onToggleMode: () => void;
-}
+interface SignUpFormProps {}
 
-export const SignUpForm = ({ onToggleMode }: SignUpFormProps) => {
+export const SignUpForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -48,7 +46,6 @@ export const SignUpForm = ({ onToggleMode }: SignUpFormProps) => {
           title: "Success",
           description: "Account created! Please check your email to verify your account."
         });
-        onToggleMode();
     } catch (error: any) {
       toast({
         title: "Error",
@@ -133,14 +130,6 @@ export const SignUpForm = ({ onToggleMode }: SignUpFormProps) => {
         className="w-full bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
       >
         {loading ? "Processing..." : "Create Account"}
-      </Button>
-      
-      <Button 
-        onClick={onToggleMode}
-        variant="outline"
-        className="w-full"
-      >
-        Already have an account? Sign In
       </Button>
     </div>
   );
