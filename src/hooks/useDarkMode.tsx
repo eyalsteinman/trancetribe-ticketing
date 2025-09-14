@@ -13,32 +13,32 @@ const themeColors = {
   ocean: {
     background: '0 0% 0%',
     foreground: '0 0% 100%',
-    primary: '180 100% 70%',
+    primary: '195 100% 45%',
   },
   sunset: {
     background: '0 0% 0%',
     foreground: '0 0% 100%',
-    primary: '45 100% 70%',
+    primary: '25 100% 45%',
   },
   forest: {
     background: '0 0% 0%',
     foreground: '0 0% 100%',
-    primary: '140 70% 60%',
+    primary: '140 70% 35%',
   },
   purple: {
     background: '0 0% 0%',
     foreground: '0 0% 100%',
-    primary: '290 80% 70%',
+    primary: '270 80% 45%',
   },
   crimson: {
     background: '0 0% 0%',
     foreground: '0 0% 100%',
-    primary: '10 90% 70%',
+    primary: '350 90% 45%',
   },
   amber: {
     background: '0 0% 0%',
     foreground: '0 0% 100%',
-    primary: '50 100% 70%',
+    primary: '45 100% 45%',
   },
 };
 

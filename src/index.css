@@ -276,6 +276,20 @@ All colors MUST be HSL.
     animation: longPressAnimation 3s ease-in-out;
   }
 
+  /* Glassmorphism effects for tiles and buttons */
+  .glassmorphism-tile {
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(15px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .glassmorphism-button {
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+  }
+
   /* Theme-based text color rules */
   :root:not(.theme-revert) {
     --foreground: 0 0% 100%;
@@ -291,6 +305,19 @@ All colors MUST be HSL.
   }
   :root:not(.theme-revert) svg {
     color: hsl(0 0% 100%) !important;
+  }
+
+  /* Exception: Form elements should maintain proper contrast */
+  :root:not(.theme-revert) input,
+  :root:not(.theme-revert) textarea,
+  :root:not(.theme-revert) select {
+    color: hsl(0 0% 0%) !important;
+  }
+
+  :root.theme-revert input,
+  :root.theme-revert textarea,
+  :root.theme-revert select {
+    color: hsl(0 0% 0%) !important;
   }
 
   /* All buttons and interactive elements have white text and icons */
