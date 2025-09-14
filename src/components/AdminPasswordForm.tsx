@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AdminPasswordFormProps {
   onSuccess: () => void;
@@ -14,21 +15,54 @@ const AdminPasswordForm = ({ onSuccess, onBack }: AdminPasswordFormProps) => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setLoading(true);
     
-    setTimeout(() => {
-      if (password === 'trancetribeadmin69') {
-        onSuccess();
-      } else {
+    try {
+      // Sign in with the provided credentials
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: 'admin@trancetribe.com', // Use a fixed admin email
+        password: password,
+      });
+
+      if (error) {
         toast({
           title: "Access Denied",
-          description: "you are no admin of mine",
+          description: "Invalid admin credentials",
           variant: "destructive"
         });
+        setLoading(false);
+        return;
       }
+
+      // Check if user has admin role
+      const { data: userRoles, error: roleError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', data.user.id)
+        .eq('role', 'admin');
+
+      if (roleError || !userRoles || userRoles.length === 0) {
+        await supabase.auth.signOut(); // Sign out if not admin
+        toast({
+          title: "Access Denied",
+          description: "Admin privileges required",
+          variant: "destructive"
+        });
+        setLoading(false);
+        return;
+      }
+
+      onSuccess();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Authentication failed",
+        variant: "destructive"
+      });
+    } finally {
       setLoading(false);
-    }, 500);
+    }
   };
 
   return (
