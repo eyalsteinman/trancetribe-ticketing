@@ -401,7 +401,6 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           <PageHeader
             title="Edit Party"
             onBack={cancelEdit}
-            isBackgroundDark={isBackgroundDark}
           />
           
           <div className="w-full max-w-none pt-20 space-y-6 text-left">
@@ -669,7 +668,6 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
         <PageHeader
           title="Edit Parties"
           onBack={onBack}
-          isBackgroundDark={isBackgroundDark}
         />
         
         <div className="w-full max-w-none pt-20 space-y-6 text-left">

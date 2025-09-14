@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { ArrowLeft, Edit, Trash2, Upload, Save, X, ArrowUpDown } from 'lucide-react';
+import PageHeader from '@/components/ui/page-header';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 interface ManageProductionsProps {

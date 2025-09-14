@@ -513,7 +513,6 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         <PageHeader
           title="QR Scanner"
           onBack={() => setCurrentView('dashboard')}
-          isBackgroundDark={isBackgroundDark}
         />
         
         <div className="w-full pt-20">
@@ -572,7 +571,6 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         <PageHeader
           title="Guest Management"
           onBack={() => setCurrentView('dashboard')}
-          isBackgroundDark={isBackgroundDark}
         />
         
         <div className="w-full pt-20">

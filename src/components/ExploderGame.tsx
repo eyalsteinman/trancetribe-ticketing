@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import BackButton from '@/components/ui/back-button';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
 
@@ -288,15 +288,9 @@ setFallingBall((prev) => {
       onTouchEnd={handleTouchEnd}
       onContextMenu={(e) => e.preventDefault()}
     >
-      <Button
-        className="absolute top-4 right-4 z-[9999] on-color back-button"
-        variant="outline"
-        size="icon"
-        aria-label="Back"
-        onClick={onBack}
-      >
-        <ArrowLeft className="h-4 w-4" />
-      </Button>
+      <div className="absolute top-4 right-4 z-[9999]">
+        <BackButton onBack={onBack} />
+      </div>
 
       {/* Scoreboard */}
       <div className="absolute right-4 z-[9999] text-right text-white" style={{ top: 'calc(env(safe-area-inset-top) + 8px)' }}>

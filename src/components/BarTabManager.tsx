@@ -3,7 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
+import PageHeader from '@/components/ui/page-header';
 import { useToast } from '@/hooks/use-toast';
 import { User } from '@supabase/supabase-js';
 import { useBackground } from '@/contexts/BackgroundContext';
@@ -170,24 +171,12 @@ const BarTabManager = ({ user, onBack }: BarTabManagerProps) => {
       className="min-h-screen p-4 transition-colors duration-500"
       style={{ backgroundColor }}
     >
-      <div className="max-w-md mx-auto space-y-6">
-        <div className="flex items-center justify-between">
-          <Button 
-            variant="outline" 
-            size="icon" 
-            onClick={onBack}
-            aria-label="Back"
-            className="absolute top-4 right-4 z-[9999] on-color back-button"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 
-            className="text-xl font-bold"
-            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-          >
-            Bar Tab Manager
-          </h1>
-        </div>
+      <PageHeader
+        title="Bar Tab Manager"
+        onBack={onBack}
+      />
+      
+      <div className="max-w-md mx-auto pt-20 space-y-6">
 
         <Card>
           <CardHeader>

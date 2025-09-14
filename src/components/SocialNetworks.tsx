@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Save } from 'lucide-react';
+import { Save } from 'lucide-react';
+import PageHeader from '@/components/ui/page-header';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -184,13 +185,12 @@ const SocialNetworks = ({ userId, onBack, onSaved, isFromTicketPurchase }: Socia
 
   return (
     <div className="min-h-screen p-4">
-      <div className="max-w-md mx-auto space-y-6 text-left">
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 className="text-xl font-bold">Social Networks</h1>
-        </div>
+      <PageHeader
+        title="Social Networks"
+        onBack={onBack}
+      />
+      
+      <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
 
         {platforms.map((p) => (
           <Card key={p.key}>

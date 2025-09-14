@@ -513,7 +513,6 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
       <PageHeader
         title="Guest List"
         onBack={onBack}
-        isBackgroundDark={isBackgroundDark}
       />
       
       <div className="px-4 pt-20 pb-4 space-y-4">

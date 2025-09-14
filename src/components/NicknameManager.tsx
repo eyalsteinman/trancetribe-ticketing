@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { User } from '@supabase/supabase-js';
-import { ArrowLeft } from 'lucide-react';
+import PageHeader from '@/components/ui/page-header';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
 
@@ -88,18 +88,12 @@ const NicknameManager = ({ user, onBack }: NicknameManagerProps) => {
         backgroundColor
       }}
     >
-      <div className="max-w-md mx-auto space-y-6 text-left">
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 
-            className="text-2xl font-bold"
-            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-          >
-            My Info
-          </h1>
-        </div>
+      <PageHeader
+        title="My Info"
+        onBack={onBack}
+      />
+      
+      <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
 
         <Card>
           <CardHeader>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import BackButton from '@/components/ui/back-button';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
@@ -188,15 +188,9 @@ const handleBack = () => {
       onTouchEnd={onPointerUp}
       onContextMenu={(e) => e.preventDefault()}
     >
-      <Button
-        className="absolute top-4 left-4 z-[9999] on-color back-button"
-        variant="outline"
-        size="icon"
-        aria-label="Back"
-        onClick={handleBack}
-      >
-        <ArrowLeft className="h-4 w-4" />
-      </Button>
+      <div className="absolute top-4 right-4 z-[9999]">
+        <BackButton onBack={handleBack} />
+      </div>
 
       {/* Scoreboard */}
       <div className="absolute top-4 right-4 z-[9999] text-right text-white">

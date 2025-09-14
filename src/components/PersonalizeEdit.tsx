@@ -251,7 +251,6 @@ const PersonalizeEdit = ({ user, onBack }: PersonalizeEditProps) => {
       <PageHeader
         title="My Info"
         onBack={onBack}
-        isBackgroundDark={isBackgroundDark}
       />
       
       <div className="max-w-md mx-auto pt-20 space-y-6 text-left">

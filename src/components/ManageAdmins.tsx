@@ -346,7 +346,6 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
       <PageHeader
         title="Manage Admins"
         onBack={onBack}
-        isBackgroundDark={isBackgroundDark}
       />
       
       <div className="max-w-2xl mx-auto pt-20 space-y-6 text-left">

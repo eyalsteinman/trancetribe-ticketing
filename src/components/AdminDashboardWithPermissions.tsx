@@ -125,7 +125,6 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
     >
       <PageHeader
         title="Admin Dashboard"
-        isBackgroundDark={isBackgroundDark}
       />
       
       <div className="max-w-4xl mx-auto pt-20 space-y-6">

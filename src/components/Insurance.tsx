@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
+import PageHeader from '@/components/ui/page-header';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
 
@@ -22,18 +23,12 @@ const Insurance = ({ onBack }: InsuranceProps) => {
         backgroundColor
       }}
     >
-      <div className="max-w-md mx-auto space-y-6 text-left">
-        <div className="flex items-center space-x-4">
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 
-            className="text-xl font-bold"
-            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-          >
-            Insurance
-          </h1>
-        </div>
+      <PageHeader
+        title="Insurance"
+        onBack={onBack}
+      />
+      
+      <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
 
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground">

@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Edit2, Save, X, UserCheck, Shield, ArrowLeft, Users } from 'lucide-react';
+import { Trash2, Edit2, Save, X, UserCheck, Shield, Users } from 'lucide-react';
+import PageHeader from '@/components/ui/page-header';
 import { useBackground } from '@/contexts/BackgroundContext';
 import SocialDialog from './SocialDialog';
 
@@ -283,17 +284,10 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
       }}
     >
         <div className="max-w-4xl mx-auto space-y-6 text-left">
-        <div className="flex items-center justify-between mb-6 pt-4">
-          <h1 
-            className="text-2xl font-bold"
-            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-          >
-            Registered Users
-          </h1>
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="on-color back-button">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </div>
+        <PageHeader
+          title="Registered Users"
+          onBack={onBack}
+        />
 
         <div className="mt-6">
         <Card>

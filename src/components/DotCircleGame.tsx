@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import BackButton from '@/components/ui/back-button';
 import { useBackground } from '@/contexts/BackgroundContext';
 
 interface DotCircleGameProps {
@@ -221,19 +221,11 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
         onMouseUp={(e) => e.stopPropagation()}
         onMouseMove={(e) => e.stopPropagation()}
       >
-        <Button 
-          variant="outline"
-          size="icon"
-          aria-label="Back"
-          className="absolute top-4 right-4 z-[9999] on-color back-button"
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            handleExit();
-          }}
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
+        <div className="absolute top-4 right-4 z-[9999]">
+          <BackButton
+            onBack={() => handleExit()}
+          />
+        </div>
       </div>
 
       {/* Scores aligned to right, side-by-side */}

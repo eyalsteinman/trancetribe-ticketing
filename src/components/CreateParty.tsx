@@ -217,7 +217,6 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
       <PageHeader
         title="Create Party"
         onBack={onBack}
-        isBackgroundDark={isBackgroundDark}
       />
       
       <div className="w-full max-w-none pt-20 space-y-6 text-left">

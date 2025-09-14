@@ -115,7 +115,6 @@ const AdminProductions = ({ onBack, onEdit }: AdminProductionsProps) => {
       <PageHeader
         title="Productions Administration"
         onBack={onBack}
-        isBackgroundDark={isBackgroundDark}
       />
       
       <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
