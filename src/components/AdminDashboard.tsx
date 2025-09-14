@@ -796,6 +796,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         })()}
         
         <Footer />
+      </div>
     </div>
   );
 };
