@@ -8,6 +8,7 @@ import { User } from '@supabase/supabase-js';
 import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut, Users, IdCard, Heart, Wine, Moon, Sun, MessageCircle, ArrowLeft, Mail } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { QRCodeSVG } from 'qrcode.react';
+import Footer from '@/components/ui/footer';
 import UserParties from './UserParties';
 import UserGames from './UserGames';
 import PersonalizeEdit from './PersonalizeEdit';
@@ -525,12 +526,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         </Dialog>
         
       {/* Footer */}
-      <div className="mt-12 pt-6 border-t border-border/50 text-center space-y-3">
-        <h3 className="font-bold text-xl text-primary">Trance Tribes Tickets</h3>
-        <p className="text-sm text-muted-foreground">
-          Created by Eyal Steinman, all rights reserved 2025
-        </p>
-      </div>
+      <Footer />
     </div>
   );
 };

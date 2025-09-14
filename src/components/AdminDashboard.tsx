@@ -8,6 +8,7 @@ import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
 import { Badge } from '@/components/ui/badge';
 import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ScanBarcode, Wine, Cog, ArrowLeft, LogOut, MessageCircle } from 'lucide-react';
+import Footer from '@/components/ui/footer';
 import PageHeader from '@/components/ui/page-header';
 import CreateParty from './CreateParty';
 import EditParties from './EditParties';
@@ -794,14 +795,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           );
         })()}
         
-        {/* Footer */}
-        <div className="container-section mt-8 pt-4 border-t border-border text-center space-y-2">
-          <h3 className="font-bold text-lg">Trance Tribes Tickets</h3>
-          <p className="text-xs text-muted-foreground">
-            Created by Eyal Steinman, all rights reserved 2025
-          </p>
-        </div>
-      </div>
+        <Footer />
     </div>
   );
 };

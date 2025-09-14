@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import ProductionBrowser from '@/components/ProductionBrowser';
+import Footer from '@/components/ui/footer';
 
 interface LoginPageProps {
   onSuccess: () => void;
@@ -98,11 +99,12 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
             <Card>
               <CardHeader>
                 <CardTitle 
-                  className="text-center text-2xl font-bold text-black"
+                  className="text-center text-2xl font-bold"
+                  style={{ color: '#000000 !important' }}
                 >
                   Trance Tribe - Choose your access type
                 </CardTitle>
-                <p className="text-center text-black">
+                <p className="text-center" style={{ color: '#000000 !important' }}>
                   {isSignUp ? 'Create your account' : 'Welcome back'}
                 </p>
               </CardHeader>
@@ -111,7 +113,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                   <>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium text-black">First Name *</label>
+                        <label className="text-sm font-medium" style={{ color: '#000000 !important' }}>First Name *</label>
                         <Input
                           type="text"
                           value={firstName}
@@ -121,7 +123,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                         />
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-black">Last Name *</label>
+                        <label className="text-sm font-medium" style={{ color: '#000000 !important' }}>Last Name *</label>
                         <Input
                           type="text"
                           value={lastName}
@@ -132,7 +134,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                       </div>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-black">Phone Number</label>
+                      <label className="text-sm font-medium" style={{ color: '#000000 !important' }}>Phone Number</label>
                       <Input
                         type="tel"
                         value={phoneNumber}
@@ -144,7 +146,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                 )}
                 
                 <div>
-                  <label className="text-sm font-medium text-black">Email *</label>
+                  <label className="text-sm font-medium" style={{ color: '#000000 !important' }}>Email *</label>
                   <Input
                     type="email"
                     value={email}
@@ -155,7 +157,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                 </div>
                 
                 <div>
-                  <label className="text-sm font-medium text-black">Password *</label>
+                  <label className="text-sm font-medium" style={{ color: '#000000 !important' }}>Password *</label>
                   <Input
                     type="password"
                     value={password}
@@ -177,20 +179,22 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                   <Button
                     variant="link"
                     onClick={() => setIsSignUp(!isSignUp)}
-                    className="text-sm hover:no-underline text-black"
+                    className="text-sm hover:no-underline"
+                    style={{ color: '#000000 !important' }}
                   >
                     {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
                   </Button>
                 </div>
 
                 <div className="text-center py-4">
-                  <p className="text-sm font-medium text-black">or continue with</p>
+                  <p className="text-sm font-medium" style={{ color: '#000000 !important' }}>or continue with</p>
                 </div>
 
                 <div className="space-y-2">
                   <Button 
                     variant="outline"
-                    className="w-full flex items-center justify-center gap-2 text-black border-black hover:bg-black/10"
+                    className="w-full flex items-center justify-center gap-2"
+                    style={{ color: '#000000 !important', borderColor: '#000000 !important' }}
                     onClick={async () => {
                       const { error } = await supabase.auth.signInWithOAuth({
                         provider: 'google',
@@ -212,7 +216,8 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                   
                   <Button 
                     variant="outline"
-                    className="w-full flex items-center justify-center gap-2 text-black border-black hover:bg-black/10"
+                    className="w-full flex items-center justify-center gap-2"
+                    style={{ color: '#000000 !important', borderColor: '#000000 !important' }}
                     onClick={async () => {
                       const { error } = await supabase.auth.signInWithOAuth({
                         provider: 'facebook',
@@ -243,15 +248,8 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
         </div>
 
         {/* Footer */}
-        <div className="container-section text-center space-y-1">
-          <div className="text-sm font-medium text-black">
-            Trance Tribe Tickets
-          </div>
-          <div className="text-xs text-black">
-            All rights reserved
-          </div>
+        <Footer />
         </div>
-      </div>
     </div>
   );
 };
