@@ -8,6 +8,7 @@ import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
 import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
+import Footer from '@/components/ui/footer';
 
 interface Friend {
   id: string;
@@ -242,6 +243,9 @@ const FriendsCodes = ({ user, onBack }: FriendsCodesProps) => {
             ))
           )}
         </div>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );

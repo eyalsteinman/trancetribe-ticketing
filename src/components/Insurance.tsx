@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { ShieldCheck } from 'lucide-react';
 import PageHeader from '@/components/ui/page-header';
+import Footer from '@/components/ui/footer';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
 
@@ -46,6 +47,9 @@ const Insurance = ({ onBack }: InsuranceProps) => {
             .
           </div>
         </div>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );

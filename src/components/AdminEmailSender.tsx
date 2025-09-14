@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import PageHeader from './ui/page-header';
+import Footer from './ui/footer';
 import { Mail, Send, Users } from 'lucide-react';
 
 interface AdminEmailSenderProps {
@@ -222,6 +223,9 @@ const AdminEmailSender: React.FC<AdminEmailSenderProps> = ({ onBack, adminEmail,
             </CardContent>
           </Card>
         </div>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { User } from '@supabase/supabase-js';
 import { useBackground } from '@/contexts/BackgroundContext';
 import PageHeader from '@/components/ui/page-header';
+import Footer from '@/components/ui/footer';
 
 interface PersonalizeEditProps {
   user: User;
@@ -373,6 +374,9 @@ const PersonalizeEdit = ({ user, onBack }: PersonalizeEditProps) => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );

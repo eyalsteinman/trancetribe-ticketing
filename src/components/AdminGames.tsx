@@ -2,6 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Palette, Target, Gamepad2, PenTool } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
 import PageHeader from '@/components/ui/page-header';
+import Footer from '@/components/ui/footer';
 
 interface AdminGamesProps {
   onBack: () => void;
@@ -68,6 +69,9 @@ const AdminGames = ({ onBack, onGameSelect }: AdminGamesProps) => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );

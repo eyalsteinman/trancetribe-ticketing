@@ -3,9 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Save } from 'lucide-react';
-import PageHeader from '@/components/ui/page-header';
-import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import PageHeader from '@/components/ui/page-header';
+import Footer from '@/components/ui/footer';
+import { useToast } from '@/hooks/use-toast';
 
 interface SocialNetworksProps {
   userId: string;
@@ -223,6 +224,9 @@ const SocialNetworks = ({ userId, onBack, onSaved, isFromTicketPurchase }: Socia
             {loading ? 'Saving All...' : 'Save All'}
           </Button>
         </div>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );

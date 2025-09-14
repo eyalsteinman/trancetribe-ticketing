@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Plus, Trash2 } from 'lucide-react';
 import PageHeader from '@/components/ui/page-header';
+import Footer from '@/components/ui/footer';
 import { useToast } from '@/hooks/use-toast';
 import { User } from '@supabase/supabase-js';
 import { useBackground } from '@/contexts/BackgroundContext';
@@ -264,9 +265,12 @@ const BarTabManager = ({ user, onBack }: BarTabManagerProps) => {
                           placeholder="Discount price"
                         />
                       </div>
-                    </div>
-                  </div>
-                </div>
+        </div>
+
+        {/* Footer */}
+        <Footer />
+      </div>
+    </div>
               ))}
 
               {barTabItems.length === 0 && (

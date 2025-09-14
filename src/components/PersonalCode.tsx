@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
 import { ArrowLeft, Copy } from 'lucide-react';
+import Footer from '@/components/ui/footer';
 
 interface PersonalCodeProps {
   user: User;
@@ -96,6 +97,9 @@ const PersonalCode = ({ user, onBack }: PersonalCodeProps) => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );
