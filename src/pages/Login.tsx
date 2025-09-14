@@ -89,10 +89,10 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center transition-colors duration-500 login-page-force-black"
+      className="min-h-screen flex items-center justify-center transition-colors duration-500"
       style={{ backgroundColor: '#ffffff' }}
     >
-      <div className="w-full space-y-6">
+      <div className="w-full space-y-6 login-page-force-black">
         {/* Login Form */}
         <div className="container-section">
           <div className="max-w-md mx-auto">
