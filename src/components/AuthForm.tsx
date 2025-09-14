@@ -546,13 +546,8 @@ const AuthForm = () => {
                   <button 
                     onClick={handleCreateAdminClick}
                     disabled={!email || !password}
-                    data-black-text="true"
-                    className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded border border-blue-600"
-                    style={{ 
-                      color: '#000000',
-                      backgroundColor: '#2563eb',
-                      fontWeight: '500'
-                    }}
+                    className="w-full px-4 py-3 rounded font-medium border border-gray-300 hover:bg-gray-50"
+                    style={{ color: '#000000', backgroundColor: '#ffffff' }}
                   >
                     Create Admin Account
                   </button>

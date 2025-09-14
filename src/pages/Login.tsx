@@ -20,9 +20,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [showLoginForm, setShowLoginForm] = useState(false);
   const { toast } = useToast();
-  const { backgroundColor, isBackgroundDark } = useBackground();
 
   const handleAuth = async () => {
     if (!email || !password) {
@@ -88,168 +86,176 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
   };
 
   return (
-    <div 
-      className="min-h-screen flex items-center justify-center transition-colors duration-500"
-      style={{ backgroundColor: '#ffffff' }}
-    >
-      <div className="w-full space-y-6 login-page-force-black">
-        {/* Login Form */}
-        <div className="container-section">
-          <div className="max-w-md mx-auto">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-center text-2xl font-bold">
-                  Trance Tribe - Choose your access type
-                </CardTitle>
-                <p className="text-center">
-                  {isSignUp ? 'Create your account' : 'Welcome back'}
-                </p>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {isSignUp && (
-                  <>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-sm font-medium">First Name *</label>
-                        <Input
-                          type="text"
-                          value={firstName}
-                          onChange={(e) => setFirstName(e.target.value)}
-                          placeholder="Enter first name"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium">Last Name *</label>
-                        <Input
-                          type="text"
-                          value={lastName}
-                          onChange={(e) => setLastName(e.target.value)}
-                          placeholder="Enter last name"
-                          required
-                        />
-                      </div>
-                    </div>
+    <div className="min-h-screen flex flex-col bg-white text-black">
+      <div className="flex-1 flex items-center justify-center py-12">
+        <div className="w-full max-w-md mx-auto px-4 space-y-8">
+          {/* Login Form */}
+          <Card className="bg-white border border-gray-200 shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-center text-2xl font-bold text-black">
+                Trance Tribe - Choose your access type
+              </CardTitle>
+              <p className="text-center text-black">
+                {isSignUp ? 'Create your account' : 'Welcome back'}
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {isSignUp && (
+                <>
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium">Phone Number</label>
+                      <label className="text-sm font-medium text-black">First Name *</label>
                       <Input
-                        type="tel"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        placeholder="Enter phone number"
+                        type="text"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        placeholder="Enter first name"
+                        required
+                        className="bg-white text-black border-gray-300"
+                        style={{ color: '#000000', backgroundColor: '#ffffff' }}
                       />
                     </div>
-                  </>
-                )}
-                
-                <div>
-                  <label className="text-sm font-medium">Email *</label>
-                  <Input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium">Password *</label>
-                  <Input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    required
-                  />
-                </div>
-
-                <Button 
-                  onClick={handleAuth}
-                  disabled={loading}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  {loading ? "Processing..." : (isSignUp ? "Create Account" : "Sign In")}
-                </Button>
-                
-                {/* Account Toggle Container */}
-                <div className="account-toggle-container">
-                  <div className="text-center">
-                    <button
-                      onClick={() => setIsSignUp(!isSignUp)}
-                      className="text-sm px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded"
-                    >
-                      {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
-                    </button>
+                    <div>
+                      <label className="text-sm font-medium text-black">Last Name *</label>
+                      <Input
+                        type="text"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        placeholder="Enter last name"
+                        required
+                        className="bg-white text-black border-gray-300"
+                        style={{ color: '#000000', backgroundColor: '#ffffff' }}
+                      />
+                    </div>
                   </div>
-                </div>
-
-                
-                {/* Social Login Container */}
-                <div className="social-login-container">
-                  <div className="text-center py-4">
-                    <p className="text-sm font-medium">or continue with</p>
+                  <div>
+                    <label className="text-sm font-medium text-black">Phone Number</label>
+                    <Input
+                      type="tel"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      placeholder="Enter phone number"
+                      className="bg-white text-black border-gray-300"
+                      style={{ color: '#000000', backgroundColor: '#ffffff' }}
+                    />
                   </div>
+                </>
+              )}
+              
+              <div>
+                <label className="text-sm font-medium text-black">Email *</label>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                  className="bg-white text-black border-gray-300"
+                  style={{ color: '#000000', backgroundColor: '#ffffff' }}
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium text-black">Password *</label>
+                <Input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  required
+                  className="bg-white text-black border-gray-300"
+                  style={{ color: '#000000', backgroundColor: '#ffffff' }}
+                />
+              </div>
 
-                  <div className="space-y-2">
-                    <button 
-                      className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded"
-                      onClick={async () => {
-                        const { error } = await supabase.auth.signInWithOAuth({
-                          provider: 'google',
-                          options: {
-                            redirectTo: window.location.origin
-                          }
-                        });
-                        if (error) {
-                          toast({
-                            title: "Error",
-                            description: error.message,
-                            variant: "destructive"
-                          });
-                        }
-                      }}
-                    >
-                      Continue with Google
-                    </button>
-                    
-                    <button 
-                      className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded"
-                      onClick={async () => {
-                        const { error } = await supabase.auth.signInWithOAuth({
-                          provider: 'facebook',
-                          options: {
-                            redirectTo: window.location.origin
-                          }
-                        });
-                        if (error) {
-                          toast({
-                            title: "Error",
-                            description: error.message,
-                            variant: "destructive"
-                          });
-                        }
-                      }}
-                    >
-                      Continue with Facebook
-                    </button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+              <Button 
+                onClick={handleAuth}
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
+              >
+                {loading ? "Processing..." : (isSignUp ? "Create Account" : "Sign In")}
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Account Toggle Container */}
+          <div className="account-toggle-container bg-white p-4 rounded-lg border border-gray-200 shadow-md">
+            <div className="text-center">
+              <button
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="text-sm px-6 py-3 rounded font-medium border border-gray-300 hover:bg-gray-50"
+                style={{ color: '#000000', backgroundColor: '#ffffff' }}
+              >
+                {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
+              </button>
+            </div>
+          </div>
+
+          {/* Social Login Container */}
+          <div className="social-login-container bg-white p-6 rounded-lg border border-gray-200 shadow-md">
+            <div className="text-center py-4">
+              <p className="text-sm font-medium text-black">or continue with</p>
+            </div>
+
+            <div className="space-y-3">
+              <button 
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded font-medium border border-gray-300 hover:bg-gray-50"
+                style={{ color: '#000000', backgroundColor: '#ffffff' }}
+                onClick={async () => {
+                  const { error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                      redirectTo: window.location.origin
+                    }
+                  });
+                  if (error) {
+                    toast({
+                      title: "Error",
+                      description: error.message,
+                      variant: "destructive"
+                    });
+                  }
+                }}
+              >
+                Continue with Google
+              </button>
+              
+              <button 
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded font-medium border border-gray-300 hover:bg-gray-50"
+                style={{ color: '#000000', backgroundColor: '#ffffff' }}
+                onClick={async () => {
+                  const { error } = await supabase.auth.signInWithOAuth({
+                    provider: 'facebook',
+                    options: {
+                      redirectTo: window.location.origin
+                    }
+                  });
+                  if (error) {
+                    toast({
+                      title: "Error",
+                      description: error.message,
+                      variant: "destructive"
+                    });
+                  }
+                }}
+              >
+                Continue with Facebook
+              </button>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Production Browser Section */}
-        <div className="container-section">
+      {/* Production Browser Section */}
+      <div className="bg-white py-8 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4">
           <ProductionBrowser onLoginPrompt={() => {}} />
         </div>
+      </div>
 
-        
-        {/* Footer Container */}
-        <div className="footer-container">
-          <Footer />
-        </div>
+      {/* Footer Container */}
+      <div className="footer-container bg-white border-t border-gray-200 py-4">
+        <Footer />
       </div>
     </div>
   );

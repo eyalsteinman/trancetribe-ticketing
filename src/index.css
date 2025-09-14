@@ -194,36 +194,44 @@ All colors MUST be HSL.
     border-color: hsl(217 91% 60%) !important;
   }
 
-  /* Login page specific black text containers */
-  .login-page-force-black .account-toggle-container button,
-  .login-page-force-black .account-toggle-container button *,
-  .login-page-force-black .social-login-container button,
-  .login-page-force-black .social-login-container button *,
-  .login-page-force-black .footer-container,
-  .login-page-force-black .footer-container *,
-  .login-page-force-black .footer-container a,
-  .login-page-force-black .footer-container button {
-    color: #000000 !important;
-    text-decoration: none !important;
-  }
-
-  /* Container styling - no visible boundaries */
+  /* Login page specific black text styling */
   .account-toggle-container,
   .social-login-container,
   .footer-container {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 0;
-    margin: 0;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
   }
 
-  /* Hover states */
-  .login-page-force-black .account-toggle-container button:hover,
-  .login-page-force-black .account-toggle-container button:hover *,
-  .login-page-force-black .social-login-container button:hover,
-  .login-page-force-black .social-login-container button:hover * {
+  .account-toggle-container button,
+  .account-toggle-container button *,
+  .social-login-container button,
+  .social-login-container button *,
+  .social-login-container p {
     color: #000000 !important;
+  }
+
+  .footer-container,
+  .footer-container *,
+  .footer-container a,
+  .footer-container button {
+    color: #000000 !important;
+    background: white !important;
+  }
+
+  /* Override any theme colors on login pages */
+  .login-page-force-black * {
+    color: #000000 !important;
+  }
+
+  .login-page-force-black input,
+  .login-page-force-black label,
+  .login-page-force-black p,
+  .login-page-force-black h1,
+  .login-page-force-black h2,
+  .login-page-force-black h3 {
+    color: #000000 !important;
+    background: white !important;
   }
 }
 
