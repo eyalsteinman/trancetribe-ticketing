@@ -188,7 +188,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
 
                 <div className="space-y-2">
                   <Button 
-                    variant="outline"
+                    variant="full"
                     className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
                     onClick={async () => {
                       const { error } = await supabase.auth.signInWithOAuth({
@@ -210,7 +210,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                   </Button>
                   
                   <Button 
-                    variant="outline"
+                    variant="full"
                     className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
                     onClick={async () => {
                       const { error } = await supabase.auth.signInWithOAuth({
