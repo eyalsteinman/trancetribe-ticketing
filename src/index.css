@@ -179,6 +179,20 @@ All colors MUST be HSL.
     --border: 50 100% 70%;
     --input: 50 100% 70%;
   }
+
+  /* Special login page rule for blue buttons on white background */
+  .login-page-force-black .bg-primary {
+    background: hsl(217 91% 60%) !important;
+    color: white !important;
+  }
+
+  .login-page-force-black .text-primary {
+    color: hsl(217 91% 60%) !important;
+  }
+
+  .login-page-force-black .border-primary {
+    border-color: hsl(217 91% 60%) !important;
+  }
 }
 
 @layer base {
