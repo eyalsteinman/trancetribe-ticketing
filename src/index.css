@@ -531,3 +531,23 @@ All colors MUST be HSL.
     }
   }
 }
+
+/* CRITICAL: Login page black text override - highest specificity */
+.login-page-force-black * {
+  color: #000000 !important;
+}
+.login-page-force-black button {
+  color: #000000 !important;
+}
+.login-page-force-black p {
+  color: #000000 !important;
+}
+.login-page-force-black label {
+  color: #000000 !important;
+}
+.login-page-force-black h1 {
+  color: #000000 !important;
+}
+.login-page-force-black .text-sm {
+  color: #000000 !important;
+}

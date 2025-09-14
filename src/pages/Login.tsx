@@ -24,14 +24,6 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
-  // Force theme-revert for login page to ensure black text
-  useEffect(() => {
-    document.documentElement.classList.add('theme-revert');
-    return () => {
-      document.documentElement.classList.remove('theme-revert');
-    };
-  }, []);
-
   const handleAuth = async () => {
     if (!email || !password) {
       toast({
@@ -97,8 +89,8 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center transition-colors duration-500 theme-revert"
-      style={{ backgroundColor }}
+      className="min-h-screen flex items-center justify-center transition-colors duration-500 login-page-force-black"
+      style={{ backgroundColor: '#ffffff' }}
     >
       <div className="w-full space-y-6">
         {/* Login Form */}
@@ -106,13 +98,10 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
           <div className="max-w-md mx-auto">
             <Card>
               <CardHeader>
-                <CardTitle 
-                  className="text-center text-2xl font-bold"
-                  style={{ color: '#000000 !important' }}
-                >
+                <CardTitle className="text-center text-2xl font-bold">
                   Trance Tribe - Choose your access type
                 </CardTitle>
-                <p className="text-center" style={{ color: '#000000 !important' }}>
+                <p className="text-center">
                   {isSignUp ? 'Create your account' : 'Welcome back'}
                 </p>
               </CardHeader>
@@ -121,7 +110,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                   <>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium" style={{ color: '#000000 !important' }}>First Name *</label>
+                        <label className="text-sm font-medium">First Name *</label>
                         <Input
                           type="text"
                           value={firstName}
@@ -131,7 +120,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                         />
                       </div>
                       <div>
-                        <label className="text-sm font-medium" style={{ color: '#000000 !important' }}>Last Name *</label>
+                        <label className="text-sm font-medium">Last Name *</label>
                         <Input
                           type="text"
                           value={lastName}
@@ -142,7 +131,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                       </div>
                     </div>
                     <div>
-                      <label className="text-sm font-medium" style={{ color: '#000000 !important' }}>Phone Number</label>
+                      <label className="text-sm font-medium">Phone Number</label>
                       <Input
                         type="tel"
                         value={phoneNumber}
@@ -154,7 +143,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                 )}
                 
                 <div>
-                  <label className="text-sm font-medium" style={{ color: '#000000 !important' }}>Email *</label>
+                  <label className="text-sm font-medium">Email *</label>
                   <Input
                     type="email"
                     value={email}
@@ -165,7 +154,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                 </div>
                 
                 <div>
-                  <label className="text-sm font-medium" style={{ color: '#000000 !important' }}>Password *</label>
+                  <label className="text-sm font-medium">Password *</label>
                   <Input
                     type="password"
                     value={password}
@@ -188,21 +177,19 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                     variant="link"
                     onClick={() => setIsSignUp(!isSignUp)}
                     className="text-sm hover:no-underline"
-                    style={{ color: '#000000 !important' }}
                   >
                     {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
                   </Button>
                 </div>
 
                 <div className="text-center py-4">
-                  <p className="text-sm font-medium" style={{ color: '#000000 !important' }}>or continue with</p>
+                  <p className="text-sm font-medium">or continue with</p>
                 </div>
 
                 <div className="space-y-2">
                   <Button 
                     variant="outline"
                     className="w-full flex items-center justify-center gap-2"
-                    style={{ color: '#000000 !important', borderColor: '#000000 !important' }}
                     onClick={async () => {
                       const { error } = await supabase.auth.signInWithOAuth({
                         provider: 'google',
@@ -225,7 +212,6 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                   <Button 
                     variant="outline"
                     className="w-full flex items-center justify-center gap-2"
-                    style={{ color: '#000000 !important', borderColor: '#000000 !important' }}
                     onClick={async () => {
                       const { error } = await supabase.auth.signInWithOAuth({
                         provider: 'facebook',
