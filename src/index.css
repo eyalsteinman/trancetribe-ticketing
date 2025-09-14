@@ -62,122 +62,122 @@ All colors MUST be HSL.
 
   /* Ocean theme */
   .theme-ocean {
-    --background: 200 100% 15%;
+    --background: 0 0% 0%;
     --foreground: 0 0% 100%;
-    --card: 200 90% 20%;
+    --card: 180 100% 70%;
     --card-foreground: 0 0% 100%;
-    --popover: 200 90% 20%;
+    --popover: 180 100% 70%;
     --popover-foreground: 0 0% 100%;
     --primary: 180 100% 70%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 200 80% 25%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 180 100% 70%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 200 70% 30%;
+    --muted: 180 100% 70%;
     --muted-foreground: 0 0% 100%;
     --accent: 180 100% 70%;
-    --accent-foreground: 0 0% 0%;
-    --border: 200 60% 40%;
-    --input: 200 60% 40%;
+    --accent-foreground: 0 0% 100%;
+    --border: 180 100% 70%;
+    --input: 180 100% 70%;
   }
 
   /* Sunset theme */
   .theme-sunset {
-    --background: 25 100% 25%;
+    --background: 0 0% 0%;
     --foreground: 0 0% 100%;
-    --card: 25 90% 30%;
+    --card: 45 100% 70%;
     --card-foreground: 0 0% 100%;
-    --popover: 25 90% 30%;
+    --popover: 45 100% 70%;
     --popover-foreground: 0 0% 100%;
     --primary: 45 100% 70%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 25 80% 35%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 45 100% 70%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 25 70% 40%;
+    --muted: 45 100% 70%;
     --muted-foreground: 0 0% 100%;
     --accent: 45 100% 70%;
-    --accent-foreground: 0 0% 0%;
-    --border: 25 60% 50%;
-    --input: 25 60% 50%;
+    --accent-foreground: 0 0% 100%;
+    --border: 45 100% 70%;
+    --input: 45 100% 70%;
   }
 
   /* Forest theme */
   .theme-forest {
-    --background: 120 60% 20%;
+    --background: 0 0% 0%;
     --foreground: 0 0% 100%;
-    --card: 120 50% 25%;
+    --card: 140 70% 60%;
     --card-foreground: 0 0% 100%;
-    --popover: 120 50% 25%;
+    --popover: 140 70% 60%;
     --popover-foreground: 0 0% 100%;
     --primary: 140 70% 60%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 120 40% 30%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 140 70% 60%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 120 30% 35%;
+    --muted: 140 70% 60%;
     --muted-foreground: 0 0% 100%;
     --accent: 140 70% 60%;
-    --accent-foreground: 0 0% 0%;
-    --border: 120 40% 45%;
-    --input: 120 40% 45%;
+    --accent-foreground: 0 0% 100%;
+    --border: 140 70% 60%;
+    --input: 140 70% 60%;
   }
 
   /* Purple theme */
   .theme-purple {
-    --background: 270 70% 25%;
+    --background: 0 0% 0%;
     --foreground: 0 0% 100%;
-    --card: 270 60% 30%;
+    --card: 290 80% 70%;
     --card-foreground: 0 0% 100%;
-    --popover: 270 60% 30%;
+    --popover: 290 80% 70%;
     --popover-foreground: 0 0% 100%;
     --primary: 290 80% 70%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 270 50% 35%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 290 80% 70%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 270 40% 40%;
+    --muted: 290 80% 70%;
     --muted-foreground: 0 0% 100%;
     --accent: 290 80% 70%;
-    --accent-foreground: 0 0% 0%;
-    --border: 270 40% 50%;
-    --input: 270 40% 50%;
+    --accent-foreground: 0 0% 100%;
+    --border: 290 80% 70%;
+    --input: 290 80% 70%;
   }
 
   /* Crimson theme */
   .theme-crimson {
-    --background: 350 80% 30%;
+    --background: 0 0% 0%;
     --foreground: 0 0% 100%;
-    --card: 350 70% 35%;
+    --card: 10 90% 70%;
     --card-foreground: 0 0% 100%;
-    --popover: 350 70% 35%;
+    --popover: 10 90% 70%;
     --popover-foreground: 0 0% 100%;
     --primary: 10 90% 70%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 350 60% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 10 90% 70%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 350 50% 45%;
+    --muted: 10 90% 70%;
     --muted-foreground: 0 0% 100%;
     --accent: 10 90% 70%;
-    --accent-foreground: 0 0% 0%;
-    --border: 350 50% 55%;
-    --input: 350 50% 55%;
+    --accent-foreground: 0 0% 100%;
+    --border: 10 90% 70%;
+    --input: 10 90% 70%;
   }
 
   /* Amber theme */
   .theme-amber {
-    --background: 35 90% 30%;
+    --background: 0 0% 0%;
     --foreground: 0 0% 100%;
-    --card: 35 80% 35%;
+    --card: 50 100% 70%;
     --card-foreground: 0 0% 100%;
-    --popover: 35 80% 35%;
+    --popover: 50 100% 70%;
     --popover-foreground: 0 0% 100%;
     --primary: 50 100% 70%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 35 70% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 50 100% 70%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 35 60% 45%;
+    --muted: 50 100% 70%;
     --muted-foreground: 0 0% 100%;
     --accent: 50 100% 70%;
-    --accent-foreground: 0 0% 0%;
-    --border: 35 60% 55%;
-    --input: 35 60% 55%;
+    --accent-foreground: 0 0% 100%;
+    --border: 50 100% 70%;
+    --input: 50 100% 70%;
   }
 }
 
@@ -285,7 +285,7 @@ All colors MUST be HSL.
     --popover-foreground: 0 0% 100%;
   }
 
-  /* Colored themes: force all text and icons to white */
+  /* Colored themes: background text is white, buttons/tiles text is white */
   :root:not(.theme-revert) * {
     color: hsl(0 0% 100%) !important;
   }
@@ -293,14 +293,22 @@ All colors MUST be HSL.
     color: hsl(0 0% 100%) !important;
   }
 
-  /* Exception: primary buttons should have dark text for visibility */
+  /* All buttons and interactive elements have white text and icons */
+  :root:not(.theme-revert) button,
   :root:not(.theme-revert) .bg-primary,
-  :root:not(.theme-revert) button.bg-primary {
-    color: hsl(0 0% 0%) !important;
+  :root:not(.theme-revert) .bg-secondary,
+  :root:not(.theme-revert) .bg-accent,
+  :root:not(.theme-revert) .bg-card,
+  :root:not(.theme-revert) .bg-muted {
+    color: hsl(0 0% 100%) !important;
   }
+  :root:not(.theme-revert) button svg,
   :root:not(.theme-revert) .bg-primary svg,
-  :root:not(.theme-revert) button.bg-primary svg {
-    color: hsl(0 0% 0%) !important;
+  :root:not(.theme-revert) .bg-secondary svg,
+  :root:not(.theme-revert) .bg-accent svg,
+  :root:not(.theme-revert) .bg-card svg,
+  :root:not(.theme-revert) .bg-muted svg {
+    color: hsl(0 0% 100%) !important;
   }
 
   /* Destructive buttons always white text */
