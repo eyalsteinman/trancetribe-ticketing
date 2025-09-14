@@ -193,6 +193,34 @@ All colors MUST be HSL.
   .login-page-force-black .border-primary {
     border-color: hsl(217 91% 60%) !important;
   }
+
+  /* Force specific texts to always be black */
+  .force-black-text,
+  .force-black-text *,
+  button:contains("Google"),
+  button:contains("Facebook"),
+  button:contains("Create one"),
+  button:contains("create admin account"),
+  [class*="force-black-text"] {
+    color: hsl(0 0% 0%) !important;
+  }
+
+  /* More specific selectors for button text content */
+  .login-page-force-black button:contains("Google") {
+    color: hsl(0 0% 0%) !important;
+  }
+
+  .login-page-force-black button:contains("Facebook") {
+    color: hsl(0 0% 0%) !important;
+  }
+
+  .login-page-force-black button:contains("Create one") {
+    color: hsl(0 0% 0%) !important;
+  }
+
+  .login-page-force-black button:contains("create admin account") {
+    color: hsl(0 0% 0%) !important;
+  }
 }
 
 @layer base {

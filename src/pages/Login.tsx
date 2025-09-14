@@ -176,7 +176,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                   <Button
                     variant="link"
                     onClick={() => setIsSignUp(!isSignUp)}
-                    className="text-sm hover:no-underline bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                    className="text-sm hover:no-underline bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded force-black-text"
                   >
                     {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
                   </Button>
@@ -188,8 +188,8 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
 
                 <div className="space-y-2">
                   <Button 
-                    variant="full"
-                    className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
+                    variant="default"
+                    className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white border-blue-600 force-black-text"
                     onClick={async () => {
                       const { error } = await supabase.auth.signInWithOAuth({
                         provider: 'google',
@@ -210,8 +210,8 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                   </Button>
                   
                   <Button 
-                    variant="full"
-                    className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
+                    variant="default"
+                    className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white border-blue-600 force-black-text"
                     onClick={async () => {
                       const { error } = await supabase.auth.signInWithOAuth({
                         provider: 'facebook',
