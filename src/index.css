@@ -420,34 +420,28 @@ All colors MUST be HSL.
     @apply p-2 rounded-lg border border-border hover:bg-secondary;
   }
 
-  /* Global page structure for consistency */
-  .min-h-screen.p-4 > .max-w-md.mx-auto.space-y-6,
-  .min-h-screen.p-4 > .max-w-lg.mx-auto.space-y-6,
-  .min-h-screen.p-4 > .max-w-xl.mx-auto.space-y-6,
-  .min-h-screen.p-4 > .max-w-2xl.mx-auto.space-y-6,
-  .min-h-screen.p-4 > .max-w-4xl.mx-auto.space-y-6 {
-    max-width: 28rem !important; /* md */
+  /* Simple utility classes only */
+  .page-max-width {
+    max-width: 28rem;
+    margin: 0 auto;
   }
 
-  /* Consistent footer spacing */
-  .footer-container,
-  footer {
+  .footer-spacing {
     margin-top: 3rem;
     padding-top: 1.5rem;
     border-top: 1px solid hsl(var(--border) / 0.5);
     text-align: center;
   }
 
-  /* Consistent page header styling */
-  .page-header {
+  .header-flex {
     display: flex;
     align-items: center;
-    justify-between;
+    justify-content: space-between;
     width: 100%;
     padding: 1rem 0;
   }
 
-  .page-header h1 {
+  .header-title {
     font-size: 1.5rem;
     font-weight: bold;
     color: hsl(var(--foreground));
