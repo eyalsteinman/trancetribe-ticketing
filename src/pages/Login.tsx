@@ -236,14 +236,14 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
           </div>
         </div>
 
-        {/* Production Browser Section - Remove the duplicate "or continue with" */}
+        {/* Production Browser Section */}
         <div className="container-section">
           <ProductionBrowser onLoginPrompt={() => {}} />
         </div>
 
         {/* Footer */}
         <Footer />
-        </div>
+      </div>
     </div>
   );
 };

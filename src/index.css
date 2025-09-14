@@ -533,21 +533,19 @@ All colors MUST be HSL.
 }
 
 /* CRITICAL: Login page black text override - highest specificity */
-.login-page-force-black * {
-  color: #000000 !important;
-}
-.login-page-force-black button {
-  color: #000000 !important;
-}
-.login-page-force-black p {
-  color: #000000 !important;
-}
-.login-page-force-black label {
-  color: #000000 !important;
-}
-.login-page-force-black h1 {
-  color: #000000 !important;
-}
-.login-page-force-black .text-sm {
+.login-page-force-black *,
+.login-page-force-black button,
+.login-page-force-black p,
+.login-page-force-black label,
+.login-page-force-black h1,
+.login-page-force-black h2,
+.login-page-force-black h3,
+.login-page-force-black span,
+.login-page-force-black div,
+.login-page-force-black .text-sm,
+.login-page-force-black .text-xs,
+.login-page-force-black .text-lg,
+.login-page-force-black .text-xl,
+.login-page-force-black .text-2xl {
   color: #000000 !important;
 }
