@@ -56,17 +56,42 @@ export const useTheme = () => {
     const colors = themeColors[theme];
     const root = document.documentElement;
     
-    // Apply theme colors
+    // Apply background and foreground
     root.style.setProperty('--background', colors.background);
     root.style.setProperty('--foreground', colors.foreground);
-    root.style.setProperty('--primary', colors.primary);
+    
+    if (theme === 'revert') {
+      // Revert theme - white background, black text
+      root.style.setProperty('--card', '0 0% 100%');
+      root.style.setProperty('--card-foreground', '0 0% 0%');
+      root.style.setProperty('--primary', colors.primary);
+      root.style.setProperty('--primary-foreground', '0 0% 100%');
+      root.style.setProperty('--secondary', '220 14% 96%');
+      root.style.setProperty('--secondary-foreground', '0 0% 0%');
+      root.style.setProperty('--muted', '220 14% 96%');
+      root.style.setProperty('--muted-foreground', '220 9% 46%');
+      root.style.setProperty('--accent', colors.primary);
+      root.style.setProperty('--accent-foreground', '0 0% 100%');
+    } else {
+      // Colored themes - black background, theme color for tiles/buttons
+      root.style.setProperty('--card', colors.primary);
+      root.style.setProperty('--card-foreground', '0 0% 100%');
+      root.style.setProperty('--primary', colors.primary);
+      root.style.setProperty('--primary-foreground', '0 0% 100%');
+      root.style.setProperty('--secondary', colors.primary);
+      root.style.setProperty('--secondary-foreground', '0 0% 100%');
+      root.style.setProperty('--muted', colors.primary);
+      root.style.setProperty('--muted-foreground', '0 0% 100%');
+      root.style.setProperty('--accent', colors.primary);
+      root.style.setProperty('--accent-foreground', '0 0% 100%');
+    }
+    
+    // Update borders and inputs
+    root.style.setProperty('--border', theme === 'revert' ? '220 13% 91%' : colors.primary);
+    root.style.setProperty('--input', theme === 'revert' ? '220 13% 91%' : colors.primary);
     
     // Update body background
     document.body.style.backgroundColor = `hsl(${colors.background})`;
-    
-    // Set colored background attribute for CSS rules
-    const isColored = theme !== 'revert';
-    document.body.setAttribute('data-colored-bg', isColored.toString());
     
     // Remove dark class and add theme class
     document.documentElement.classList.remove('dark');
