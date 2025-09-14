@@ -301,7 +301,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
               window.location.reload();
             }, 2000);
           }} 
-          className="absolute top-2 right-4 z-50 on-color back-button"
+          className="absolute top-2 right-4 z-50 border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200"
           aria-label="Sign Out"
         >
           <LogOut className="h-4 w-4" />

@@ -125,25 +125,29 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
   return (
     <div className="min-h-screen p-4" style={{ backgroundColor }}>
       <div className="max-w-md mx-auto space-y-6 text-left">
-        <div className="flex items-center justify-between">
-          <Button variant="outline" size="icon" onClick={onBack} aria-label="Back" className="absolute top-4 right-4 z-[9999] on-color back-button">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 
-            className="text-xl font-bold" 
-            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-          >
+        <div className="flex items-center justify-between w-full py-4">
+          <h1 className="text-2xl font-bold text-foreground">
             Manage Productions
           </h1>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setSortAscending(!sortAscending)}
-            className="text-xs"
-          >
-            <ArrowUpDown className="h-4 w-4 mr-1" />
-            {sortAscending ? "Latest First" : "Oldest First"}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSortAscending(!sortAscending)}
+              className="text-xs border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10"
+            >
+              <ArrowUpDown className="h-4 w-4 mr-1" />
+              {sortAscending ? "Latest First" : "Oldest First"}
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={onBack} 
+              className="flex items-center gap-2 px-3 py-2 h-auto text-sm font-medium border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Button>
+          </div>
         </div>
 
         {productions.length === 0 ? (

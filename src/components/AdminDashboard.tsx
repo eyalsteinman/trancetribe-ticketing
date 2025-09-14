@@ -648,7 +648,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             variant="outline" 
             size="icon"
             onClick={handleSignOut} 
-            className="on-color back-button"
+            className="border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200"
             aria-label="Sign Out"
           >
             <LogOut className="h-4 w-4" />

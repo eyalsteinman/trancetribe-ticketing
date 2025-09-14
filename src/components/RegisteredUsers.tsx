@@ -422,56 +422,56 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                             <td className="p-3 text-sm text-muted-foreground">
                               {new Date(user.created_at).toLocaleDateString()}
                             </td>
-                            <td className="p-3">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => viewSocialMedia(user.user_id)}
-                                className="p-1"
-                                title="View social media"
-                              >
-                                <Users className="h-4 w-4" />
-                              </Button>
-                            </td>
+                             <td className="p-3">
+                               <Button
+                                 size="sm"
+                                 variant="outline"
+                                 onClick={() => viewSocialMedia(user.user_id)}
+                                 className="p-1 border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10"
+                                 title="View social media"
+                               >
+                                 <Users className="h-4 w-4" />
+                               </Button>
+                             </td>
                             <td className="p-3">
                               <div className="flex justify-start gap-6">
                                 <div className="flex w-20 flex-col items-center">
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => startEditing(user)}
-                                    className="p-2"
-                                    title="Edit user"
-                                    aria-label="Edit user"
-                                  >
-                                    <Edit2 className="h-4 w-4" />
-                                  </Button>
+                                   <Button
+                                     size="sm"
+                                     variant="outline"
+                                     onClick={() => startEditing(user)}
+                                     className="p-2 border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10"
+                                     title="Edit user"
+                                     aria-label="Edit user"
+                                   >
+                                     <Edit2 className="h-4 w-4" />
+                                   </Button>
                                   <span className="mt-1 text-xs text-muted-foreground text-center">Edit</span>
                                 </div>
                                 <div className="flex w-20 flex-col items-center">
-                                  <Button
-                                    size="sm"
-                                    variant={user.roles.includes('user') ? 'default' : 'outline'}
-                                    onClick={() => toggleRole(user.user_id, 'user')}
-                                    className="p-2"
-                                    title={user.roles.includes('user') ? 'Remove user role' : 'Add user role'}
-                                    aria-label="Toggle user role"
-                                  >
-                                    <UserCheck className="h-4 w-4" />
-                                  </Button>
+                                   <Button
+                                     size="sm"
+                                     variant={user.roles.includes('user') ? 'default' : 'outline'}
+                                     onClick={() => toggleRole(user.user_id, 'user')}
+                                     className={`p-2 ${!user.roles.includes('user') ? 'border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10' : ''}`}
+                                     title={user.roles.includes('user') ? 'Remove user role' : 'Add user role'}
+                                     aria-label="Toggle user role"
+                                   >
+                                     <UserCheck className="h-4 w-4" />
+                                   </Button>
                                   <span className="mt-1 text-xs text-muted-foreground text-center">User</span>
                                 </div>
                                 <div className="flex w-20 flex-col items-center">
-                                  <Button
-                                    size="sm"
-                                    variant={user.roles.includes('admin') ? 'default' : 'outline'}
-                                    onClick={() => toggleRole(user.user_id, 'admin')}
-                                    className="p-2"
-                                    title={user.roles.includes('admin') ? 'Remove admin role' : 'Add admin role'}
-                                    aria-label="Toggle admin role"
-                                  >
-                                    <Shield className="h-4 w-4" />
-                                  </Button>
+                                   <Button
+                                     size="sm"
+                                     variant={user.roles.includes('admin') ? 'default' : 'outline'}
+                                     onClick={() => toggleRole(user.user_id, 'admin')}
+                                     className={`p-2 ${!user.roles.includes('admin') ? 'border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10' : ''}`}
+                                     title={user.roles.includes('admin') ? 'Remove admin role' : 'Add admin role'}
+                                     aria-label="Toggle admin role"
+                                   >
+                                     <Shield className="h-4 w-4" />
+                                   </Button>
                                   <span className="mt-1 text-xs text-muted-foreground text-center">Admin</span>
                                 </div>
                                 <div className="flex w-20 flex-col items-center">

@@ -7,6 +7,9 @@ import PageHeader from './ui/page-header';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
+import RtlInput from './RtlInput';
+import RtlTextArea from './RtlTextArea';
+import RtlText from './RtlText';
 
 interface FAQItem {
   id: string;
@@ -289,18 +292,18 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
               {faqs.map((faq) => (
                 <div key={faq.id} className="border-b pb-4 last:border-b-0">
                   {isAdmin && editingFaqId === faq.id ? (
-                    <div className="space-y-2">
-                      <Input value={editQuestion} onChange={(e) => setEditQuestion(e.target.value)} placeholder="Question" />
-                      <Textarea value={editAnswer} onChange={(e) => setEditAnswer(e.target.value)} rows={3} placeholder="Answer" />
-                      <div className="flex gap-2">
-                        <Button size="sm" onClick={updateFAQ}>Save</Button>
-                        <Button size="sm" variant="outline" onClick={cancelEditFaq}>Cancel</Button>
-                      </div>
-                    </div>
+                     <div className="space-y-2">
+                       <RtlInput value={editQuestion} onChange={(e) => setEditQuestion(e.target.value)} placeholder="Question" />
+                       <RtlTextArea value={editAnswer} onChange={(e) => setEditAnswer(e.target.value)} rows={3} placeholder="Answer" />
+                       <div className="flex gap-2">
+                         <Button size="sm" onClick={updateFAQ}>Save</Button>
+                         <Button size="sm" variant="outline" onClick={cancelEditFaq}>Cancel</Button>
+                       </div>
+                     </div>
                   ) : (
                     <>
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold text-sm flex-1">{faq.question}</h3>
+                       <div className="flex justify-between items-start mb-2">
+                         <RtlText text={faq.question} className="font-semibold text-sm flex-1" />
                         {isAdmin && (
                           <div className="flex items-center gap-1">
                             <Button
@@ -321,7 +324,7 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
                           </div>
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground">{faq.answer}</p>
+                      <RtlText text={faq.answer} className="text-sm text-muted-foreground" />
                     </>
                   )}
                 </div>
@@ -336,23 +339,23 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
                 <CardTitle>Add New FAQ</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium">Question</label>
-                  <Input
-                    value={newQuestion}
-                    onChange={(e) => setNewQuestion(e.target.value)}
-                    placeholder="Enter the question..."
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Answer</label>
-                  <Textarea
-                    value={newAnswer}
-                    onChange={(e) => setNewAnswer(e.target.value)}
-                    placeholder="Enter the answer..."
-                    rows={3}
-                  />
-                </div>
+                 <div>
+                   <label className="text-sm font-medium">Question</label>
+                   <RtlInput
+                     value={newQuestion}
+                     onChange={(e) => setNewQuestion(e.target.value)}
+                     placeholder="Enter the question..."
+                   />
+                 </div>
+                 <div>
+                   <label className="text-sm font-medium">Answer</label>
+                   <RtlTextArea
+                     value={newAnswer}
+                     onChange={(e) => setNewAnswer(e.target.value)}
+                     placeholder="Enter the answer..."
+                     rows={3}
+                   />
+                 </div>
                 <Button onClick={addFAQ} className="w-full">
                   Add FAQ
                 </Button>
@@ -384,27 +387,27 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
             <CardContent className="space-y-3">
               {editingContactInfo ? (
                 <>
-                  <div>
-                    <label className="text-sm font-medium">Email</label>
-                    <Input
-                      value={tempContactInfo.email}
-                      onChange={(e) => setTempContactInfo({...tempContactInfo, email: e.target.value})}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">Phone</label>
-                    <Input
-                      value={tempContactInfo.phone}
-                      onChange={(e) => setTempContactInfo({...tempContactInfo, phone: e.target.value})}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">Address</label>
-                    <Input
-                      value={tempContactInfo.address || ''}
-                      onChange={(e) => setTempContactInfo({...tempContactInfo, address: e.target.value})}
-                    />
-                  </div>
+                   <div>
+                     <label className="text-sm font-medium">Email</label>
+                     <RtlInput
+                       value={tempContactInfo.email}
+                       onChange={(e) => setTempContactInfo({...tempContactInfo, email: e.target.value})}
+                     />
+                   </div>
+                   <div>
+                     <label className="text-sm font-medium">Phone</label>
+                     <RtlInput
+                       value={tempContactInfo.phone}
+                       onChange={(e) => setTempContactInfo({...tempContactInfo, phone: e.target.value})}
+                     />
+                   </div>
+                   <div>
+                     <label className="text-sm font-medium">Address</label>
+                     <RtlInput
+                       value={tempContactInfo.address || ''}
+                       onChange={(e) => setTempContactInfo({...tempContactInfo, address: e.target.value})}
+                     />
+                   </div>
                   <Button
                     variant="outline"
                     onClick={() => {
