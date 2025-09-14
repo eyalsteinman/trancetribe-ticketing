@@ -319,12 +319,10 @@ const AdminSignupNew = ({ onBack }: AdminSignupNewProps) => {
             <Button 
               onClick={handleAdminSignup} 
               disabled={loading} 
-              className="w-full force-black-text"
-              style={{ color: 'black' }}
+              variant="blackText"
+              className="w-full"
             >
-              <span style={{ color: 'black' }}>
-                {loading ? 'Creating Admin Account...' : 'Create Admin Account'}
-              </span>
+              {loading ? 'Creating Admin Account...' : 'Create Admin Account'}
             </Button>
           </CardContent>
         </Card>

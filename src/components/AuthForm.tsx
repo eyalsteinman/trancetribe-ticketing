@@ -545,12 +545,11 @@ const AuthForm = () => {
                   </Button>
                   <Button 
                     onClick={handleCreateAdminClick}
-                    variant="outline"
+                    variant="blackText"
                     disabled={!email || !password}
-                    className="w-full force-black-text"
-                    style={{ color: 'black' }}
+                    className="w-full"
                   >
-                    <span style={{ color: 'black' }}>Create Admin Account</span>
+                    Create Admin Account
                   </Button>
                 </div>
               </CardContent>
