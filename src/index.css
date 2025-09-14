@@ -367,3 +367,4 @@ All colors MUST be HSL.
   .back-button-consistent {
     @apply p-2 rounded-lg border border-border hover:bg-secondary;
   }
+}
