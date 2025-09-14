@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import PartyPreview from "./PartyPreview";
 import BrowseMenu from "./BrowseMenu";
+import { useBackground } from "@/contexts/BackgroundContext";
 
 interface Production {
   id: string;
@@ -42,6 +43,7 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
   const [selectedProduction, setSelectedProduction] = useState<Production | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [browseMode, setBrowseMode] = useState("production");
+  const { isBackgroundDark } = useBackground();
 
   const filteredProductions = productions.filter(production =>
     production.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -115,10 +117,10 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
             />
           ) : (
             <div className="w-32 h-32 bg-muted flex items-center justify-center mx-auto mb-4">
-              <span className="font-semibold">{selectedProduction.name}</span>
+              <span className="font-semibold" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{selectedProduction.name}</span>
             </div>
           )}
-          <h2 className="text-2xl font-bold">{selectedProduction.name}</h2>
+          <h2 className="text-2xl font-bold" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{selectedProduction.name}</h2>
         </div>
         
         <div className="flex overflow-x-auto gap-4 pb-4">
@@ -136,12 +138,12 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
                 />
               ) : (
                 <div className="w-full h-48 bg-muted flex items-center justify-center">
-                  <span className="text-center p-4">{party.name}</span>
+                  <span className="text-center p-4" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{party.name}</span>
                 </div>
               )}
               <div className="p-2">
-                <h3 className="font-semibold">{party.name}</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="font-semibold" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{party.name}</h3>
+                <p className="text-sm" style={{ color: isBackgroundDark ? '#888888' : '#666666' }}>
                   {new Date(party.date).toLocaleDateString()}
                 </p>
               </div>
@@ -152,6 +154,7 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
         <button
           onClick={() => setSelectedProduction(null)}
           className="mt-4 px-4 py-2 bg-primary text-white rounded"
+          style={{ color: '#ffffff' }}
         >
           Back
         </button>
@@ -197,10 +200,10 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
                 />
               ) : (
                 <div className="w-24 h-24 bg-muted flex items-center justify-center">
-                  <span className="text-xs text-center font-semibold">{production.name}</span>
+                  <span className="text-xs text-center font-semibold" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{production.name}</span>
                 </div>
               )}
-              <p className="text-xs text-center mt-2 truncate">{production.name}</p>
+              <p className="text-xs text-center mt-2 truncate" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{production.name}</p>
             </div>
           ))
         ) : (
@@ -218,10 +221,10 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
                 />
               ) : (
                 <div className="w-32 h-24 bg-muted flex items-center justify-center">
-                  <span className="text-xs text-center p-2">{party.name}</span>
+                  <span className="text-xs text-center p-2" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{party.name}</span>
                 </div>
               )}
-              <p className="text-xs text-center mt-2 truncate">{party.name}</p>
+              <p className="text-xs text-center mt-2 truncate" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{party.name}</p>
             </div>
           ))
         )}
@@ -254,12 +257,12 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
                 />
               ) : (
                 <div className="w-full h-48 bg-muted flex items-center justify-center">
-                  <span className="text-center p-4">{party.name}</span>
+                  <span className="text-center p-4" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{party.name}</span>
                 </div>
               )}
               <div className="p-4">
-                <h3 className="font-semibold">{party.name}</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="font-semibold" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{party.name}</h3>
+                <p className="text-sm" style={{ color: isBackgroundDark ? '#888888' : '#666666' }}>
                   {new Date(party.date).toLocaleDateString()}
                 </p>
               </div>

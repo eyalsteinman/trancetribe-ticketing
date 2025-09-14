@@ -92,11 +92,6 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
       style={{ backgroundColor }}
     >
       <div className="w-full space-y-0">
-        {/* Production Browser Section */}
-        <div className="container-section">
-          <ProductionBrowser onLoginPrompt={() => setShowLoginForm(true)} />
-        </div>
-        
         {/* Login Form */}
         <div className="container-section">
           <div className="max-w-md mx-auto">
@@ -195,13 +190,22 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                 variant="link"
                 onClick={() => setIsSignUp(!isSignUp)}
                 className="text-sm"
+                style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
               >
-                {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
+                {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
               </Button>
             </div>
           </CardContent>
         </Card>
         </div>
+        </div>
+
+        {/* Production Browser Section */}
+        <div className="container-section">
+          <div className="text-center mb-4">
+            <p style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>or continue with</p>
+          </div>
+          <ProductionBrowser onLoginPrompt={() => setShowLoginForm(true)} />
         </div>
 
         {/* Footer */}
