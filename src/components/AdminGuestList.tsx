@@ -546,7 +546,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
             className={`flex-1 text-sm ${
               activeTab === 'scanned' 
                 ? 'bg-primary text-primary-foreground' 
-                : 'theme-revert:text-foreground theme-revert:border-foreground theme-revert:hover:bg-foreground/10'
+                : 'text-black border-black hover:bg-black/10'
             }`}
           >
             Scanned ({scannedGuests.length})
@@ -557,7 +557,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
             className={`flex-1 text-sm ${
               activeTab === 'arriving' 
                 ? 'bg-primary text-primary-foreground' 
-                : 'theme-revert:text-foreground theme-revert:border-foreground theme-revert:hover:bg-foreground/10'
+                : 'text-black border-black hover:bg-black/10'
             }`}
           >
             Arriving ({arrivingGuests.length})
