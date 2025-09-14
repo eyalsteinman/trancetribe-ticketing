@@ -108,7 +108,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
             >
               Trance Tribe - Choose your access type
             </CardTitle>
-            <p className="text-center text-muted-foreground">
+            <p className="text-center" style={{ color: isBackgroundDark ? '#888888' : '#666666' }}>
               {isSignUp ? 'Create your account' : 'Welcome back'}
             </p>
             {showLoginForm && (
@@ -127,8 +127,8 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
             {isSignUp && (
               <>
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium">First Name *</label>
+                    <div>
+                    <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>First Name *</label>
                     <Input
                       type="text"
                       value={firstName}
@@ -138,7 +138,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium">Last Name *</label>
+                    <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>Last Name *</label>
                     <Input
                       type="text"
                       value={lastName}
@@ -149,7 +149,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                   </div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium">Phone Number</label>
+                  <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>Phone Number</label>
                   <Input
                     type="tel"
                     value={phoneNumber}
@@ -161,7 +161,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
             )}
             
             <div>
-              <label className="text-sm font-medium">Email *</label>
+              <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>Email *</label>
               <Input
                 type="email"
                 value={email}
@@ -172,7 +172,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
             </div>
             
             <div>
-              <label className="text-sm font-medium">Password *</label>
+              <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>Password *</label>
               <Input
                 type="password"
                 value={password}
