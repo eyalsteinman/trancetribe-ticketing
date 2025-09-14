@@ -98,12 +98,11 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
             <Card>
               <CardHeader>
                 <CardTitle 
-                  className="text-center text-2xl font-bold"
-                  style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+                  className="text-center text-2xl font-bold text-black"
                 >
                   Trance Tribe - Choose your access type
                 </CardTitle>
-                <p className="text-center" style={{ color: isBackgroundDark ? '#888888' : '#666666' }}>
+                <p className="text-center text-black">
                   {isSignUp ? 'Create your account' : 'Welcome back'}
                 </p>
               </CardHeader>
@@ -112,7 +111,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                   <>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>First Name *</label>
+                        <label className="text-sm font-medium text-black">First Name *</label>
                         <Input
                           type="text"
                           value={firstName}
@@ -122,7 +121,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                         />
                       </div>
                       <div>
-                        <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>Last Name *</label>
+                        <label className="text-sm font-medium text-black">Last Name *</label>
                         <Input
                           type="text"
                           value={lastName}
@@ -133,7 +132,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                       </div>
                     </div>
                     <div>
-                      <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>Phone Number</label>
+                      <label className="text-sm font-medium text-black">Phone Number</label>
                       <Input
                         type="tel"
                         value={phoneNumber}
@@ -145,7 +144,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                 )}
                 
                 <div>
-                  <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>Email *</label>
+                  <label className="text-sm font-medium text-black">Email *</label>
                   <Input
                     type="email"
                     value={email}
@@ -156,7 +155,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                 </div>
                 
                 <div>
-                  <label className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>Password *</label>
+                  <label className="text-sm font-medium text-black">Password *</label>
                   <Input
                     type="password"
                     value={password}
@@ -178,18 +177,14 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                   <Button
                     variant="link"
                     onClick={() => setIsSignUp(!isSignUp)}
-                    className="text-sm hover:no-underline"
-                    style={{ 
-                      color: isBackgroundDark ? '#ffffff' : '#000000',
-                      textDecoration: 'none'
-                    }}
+                    className="text-sm hover:no-underline text-black"
                   >
                     {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
                   </Button>
                 </div>
 
                 <div className="text-center py-4">
-                  <p className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>or continue with</p>
+                  <p className="text-sm font-medium text-black">or continue with</p>
                 </div>
 
                 <div className="space-y-2">
@@ -249,16 +244,10 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
 
         {/* Footer */}
         <div className="container-section text-center space-y-1">
-          <div 
-            className="text-sm font-medium"
-            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-          >
+          <div className="text-sm font-medium text-black">
             Trance Tribe Tickets
           </div>
-          <div 
-            className="text-xs"
-            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-          >
+          <div className="text-xs text-black">
             All rights reserved
           </div>
         </div>
