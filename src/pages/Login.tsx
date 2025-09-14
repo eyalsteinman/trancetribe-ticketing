@@ -100,7 +100,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                 onClick={() => setIsSignUp(!isSignUp)}
                 className="absolute top-4 right-4 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-xs font-medium leading-tight"
               >
-                {isSignUp ? (
+                {!isSignUp ? (
                   <>
                     <div>Already have an account?</div>
                     <div>Sign In</div>
