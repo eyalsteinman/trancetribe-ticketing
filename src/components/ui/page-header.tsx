@@ -12,25 +12,30 @@ interface PageHeaderProps {
 }
 
 const PageHeader = ({ title, onBack, showBackButton = true }: PageHeaderProps) => {
-  const headerClasses = "page-header";
-
   return (
-    <div className={headerClasses}>
-      {showBackButton && onBack && (
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={onBack}
+    <header className="flex justify-between items-center py-4 px-6 border-b border-gray-700">
+      {showBackButton && onBack ? (
+        <button 
+          onClick={onBack} 
+          className="flex items-center text-gray-400 hover:text-white transition-colors"
           aria-label="Back"
-          className="back-button back-button-consistent mr-2"
         >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
+          <ArrowLeft className="h-5 w-5 mr-1" />
+          <span className="hidden sm:inline">Back</span>
+        </button>
+      ) : (
+        <div></div>
       )}
-      <h1 className="headline-consistent text-foreground">
-        {title}
-      </h1>
-    </div>
+      
+      <div className="flex items-center space-x-2">
+        <svg className="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h1 className="text-xl font-bold text-gray-200">{title}</h1>
+      </div>
+      
+      <div></div>
+    </header>
   );
 };
 
