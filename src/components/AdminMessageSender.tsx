@@ -7,8 +7,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, Send, Users } from 'lucide-react';
+import { Users, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import BackButton from '@/components/ui/back-button';
 
 interface User {
   id: string;
@@ -160,19 +161,16 @@ const AdminMessageSender: React.FC<AdminMessageSenderProps> = ({
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-4xl mx-auto">
-        <Button
-          variant="ghost"
-          onClick={onBack}
-          className="mb-4"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Dashboard
-        </Button>
+        <div className="flex items-center justify-between w-full py-4">
+          <BackButton onBack={onBack} />
+          <h1 className="text-2xl font-bold text-foreground">
+            Message Users
+          </h1>
+        </div>
 
-        <Card>
+        <Card className="pt-4">
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <Send className="mr-2 h-5 w-5" />
+            <CardTitle>
               Message Users
             </CardTitle>
           </CardHeader>
