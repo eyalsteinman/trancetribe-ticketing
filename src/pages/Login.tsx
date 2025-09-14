@@ -178,25 +178,24 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                   <Button
                     variant="link"
                     onClick={() => setIsSignUp(!isSignUp)}
-                    className="text-sm"
-                    style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+                    className="text-sm hover:no-underline"
+                    style={{ 
+                      color: isBackgroundDark ? '#ffffff' : '#000000',
+                      textDecoration: 'none'
+                    }}
                   >
                     {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
                   </Button>
                 </div>
 
                 <div className="text-center py-4">
-                  <p className="text-sm" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>or continue with</p>
+                  <p className="text-sm font-medium" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>or continue with</p>
                 </div>
 
                 <div className="space-y-2">
                   <Button 
                     variant="outline"
-                    className="w-full flex items-center justify-center gap-2"
-                    style={{ 
-                      color: isBackgroundDark ? '#ffffff' : '#000000',
-                      borderColor: isBackgroundDark ? '#ffffff' : '#000000'
-                    }}
+                    className="w-full flex items-center justify-center gap-2 text-black border-black hover:bg-black/10"
                     onClick={async () => {
                       const { error } = await supabase.auth.signInWithOAuth({
                         provider: 'google',
@@ -218,11 +217,7 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                   
                   <Button 
                     variant="outline"
-                    className="w-full flex items-center justify-center gap-2"
-                    style={{ 
-                      color: isBackgroundDark ? '#ffffff' : '#000000',
-                      borderColor: isBackgroundDark ? '#ffffff' : '#000000'
-                    }}
+                    className="w-full flex items-center justify-center gap-2 text-black border-black hover:bg-black/10"
                     onClick={async () => {
                       const { error } = await supabase.auth.signInWithOAuth({
                         provider: 'facebook',
