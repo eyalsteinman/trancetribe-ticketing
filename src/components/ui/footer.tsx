@@ -6,7 +6,7 @@ const Footer = () => {
       <div className="text-lg font-bold" style={{ color: '#2e2727' }}>
         Trance Tribe Tickets
       </div>
-      <div className="text-sm" style={{ color: '##2e2727' }}>
+      <div className="text-sm" style={{ color: '#2e2727' }}>
         All rights reserved
       </div>
     </div>
