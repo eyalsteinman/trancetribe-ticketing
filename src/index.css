@@ -14,37 +14,37 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Dark theme by default - matching Gemini design */
-    --background: 222 84% 5%;  /* slate-900 */
-    --foreground: 210 40% 98%;  /* gray-200 */
+    /* Default (revert) theme - black on white */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
 
-    --card: 215 28% 17%;  /* slate-800 */
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
 
-    --popover: 215 28% 17%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
 
-    --primary: 262 83% 58%;  /* purple-600 */
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 262 83% 63%;  /* purple-700 */
-    --primary-light: 262 83% 85%;
+    --primary-hover: 217 91% 55%;
+    --primary-light: 217 91% 85%;
 
-    --secondary: 262 83% 30%;  /* purple-800/30 with dark background */
-    --secondary-foreground: 0 0% 100%;
-    --secondary-hover: 262 83% 35%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 0 0% 0%;
+    --secondary-hover: 220 14% 92%;
 
-    --muted: 215 28% 25%;  /* slate-700 */
-    --muted-foreground: 220 5% 65%;  /* gray-400 */
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
 
-    --accent: 262 83% 58%;
+    --accent: 217 91% 60%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 28% 25%;  /* slate-700 for borders */
-    --input: 215 28% 25%;
-    --ring: 262 83% 58%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 217 91% 60%;
 
     --radius: 0px;
 
@@ -382,10 +382,10 @@ All colors MUST be HSL.
     overflow: hidden;
   }
   
-  /* Modern glassmorphism effects - matching Gemini design */
+  /* Modern glassmorphism effects */
   .glass {
-    background: rgba(147, 51, 234, 0.3);  /* purple-800/30 */
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.2);
   }
   
@@ -393,18 +393,6 @@ All colors MUST be HSL.
     background: rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  /* Dashboard tile styling matching Gemini */
-  .dashboard-tile {
-    background: rgba(147, 51, 234, 0.3);  /* purple-800/30 */
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
-  }
-
-  .dashboard-tile:hover {
-    background: rgba(126, 34, 206, 0.5);  /* purple-700/50 */
   }
   
   /* Premium gradients */

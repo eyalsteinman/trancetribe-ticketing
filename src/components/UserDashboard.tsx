@@ -283,134 +283,122 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   return (
-    <div className="p-4 sm:p-8 font-sans antialiased bg-slate-900 text-gray-200 min-h-screen">
-      {/* Header matching Gemini design */}
-      <header className="flex justify-between items-center py-4 px-6 border-b border-gray-700">
-        <button 
-          onClick={() => setCurrentView('dashboard')} 
-          className="flex items-center text-gray-400 hover:text-white transition-colors"
-        >
-          <ArrowLeft className="h-5 w-5 mr-1" />
-          <span className="hidden sm:inline">Back</span>
-        </button>
-        
-        <div className="flex items-center space-x-2">
-          <svg className="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <h1 className="text-xl font-bold text-gray-200">Trance Tribe</h1>
-        </div>
-        
-        <button 
+    <div className="min-h-screen w-full transition-colors duration-500 p-4">
+      {/* Header */}
+      <div className="relative pt-2 pb-6">
+        <h1 className="text-2xl font-bold text-foreground mb-1">
+          {nickname ? `Welcome back,` : 'User Dashboard'}
+        </h1>
+        {nickname && (
+          <p className="text-lg text-primary font-semibold">{nickname}!</p>
+        )}
+        <Button 
+          variant="outline" 
+          size="icon"
           onClick={async () => {
             await handleSignOut();
             setTimeout(() => {
               window.location.reload();
             }, 2000);
           }} 
-          className="flex items-center text-gray-400 hover:text-white transition-colors"
-          aria-label="Logout"
+          className="absolute top-2 right-4 z-50 on-color back-button"
+          aria-label="Sign Out"
         >
-          <LogOut className="h-5 w-5 mr-1" />
-          <span className="hidden sm:inline">Logout</span>
-        </button>
-      </header>
+          <LogOut className="h-4 w-4" />
+        </Button>
+      </div>
 
-      {/* Main content */}
-      <main className="flex-1 flex flex-col items-center justify-center p-6 sm:p-10">
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 w-full max-w-5xl">
+      <div className="w-full">
           {(() => {
-            const tiles = [
+            const items = [
               {
                 id: 'parties',
-                title: ['Events', '& Parties'],
-                icon: <Calendar className="h-10 w-10 md:h-12 md:w-12 text-gray-300 transition-colors" />,
+                title: 'Events\n& Parties',
+                icon: <Calendar className="h-12 w-12" />,
                 onClick: () => setCurrentView('parties' as const),
               },
               {
                 id: 'nickname',
-                title: ['My', 'Info'],
-                icon: <UserIcon className="h-10 w-10 md:h-12 md:w-12 text-gray-300 transition-colors" />,
+                title: 'My Info',
+                icon: <UserIcon className="h-12 w-12" />,
                 onClick: () => setCurrentView('nickname' as const),
               },
               {
                 id: 'social',
-                title: ['Social', 'Networks'],
-                icon: <Users className="h-10 w-10 md:h-12 md:w-12 text-gray-300 transition-colors" />,
+                title: 'Social Networks',
+                icon: <Users className="h-12 w-12" />,
                 onClick: () => setCurrentView('social' as const),
               },
               {
                 id: 'insurance',
-                title: ['Insurance'],
-                icon: <ShieldCheck className="h-10 w-10 md:h-12 md:w-12 text-gray-300 transition-colors" />,
+                title: 'Insurance',
+                icon: <ShieldCheck className="h-12 w-12" />,
                 onClick: () => setCurrentView('insurance' as const),
               },
               {
                 id: 'vip',
-                title: ['VIP'],
-                icon: <Crown className="h-10 w-10 md:h-12 md:w-12 text-gray-300 transition-colors" />,
+                title: 'VIP',
+                icon: <Crown className="h-12 w-12" />,
                 onClick: () => setCurrentView('vip' as const),
               },
               {
                 id: 'personal-code',
-                title: ['Personal', 'Code'],
-                icon: <IdCard className="h-10 w-10 md:h-12 md:w-12 text-gray-300 transition-colors" />,
+                title: 'Personal Code',
+                icon: <IdCard className="h-12 w-12" />,
                 onClick: () => setCurrentView('personal-code' as const),
               },
               {
                 id: 'friends-codes',
-                title: ['Friends', 'Codes'],
-                icon: <Heart className="h-10 w-10 md:h-12 md:w-12 text-gray-300 transition-colors" />,
+                title: 'Friends Codes',
+                icon: <Heart className="h-12 w-12" />,
                 onClick: () => setCurrentView('friends-codes' as const),
               },
               {
                 id: 'bar-tab',
-                title: ['Bar', 'Tab'],
-                icon: <Wine className="h-10 w-10 md:h-12 md:w-12 text-gray-300 transition-colors" />,
+                title: 'Bar Tab',
+                icon: <Wine className="h-12 w-12" />,
                 onClick: () => setCurrentView('bar-tab' as const),
               },
-              {
-                id: 'faq',
-                title: ['FAQ &', 'Contact'],
-                icon: <Users className="h-10 w-10 md:h-12 md:w-12 text-gray-300 transition-colors" />,
-                onClick: () => setCurrentView('faq' as const),
-              },
-              {
-                id: 'messages',
-                title: ['Tribe', 'Messages'],
-                icon: (
-                  <div className="relative">
-                    <MessageCircle className="h-10 w-10 md:h-12 md:w-12 text-gray-300 transition-colors" />
-                    {unreadMessageCount > 0 && (
-                      <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                        {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
-                      </div>
-                    )}
-                  </div>
-                ),
-                onClick: () => setCurrentView('messages' as const),
-              },
-              {
-                id: 'direct-messages',
-                title: ['Direct', 'Messages'],
-                icon: (
-                  <div className="relative">
-                    <Mail className="h-10 w-10 md:h-12 md:w-12 text-gray-300 transition-colors" />
-                    {unreadDirectMessageCount > 0 && (
-                      <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                        {unreadDirectMessageCount > 9 ? '9+' : unreadDirectMessageCount}
-                      </div>
-                    )}
-                  </div>
-                ),
-                onClick: () => setCurrentView('direct-messages' as const),
-              },
+                {
+                  id: 'faq',
+                  title: 'FAQ & Contact',
+                  icon: <Users className="h-12 w-12" />,
+                  onClick: () => setCurrentView('faq' as const),
+                },
+                {
+                  id: 'messages',
+                  title: 'Tribe Messages',
+                  icon: (
+                    <div className="relative">
+                      <MessageCircle className="h-12 w-12" />
+                      {unreadMessageCount > 0 && (
+                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                          {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
+                        </div>
+                      )}
+                    </div>
+                  ),
+                  onClick: () => setCurrentView('messages' as const),
+                },
+                {
+                  id: 'direct-messages',
+                  title: 'Direct Messages',
+                  icon: (
+                    <div className="relative">
+                      <Mail className="h-12 w-12" />
+                      {unreadDirectMessageCount > 0 && (
+                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                          {unreadDirectMessageCount > 9 ? '9+' : unreadDirectMessageCount}
+                        </div>
+                      )}
+                    </div>
+                  ),
+                  onClick: () => setCurrentView('direct-messages' as const),
+                },
             ];
-
             return (
               <ReorderableTilesLogic 
-                items={tiles} 
+                items={items} 
                 orderKey={`dashboard-order-user-${user.id}`}
                 onLongPress={(id) => {
                   // Handle long press for reordering
@@ -420,7 +408,6 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
             );
           })()}
         </div>
-      </main>
 
       {/* QR Codes Section */}
       {userQRCodes.length > 0 && (

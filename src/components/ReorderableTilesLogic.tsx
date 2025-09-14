@@ -15,7 +15,7 @@ import { CSS } from '@dnd-kit/utilities';
 
 interface TileItem {
   id: string;
-  title: string | string[];
+  title: string | React.ReactNode;
   icon: React.ReactNode;
   onClick: () => void;
   notificationCount?: number;
@@ -44,10 +44,9 @@ const SortableTile: React.FC<{
 }> = ({ item, index, isReordering, tiltedTileId, onTileClick }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
 
-  const tileStyle: React.CSSProperties = {
+  const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
-    backdropFilter: 'blur(10px)',
     cursor: isReordering ? 'grab' : 'pointer',
   };
 
@@ -57,9 +56,11 @@ const SortableTile: React.FC<{
       data-tile="true"
       data-index={index}
       data-id={item.id}
-      style={tileStyle}
+      style={style}
       className={`
-        flex flex-col items-center justify-center p-6 rounded-xl bg-purple-800/30 text-white shadow-2xl transition-all hover:bg-purple-700/50 focus:outline-none focus:ring-2 focus:ring-purple-500 border border-white/20 select-none
+        relative p-4 bg-card select-none h-32 min-h-32
+        border border-border flex flex-col items-center justify-center text-center space-y-2
+        transition-transform duration-200 ease-out
         ${!isReordering ? 'hover:scale-102' : ''}
         ${tiltedTileId === item.id ? 'animate-[tilt_0.3s_ease-in-out] rotate-12' : ''}
         ${isDragging ? 'z-10' : ''}
@@ -69,24 +70,15 @@ const SortableTile: React.FC<{
       }}
       {...(isReordering ? { ...attributes, ...listeners } : {})}
     >
-      <div className="mb-2">
+      <div className="text-primary">
         {item.icon}
       </div>
-      <span className="text-sm font-semibold text-center leading-tight text-white">
-        {Array.isArray(item.title) ? (
-          item.title.map((line, lineIndex) => (
-            <React.Fragment key={lineIndex}>
-              {line}
-              {lineIndex < item.title.length - 1 && <br />}
-            </React.Fragment>
-          ))
-        ) : (
-          item.title
-        )}
+      <span className="text-sm font-medium text-foreground whitespace-pre-line">
+        {item.title}
       </span>
       {item.notificationCount && item.notificationCount > 0 && (
-        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-          {item.notificationCount > 9 ? '9+' : item.notificationCount}
+        <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full min-w-6 h-6 flex items-center justify-center font-bold">
+          {item.notificationCount}
         </div>
       )}
     </div>
