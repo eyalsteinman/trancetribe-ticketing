@@ -3,7 +3,7 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useBackground } from '@/contexts/BackgroundContext';
 import SplashScreen from '@/components/SplashScreen';
-import AuthForm from '@/components/AuthForm';
+import AuthPage from './Auth';
 import UserDashboard from '@/components/UserDashboard';
 import AdminDashboard from '@/components/AdminDashboard';
 import ProfileCompletion from '@/components/ProfileCompletion';
@@ -96,7 +96,7 @@ const Index = () => {
 
   if (!user) {
     console.log('No user, showing auth form');
-    return <AuthForm />;
+    return <AuthPage />;
   }
 
   // Check if user profile is incomplete (for non-admin users)
