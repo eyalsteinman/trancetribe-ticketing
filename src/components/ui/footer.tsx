@@ -2,13 +2,11 @@ import React from 'react';
 
 const Footer = () => {
   return (
-    <div className="container-section text-center space-y-2 mt-8 p-4 bg-gray-100">
-      <div className="text-lg font-bold" style={{ color: '#2e2727' }}>
-        Trance Tribe Tickets
-      </div>
-      <div className="text-sm" style={{ color: '#2e2727' }}>
-        All rights reserved
-      </div>
+    <div className="mt-12 pt-6 border-t border-border/50 text-center space-y-3">
+      <h3 className="font-bold text-xl text-primary">Trance Tribes Tickets</h3>
+      <p className="text-sm text-muted-foreground">
+        Created by Eyal Steinman, all rights reserved 2025
+      </p>
     </div>
   );
 };

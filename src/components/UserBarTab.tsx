@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import Footer from '@/components/ui/footer';
 
 interface BarTabItem {
   id: string;
@@ -358,6 +359,9 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
           );
         })}
       </div>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

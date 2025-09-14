@@ -255,7 +255,12 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
 
       {/* Footer Container */}
       <div className="footer-container bg-white border-t border-gray-200 py-4">
-        <Footer />
+        <div className="mt-12 pt-6 border-t border-border/50 text-center space-y-3">
+          <h3 className="font-bold text-xl text-primary">Trance Tribes Tickets</h3>
+          <p className="text-sm text-muted-foreground">
+            Created by Eyal Steinman, all rights reserved 2025
+          </p>
+        </div>
       </div>
     </div>
   );

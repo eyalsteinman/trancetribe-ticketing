@@ -233,6 +233,41 @@ All colors MUST be HSL.
     color: #000000 !important;
     background: white !important;
   }
+
+  /* Global page structure for consistency */
+  .min-h-screen.p-4 > .max-w-md.mx-auto.space-y-6,
+  .min-h-screen.p-4 > .max-w-lg.mx-auto.space-y-6,
+  .min-h-screen.p-4 > .max-w-xl.mx-auto.space-y-6,
+  .min-h-screen.p-4 > .max-w-2xl.mx-auto.space-y-6,
+  .min-h-screen.p-4 > .max-w-4xl.mx-auto.space-y-6 {
+    max-width: 28rem !important; /* md */
+  }
+
+  /* Consistent footer spacing */
+  .footer-container,
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid hsl(var(--border) / 0.5);
+    text-align: center;
+  }
+
+  /* Consistent page header styling */
+  .page-header,
+  [class*="PageHeader"] {
+    display: flex;
+    align-items: center;
+    justify-between;
+    width: 100%;
+    padding: 1rem 0;
+  }
+
+  .page-header h1,
+  [class*="PageHeader"] h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: hsl(var(--foreground));
+  }
 }
 
 @layer base {

@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import PageHeader from '@/components/ui/page-header';
+import Footer from '@/components/ui/footer';
 
 interface Message {
   id: string;
@@ -172,14 +173,15 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId, onOpenTribe
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen p-4">
+      <div className="max-w-md mx-auto space-y-6">
         <PageHeader
           title="Tribe Messages"
           onBack={onBack}
+          showBackButton={true}
         />
 
-        <div className="pt-4">
+        <div className="space-y-6 pt-6">
           <Card>
             <CardHeader>
               <CardTitle>Tribe Messages</CardTitle>
@@ -260,6 +262,9 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId, onOpenTribe
             </CardContent>
           </Card>
         </div>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );

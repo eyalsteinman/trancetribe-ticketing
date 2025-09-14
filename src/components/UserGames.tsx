@@ -2,6 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Circle, Target, Bomb, PenTool } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
 import PageHeader from '@/components/ui/page-header';
+import Footer from '@/components/ui/footer';
 
 interface UserGamesProps {
   onBack: () => void;
@@ -55,6 +56,9 @@ const UserGames = ({ onBack, onGameSelect }: UserGamesProps) => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );
