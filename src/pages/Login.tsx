@@ -171,83 +171,69 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
                 >
                   {loading ? "Processing..." : (isSignUp ? "Create Account" : "Sign In")}
                 </Button>
-
-                <div className="text-center">
-                  <button
-                    onClick={() => setIsSignUp(!isSignUp)}
-                    data-black-text="true"
-                    className="text-sm px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded"
-                    style={{ 
-                      color: '#000000 !important',
-                      backgroundColor: '#2563eb',
-                      border: 'none',
-                      fontWeight: '500'
-                    }}
-                  >
-                    {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
-                  </button>
+                
+                {/* Account Toggle Container */}
+                <div className="account-toggle-container">
+                  <div className="text-center">
+                    <button
+                      onClick={() => setIsSignUp(!isSignUp)}
+                      className="text-sm px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded"
+                    >
+                      {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
+                    </button>
+                  </div>
                 </div>
 
-                <div className="text-center py-4">
-                  <p className="text-sm font-medium">or continue with</p>
-                </div>
+                
+                {/* Social Login Container */}
+                <div className="social-login-container">
+                  <div className="text-center py-4">
+                    <p className="text-sm font-medium">or continue with</p>
+                  </div>
 
-                <div className="space-y-2">
-                  <button 
-                    data-black-text="true"
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded"
-                    style={{ 
-                      color: '#000000',
-                      backgroundColor: '#2563eb',
-                      border: 'none',
-                      fontWeight: '500'
-                    }}
-                    onClick={async () => {
-                      const { error } = await supabase.auth.signInWithOAuth({
-                        provider: 'google',
-                        options: {
-                          redirectTo: window.location.origin
-                        }
-                      });
-                      if (error) {
-                        toast({
-                          title: "Error",
-                          description: error.message,
-                          variant: "destructive"
+                  <div className="space-y-2">
+                    <button 
+                      className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded"
+                      onClick={async () => {
+                        const { error } = await supabase.auth.signInWithOAuth({
+                          provider: 'google',
+                          options: {
+                            redirectTo: window.location.origin
+                          }
                         });
-                      }
-                    }}
-                  >
-                    Continue with Google
-                  </button>
-                  
-                  <button 
-                    data-black-text="true"
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded"
-                    style={{ 
-                      color: '#000000',
-                      backgroundColor: '#2563eb',
-                      border: 'none',
-                      fontWeight: '500'
-                    }}
-                    onClick={async () => {
-                      const { error } = await supabase.auth.signInWithOAuth({
-                        provider: 'facebook',
-                        options: {
-                          redirectTo: window.location.origin
+                        if (error) {
+                          toast({
+                            title: "Error",
+                            description: error.message,
+                            variant: "destructive"
+                          });
                         }
-                      });
-                      if (error) {
-                        toast({
-                          title: "Error",
-                          description: error.message,
-                          variant: "destructive"
+                      }}
+                    >
+                      Continue with Google
+                    </button>
+                    
+                    <button 
+                      className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 rounded"
+                      onClick={async () => {
+                        const { error } = await supabase.auth.signInWithOAuth({
+                          provider: 'facebook',
+                          options: {
+                            redirectTo: window.location.origin
+                          }
                         });
-                      }
-                    }}
-                  >
-                    Continue with Facebook
-                  </button>
+                        if (error) {
+                          toast({
+                            title: "Error",
+                            description: error.message,
+                            variant: "destructive"
+                          });
+                        }
+                      }}
+                    >
+                      Continue with Facebook
+                    </button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -259,8 +245,11 @@ const LoginPage = ({ onSuccess }: LoginPageProps) => {
           <ProductionBrowser onLoginPrompt={() => {}} />
         </div>
 
-        {/* Footer */}
-        <Footer />
+        
+        {/* Footer Container */}
+        <div className="footer-container">
+          <Footer />
+        </div>
       </div>
     </div>
   );

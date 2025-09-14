@@ -194,30 +194,36 @@ All colors MUST be HSL.
     border-color: hsl(217 91% 60%) !important;
   }
 
-  /* Force specific button texts to always be black - AGGRESSIVE OVERRIDE */
-  .force-black-text,
-  .force-black-text *,
-  button.force-black-text,
-  button.force-black-text *,
-  [data-black-text="true"],
-  [data-black-text="true"] * {
+  /* Login page specific black text containers */
+  .login-page-force-black .account-toggle-container button,
+  .login-page-force-black .account-toggle-container button *,
+  .login-page-force-black .social-login-container button,
+  .login-page-force-black .social-login-container button *,
+  .login-page-force-black .footer-container,
+  .login-page-force-black .footer-container *,
+  .login-page-force-black .footer-container a,
+  .login-page-force-black .footer-container button {
     color: #000000 !important;
     text-decoration: none !important;
   }
 
-  /* Override ALL possible button text colors */
-  .login-page-force-black button[data-black-text="true"],
-  .login-page-force-black button[data-black-text="true"] *,
-  button[data-black-text="true"],
-  button[data-black-text="true"] *,
-  button[data-black-text="true"]:hover,
-  button[data-black-text="true"]:hover *,
-  button[data-black-text="true"]:focus,
-  button[data-black-text="true"]:focus *,
-  button[data-black-text="true"]:active,
-  button[data-black-text="true"]:active * {
+  /* Container styling - no visible boundaries */
+  .account-toggle-container,
+  .social-login-container,
+  .footer-container {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Hover states */
+  .login-page-force-black .account-toggle-container button:hover,
+  .login-page-force-black .account-toggle-container button:hover *,
+  .login-page-force-black .social-login-container button:hover,
+  .login-page-force-black .social-login-container button:hover * {
     color: #000000 !important;
-    fill: #000000 !important;
   }
 }
 
