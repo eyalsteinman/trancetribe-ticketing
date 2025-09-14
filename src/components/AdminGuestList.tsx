@@ -635,9 +635,9 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                 <>
                   {/* Sort dropdown */}
                   <div className="mb-4">
-                    <label className="text-sm font-medium text-black mr-2">Order by:</label>
+                    <label className="text-sm font-medium theme-revert:text-foreground text-white mr-2">Order by:</label>
                     <select 
-                      className="p-2 border rounded-md text-black bg-white"
+                      className="p-2 border rounded-md theme-revert:text-foreground theme-revert:bg-background text-white bg-card"
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value as 'name' | 'surname' | 'recent' | 'approved')}
                     >
@@ -668,29 +668,29 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                      </TableRow>
                    </TableHeader>
                   <TableBody>
-                     {sortedArrivingGuests.map((guest, index) => (
-                       <TableRow key={guest.id}>
-                         <TableCell className="text-black font-medium">
-                           <input
-                             type="checkbox"
-                             checked={selectedGuests.has(guest.id)}
-                             onChange={() => toggleGuestSelection(guest.id)}
-                             className="mr-2"
-                           />
-                           {index + 1}
+                      {sortedArrivingGuests.map((guest, index) => (
+                        <TableRow key={guest.id}>
+                          <TableCell className="theme-revert:text-foreground text-white font-medium">
+                            <input
+                              type="checkbox"
+                              checked={selectedGuests.has(guest.id)}
+                              onChange={() => toggleGuestSelection(guest.id)}
+                              className="mr-2"
+                            />
+                            {index + 1}
+                          </TableCell>
+                         <TableCell className="theme-revert:text-foreground text-white">
+                           {guest.profiles?.first_name || 'Unknown'}
                          </TableCell>
-                        <TableCell className="text-black">
-                          {guest.profiles?.first_name || 'Unknown'}
-                        </TableCell>
-                        <TableCell className="text-black">
-                          {guest.profiles?.last_name || 'Unknown'}
-                        </TableCell>
-                         <TableCell className="text-black text-sm">
-                           {guest.profiles?.email || 'No email'}
+                         <TableCell className="theme-revert:text-foreground text-white">
+                           {guest.profiles?.last_name || 'Unknown'}
                          </TableCell>
-                         <TableCell className="text-black text-sm">
-                           {guest.profiles?.phone_number || 'No phone'}
-                         </TableCell>
+                          <TableCell className="theme-revert:text-foreground text-white text-sm">
+                            {guest.profiles?.email || 'No email'}
+                          </TableCell>
+                          <TableCell className="theme-revert:text-foreground text-white text-sm">
+                            {guest.profiles?.phone_number || 'No phone'}
+                          </TableCell>
                          <TableCell>
                           {guest.is_approved ? (
                             <Badge variant="default" className="bg-green-600">Approved</Badge>
@@ -717,7 +717,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                                 size="sm"
                                 variant="outline"
                                 onClick={() => approveAlways(guest.user_id)}
-                                className="p-1"
+                                className="p-1 theme-revert:text-foreground theme-revert:border-foreground theme-revert:hover:bg-foreground/10"
                                 title="Approve always"
                               >
                                 <UserCheck className="h-4 w-4" />
@@ -731,7 +731,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                                 guestId: guest.id,
                                 email: guest.profiles?.email || ''
                               })}
-                              className="p-1"
+                              className="p-1 theme-revert:text-foreground theme-revert:border-foreground theme-revert:hover:bg-foreground/10"
                               title="Send message"
                             >
                               <MessageCircle className="h-4 w-4" />
@@ -740,7 +740,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                               size="sm"
                               variant="outline"
                               onClick={() => viewSocialMedia(guest.user_id)}
-                              className="p-1"
+                              className="p-1 theme-revert:text-foreground theme-revert:border-foreground theme-revert:hover:bg-foreground/10"
                               title="View social media"
                             >
                               <Users className="h-4 w-4" />

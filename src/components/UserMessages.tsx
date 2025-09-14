@@ -6,6 +6,7 @@ import { ArrowLeft, MessageCircle, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import PageHeader from '@/components/ui/page-header';
 
 interface Message {
   id: string;
@@ -173,28 +174,17 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId, onOpenTribe
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between w-full py-4">
-          <h1 className="text-2xl font-bold text-foreground">
-            Tribe Messages
-          </h1>
-          <Button 
-            variant="outline" 
-            onClick={onBack} 
-            className="flex items-center gap-2 px-3 py-2 h-auto text-sm font-medium border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back
-          </Button>
-        </div>
+        <PageHeader
+          title="Tribe Messages"
+          onBack={onBack}
+        />
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <MessageCircle className="mr-2 h-5 w-5" />
-              Tribe Messages
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="pt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Tribe Messages</CardTitle>
+            </CardHeader>
+            <CardContent>
             {!loading && messages.length > 0 && (
               <div className="flex justify-between items-center mb-4">
                 <label className="text-sm font-medium">Sort by:</label>
@@ -267,8 +257,9 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId, onOpenTribe
               </div>
             )}
 
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

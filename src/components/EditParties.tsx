@@ -734,7 +734,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                           variant="outline"
                           size="sm"
                           onClick={() => handleEditParty(party)}
-                          className="flex items-center gap-1"
+                          className="flex items-center gap-1 theme-revert:text-foreground theme-revert:border-foreground theme-revert:hover:bg-foreground/10"
                         >
                           <Edit className="h-3 w-3" />
                           Edit

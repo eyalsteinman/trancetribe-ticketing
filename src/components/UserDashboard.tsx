@@ -367,7 +367,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 },
                 {
                   id: 'messages',
-                  title: 'Tribe Messages',
+                  title: 'Messages',
                   icon: (
                     <div className="relative">
                       <MessageCircle className="h-12 w-12" />
