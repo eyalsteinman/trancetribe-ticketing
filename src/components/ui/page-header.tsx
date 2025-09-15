@@ -9,7 +9,7 @@ interface PageHeaderProps {
 
 const PageHeader = ({ title, onBack, showBackButton = true }: PageHeaderProps) => {
   return (
-    <div className="flex items-center justify-between w-full py-4">
+    <div className="container-section flex items-center justify-between">
       <h1 className="text-2xl font-bold text-foreground">
         {title}
       </h1>

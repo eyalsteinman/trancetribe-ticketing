@@ -10,6 +10,7 @@ import PageHeader from '@/components/ui/page-header';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
+import Footer from '@/components/ui/footer';
 
 interface ManageAdminsProps {
   onBack: () => void;
@@ -477,6 +478,9 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
             )}
           </CardContent>
         </Card>
+        
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );

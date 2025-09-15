@@ -9,6 +9,7 @@ import { Trash2, Edit2, Save, X, UserCheck, Shield, Users } from 'lucide-react';
 import PageHeader from '@/components/ui/page-header';
 import { useBackground } from '@/contexts/BackgroundContext';
 import SocialDialog from './SocialDialog';
+import Footer from '@/components/ui/footer';
 
 interface RegisteredUsersProps {
   onBack: () => void;
@@ -505,6 +506,8 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
           onOpenChange={(open) => setSocialDialog(prev => ({ ...prev, open }))}
           socials={socialDialog.socials}
         />
+        
+        <Footer />
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { Plus, Upload } from 'lucide-react';
 import PageHeader from '@/components/ui/page-header';
+import Footer from '@/components/ui/footer';
 
 interface AdminProductionsProps {
   onBack: () => void;
@@ -207,6 +208,9 @@ const AdminProductions = ({ onBack, onEdit }: AdminProductionsProps) => {
             </CardContent>
           </Card>
         )}
+        
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );

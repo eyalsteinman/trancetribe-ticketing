@@ -789,12 +789,9 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
                       </div>
                     ))}
                   </div>
-        </div>
-
-        {/* Footer */}
-        <Footer />
-      </div>
-    </div>
+                </div>
+              </div>
+            </div>
           );
         })()}
         

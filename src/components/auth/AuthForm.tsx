@@ -27,25 +27,27 @@ export const AuthForm = ({
       
       <TabsContent value="user">
         <Card>
-          <CardHeader className="relative">
-            <CardTitle>User Login/Registration</CardTitle>
-            {/* Toggle Button - Top Right */}
+          <CardHeader>
+            <div className="flex items-center justify-between mb-2">
+              <CardTitle>User Login/Registration</CardTitle>
+            {/* Toggle Button - Right side without overlap */}
             <button
               onClick={onToggleUserLogin}
-              className="absolute top-4 right-4 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-xs font-medium leading-tight"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-xs font-medium leading-tight ml-auto"
             >
               {isUserLogin ? (
                 <>
-                  <div>Don't have an account?</div>
+                  <div>Don't have account?</div>
                   <div>Sign Up</div>
                 </>
               ) : (
                 <>
-                  <div>Already have an account?</div>
+                  <div>Have account?</div>
                   <div>Sign In</div>
                 </>
               )}
             </button>
+            </div>
             <CardDescription>
               {isUserLogin ? "Sign in to your account" : "Create your account with your full name and get instant access"}
             </CardDescription>

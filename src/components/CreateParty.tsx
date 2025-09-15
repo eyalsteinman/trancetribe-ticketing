@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Upload } from 'lucide-react';
 import PageHeader from '@/components/ui/page-header';
 import { useBackground } from '@/contexts/BackgroundContext';
+import Footer from '@/components/ui/footer';
 import TicketManager from './TicketManager';
 
 const socialOptions = [
@@ -397,6 +398,8 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
             </Button>
           </CardContent>
         </Card>
+        
+        <Footer />
       </div>
     </div>
   );

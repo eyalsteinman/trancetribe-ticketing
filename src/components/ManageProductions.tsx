@@ -8,6 +8,7 @@ import { useBackground } from '@/contexts/BackgroundContext';
 import { ArrowLeft, Edit, Trash2, Upload, Save, X, ArrowUpDown } from 'lucide-react';
 import PageHeader from '@/components/ui/page-header';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
+import Footer from '@/components/ui/footer';
 
 interface ManageProductionsProps {
   onBack: () => void;
@@ -260,6 +261,9 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
             </Card>
           ))
         )}
+        
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );

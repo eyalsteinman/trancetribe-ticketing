@@ -8,6 +8,7 @@ import { ArrowLeft, Search } from "lucide-react";
 import PartyDetails from "./PartyDetails";
 import BrowseMenu from "./BrowseMenu";
 import PageHeader from "./ui/page-header";
+import Footer from '@/components/ui/footer';
 
 export default function UserParties({ user, onBack }) {
   const [parties, setParties] = useState([]);
@@ -112,13 +113,11 @@ export default function UserParties({ user, onBack }) {
       <div className="w-full">
         {!selectedParty && (
           <>
-            <div className="container-section">
-              <PageHeader
-                title="Events & Parties"
-                onBack={onBack}
-                showBackButton={true}
-              />
-            </div>
+            <PageHeader
+              title="Events & Parties"
+              onBack={onBack}
+              showBackButton={true}
+            />
             
             <div className="container-section">
               <BrowseMenu value={browseMode} onValueChange={setBrowseMode} />
@@ -295,6 +294,9 @@ export default function UserParties({ user, onBack }) {
             <p>Please add missing social links to continue.</p>
           </DialogContent>
         </Dialog>
+        
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );

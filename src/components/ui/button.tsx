@@ -9,13 +9,13 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary/70 backdrop-blur-md text-white hover:bg-primary/80 shadow-lg hover:shadow-xl rounded-xl border border-white/20",
-        destructive: "bg-destructive/70 backdrop-blur-md text-white hover:bg-destructive/80 shadow-lg hover:shadow-xl rounded-xl border border-white/20",
-        outline: "border border-white/30 bg-white/10 backdrop-blur-md text-white hover:bg-white/20 rounded-xl shadow-sm hover:shadow-md",
-        secondary: "bg-secondary/70 backdrop-blur-md text-white hover:bg-secondary/80 rounded-xl shadow-sm hover:shadow-md border border-white/20",
-        ghost: "hover:bg-white/10 backdrop-blur-md text-white rounded-xl",
+        default: "bg-primary/70 backdrop-blur-md text-primary-foreground hover:bg-primary/80 shadow-lg hover:shadow-xl rounded-xl border border-primary/20",
+        destructive: "bg-destructive/70 backdrop-blur-md text-destructive-foreground hover:bg-destructive/80 shadow-lg hover:shadow-xl rounded-xl border border-destructive/20",
+        outline: "border border-input bg-background/10 backdrop-blur-md text-foreground hover:bg-accent hover:text-accent-foreground rounded-xl shadow-sm hover:shadow-md",
+        secondary: "bg-secondary/70 backdrop-blur-md text-secondary-foreground hover:bg-secondary/80 rounded-xl shadow-sm hover:shadow-md border border-secondary/20",
+        ghost: "hover:bg-accent hover:text-accent-foreground backdrop-blur-md text-foreground rounded-xl",
         link: "text-primary underline-offset-4 hover:underline rounded-xl",
-        premium: "bg-primary/80 backdrop-blur-md text-white hover:bg-primary/90 shadow-premium rounded-xl border border-white/30 font-bold",
+        premium: "bg-primary/80 backdrop-blur-md text-primary-foreground hover:bg-primary/90 shadow-premium rounded-xl border border-primary/30 font-bold",
         blackText: "bg-blue-600 hover:bg-blue-700 text-black hover:text-black rounded-xl border border-blue-600",
       },
       size: {

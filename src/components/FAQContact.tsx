@@ -10,6 +10,7 @@ import { useBackNavigation } from '@/hooks/useBackNavigation';
 import RtlInput from './RtlInput';
 import RtlTextArea from './RtlTextArea';
 import RtlText from './RtlText';
+import AIChat from './AIChat';
 
 interface FAQItem {
   id: string;
@@ -283,6 +284,8 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
         />
 
         <div className="space-y-6 pt-6">
+          {/* AI Chat Assistant */}
+          <AIChat />
           {/* FAQs Section */}
           <Card>
             <CardHeader>
