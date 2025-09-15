@@ -127,13 +127,7 @@ const AuthPage = () => {
   }
 
   return (
-    <div 
-      className="min-h-screen w-full flex items-center justify-center p-4 transition-colors duration-500"
-      style={{ 
-        backgroundColor,
-        color: isBackgroundDark ? '#ffffff' : '#000000'
-      }}
-    >
+    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-black text-white">
       <div className="w-full space-y-6">
         <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} carouselOnly />
 

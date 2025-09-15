@@ -56,10 +56,10 @@ const SortableTile: React.FC<{
       data-tile="true"
       data-index={index}
       data-id={item.id}
-      style={style}
+      style={{ ...style, backgroundColor: '#9207E3' }}
       className={`
-        relative p-4 bg-card select-none h-32 min-h-32
-        border border-border flex flex-col items-center justify-center text-center space-y-2
+        relative p-4 select-none h-32 min-h-32
+        border border-[#9207E3]/50 flex flex-col items-center justify-center text-center space-y-2
         transition-transform duration-200 ease-out
         ${!isReordering ? 'hover:scale-102' : ''}
         ${tiltedTileId === item.id ? 'animate-[tilt_0.3s_ease-in-out] rotate-12' : ''}
@@ -70,10 +70,10 @@ const SortableTile: React.FC<{
       }}
       {...(isReordering ? { ...attributes, ...listeners } : {})}
     >
-      <div className="text-primary">
+      <div className="text-white">
         {item.icon}
       </div>
-      <span className="text-sm font-medium text-foreground whitespace-pre-line">
+      <span className="text-sm font-medium text-white whitespace-pre-line">
         {item.title}
       </span>
       {item.notificationCount && item.notificationCount > 0 && (
