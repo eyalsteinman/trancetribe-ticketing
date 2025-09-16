@@ -6,39 +6,39 @@ const themes: Theme[] = ['revert', 'ocean', 'sunset', 'forest', 'purple', 'crims
 
 const themeColors = {
   revert: {
-    background: '0 0% 100%',
-    foreground: '0 0% 0%',
-    primary: '217 91% 60%',
+    background: '220 13% 3%',
+    foreground: '0 0% 98%',
+    primary: '270 91% 65%',
   },
   ocean: {
-    background: '0 0% 0%',
-    foreground: '0 0% 100%',
-    primary: '195 100% 45%',
+    background: '220 13% 3%',
+    foreground: '0 0% 98%',
+    primary: '195 100% 65%',
   },
   sunset: {
-    background: '0 0% 0%',
-    foreground: '0 0% 100%',
-    primary: '25 100% 45%',
+    background: '220 13% 3%',
+    foreground: '0 0% 98%',
+    primary: '25 100% 65%',
   },
   forest: {
-    background: '0 0% 0%',
-    foreground: '0 0% 100%',
-    primary: '140 70% 35%',
+    background: '220 13% 3%',
+    foreground: '0 0% 98%',
+    primary: '140 70% 55%',
   },
   purple: {
-    background: '0 0% 0%',
-    foreground: '0 0% 100%',
-    primary: '270 80% 45%',
+    background: '220 13% 3%',
+    foreground: '0 0% 98%',
+    primary: '270 91% 65%',
   },
   crimson: {
-    background: '0 0% 0%',
-    foreground: '0 0% 100%',
-    primary: '350 90% 45%',
+    background: '220 13% 3%',
+    foreground: '0 0% 98%',
+    primary: '350 90% 65%',
   },
   amber: {
-    background: '0 0% 0%',
-    foreground: '0 0% 100%',
-    primary: '45 100% 45%',
+    background: '220 13% 3%',
+    foreground: '0 0% 98%',
+    primary: '45 100% 65%',
   },
 };
 
@@ -60,35 +60,21 @@ export const useTheme = () => {
     root.style.setProperty('--background', colors.background);
     root.style.setProperty('--foreground', colors.foreground);
     
-    if (theme === 'revert') {
-      // Revert theme - white background, black text
-      root.style.setProperty('--card', '0 0% 100%');
-      root.style.setProperty('--card-foreground', '0 0% 0%');
-      root.style.setProperty('--primary', colors.primary);
-      root.style.setProperty('--primary-foreground', '0 0% 100%');
-      root.style.setProperty('--secondary', '220 14% 96%');
-      root.style.setProperty('--secondary-foreground', '0 0% 0%');
-      root.style.setProperty('--muted', '220 14% 96%');
-      root.style.setProperty('--muted-foreground', '220 9% 46%');
-      root.style.setProperty('--accent', colors.primary);
-      root.style.setProperty('--accent-foreground', '0 0% 100%');
-    } else {
-      // Colored themes - black background, theme color for tiles/buttons
-      root.style.setProperty('--card', colors.primary);
-      root.style.setProperty('--card-foreground', '0 0% 100%');
-      root.style.setProperty('--primary', colors.primary);
-      root.style.setProperty('--primary-foreground', '0 0% 100%');
-      root.style.setProperty('--secondary', colors.primary);
-      root.style.setProperty('--secondary-foreground', '0 0% 100%');
-      root.style.setProperty('--muted', colors.primary);
-      root.style.setProperty('--muted-foreground', '0 0% 100%');
-      root.style.setProperty('--accent', colors.primary);
-      root.style.setProperty('--accent-foreground', '0 0% 100%');
-    }
+    // All themes now use ultra dark design with maximum contrast
+    root.style.setProperty('--card', '220 13% 6%');
+    root.style.setProperty('--card-foreground', '0 0% 98%');
+    root.style.setProperty('--primary', colors.primary);
+    root.style.setProperty('--primary-foreground', '0 0% 100%');
+    root.style.setProperty('--secondary', '285 85% 60%');
+    root.style.setProperty('--secondary-foreground', '0 0% 100%');
+    root.style.setProperty('--muted', '220 13% 10%');
+    root.style.setProperty('--muted-foreground', '0 0% 85%');
+    root.style.setProperty('--accent', '285 85% 70%');
+    root.style.setProperty('--accent-foreground', '0 0% 100%');
     
-    // Update borders and inputs
-    root.style.setProperty('--border', theme === 'revert' ? '220 13% 91%' : colors.primary);
-    root.style.setProperty('--input', theme === 'revert' ? '220 13% 91%' : colors.primary);
+    // Ultra dark borders and inputs with maximum contrast
+    root.style.setProperty('--border', '220 13% 15%');
+    root.style.setProperty('--input', '220 13% 8%');
     
     // Update body background
     document.body.style.backgroundColor = `hsl(${colors.background})`;
@@ -111,7 +97,7 @@ export const useTheme = () => {
 
   const getThemeDisplayName = (theme: Theme) => {
     const names = {
-      revert: 'Light',
+      revert: 'Purple',
       ocean: 'Ocean',
       sunset: 'Sunset', 
       forest: 'Forest',
