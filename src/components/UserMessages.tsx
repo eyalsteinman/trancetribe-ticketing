@@ -11,6 +11,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 interface UserMessagesProps {
   onBack: () => void;
+  userId: string;
+  onOpenTribes?: () => void;
 }
 
 interface Message {
@@ -18,11 +20,13 @@ interface Message {
   subject: string;
   content: string;
   created_at: string;
-  sender: string;
+  created_by: string;
   is_read: boolean;
+  production_id: string;
+  recipient_id: string;
 }
 
-const UserMessages = ({ onBack }: UserMessagesProps) => {
+const UserMessages = ({ onBack, userId }: UserMessagesProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
@@ -39,21 +43,11 @@ const UserMessages = ({ onBack }: UserMessagesProps) => {
 
       console.log('Fetching messages for user:', user.id);
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('email')
-        .eq('user_id', user.id)
-        .single();
-
-      if (!profile?.email) {
-        console.log('No profile email found');
-        return;
-      }
-
+      // Get messages directly using user ID
       const { data, error } = await supabase
         .from('messages')
         .select('*')
-        .eq('recipient_email', profile.email)
+        .eq('recipient_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -62,7 +56,33 @@ const UserMessages = ({ onBack }: UserMessagesProps) => {
       }
 
       console.log('Fetched messages:', data);
-      setMessages(data || []);
+      
+      // Get sender names for each message
+      const messagesWithSender = await Promise.all(
+        (data || []).map(async (msg) => {
+          try {
+            const { data: senderProfile } = await supabase
+              .from('profiles')
+              .select('display_name, first_name, last_name')
+              .eq('user_id', msg.created_by)
+              .single();
+            
+            return {
+              ...msg,
+              sender_name: senderProfile?.display_name || 
+                          `${senderProfile?.first_name || ''} ${senderProfile?.last_name || ''}`.trim() || 
+                          'System'
+            };
+          } catch {
+            return {
+              ...msg,
+              sender_name: 'System'
+            };
+          }
+        })
+      );
+      
+      setMessages(messagesWithSender);
     } catch (error) {
       console.error('Error in fetchMessages:', error);
     } finally {
@@ -122,7 +142,7 @@ const UserMessages = ({ onBack }: UserMessagesProps) => {
                   {selectedMessage.subject}
                 </CardTitle>
                 <div className="text-sm text-muted-foreground space-y-1">
-                  <p>From: {selectedMessage.sender}</p>
+                  <p>From: {(selectedMessage as any).sender_name || 'System'}</p>
                   <p>
                     <Calendar className="h-4 w-4 inline mr-1" />
                     {format(new Date(selectedMessage.created_at), 'PPp')}
@@ -200,7 +220,7 @@ const UserMessages = ({ onBack }: UserMessagesProps) => {
                       </CardTitle>
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      From: {message.sender} • {format(new Date(message.created_at), 'MMM d, yyyy')}
+                      From: {(message as any).sender_name || 'System'} • {format(new Date(message.created_at), 'MMM d, yyyy')}
                     </div>
                   </CardHeader>
                   <CardContent className="pt-0">
