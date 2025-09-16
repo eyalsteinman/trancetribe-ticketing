@@ -10,15 +10,30 @@ interface BrowseMenuProps {
 const BrowseMenu = ({ value, onValueChange }: BrowseMenuProps) => {
   const { t } = useLanguage();
   
+  // Fallback text if translations are not available
+  const getText = (key: string) => {
+    try {
+      return t(key);
+    } catch {
+      // Fallback to English text
+      const fallbacks = {
+        browse_by_production: 'Browse by Production',
+        browse_by_party: 'Browse by Party', 
+        browse_by_date: 'Browse by Date'
+      };
+      return fallbacks[key] || key;
+    }
+  };
+  
   return (
     <Select value={value} onValueChange={onValueChange}>
       <SelectTrigger className="w-full mb-4">
-        <SelectValue placeholder={t('browse_by_production')} />
+        <SelectValue placeholder={getText('browse_by_production')} />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="production">{t('browse_by_production')}</SelectItem>
-        <SelectItem value="party">{t('browse_by_party')}</SelectItem>
-        <SelectItem value="date">{t('browse_by_date')}</SelectItem>
+        <SelectItem value="production">{getText('browse_by_production')}</SelectItem>
+        <SelectItem value="party">{getText('browse_by_party')}</SelectItem>
+        <SelectItem value="date">{getText('browse_by_date')}</SelectItem>
       </SelectContent>
     </Select>
   );
