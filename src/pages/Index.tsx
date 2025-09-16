@@ -9,7 +9,6 @@ import AdminDashboard from '@/components/AdminDashboard';
 import ProfileCompletion from '@/components/ProfileCompletion';
 import OnboardingFlow from '@/components/OnboardingFlow';
 import WelcomeToast from '@/components/WelcomeToast';
-import { useProfileCompletion } from '@/hooks/useProfileCompletion';
 
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -19,8 +18,45 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [isFirstLogin, setIsFirstLogin] = useState(false);
+  const [isProfileComplete, setIsProfileComplete] = useState(false);
   const { backgroundColor, isBackgroundDark } = useBackground();
-  const { isProfileComplete, loading: profileLoading, refetchProfile } = useProfileCompletion();
+
+  const checkProfileCompletion = async (userId: string) => {
+    console.log('📊 Checking profile completion for user:', userId);
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('first_name, last_name, phone_number, email')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (error) {
+        console.error('❌ Error fetching profile:', error);
+        setIsProfileComplete(false);
+        return false;
+      }
+
+      if (profile) {
+        const isComplete = !!(
+          profile.first_name && 
+          profile.last_name && 
+          profile.phone_number && 
+          profile.email
+        );
+        console.log('✅ Profile completion status:', isComplete);
+        setIsProfileComplete(isComplete);
+        return isComplete;
+      } else {
+        console.log('❌ No profile found, setting incomplete');
+        setIsProfileComplete(false);
+        return false;
+      }
+    } catch (error) {
+      console.error('💥 Error in profile completion check:', error);
+      setIsProfileComplete(false);
+      return false;
+    }
+  };
 
   const checkAdminRole = async (userId: string) => {
     console.log('🔐 Checking admin role for user:', userId);
@@ -54,9 +90,6 @@ const Index = () => {
       }
       setIsAdmin(false);
       return false;
-    } finally {
-      console.log('🏁 Admin check finished, setting loading to false');
-      setLoading(false);
     }
   };
 
@@ -75,8 +108,11 @@ const Index = () => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Check if user is admin
-          const adminRole = await checkAdminRole(session.user.id);
+          // Check both admin role and profile completion
+          const [adminRole, profileComplete] = await Promise.all([
+            checkAdminRole(session.user.id),
+            checkProfileCompletion(session.user.id)
+          ]);
           
           // Check if this is a first login by looking at user metadata
           const isNew = event === 'SIGNED_IN' && session.user.created_at && 
@@ -86,11 +122,14 @@ const Index = () => {
             setIsFirstLogin(true);
             setShowOnboarding(true);
           }
+          
+          setLoading(false);
         } else {
           // User logged out - reset all states
           setIsAdmin(false);
           setIsFirstLogin(false);
           setShowOnboarding(false);
+          setIsProfileComplete(false);
           setLoading(false);
         }
         
@@ -99,11 +138,15 @@ const Index = () => {
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        checkAdminRole(session.user.id);
+        await Promise.all([
+          checkAdminRole(session.user.id),
+          checkProfileCompletion(session.user.id)
+        ]);
+        setLoading(false);
       } else {
         setLoading(false);
         clearTimeout(fallbackTimeout);
@@ -125,10 +168,9 @@ const Index = () => {
     return <SplashScreen onComplete={handleSplashComplete} />;
   }
 
-  if (loading || profileLoading) {
+  if (loading) {
     console.log('⏳ Still loading...', { 
       loading, 
-      profileLoading, 
       user: user?.id, 
       isAdmin, 
       timestamp: new Date().toISOString() 
@@ -142,7 +184,7 @@ const Index = () => {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <h1 className="text-2xl font-bold text-foreground">Loading...</h1>
           <p className="text-muted-foreground">
-            {loading ? 'Checking authentication...' : 'Loading profile...'}
+            Checking authentication and profile...
           </p>
         </div>
       </div>
@@ -157,7 +199,7 @@ const Index = () => {
   // Check if user profile is incomplete (for non-admin users)
   if (!isAdmin && !isProfileComplete) {
     console.log('User profile incomplete, showing profile completion');
-    return <ProfileCompletion onProfileComplete={refetchProfile} />;
+    return <ProfileCompletion onProfileComplete={() => checkProfileCompletion(user.id)} />;
   }
 
   // Show onboarding for first-time users
