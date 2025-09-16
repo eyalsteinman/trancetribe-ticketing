@@ -62,6 +62,7 @@ export const translations = {
     'welcome_to': 'welcome to',
     'trance_tribes': 'TRANCE\nTRIBES',
     'ticket_generator': 'ticket generator',
+    'choose_access_type': 'Choose your access type',
     
     // Dashboard
     'dashboard': 'Dashboard',
@@ -324,6 +325,7 @@ export const translations = {
     'welcome_to': 'ברוכים הבאים ל',
     'trance_tribes': 'טראנס\nשבטים',
     'ticket_generator': 'מחולל כרטיסים',
+    'choose_access_type': 'בחר את סוג הגישה שלך',
     
     // Dashboard
     'dashboard': 'לוח בקרה',
@@ -586,6 +588,7 @@ export const translations = {
     'welcome_to': 'bienvenido a',
     'trance_tribes': 'TRANCE\nTRIBUS',
     'ticket_generator': 'generador de boletos',
+    'choose_access_type': 'Elige tu tipo de acceso',
     
     // Dashboard
     'dashboard': 'Panel',
@@ -848,6 +851,7 @@ export const translations = {
     'welcome_to': 'bienvenue à',
     'trance_tribes': 'TRANCE\nTRIBUS',
     'ticket_generator': 'générateur de billets',
+    'choose_access_type': 'Choisissez votre type d\'accès',
     
     // Dashboard
     'dashboard': 'Tableau de bord',
@@ -1110,6 +1114,7 @@ export const translations = {
     'welcome_to': 'benvenuto a',
     'trance_tribes': 'TRANCE\nTRIBÙ',
     'ticket_generator': 'generatore di biglietti',
+    'choose_access_type': 'Scegli il tuo tipo di accesso',
     
     // Dashboard
     'dashboard': 'Dashboard',

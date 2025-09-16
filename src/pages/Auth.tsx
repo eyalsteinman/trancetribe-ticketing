@@ -5,6 +5,7 @@ import { useBackground } from '@/contexts/BackgroundContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import ProductionBrowser from '@/components/ProductionBrowser';
 import LanguageSelector from '@/components/LanguageSelector';
+import RtlText from '@/components/RtlText';
 import AdminPasswordForm from '@/components/AdminPasswordForm';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -13,7 +14,7 @@ const AuthPage = () => {
   const [isUserLogin, setIsUserLogin] = useState(false);
   const [pendingAdminSignup, setPendingAdminSignup] = useState<{email: string, password: string} | null>(null);
   const { backgroundColor, isBackgroundDark } = useBackground();
-  const { t } = useLanguage();
+  const { t, isRTL } = useLanguage();
 
   const handleAdminPasswordSuccess = async () => {
     setShowAdminPassword(false);
@@ -130,28 +131,31 @@ const AuthPage = () => {
 
   return (
     <div 
-      className="min-h-screen w-full flex items-center justify-center p-4 transition-colors duration-500"
+      className={`min-h-screen w-full flex items-center justify-center p-4 transition-colors duration-500 ${isRTL ? 'rtl' : 'ltr'}`}
       style={{ 
         backgroundColor,
         color: isBackgroundDark ? '#ffffff' : '#000000'
       }}
+      dir={isRTL ? 'rtl' : 'ltr'}
     >
       <div className="w-full space-y-6">
         <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} carouselOnly />
 
         <div className="w-full">
-          <div className="text-center">
+          <div className={`text-center ${isRTL ? 'space-y-4' : 'space-y-2'}`}>
             <LanguageSelector />
-            <h1 className="text-3xl font-bold">{t('trance_tribes')}</h1>
-            <p className="opacity-75 mt-2">{t('choose_access_type')}</p>
+            <RtlText text={t('trance_tribes')} className="text-3xl font-bold whitespace-pre-line" />
+            <RtlText text={t('choose_access_type')} className="opacity-75 mt-2" />
           </div>
 
-          <AuthForm 
-            onShowAdminPassword={showAdminPasswordForm}
-            pendingAdminSignup={pendingAdminSignup}
-            isUserLogin={isUserLogin}
-            onToggleUserLogin={() => setIsUserLogin(!isUserLogin)}
-          />
+          <div className={`mt-6 ${isRTL ? 'rtl-form' : ''}`}>
+            <AuthForm 
+              onShowAdminPassword={showAdminPasswordForm}
+              pendingAdminSignup={pendingAdminSignup}
+              isUserLogin={isUserLogin}
+              onToggleUserLogin={() => setIsUserLogin(!isUserLogin)}
+            />
+          </div>
         </div>
       </div>
     </div>
