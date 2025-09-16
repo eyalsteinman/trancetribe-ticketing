@@ -4,8 +4,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useBackground } from '@/contexts/BackgroundContext';
 import SplashScreen from '@/components/SplashScreen';
 import AuthPage from './Auth';
-import UserDashboard from '@/components/UserDashboard';
-import AdminDashboard from '@/components/AdminDashboard';
+import NewUserDashboard from '@/components/NewUserDashboard';
+import NewAdminDashboard from '@/components/NewAdminDashboard';
 import ProfileCompletion from '@/components/ProfileCompletion';
 import { useProfileCompletion } from '@/hooks/useProfileCompletion';
 
@@ -107,11 +107,11 @@ const Index = () => {
 
   if (isAdmin) {
     console.log('User is admin, showing admin dashboard');
-    return <AdminDashboard user={user} />;
+    return <NewAdminDashboard user={user} />;
   }
 
   console.log('User is regular user, showing user dashboard');
-  return <UserDashboard user={user} />;
+  return <NewUserDashboard user={user} />;
 };
 
 export default Index;
