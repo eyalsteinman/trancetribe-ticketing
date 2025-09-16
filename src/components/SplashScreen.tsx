@@ -21,10 +21,11 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 overflow-hidden">
-      {/* Dynamic background with animated gradients */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-accent to-secondary animate-gradient-shift"></div>
-      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-primary/20 to-accent/30 animate-pulse"></div>
+    <div className="fixed inset-0 flex items-center justify-center z-50 overflow-hidden bg-gradient-mesh">
+      {/* Animated background elements - matching login page style */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-accent/20 to-secondary/30 animate-pulse-slow"></div>
+      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-radial from-primary/40 to-transparent rounded-full blur-3xl animate-float"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-radial from-accent/40 to-transparent rounded-full blur-3xl animate-float-delayed"></div>
       
       {/* Floating particles */}
       <div className="absolute inset-0">

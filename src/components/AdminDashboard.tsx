@@ -641,16 +641,29 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   }
 
   return (
-    <div className={`min-h-screen transition-colors duration-500 p-2 sm:p-4`}>
-      <div className="w-full">
-        <div className="container-section flex items-center justify-between mb-4 lg:mb-6">
-          <div className="space-y-1 sm:space-y-2">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-              {adminNickname ? `Welcome back,` : 'Admin Dashboard'}
-            </h1>
-            {adminNickname && (
-              <p className="text-lg sm:text-xl lg:text-2xl text-primary font-bold">{adminNickname}!</p>
-            )}
+    <div className="min-h-screen w-full bg-gradient-mesh overflow-hidden relative">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 animate-pulse-slow"></div>
+      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-radial from-primary/30 to-transparent rounded-full blur-3xl animate-float"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-radial from-accent/30 to-transparent rounded-full blur-3xl animate-float-delayed"></div>
+      
+      {/* Floating particles */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary rounded-full animate-ping opacity-40"></div>
+        <div className="absolute top-3/4 left-3/4 w-1 h-1 bg-accent rounded-full animate-ping opacity-60 delay-1000"></div>
+        <div className="absolute top-1/2 right-1/4 w-1.5 h-1.5 bg-secondary rounded-full animate-ping opacity-50 delay-500"></div>
+      </div>
+
+      <div className="relative z-10 min-h-screen p-2 sm:p-4">
+        <div className="w-full">
+          <div className="container-section flex items-center justify-between mb-4 lg:mb-6">
+            <div className="space-y-1 sm:space-y-2">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent text-glow">
+                {adminNickname ? `Welcome back,` : 'Admin Dashboard'}
+              </h1>
+              {adminNickname && (
+                <p className="text-lg sm:text-xl lg:text-2xl text-primary font-bold">{adminNickname}!</p>
+              )}
           </div>
           <Button 
             variant="ghost" 
@@ -802,7 +815,8 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           );
         })()}
         
-        <Footer />
+          <Footer />
+        </div>
       </div>
     </div>
   );

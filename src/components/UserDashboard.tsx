@@ -284,34 +284,47 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-background via-background to-card/20 p-3 sm:p-6">
-      {/* Modern Header */}
-      <div className="relative mb-6 sm:mb-8">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1 sm:space-y-2">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-              {nickname ? `Welcome back,` : 'User Dashboard'}
-            </h1>
-            {nickname && (
-              <p className="text-lg sm:text-xl lg:text-2xl text-primary font-bold">{nickname}!</p>
-            )}
-          </div>
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={async () => {
-              await handleSignOut();
-              setTimeout(() => {
-                window.location.reload();
-              }, 2000);
-            }} 
-            className="h-10 w-10 sm:h-12 sm:w-12 rounded-2xl bg-card/50 backdrop-blur-xl border border-border/50 hover:bg-card hover:border-primary/50 transition-all duration-300 hover:scale-105"
-            aria-label="Sign Out"
-          >
-            <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
-          </Button>
-        </div>
+    <div className="min-h-screen w-full bg-gradient-mesh overflow-hidden relative">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 animate-pulse-slow"></div>
+      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-radial from-primary/30 to-transparent rounded-full blur-3xl animate-float"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-radial from-accent/30 to-transparent rounded-full blur-3xl animate-float-delayed"></div>
+      
+      {/* Floating particles */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary rounded-full animate-ping opacity-40"></div>
+        <div className="absolute top-3/4 left-3/4 w-1 h-1 bg-accent rounded-full animate-ping opacity-60 delay-1000"></div>
+        <div className="absolute top-1/2 right-1/4 w-1.5 h-1.5 bg-secondary rounded-full animate-ping opacity-50 delay-500"></div>
       </div>
+
+      <div className="relative z-10 min-h-screen p-3 sm:p-6">
+        {/* Modern Header */}
+        <div className="relative mb-6 sm:mb-8">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1 sm:space-y-2">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent text-glow">
+                {nickname ? `Welcome back,` : 'User Dashboard'}
+              </h1>
+              {nickname && (
+                <p className="text-lg sm:text-xl lg:text-2xl text-primary font-bold">{nickname}!</p>
+              )}
+            </div>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={async () => {
+                await handleSignOut();
+                setTimeout(() => {
+                  window.location.reload();
+                }, 2000);
+              }} 
+              className="h-10 w-10 sm:h-12 sm:w-12 rounded-2xl bg-glass backdrop-blur-xl border border-white/20 hover:bg-white/10 hover:border-primary/50 transition-all duration-300 hover:scale-105 shadow-neon"
+              aria-label="Sign Out"
+            >
+              <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
+            </Button>
+          </div>
+        </div>
 
       <div className="w-full">
           {(() => {
@@ -529,8 +542,9 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           </DialogContent>
         </Dialog>
         
-      {/* Footer */}
-      <Footer />
+        {/* Footer */}
+        <Footer />
+      </div>
     </div>
   );
 };

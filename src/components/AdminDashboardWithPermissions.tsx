@@ -116,16 +116,29 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
 
   // Here you would render tiles based on adminProfile.allowed_tiles
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-background via-background to-card/20 p-3 sm:p-6">
-      <div className="relative flex items-center justify-between mb-6 sm:mb-8">
-        <div className="flex-1">
-          <div className="space-y-1 sm:space-y-2">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-              Welcome, Admin
-            </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground font-medium">
-              Level: {adminProfile?.admin_level.replace('level', 'Level ')}
-            </p>
+    <div className="min-h-screen w-full bg-gradient-mesh overflow-hidden relative">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 animate-pulse-slow"></div>
+      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-radial from-primary/30 to-transparent rounded-full blur-3xl animate-float"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-radial from-accent/30 to-transparent rounded-full blur-3xl animate-float-delayed"></div>
+      
+      {/* Floating particles */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary rounded-full animate-ping opacity-40"></div>
+        <div className="absolute top-3/4 left-3/4 w-1 h-1 bg-accent rounded-full animate-ping opacity-60 delay-1000"></div>
+        <div className="absolute top-1/2 right-1/4 w-1.5 h-1.5 bg-secondary rounded-full animate-ping opacity-50 delay-500"></div>
+      </div>
+
+      <div className="relative z-10 min-h-screen p-3 sm:p-6">
+        <div className="relative flex items-center justify-between mb-6 sm:mb-8">
+          <div className="flex-1">
+            <div className="space-y-1 sm:space-y-2">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent text-glow">
+                Welcome, Admin
+              </h1>
+              <p className="text-lg sm:text-xl text-muted-foreground font-medium">
+                Level: {adminProfile?.admin_level.replace('level', 'Level ')}
+              </p>
           </div>
         </div>
         <Button 
@@ -265,7 +278,8 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
             </div>
           </CardContent>
         </Card>
-      )}
+        )}
+      </div>
     </div>
   );
 };
