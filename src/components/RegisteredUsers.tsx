@@ -5,11 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Edit2, Save, X, UserCheck, Shield, Users } from 'lucide-react';
+import { Trash2, Edit2, Save, X, UserCheck, Shield, Users, Search, Send, Gift, Tag } from 'lucide-react';
 import PageHeader from '@/components/ui/page-header';
 import { useBackground } from '@/contexts/BackgroundContext';
 import SocialDialog from './SocialDialog';
 import Footer from '@/components/ui/footer';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
 
 interface RegisteredUsersProps {
   onBack: () => void;
@@ -27,8 +31,24 @@ interface RegisteredUser {
   roles: string[];
 }
 
+interface Party {
+  id: string;
+  name: string;
+  date: string;
+}
+
+interface TicketOfferForm {
+  partyId: string;
+  messageSubject: string;
+  messageContent: string;
+  ticketType: 'free' | 'discounted';
+  originalPrice: number;
+  discountedPrice: number;
+}
+
 const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
   const [users, setUsers] = useState<RegisteredUser[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<RegisteredUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [editingUser, setEditingUser] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({
@@ -43,12 +63,36 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
     socials: []
   });
   
+  // Search functionality
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchField, setSearchField] = useState<'name' | 'email' | 'phone'>('name');
+  
+  // Selection functionality
+  const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
+  
+  // Messaging functionality
+  const [showMessageForm, setShowMessageForm] = useState(false);
+  const [parties, setParties] = useState<Party[]>([]);
+  const [messageForm, setMessageForm] = useState<TicketOfferForm>({
+    partyId: '',
+    messageSubject: '',
+    messageContent: '',
+    ticketType: 'free',
+    originalPrice: 0,
+    discountedPrice: 0
+  });
+  
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
   useEffect(() => {
     loadUsers();
+    loadParties();
   }, []);
+
+  useEffect(() => {
+    filterUsers();
+  }, [users, searchQuery, searchField]);
 
   const loadUsers = async () => {
     setLoading(true);
@@ -107,6 +151,48 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadParties = async () => {
+    try {
+      const { data: currentUser } = await supabase.auth.getUser();
+      if (!currentUser.user) return;
+
+      const { data, error } = await supabase
+        .from('parties')
+        .select('id, name, date')
+        .eq('created_by', currentUser.user.id)
+        .order('date', { ascending: false });
+
+      if (error) throw error;
+      setParties(data || []);
+    } catch (error) {
+      console.error('Error loading parties:', error);
+    }
+  };
+
+  const filterUsers = () => {
+    if (!searchQuery.trim()) {
+      setFilteredUsers(users);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = users.filter(user => {
+      switch (searchField) {
+        case 'name':
+          return (user.first_name?.toLowerCase().includes(query)) ||
+                 (user.last_name?.toLowerCase().includes(query)) ||
+                 (user.display_name?.toLowerCase().includes(query));
+        case 'email':
+          return user.email?.toLowerCase().includes(query);
+        case 'phone':
+          return user.phone_number?.includes(query);
+        default:
+          return false;
+      }
+    });
+    setFilteredUsers(filtered);
   };
 
   const deleteUser = async (userId: string) => {
@@ -277,6 +363,124 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
     }
   };
 
+  const toggleUserSelection = (userId: string) => {
+    const newSelection = new Set(selectedUsers);
+    if (newSelection.has(userId)) {
+      newSelection.delete(userId);
+    } else {
+      newSelection.add(userId);
+    }
+    setSelectedUsers(newSelection);
+  };
+
+  const selectAllUsers = () => {
+    if (selectedUsers.size === filteredUsers.length) {
+      setSelectedUsers(new Set());
+    } else {
+      setSelectedUsers(new Set(filteredUsers.map(user => user.user_id)));
+    }
+  };
+
+  const sendTicketOffers = async () => {
+    if (selectedUsers.size === 0) {
+      toast({
+        title: "Error",
+        description: "Please select at least one user",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!messageForm.partyId || !messageForm.messageSubject || !messageForm.messageContent) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const party = parties.find(p => p.id === messageForm.partyId);
+      if (!party) return;
+
+      const selectedUsersList = Array.from(selectedUsers);
+      
+      for (const userId of selectedUsersList) {
+        const user = users.find(u => u.user_id === userId);
+        if (!user) continue;
+
+        let messageContent = messageForm.messageContent;
+        
+        if (messageForm.ticketType === 'free') {
+          // Generate free QR code
+          const qrData = `${userId}-${messageForm.partyId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+          
+          const { error: qrError } = await supabase
+            .from('qr_codes')
+            .insert({
+              user_id: userId,
+              party_id: messageForm.partyId,
+              code: qrData,
+              is_approved: true,
+              auto_approved: true
+            });
+
+          if (qrError) {
+            console.error('Error creating QR code:', qrError);
+            continue;
+          }
+
+          messageContent += `\n\n🎫 FREE TICKET GRANTED!\nYour QR code: ${qrData}\nShow this at the entrance to gain access.`;
+        } else {
+          // Discounted ticket
+          const qrData = `DISCOUNT-${userId}-${messageForm.partyId}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+          
+          messageContent += `\n\n🏷️ SPECIAL DISCOUNT OFFER!\nOriginal Price: ₪${messageForm.originalPrice}\nYour Price: ₪${messageForm.discountedPrice}\nSavings: ₪${messageForm.originalPrice - messageForm.discountedPrice}\n\nClick "Purchase" to buy at the discounted price!\nDiscount Code: ${qrData}`;
+        }
+
+        // Send message
+        const { error: messageError } = await supabase
+          .from('messages')
+          .insert({
+            recipient_id: userId,
+            subject: messageForm.messageSubject,
+            content: messageContent,
+            production_id: null,
+            created_by: (await supabase.auth.getUser()).data.user?.id
+          });
+
+        if (messageError) {
+          console.error('Error sending message:', messageError);
+        }
+      }
+
+      toast({
+        title: "Success",
+        description: `Ticket offers sent to ${selectedUsersList.length} users`,
+      });
+
+      setShowMessageForm(false);
+      setSelectedUsers(new Set());
+      setMessageForm({
+        partyId: '',
+        messageSubject: '',
+        messageContent: '',
+        ticketType: 'free',
+        originalPrice: 0,
+        discountedPrice: 0
+      });
+
+    } catch (error: any) {
+      console.error('Error sending ticket offers:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send ticket offers: " + error.message,
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
   <div 
       className="min-h-screen p-4 transition-colors duration-500"
@@ -290,23 +494,195 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
           onBack={onBack}
         />
 
+        {/* Search Bar */}
+        <Card>
+          <CardHeader>
+            <CardTitle>User Search</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-4 items-end">
+              <div className="flex-1">
+                <label className="text-sm font-medium">Search Field</label>
+                <Select value={searchField} onValueChange={(value: 'name' | 'email' | 'phone') => setSearchField(value)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="name">Name</SelectItem>
+                    <SelectItem value="email">Email</SelectItem>
+                    <SelectItem value="phone">Phone</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex-2">
+                <label className="text-sm font-medium">Search Query</label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder={`Search by ${searchField}...`}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Selection and Messaging */}
+        {filteredUsers.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <span>User Selection ({selectedUsers.size} selected)</span>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={selectAllUsers}
+                  >
+                    {selectedUsers.size === filteredUsers.length ? 'Deselect All' : 'Select All'}
+                  </Button>
+                  <Dialog open={showMessageForm} onOpenChange={setShowMessageForm}>
+                    <DialogTrigger asChild>
+                      <Button
+                        disabled={selectedUsers.size === 0}
+                        className="flex items-center gap-2"
+                      >
+                        <Send className="h-4 w-4" />
+                        Send Ticket Offers
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>Send Ticket Offers to {selectedUsers.size} Users</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-sm font-medium">Select Party</label>
+                          <Select value={messageForm.partyId} onValueChange={(value) => setMessageForm({...messageForm, partyId: value})}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Choose a party..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {parties.map(party => (
+                                <SelectItem key={party.id} value={party.id}>
+                                  {party.name} - {new Date(party.date).toLocaleDateString()}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div>
+                          <label className="text-sm font-medium">Message Subject</label>
+                          <Input
+                            value={messageForm.messageSubject}
+                            onChange={(e) => setMessageForm({...messageForm, messageSubject: e.target.value})}
+                            placeholder="Enter message subject..."
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-sm font-medium">Message Content</label>
+                          <Textarea
+                            value={messageForm.messageContent}
+                            onChange={(e) => setMessageForm({...messageForm, messageContent: e.target.value})}
+                            placeholder="Enter your message..."
+                            rows={4}
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-sm font-medium">Ticket Type</label>
+                          <Select value={messageForm.ticketType} onValueChange={(value: 'free' | 'discounted') => setMessageForm({...messageForm, ticketType: value})}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="free">
+                                <div className="flex items-center gap-2">
+                                  <Gift className="h-4 w-4" />
+                                  Free Ticket
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="discounted">
+                                <div className="flex items-center gap-2">
+                                  <Tag className="h-4 w-4" />
+                                  Discounted Ticket
+                                </div>
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {messageForm.ticketType === 'discounted' && (
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label className="text-sm font-medium">Original Price (₪)</label>
+                              <Input
+                                type="number"
+                                value={messageForm.originalPrice || ''}
+                                onChange={(e) => setMessageForm({...messageForm, originalPrice: Number(e.target.value)})}
+                                placeholder="0"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-sm font-medium">Discounted Price (₪)</label>
+                              <Input
+                                type="number"
+                                value={messageForm.discountedPrice || ''}
+                                onChange={(e) => setMessageForm({...messageForm, discountedPrice: Number(e.target.value)})}
+                                placeholder="0"
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex gap-2 justify-end">
+                          <Button
+                            variant="outline"
+                            onClick={() => setShowMessageForm(false)}
+                          >
+                            Cancel
+                          </Button>
+                          <Button onClick={sendTicketOffers}>
+                            Send Offers
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </CardTitle>
+            </CardHeader>
+          </Card>
+        )}
+
         <div className="mt-6">
         <Card>
           <CardHeader>
-            <CardTitle>All Registered Users ({users.length})</CardTitle>
+            <CardTitle>All Registered Users ({filteredUsers.length} shown of {users.length})</CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? (
               <div className="text-center py-4">Loading...</div>
-            ) : users.length === 0 ? (
+            ) : filteredUsers.length === 0 ? (
               <div className="text-center py-4 text-muted-foreground">
-                No users found
+                {users.length === 0 ? 'No users found' : 'No users match your search'}
               </div>
             ) : (
               <div className="overflow-x-auto">
                   <table className="w-full border-collapse">
                     <thead>
                       <tr className="border-b">
+                        <th className="text-left p-3 font-medium">
+                          <Checkbox
+                            checked={selectedUsers.size === filteredUsers.length && filteredUsers.length > 0}
+                            onCheckedChange={selectAllUsers}
+                          />
+                        </th>
                         <th className="text-left p-3 font-medium">First Name</th>
                         <th className="text-left p-3 font-medium">Last Name</th>
                         <th className="text-left p-3 font-medium">Email</th>
@@ -317,11 +693,17 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                         <th className="text-left p-3 font-medium">Actions</th>
                       </tr>
                     </thead>
-                  <tbody>
-                    {users.map((user) => (
-                      <tr key={user.user_id} className="border-b hover:bg-muted/50">
-                        {editingUser === user.user_id ? (
-                          <>
+                   <tbody>
+                     {filteredUsers.map((user) => (
+                       <tr key={user.user_id} className="border-b hover:bg-muted/50">
+                          {editingUser === user.user_id ? (
+                            <>
+                              <td className="p-3">
+                                <Checkbox
+                                  checked={selectedUsers.has(user.user_id)}
+                                  onCheckedChange={() => toggleUserSelection(user.user_id)}
+                                />
+                              </td>
                             <td className="p-3">
                               <Input
                                 value={editForm.first_name}
@@ -402,9 +784,15 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                               </div>
                             </td>
                           </>
-                        ) : (
-                          <>
-                            <td className="p-3">{user.first_name || 'N/A'}</td>
+                         ) : (
+                           <>
+                             <td className="p-3">
+                               <Checkbox
+                                 checked={selectedUsers.has(user.user_id)}
+                                 onCheckedChange={() => toggleUserSelection(user.user_id)}
+                               />
+                             </td>
+                             <td className="p-3">{user.first_name || 'N/A'}</td>
                             <td className="p-3">{user.last_name || 'N/A'}</td>
                             <td className="p-3 text-sm">{user.email || 'N/A'}</td>
                             <td className="p-3 text-sm">{user.phone_number || 'N/A'}</td>

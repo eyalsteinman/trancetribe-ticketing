@@ -612,8 +612,16 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
               <CardTitle>Your QR Code</CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-4">
-              <div className="bg-white p-4 rounded-lg inline-block">
+              <div className="bg-white p-4 rounded-lg inline-block relative">
                 <QRCodeSVG value={userQR.code} size={200} />
+                {!userQR.is_approved && (
+                  <div className="absolute inset-0 backdrop-blur-sm bg-white/20 flex items-center justify-center rounded-lg">
+                    <div className="text-center p-4">
+                      <p className="text-sm font-medium text-gray-800">⏳ Pending Approval</p>
+                      <p className="text-xs text-gray-600 mt-1">QR code will be clear once approved</p>
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium">
@@ -643,9 +651,16 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
                     <div className="font-medium">
                       {friendQR.friend_display_name || 'Friend'}
                     </div>
-                    <div className="bg-white p-3 rounded-lg inline-block">
-                      <QRCodeSVG value={friendQR.code} size={150} />
-                    </div>
+                     <div className="bg-white p-3 rounded-lg inline-block relative">
+                       <QRCodeSVG value={friendQR.code} size={150} />
+                       {!friendQR.is_approved && (
+                         <div className="absolute inset-0 backdrop-blur-sm bg-white/20 flex items-center justify-center rounded-lg">
+                           <div className="text-center p-2">
+                             <p className="text-xs font-medium text-gray-800">⏳ Pending</p>
+                           </div>
+                         </div>
+                       )}
+                     </div>
                     <div className="space-y-1">
                       <p className="text-xs font-medium">
                         Status: {friendQR.is_approved ? '✅ Approved' : '⏳ Pending Approval'}
