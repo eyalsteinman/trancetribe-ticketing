@@ -284,19 +284,17 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   return (
-    <div className="min-h-screen w-full bg-black text-white p-4 pt-16">
+    <div className="min-h-screen w-full transition-colors duration-500 p-4">
       {/* Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-black border-b border-border p-2 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-white">
-            {nickname ? `Welcome back,` : 'User Dashboard'}
-          </h1>
-          {nickname && (
-            <p className="text-sm text-white">{nickname}!</p>
-          )}
-        </div>
+      <div className="relative pt-2 pb-6">
+        <h1 className="text-2xl font-bold text-foreground mb-1">
+          {nickname ? `Welcome back,` : 'User Dashboard'}
+        </h1>
+        {nickname && (
+          <p className="text-lg text-primary font-semibold">{nickname}!</p>
+        )}
         <Button 
-          variant="ghost"
+          variant="outline" 
           size="icon"
           onClick={async () => {
             await handleSignOut();
@@ -304,7 +302,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
               window.location.reload();
             }, 2000);
           }} 
-          className="text-white hover:bg-white/10"
+          className="absolute top-2 right-4 z-50 border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200"
           aria-label="Sign Out"
         >
           <LogOut className="h-4 w-4" />

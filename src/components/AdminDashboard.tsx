@@ -641,15 +641,15 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white pt-16">
+    <div className={`min-h-screen transition-colors duration-500`}>
       <div className="w-full">
-        <div className="fixed top-0 left-0 right-0 z-50 bg-black border-b border-border p-2 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-white">Admin Dashboard</h1>
+        <div className="container-section flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
           <Button 
-            variant="ghost"
+            variant="outline" 
             size="icon"
             onClick={handleSignOut} 
-            className="text-white hover:bg-white/10"
+            className="border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200"
             aria-label="Sign Out"
           >
             <LogOut className="h-4 w-4" />

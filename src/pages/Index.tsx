@@ -81,7 +81,12 @@ const Index = () => {
   if (loading || profileLoading) {
     console.log('Loading state, user:', user, 'isAdmin:', isAdmin, 'profileLoading:', profileLoading);
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black text-white">
+      <div 
+        className="min-h-screen flex items-center justify-center transition-colors duration-500"
+        style={{ 
+          backgroundColor
+        }}
+      >
         <div className="text-center">
           <h1 className="text-xl">Loading...</h1>
         </div>
