@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SignInForm } from './SignInForm';
 import { SignUpForm } from './SignUpForm';
 import { AdminForm } from './AdminForm';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AuthFormProps {
   onShowAdminPassword: (email: string, password: string) => void;
@@ -18,18 +19,20 @@ export const AuthForm = ({
   isUserLogin, 
   onToggleUserLogin 
 }: AuthFormProps) => {
+  const { t } = useLanguage();
+  
   return (
     <Tabs defaultValue="user" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="user">User</TabsTrigger>
-        <TabsTrigger value="admin">Admin</TabsTrigger>
+        <TabsTrigger value="user">{t('user')}</TabsTrigger>
+        <TabsTrigger value="admin">{t('admin')}</TabsTrigger>
       </TabsList>
       
       <TabsContent value="user">
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between mb-2">
-              <CardTitle>User Login/Registration</CardTitle>
+              <CardTitle>{t('user_login_registration')}</CardTitle>
             {/* Toggle Button - Right side without overlap */}
             <button
               onClick={onToggleUserLogin}
@@ -37,19 +40,19 @@ export const AuthForm = ({
             >
               {isUserLogin ? (
                 <>
-                  <div>Don't have account?</div>
-                  <div>Sign Up</div>
+                  <div>{t('dont_have_account')}</div>
+                  <div>{t('sign_up')}</div>
                 </>
               ) : (
                 <>
-                  <div>Have account?</div>
-                  <div>Sign In</div>
+                  <div>{t('have_account')}</div>
+                  <div>{t('sign_in')}</div>
                 </>
               )}
             </button>
             </div>
             <CardDescription>
-              {isUserLogin ? "Sign in to your account" : "Create your account with your full name and get instant access"}
+              {isUserLogin ? t('sign_in_to_account') : t('create_account_description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -65,8 +68,8 @@ export const AuthForm = ({
       <TabsContent value="admin">
         <Card>
           <CardHeader>
-            <CardTitle>Admin Access</CardTitle>
-            <CardDescription>Sign in with your admin credentials</CardDescription>
+            <CardTitle>{t('admin_access')}</CardTitle>
+            <CardDescription>{t('admin_credentials_description')}</CardDescription>
           </CardHeader>
           <CardContent>
             <AdminForm 

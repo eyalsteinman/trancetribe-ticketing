@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AdminFormProps {
   onShowAdminPassword: (email: string, password: string) => void;
@@ -14,12 +15,13 @@ export const AdminForm = ({ onShowAdminPassword, pendingAdminSignup }: AdminForm
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleAdminLogin = async () => {
     if (!email || !password) {
       toast({
-        title: "Error",
-        description: "All fields are required",
+        title: t('error'),
+        description: t('all_fields_required'),
         variant: "destructive"
       });
       return;
@@ -34,15 +36,15 @@ export const AdminForm = ({ onShowAdminPassword, pendingAdminSignup }: AdminForm
       
       if (error) {
         toast({
-          title: "Error",
+          title: t('error'),
           description: error.message,
           variant: "destructive"
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to sign in",
+        title: t('error'),
+        description: t('failed_to_sign_in'),
         variant: "destructive"
       });
     } finally {
@@ -53,8 +55,8 @@ export const AdminForm = ({ onShowAdminPassword, pendingAdminSignup }: AdminForm
   const handleCreateAdminClick = () => {
     if (!email || !password) {
       toast({
-        title: "Error",
-        description: "Please enter email and password first",
+        title: t('error'),
+        description: t('enter_email_password_first'),
         variant: "destructive"
       });
       return;
@@ -66,13 +68,13 @@ export const AdminForm = ({ onShowAdminPassword, pendingAdminSignup }: AdminForm
     <div className="space-y-4">
       <Input
         type="email"
-        placeholder="Admin email"
+        placeholder={t('admin_email')}
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
       <Input
         type="password"
-        placeholder="Password"
+        placeholder={t('password')}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
@@ -82,7 +84,7 @@ export const AdminForm = ({ onShowAdminPassword, pendingAdminSignup }: AdminForm
           disabled={loading || !email || !password}
           className="w-full"
         >
-          {loading ? "Signing in..." : "Sign In as Admin"}
+          {loading ? t('signing_in') : t('sign_in_as_admin')}
         </Button>
         <button 
           onClick={handleCreateAdminClick}
@@ -90,7 +92,7 @@ export const AdminForm = ({ onShowAdminPassword, pendingAdminSignup }: AdminForm
           className="w-full px-4 py-3 rounded font-medium border border-gray-300 hover:bg-gray-50"
           style={{ color: '#000000', backgroundColor: '#ffffff' }}
         >
-          Create Admin Account
+          {t('create_admin_account')}
         </button>
       </div>
     </div>

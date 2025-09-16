@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SignUpFormProps {}
 
@@ -14,12 +15,13 @@ export const SignUpForm = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleSignUp = async () => {
     if (!email || !password || !firstName || !lastName) {
       toast({
-        title: "Error",
-        description: "Please fill in all required fields",
+        title: t('error'),
+        description: t('fields_required'),
         variant: "destructive"
       });
       return;
@@ -44,12 +46,12 @@ export const SignUpForm = () => {
       if (error) throw error;
       
         toast({
-          title: "Success",
-          description: "Account created! Please check your email to verify your account."
+          title: t('success'),
+          description: t('account_created_verify_email')
         });
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: t('error'),
         description: error.message,
         variant: "destructive"
       });
@@ -62,24 +64,24 @@ export const SignUpForm = () => {
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium text-black">First Name *</label>
+          <label className="text-sm font-medium text-black">{t('first_name')} *</label>
           <Input
             type="text"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
-            placeholder="Enter first name"
+            placeholder={t('enter_first_name')}
             required
             className="bg-white text-black border-gray-300"
             style={{ color: '#000000', backgroundColor: '#ffffff' }}
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-black">Last Name *</label>
+          <label className="text-sm font-medium text-black">{t('last_name')} *</label>
           <Input
             type="text"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
-            placeholder="Enter last name"
+            placeholder={t('enter_last_name')}
             required
             className="bg-white text-black border-gray-300"
             style={{ color: '#000000', backgroundColor: '#ffffff' }}
@@ -88,24 +90,24 @@ export const SignUpForm = () => {
       </div>
       
       <div>
-        <label className="text-sm font-medium text-black">Phone Number</label>
+        <label className="text-sm font-medium text-black">{t('phone_number')}</label>
         <Input
           type="tel"
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
-          placeholder="Enter phone number"
+          placeholder={t('enter_phone_number')}
           className="bg-white text-black border-gray-300"
           style={{ color: '#000000', backgroundColor: '#ffffff' }}
         />
       </div>
       
       <div>
-        <label className="text-sm font-medium text-black">Email *</label>
+        <label className="text-sm font-medium text-black">{t('email')} *</label>
         <Input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email"
+          placeholder={t('enter_email')}
           required
           className="bg-white text-black border-gray-300"
           style={{ color: '#000000', backgroundColor: '#ffffff' }}
@@ -113,12 +115,12 @@ export const SignUpForm = () => {
       </div>
       
       <div>
-        <label className="text-sm font-medium text-black">Password *</label>
+        <label className="text-sm font-medium text-black">{t('password')} *</label>
         <Input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter your password"
+          placeholder={t('enter_password')}
           required
           className="bg-white text-black border-gray-300"
           style={{ color: '#000000', backgroundColor: '#ffffff' }}
@@ -130,7 +132,7 @@ export const SignUpForm = () => {
         disabled={loading}
         className="w-full bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
       >
-        {loading ? "Processing..." : "Create Account"}
+        {loading ? t('processing') : t('create_account')}
       </Button>
     </div>
   );

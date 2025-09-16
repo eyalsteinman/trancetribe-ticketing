@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SignInFormProps {}
 
@@ -11,12 +12,13 @@ export const SignInForm = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleSignIn = async () => {
     if (!email || !password) {
       toast({
-        title: "Error",
-        description: "Please fill in all required fields",
+        title: t('error'),
+        description: t('fields_required'),
         variant: "destructive"
       });
       return;
@@ -34,7 +36,7 @@ export const SignInForm = () => {
       // Successfully signed in - the app will handle the redirect
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: t('error'),
         description: error.message,
         variant: "destructive"
       });
@@ -55,15 +57,15 @@ export const SignInForm = () => {
       
       if (error) {
         toast({
-          title: "Error",
+          title: t('error'),
           description: error.message,
           variant: "destructive"
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to sign in with Google",
+        title: t('error'),
+        description: t('google_signin_failed'),
         variant: "destructive"
       });
     } finally {
@@ -83,15 +85,15 @@ export const SignInForm = () => {
       
       if (error) {
         toast({
-          title: "Error",
+          title: t('error'),
           description: error.message,
           variant: "destructive"
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to sign in with Facebook",
+        title: t('error'),
+        description: t('facebook_signin_failed'),
         variant: "destructive"
       });
     } finally {
@@ -102,12 +104,12 @@ export const SignInForm = () => {
   return (
     <div className="space-y-4">
       <div>
-        <label className="text-sm font-medium text-black">Email *</label>
+        <label className="text-sm font-medium text-black">{t('email')} *</label>
         <Input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Enter your email"
+          placeholder={t('enter_email')}
           required
           className="bg-white text-black border-gray-300"
           style={{ color: '#000000', backgroundColor: '#ffffff' }}
@@ -115,12 +117,12 @@ export const SignInForm = () => {
       </div>
       
       <div>
-        <label className="text-sm font-medium text-black">Password *</label>
+        <label className="text-sm font-medium text-black">{t('password')} *</label>
         <Input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter your password"
+          placeholder={t('enter_password')}
           required
           className="bg-white text-black border-gray-300"
           style={{ color: '#000000', backgroundColor: '#ffffff' }}
@@ -132,7 +134,7 @@ export const SignInForm = () => {
         disabled={loading}
         className="w-full bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
       >
-        {loading ? "Processing..." : "Sign In"}
+        {loading ? t('processing') : t('sign_in')}
       </Button>
 
       <div className="relative">
@@ -141,7 +143,7 @@ export const SignInForm = () => {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
+            {t('or_continue_with')}
           </span>
         </div>
       </div>
@@ -153,7 +155,7 @@ export const SignInForm = () => {
           disabled={loading}
           className="w-full"
         >
-          Google
+          {t('google')}
         </Button>
         <Button
           variant="outline"
@@ -161,7 +163,7 @@ export const SignInForm = () => {
           disabled={loading}
           className="w-full"
         >
-          Facebook
+          {t('facebook')}
         </Button>
       </div>
     </div>
