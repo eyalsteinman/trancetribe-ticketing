@@ -214,18 +214,14 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
       <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 animate-pulse-slow"></div>
       
       <div className="relative z-10 min-h-screen p-4">
-        <div className="container mx-auto w-full px-4">
+        <div className="w-full px-4">
           <PageHeader
             title="Create Party"
             onBack={onBack}
           />
           
-          <div className="pt-20 space-y-6">
-            <Card>
-          <CardHeader>
-            <CardTitle>Party Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+          <div className="pt-20 space-y-8">
+            <div className="floating-section space-y-6">
             <div>
               <label className="text-sm font-medium">Production</label>
               <select
@@ -395,8 +391,7 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
             >
               {loading ? "Creating..." : "Create Party"}
             </Button>
-          </CardContent>
-            </Card>
+            </div>
             
             <Footer />
           </div>

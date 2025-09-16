@@ -478,8 +478,8 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
         )}
 
         {/* F. Party Details Container */}
-        <div className="w-full p-3 space-y-2 bg-card rounded-lg">
-          <h2 className="text-base font-bold">Party Details</h2>
+        <div className="floating-section space-y-3">
+          <h2 className="text-lg font-bold">Party Details</h2>
             <div className="text-sm">
               <strong>Date:</strong> {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
             </div>
@@ -509,7 +509,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
         </div>
 
         {/* G. Ticket Options Container */}
-        <div className="w-full p-4 space-y-4 bg-card">
+        <div className="floating-section space-y-4">
           <h2 className="text-lg font-bold">
             {party.is_free ? 'Get Your Free Ticket' : 'Purchase Ticket'}
           </h2>
@@ -594,7 +594,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
         </div>
 
         {/* H. Buy for Friends Container - Always Available */}
-        <div className="w-full p-4 bg-card">
+        <div className="floating-section">
           <h2 className="text-lg font-bold mb-4">Buy Tickets for Friends</h2>
           <Button
             variant="outline"
