@@ -641,7 +641,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   }
 
   return (
-    <div className="min-h-screen w-full bg-gradient-mesh overflow-hidden relative">
+    <div className="min-h-screen w-full app-background relative">
       {/* Animated background elements */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 animate-pulse-slow"></div>
       <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-radial from-primary/30 to-transparent rounded-full blur-3xl animate-float"></div>
