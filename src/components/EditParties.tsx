@@ -9,6 +9,7 @@ import PageHeader from '@/components/ui/page-header';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useBackground } from '@/contexts/BackgroundContext';
 import TicketManager from './TicketManager';
+import Footer from '@/components/ui/footer';
 
 interface EditPartiesProps {
   onBack: () => void;
@@ -393,7 +394,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
   if (editingParty) {
     return (
       <div 
-        className="min-h-screen p-4 transition-colors duration-500"
+        className="min-h-screen p-4 sm:p-6 transition-colors duration-500"
         style={{ 
           backgroundColor
         }}
@@ -403,9 +404,9 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
             onBack={cancelEdit}
           />
           
-          <div className="w-full max-w-none pt-20 space-y-6 text-left">
+          <div className="w-full max-w-2xl mx-auto pt-20 px-4 space-y-6 text-left">
 
-          <Card className="w-full max-w-none mx-4">
+          <Card className="w-full">
             <CardHeader>
               <CardTitle>Party Details</CardTitle>
             </CardHeader>
@@ -458,7 +459,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium">Start Time</label>
                   <Input
@@ -498,153 +499,133 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                 <label htmlFor="editIsFree" className="text-sm">Free Party</label>
               </div>
 
-            <div>
-              <label className="text-sm font-medium">Number of Tickets Available</label>
-              <Input
-                type="number"
-                min="1"
-                placeholder="e.g. 100"
-                value={(editingParty as any).ticket_count || ''}
-                onChange={(e) => setEditingParty((p) => p ? { ...p, ticket_count: Number(e.target.value) || null } as any : p)}
+              <div>
+                <label className="text-sm font-medium">Max Tickets Per User</label>
+                <Input
+                  type="number"
+                  min="1"
+                  value={editMaxTicketsPerUser}
+                  onChange={(e) => setEditMaxTicketsPerUser(parseInt(e.target.value) || 1)}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Ticket Management Section */}
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle>Ticket Types</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <TicketManager
+                tickets={editTicketTypes}
+                onChange={setEditTicketTypes}
+                maxTicketsPerUser={editMaxTicketsPerUser}
+                onMaxTicketsChange={setEditMaxTicketsPerUser}
               />
-            </div>
+            </CardContent>
+          </Card>
 
-            {/* Existing Ticket Types */}
-            {editTicketTypes.length > 0 && (
+          {/* Social Networks Section */}
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle>Social Networks</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div>
-                <label className="text-sm font-medium">Existing Ticket Types</label>
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {editTicketTypes.map((ticket) => (
-                    <div key={ticket.id} className="border rounded-lg p-3 bg-muted/20">
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="font-medium">{ticket.label}</p>
-                          <p className="text-sm text-muted-foreground">
-                            ₪{ticket.price} • {ticket.sold}/{ticket.quantity} sold
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-sm text-muted-foreground">
-                            {ticket.quantity - ticket.sold} remaining
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-<TicketManager
-  tickets={editTicketTypes}
-  onChange={setEditTicketTypes}
-  maxTicketsPerUser={editMaxTicketsPerUser}
-  onMaxTicketsChange={setEditMaxTicketsPerUser}
-  totalTickets={(editingParty as any).ticket_count ?? undefined}
-/>
-
-              <div>
-                <label className="text-sm font-medium">Social Networks Required</label>
-                <div className="grid grid-cols-1 gap-3 mt-2">
-                  {['facebook','instagram','tiktok','x'].map((key) => (
-                    <div key={key} className="space-y-2">
-                      <div className="font-medium text-sm">{key.charAt(0).toUpperCase() + key.slice(1)}</div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <label className="flex items-center gap-2 text-sm">
+                <label className="text-sm font-medium mb-2 block">Required Social Media</label>
+                <div className="space-y-2">
+                  {['instagram', 'facebook', 'whatsapp', 'tiktok'].map((platform) => (
+                    <div key={platform} className="flex items-center gap-4">
+                      <span className="w-20 text-sm capitalize">{platform}</span>
+                      <div className="flex gap-2">
+                        <label className="flex items-center gap-1">
                           <input
                             type="checkbox"
-                            checked={editRequiredSocials.includes(`${key}_optional`)}
+                            checked={editRequiredSocials.includes(`${platform}_optional`)}
                             onChange={(e) => {
                               if (e.target.checked) {
-                                setEditRequiredSocials([...editRequiredSocials.filter(s => !s.startsWith(key)), `${key}_optional`]);
+                                setEditRequiredSocials(prev => [...prev.filter(s => !s.startsWith(platform)), `${platform}_optional`]);
                               } else {
-                                setEditRequiredSocials(editRequiredSocials.filter((s) => s !== `${key}_optional`));
+                                setEditRequiredSocials(prev => prev.filter(s => s !== `${platform}_optional`));
                               }
                             }}
-                            className="h-4 w-4"
+                            className="h-3 w-3"
                           />
-                          Optional (either)
+                          <span className="text-xs">Optional</span>
                         </label>
-                        <label className="flex items-center gap-2 text-sm">
+                        <label className="flex items-center gap-1">
                           <input
                             type="checkbox"
-                            checked={editRequiredSocials.includes(`${key}_obligatory`)}
+                            checked={editRequiredSocials.includes(`${platform}_obligatory`)}
                             onChange={(e) => {
                               if (e.target.checked) {
-                                setEditRequiredSocials([...editRequiredSocials.filter(s => !s.startsWith(key)), `${key}_obligatory`]);
+                                setEditRequiredSocials(prev => [...prev.filter(s => !s.startsWith(platform)), `${platform}_obligatory`]);
                               } else {
-                                setEditRequiredSocials(editRequiredSocials.filter((s) => s !== `${key}_obligatory`));
+                                setEditRequiredSocials(prev => prev.filter(s => s !== `${platform}_obligatory`));
                               }
                             }}
-                            className="h-4 w-4"
+                            className="h-3 w-3"
                           />
-                          Obligatory
+                          <span className="text-xs">Required</span>
                         </label>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
-              <div>
-                <label className="text-sm font-medium">Current Photo</label>
-                {editingParty.photo_url ? (
-                  <div className="space-y-2">
+          {/* Photo Section */}
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle>Party Photo</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {editingParty.photo_url && (
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">Current photo:</p>
+                  <div className="relative">
                     <img 
                       src={editingParty.photo_url} 
                       alt={editingParty.name}
-                      className="w-full h-32 object-cover rounded-md"
+                      className="w-full max-w-sm h-auto rounded-lg"
                     />
                     <Button
+                      type="button"
                       variant="destructive"
                       size="sm"
                       onClick={() => removePartyPhoto(editingParty)}
-                      disabled={loading}
-                      className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
-                    >
-                      <span className="text-white">Remove Current Photo</span>
-                    </Button>
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">No photo uploaded</p>
-                )}
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">Upload New Photo</label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    id="editPhoto"
-                    type="file"
-                    accept="image/*"
-                    onChange={handlePhotoSelect}
-                    className="hidden"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => document.getElementById('editPhoto')?.click()}
-                    className="flex items-center gap-2 text-foreground"
-                  >
-                    <Upload className="h-4 w-4" />
-                    <span className="truncate max-w-32">
-                      {selectedPhoto ? selectedPhoto.name : 'Choose New Photo'}
-                    </span>
-                  </Button>
-                  {selectedPhoto && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() => setSelectedPhoto(null)}
-                      size="sm"
+                      className="absolute top-2 right-2"
                     >
                       <X className="h-4 w-4" />
                     </Button>
-                  )}
+                  </div>
                 </div>
+              )}
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  {editingParty.photo_url ? 'Replace Photo' : 'Upload Photo'}
+                </label>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoSelect}
+                />
+                {selectedPhoto && (
+                  <p className="text-sm text-muted-foreground">
+                    Selected: {selectedPhoto.name}
+                  </p>
+                )}
               </div>
+            </CardContent>
+          </Card>
 
-              <Button 
+          <Card className="w-full">
+            <CardContent className="pt-6">
+              <Button
                 onClick={savePartyChanges}
                 disabled={loading || !editName.trim() || !editDate}
                 className="w-full"
@@ -653,6 +634,9 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
               </Button>
             </CardContent>
           </Card>
+          
+          {/* Footer */}
+          <Footer />
         </div>
       </div>
     );
@@ -660,7 +644,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
 
   return (
     <div 
-      className="min-h-screen p-4 transition-colors duration-500"
+      className="min-h-screen p-4 sm:p-6 transition-colors duration-500"
       style={{ 
         backgroundColor
       }}
@@ -670,8 +654,8 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           onBack={onBack}
         />
         
-        <div className="w-full max-w-none pt-20 space-y-6 text-left">
-          <Card className="w-full max-w-none mx-4">
+        <div className="w-full max-w-4xl mx-auto pt-20 px-4 space-y-6 text-left">
+          <Card className="w-full">
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle>All Parties</CardTitle>
@@ -716,10 +700,10 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                     data-party-id={party.id}
                     className="border rounded-lg p-4 space-y-3"
                   >
-                    <div className="flex justify-between items-start">
+                    <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                       <div className="flex-1">
-                        <div className="font-semibold">{party.name}</div>
-                        <div className="text-sm text-muted-foreground">
+                        <div className="font-semibold text-sm sm:text-base">{party.name}</div>
+                        <div className="text-xs sm:text-sm text-muted-foreground">
                           {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                         </div>
                         {showActive && (
@@ -729,22 +713,22 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                           <div className="text-xs text-red-600 font-medium mt-1">Ended</div>
                         )}
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handleEditParty(party)}
-                          className="flex items-center gap-1 text-black border-black hover:bg-black/10"
+                          className="flex items-center gap-1 text-xs sm:text-sm w-full sm:w-auto"
                         >
                           <Edit className="h-3 w-3" />
-                          Edit
+                          <span>Edit</span>
                         </Button>
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button
                               variant="destructive"
                               size="sm"
-                              className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
+                              className="bg-red-600 hover:bg-red-700 border-red-600 text-white text-xs sm:text-sm w-full sm:w-auto"
                             >
                               <Trash2 className="h-3 w-3 text-white" />
                               <span className="text-white">Delete</span>
@@ -787,10 +771,12 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
             )}
           </CardContent>
         </Card>
+        
+        {/* Footer */}
+        <Footer />
         </div>
     </div>
   );
 };
 
 export default EditParties;
-

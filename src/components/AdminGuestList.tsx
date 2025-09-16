@@ -1,24 +1,23 @@
 import { useState, useEffect, useMemo } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Check, UserCheck, MessageCircle, Users, Send } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Check, UserCheck, Users, MessageCircle } from 'lucide-react';
-import { useBackground } from '@/contexts/BackgroundContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import PageHeader from '@/components/ui/page-header';
-import SocialDialog from './SocialDialog';
-import { User } from '@supabase/supabase-js';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import SocialDialog from '@/components/SocialDialog';
+import { useBackground } from '@/contexts/BackgroundContext';
+import Footer from '@/components/ui/footer';
+
+interface User {
+  id: string;
+  email?: string;
+}
 
 interface AdminGuestListProps {
   user: User;
@@ -28,12 +27,11 @@ interface AdminGuestListProps {
 interface ArrivingGuest {
   id: string;
   user_id: string;
-  code: string;
-  created_at: string;
   is_approved: boolean;
   auto_approved: boolean;
+  created_at: string;
   profiles: {
-    display_name: string;
+    user_id: string;
     first_name: string;
     last_name: string;
     email: string;
@@ -46,7 +44,7 @@ interface ScannedGuest {
   user_id: string;
   scanned_at: string;
   profiles: {
-    display_name: string;
+    user_id: string;
     first_name: string;
     last_name: string;
     email: string;
@@ -56,38 +54,38 @@ interface ScannedGuest {
 
 const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
   const [parties, setParties] = useState<any[]>([]);
-  const [selectedParty, setSelectedParty] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'scanned' | 'arriving'>('scanned');
+  const [selectedParty, setSelectedParty] = useState<string>('');
+  const [activeTab, setActiveTab] = useState<'scanned' | 'arriving'>('arriving');
   const [arrivingGuests, setArrivingGuests] = useState<ArrivingGuest[]>([]);
   const [scannedGuests, setScannedGuests] = useState<ScannedGuest[]>([]);
   const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState<'name' | 'surname' | 'recent' | 'approved'>('recent');
   const [selectedGuests, setSelectedGuests] = useState<Set<string>>(new Set());
-  const [emailDialog, setEmailDialog] = useState<{open: boolean; guestId: string; email: string}>({
-    open: false,
-    guestId: '',
-    email: ''
-  });
+  const [emailDialog, setEmailDialog] = useState({ open: false, guestId: '', email: '' });
   const [emailMessage, setEmailMessage] = useState('');
-  const [socialDialog, setSocialDialog] = useState<{open: boolean; userId: string; socials: any[]}>({
-    open: false,
-    userId: '',
-    socials: []
-  });
-  
+  const [socialDialog, setSocialDialog] = useState({ open: false, socials: [] });
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
-  // Sort arriving guests when sortBy changes
+  // Memoized sorted arriving guests
   const sortedArrivingGuests = useMemo(() => {
+    if (!arrivingGuests.length) return [];
+    
     return [...arrivingGuests].sort((a, b) => {
       switch (sortBy) {
         case 'name':
-          return (a.profiles?.first_name || '').localeCompare(b.profiles?.first_name || '');
+          const nameA = a.profiles?.first_name || '';
+          const nameB = b.profiles?.first_name || '';
+          return nameA.localeCompare(nameB);
         case 'surname':
-          return (a.profiles?.last_name || '').localeCompare(b.profiles?.last_name || '');
+          const surnameA = a.profiles?.last_name || '';
+          const surnameB = b.profiles?.last_name || '';
+          return surnameA.localeCompare(surnameB);
         case 'approved':
-          return Number(b.is_approved) - Number(a.is_approved);
+          if (a.is_approved === b.is_approved) {
+            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+          }
+          return a.is_approved ? 1 : -1;
         case 'recent':
         default:
           return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
@@ -105,24 +103,27 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
     }
   }, [selectedParty, activeTab]);
 
-
   const loadParties = async () => {
     try {
       const { data, error } = await supabase
         .from('parties')
-        .select('*')
+        .select('id, name, date')
         .order('date', { ascending: false });
-
-      if (error) {
-        console.error('Error loading parties:', error);
-      } else {
-        setParties(data || []);
-        if (data && data.length > 0 && !selectedParty) {
-          setSelectedParty(data[0].id);
-        }
+      
+      if (error) throw error;
+      setParties(data || []);
+      
+      // Auto-select the most recent party
+      if (data && data.length > 0) {
+        setSelectedParty(data[0].id);
       }
     } catch (error) {
       console.error('Error loading parties:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load parties",
+        variant: "destructive"
+      });
     }
   };
 
@@ -132,131 +133,92 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
     setLoading(true);
     try {
       if (activeTab === 'arriving') {
-        // Load guests who generated QR codes but haven't been scanned yet
-        const { data: qrData, error: qrError } = await supabase
+        // Load QR codes that haven't been scanned yet
+        const { data, error } = await supabase
           .from('qr_codes')
-          .select('id, user_id, code, created_at, is_approved, auto_approved')
-          .eq('is_scanned', false)
+          .select(`
+            id,
+            user_id,
+            is_approved,
+            auto_approved,
+            created_at,
+            profiles!inner(
+              user_id,
+              first_name,
+              last_name,
+              email,
+              phone_number
+            )
+          `)
           .eq('party_id', selectedParty)
-          .order('created_at', { ascending: true });
-
-        if (qrError) {
-          console.error('Error loading arriving guests:', qrError);
-          return;
-        }
-
-        if (!qrData || qrData.length === 0) {
-          setArrivingGuests([]);
-          return;
-        }
-
-        const userIds = qrData.map(qr => qr.user_id);
-        const { data: profilesData, error: profilesError } = await supabase
-          .from('profiles')
-          .select('user_id, display_name, first_name, last_name, email, phone_number')
-          .in('user_id', userIds);
-
-        if (profilesError) {
-          console.error('Error loading profiles:', profilesError);
-          return;
-        }
-
-        const combinedData = qrData.map(qr => {
-          const profile = profilesData?.find(p => p.user_id === qr.user_id);
-          return {
-            ...qr,
-            profiles: profile || null
-          };
-        });
-
-        setArrivingGuests(combinedData);
+          .is('scanned_at', null)
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        setArrivingGuests(data || []);
       } else {
-        // Load scanned guests
-        const { data: qrData, error: qrError } = await supabase
+        // Load scanned QR codes
+        const { data, error } = await supabase
           .from('qr_codes')
-          .select('id, user_id, scanned_at')
-          .eq('is_scanned', true)
-          .eq('scanned_by', user.id)
+          .select(`
+            id,
+            user_id,
+            scanned_at,
+            profiles!inner(
+              user_id,
+              first_name,
+              last_name,
+              email,
+              phone_number
+            )
+          `)
           .eq('party_id', selectedParty)
-          .order('scanned_at', { ascending: true });
-
-        if (qrError) {
-          console.error('Error loading scanned guests:', qrError);
-          return;
-        }
-
-        if (!qrData || qrData.length === 0) {
-          setScannedGuests([]);
-          return;
-        }
-
-        const userIds = qrData.map(qr => qr.user_id);
-        const { data: profilesData, error: profilesError } = await supabase
-          .from('profiles')
-          .select('user_id, display_name, first_name, last_name, email, phone_number')
-          .in('user_id', userIds);
-
-        if (profilesError) {
-          console.error('Error loading profiles:', profilesError);
-          return;
-        }
-
-        const combinedData = qrData.map(qr => {
-          const profile = profilesData?.find(p => p.user_id === qr.user_id);
-          return {
-            ...qr,
-            profiles: profile || null
-          };
-        });
-
-        setScannedGuests(combinedData);
+          .not('scanned_at', 'is', null)
+          .order('scanned_at', { ascending: false });
+        
+        if (error) throw error;
+        setScannedGuests(data || []);
       }
     } catch (error) {
       console.error('Error loading guests:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load guests",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
   };
 
-
   const approveQR = async (qrId: string) => {
     try {
       const { error } = await supabase
         .from('qr_codes')
-        .update({
-          is_approved: true,
-          approved_by: user.id,
-          approved_at: new Date().toISOString()
-        })
+        .update({ is_approved: true })
         .eq('id', qrId);
+      
+      if (error) throw error;
 
-      if (error) {
-        toast({
-          title: "Error",
-          description: "Failed to approve QR code",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Send QR code email to the user with admin email
-      const guest = arrivingGuests.find(g => g.id === qrId);
-      if (guest && guest.profiles?.email) {
+      // Send approval email
+      const qrCode = arrivingGuests.find(g => g.id === qrId);
+      if (qrCode?.profiles?.email) {
         try {
-          await supabase.functions.invoke('send-qr-email-with-admin', {
+          await supabase.functions.invoke('send-qr-email-on-approval', {
             body: {
-              qrCodeId: qrId,
-              adminEmail: user.email || 'admin@example.com'
+              email: qrCode.profiles.email,
+              qrId: qrId,
+              partyId: selectedParty
             }
           });
         } catch (emailError) {
-          console.error('Error sending QR code email:', emailError);
+          console.error('Error sending approval email:', emailError);
         }
       }
 
       toast({
         title: "Success",
-        description: "QR code approved successfully and email sent to user",
+        description: "Guest approved and email sent!",
       });
       
       loadGuests();
@@ -264,7 +226,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
       console.error('Error approving QR:', error);
       toast({
         title: "Error",
-        description: "Failed to approve QR code",
+        description: "Failed to approve guest",
         variant: "destructive"
       });
     }
@@ -272,29 +234,17 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
 
   const approveAlways = async (userId: string) => {
     try {
-      // Update all QR codes for this user to be auto-approved for future
       const { error } = await supabase
         .from('qr_codes')
-        .update({
-          auto_approved: true,
-          is_approved: true,
-          approved_by: user.id,
-          approved_at: new Date().toISOString()
-        })
-        .eq('user_id', userId);
-
-      if (error) {
-        toast({
-          title: "Error",
-          description: "Failed to set auto-approval",
-          variant: "destructive"
-        });
-        return;
-      }
+        .update({ auto_approved: true, is_approved: true })
+        .eq('user_id', userId)
+        .eq('party_id', selectedParty);
+      
+      if (error) throw error;
 
       toast({
         title: "Success",
-        description: "User set to auto-approve for all future QR codes",
+        description: "User will be auto-approved for future events!",
       });
       
       loadGuests();
@@ -309,149 +259,41 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
   };
 
   const sendMessage = async () => {
-    if (!emailMessage.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a message",
-        variant: "destructive"
-      });
-      return;
-    }
+    if (!emailMessage.trim()) return;
 
     try {
+      let recipients: string[] = [];
+      
       if (emailDialog.guestId === 'all') {
-        // Send to all arriving guests
-        const userIds = arrivingGuests.map(guest => guest.user_id);
+        recipients = arrivingGuests
+          .filter(g => g.profiles?.email)
+          .map(g => g.profiles!.email);
       } else if (emailDialog.guestId === 'selected') {
-        // Send to selected guests
-        const selectedGuestsList = arrivingGuests.filter(guest => selectedGuests.has(guest.id));
-        const userIds = selectedGuestsList.map(guest => guest.user_id);
-        const messagesToInsert = userIds.map(userId => ({
-          created_by: user.id,
-          recipient_id: userId,
-          production_id: parties.find(p => p.id === selectedParty)?.production_id || null,
-          subject: `Message about ${parties.find(p => p.id === selectedParty)?.name || 'your party'}`,
-          content: emailMessage.trim()
-        }));
-
-        const { error } = await supabase
-          .from('messages')
-          .insert(messagesToInsert);
-
-        if (error) throw error;
-        
-        toast({
-          title: "Success",
-          description: `Message sent to ${userIds.length} guests successfully`,
-        });
-      } else if (emailDialog.guestId === 'selected') {
-        // Send to selected guests
-        const selectedGuestsList = arrivingGuests.filter(guest => selectedGuests.has(guest.id));
-        const userIds = selectedGuestsList.map(guest => guest.user_id);
-        const messagesToInsert = userIds.map(userId => ({
-          created_by: user.id,
-          recipient_id: userId,
-          production_id: parties.find(p => p.id === selectedParty)?.production_id || null,
-          subject: `Message about ${parties.find(p => p.id === selectedParty)?.name || 'your party'}`,
-          content: emailMessage.trim()
-        }));
-
-        const { error } = await supabase
-          .from('messages')
-          .insert(messagesToInsert);
-
-        if (error) throw error;
-        
-        toast({
-          title: "Success",
-          description: `Message sent to ${userIds.length} selected guests successfully`,
-        });
-        setSelectedGuests(new Set());
+        recipients = arrivingGuests
+          .filter(g => selectedGuests.has(g.id) && g.profiles?.email)
+          .map(g => g.profiles!.email);
       } else {
-        // Send to single guest
         const guest = arrivingGuests.find(g => g.id === emailDialog.guestId);
-        if (!guest) return;
-
-        const { error } = await supabase
-          .from('messages')
-          .insert({
-            created_by: user.id,
-            recipient_id: guest.user_id,
-            production_id: parties.find(p => p.id === selectedParty)?.production_id || null,
-            subject: `Message about ${parties.find(p => p.id === selectedParty)?.name || 'your party'}`,
-            content: emailMessage.trim()
-          });
-
-        if (error) throw error;
-
-        toast({
-          title: "Success",
-          description: "Message sent successfully",
-        });
+        if (guest?.profiles?.email) {
+          recipients = [guest.profiles.email];
+        }
       }
-    } catch (error: any) {
-      console.error('Error sending message:', error);
-      toast({
-        title: "Error",
-        description: "Failed to send message. Please try again.",
-        variant: "destructive"
-      });
-    }
-    
-    setEmailDialog({ open: false, guestId: '', email: '' });
-    setEmailMessage('');
-  };
 
-  const messageGroup = async () => {
-    if (arrivingGuests.length === 0) {
-      toast({
-        title: "No guests to message",
-        description: "There are no arriving guests to send messages to.",
-        variant: "destructive",
-      });
-      return;
-    }
+      if (recipients.length === 0) {
+        toast({
+          title: "Error",
+          description: "No valid email addresses found",
+          variant: "destructive"
+        });
+        return;
+      }
 
-    setEmailDialog({
-      open: true,
-      guestId: 'all',
-      email: 'all-guests'
-    });
-  };
-
-  const messageSelected = async () => {
-    if (selectedGuests.size === 0) {
-      toast({
-        title: "No guests selected",
-        description: "Please select guests to send messages to.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setEmailDialog({
-      open: true,
-      guestId: 'selected',
-      email: 'selected-guests'
-    });
-  };
-
-  const toggleGuestSelection = (guestId: string) => {
-    const newSelected = new Set(selectedGuests);
-    if (newSelected.has(guestId)) {
-      newSelected.delete(guestId);
-    } else {
-      newSelected.add(guestId);
-    }
-    setSelectedGuests(newSelected);
-  };
-
-  const sendQRToAll = async () => {
-    try {
-      const { error } = await supabase.functions.invoke('send-qr-to-all', {
+      // Send message using the guest message function
+      const { error } = await supabase.functions.invoke('send-guest-message', {
         body: {
-          party_id: selectedParty,
-          guest_list: arrivingGuests
+          emails: recipients,
+          message: emailMessage,
+          subject: 'Message from Event Administration'
         }
       });
 
@@ -459,9 +301,65 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
 
       toast({
         title: "Success",
-        description: "QR codes sent to all guests!"
+        description: `Message sent to ${recipients.length} recipient(s)`,
       });
-    } catch (error: any) {
+
+      setEmailDialog({ open: false, guestId: '', email: '' });
+      setEmailMessage('');
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send message",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const messageGroup = () => {
+    setEmailDialog({
+      open: true,
+      guestId: 'all',
+      email: 'all-guests'
+    });
+  };
+
+  const messageSelected = () => {
+    if (selectedGuests.size === 0) return;
+    setEmailDialog({
+      open: true,
+      guestId: 'selected',
+      email: `${selectedGuests.size}-selected`
+    });
+  };
+
+  const toggleGuestSelection = (guestId: string) => {
+    setSelectedGuests(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(guestId)) {
+        newSet.delete(guestId);
+      } else {
+        newSet.add(guestId);
+      }
+      return newSet;
+    });
+  };
+
+  const sendQRToAll = async () => {
+    try {
+      const { error } = await supabase.functions.invoke('send-qr-to-all', {
+        body: {
+          partyId: selectedParty
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "QR codes sent to all arriving guests!",
+      });
+    } catch (error) {
       console.error('Error sending QR codes:', error);
       toast({
         title: "Error",
@@ -474,22 +372,22 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
   const viewSocialMedia = async (userId: string) => {
     try {
       const { data, error } = await supabase
-        .from('user_socials')
+        .from('profiles')
         .select('*')
-        .eq('user_id', userId);
-
+        .eq('user_id', userId)
+        .single();
+      
       if (error) throw error;
-
+      
       setSocialDialog({
         open: true,
-        userId,
-        socials: data || []
+        socials: []
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error loading social media:', error);
       toast({
         title: "Error",
-        description: "Failed to load social media information",
+        description: "Failed to load social media profiles",
         variant: "destructive"
       });
     }
@@ -505,339 +403,341 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
 
   return (
     <div 
-      className="min-h-screen transition-colors duration-500"
-      style={{ 
-        backgroundColor
-      }}
+      className="min-h-screen p-4 sm:p-6"
+      style={{ backgroundColor }}
     >
-      <PageHeader
-        title="Guest List"
-        onBack={onBack}
-      />
-      
-      <div className="px-4 pt-20 pb-4 space-y-4">
-        {/* Party Selection */}
-        {parties.length > 0 && (
+      <div className="max-w-6xl mx-auto">
+        <PageHeader
+          title="Guest Management"
+          onBack={onBack}
+          showBackButton={true}
+        />
+        
+        <div className="space-y-6 pt-20">
+          {/* Party Selection */}
           <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Select Party</CardTitle>
+            <CardHeader>
+              <CardTitle>Select Event</CardTitle>
             </CardHeader>
             <CardContent>
-              <select 
-                className="w-full p-2 border rounded-md text-black bg-white"
-                value={selectedParty || ''}
-                onChange={(e) => setSelectedParty(e.target.value)}
-              >
-                {parties.map((party) => (
-                  <option key={party.id} value={party.id}>
-                    {party.name} - {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                  </option>
-                ))}
-              </select>
+              <Select value={selectedParty} onValueChange={setSelectedParty}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Choose an event..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {parties.map((party) => (
+                    <SelectItem key={party.id} value={party.id}>
+                      {party.name} - {new Date(party.date).toLocaleDateString()}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </CardContent>
           </Card>
-        )}
 
-        {/* Tab Buttons */}
-        <div className="flex gap-2">
-          <Button
-            variant={activeTab === 'scanned' ? 'default' : 'outline'}
-            onClick={() => setActiveTab('scanned')}
-            className={`flex-1 text-sm ${
-              activeTab === 'scanned' 
-                ? 'bg-primary text-primary-foreground' 
-                : 'text-black border-black hover:bg-black/10'
-            }`}
-          >
-            Scanned ({scannedGuests.length})
-          </Button>
-          <Button
-            variant={activeTab === 'arriving' ? 'default' : 'outline'}
-            onClick={() => setActiveTab('arriving')}
-            className={`flex-1 text-sm ${
-              activeTab === 'arriving' 
-                ? 'bg-primary text-primary-foreground' 
-                : 'text-black border-black hover:bg-black/10'
-            }`}
-          >
-            Arriving ({arrivingGuests.length})
-          </Button>
+          {/* Guest Lists */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Guest Lists</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'scanned' | 'arriving')}>
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="arriving" className="relative">
+                    Arriving Guests
+                    {arrivingGuests.length > 0 && (
+                      <Badge variant="secondary" className="ml-2 text-xs">
+                        {arrivingGuests.length}
+                      </Badge>
+                    )}
+                  </TabsTrigger>
+                  <TabsTrigger value="scanned" className="relative">
+                    Checked In
+                    {scannedGuests.length > 0 && (
+                      <Badge variant="secondary" className="ml-2 text-xs">
+                        {scannedGuests.length}
+                      </Badge>
+                    )}
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="arriving" className="space-y-4">
+                  {loading ? (
+                    <p className="text-center text-muted-foreground py-8">Loading guests...</p>
+                  ) : arrivingGuests.length === 0 ? (
+                    <p className="text-muted-foreground text-center py-4">
+                      No arriving guests yet
+                    </p>
+                  ) : (
+                    <div className="space-y-4">
+                      {/* Sort dropdown */}
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                        <label className="text-sm font-medium">Sort by:</label>
+                        <Select value={sortBy} onValueChange={(value: 'name' | 'surname' | 'recent' | 'approved') => setSortBy(value)}>
+                          <SelectTrigger className="w-full sm:w-48">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="recent">Recently Added</SelectItem>
+                            <SelectItem value="name">First Name</SelectItem>
+                            <SelectItem value="surname">Last Name</SelectItem>
+                            <SelectItem value="approved">Approval Status</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      {/* Responsive table wrapper */}
+                      <div className="overflow-x-auto">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead className="w-16">
+                                <input
+                                  type="checkbox"
+                                  checked={selectedGuests.size === arrivingGuests.length && arrivingGuests.length > 0}
+                                  onChange={selectAllGuests}
+                                  className="mr-2"
+                                />
+                                #
+                              </TableHead>
+                              <TableHead className="min-w-[100px]">First Name</TableHead>
+                              <TableHead className="min-w-[100px]">Last Name</TableHead>
+                              <TableHead className="min-w-[200px] hidden sm:table-cell">Email</TableHead>
+                              <TableHead className="min-w-[120px] hidden md:table-cell">Phone</TableHead>
+                              <TableHead className="min-w-[100px]">Status</TableHead>
+                              <TableHead className="min-w-[200px]">Actions</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {sortedArrivingGuests.map((guest, index) => (
+                              <TableRow key={guest.id}>
+                                <TableCell className="font-medium">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedGuests.has(guest.id)}
+                                    onChange={() => toggleGuestSelection(guest.id)}
+                                    className="mr-2"
+                                  />
+                                  {index + 1}
+                                </TableCell>
+                                <TableCell className="font-medium">
+                                  {guest.profiles?.first_name || 'Unknown'}
+                                </TableCell>
+                                <TableCell>
+                                  {guest.profiles?.last_name || 'Unknown'}
+                                </TableCell>
+                                <TableCell className="text-sm hidden sm:table-cell">
+                                  {guest.profiles?.email || 'No email'}
+                                </TableCell>
+                                <TableCell className="text-sm hidden md:table-cell">
+                                  {guest.profiles?.phone_number || 'No phone'}
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex flex-col gap-1">
+                                    {guest.is_approved ? (
+                                      <Badge variant="default" className="bg-green-600">Approved</Badge>
+                                    ) : (
+                                      <Badge variant="secondary">Pending</Badge>
+                                    )}
+                                    {guest.auto_approved && (
+                                      <Badge variant="outline" className="text-xs">Auto</Badge>
+                                    )}
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex flex-wrap gap-1">
+                                    {!guest.is_approved && (
+                                      <Button
+                                        size="sm"
+                                        onClick={() => approveQR(guest.id)}
+                                        className="p-1"
+                                        title="Approve"
+                                      >
+                                        <Check className="h-4 w-4" />
+                                      </Button>
+                                    )}
+                                    {!guest.auto_approved && (
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => approveAlways(guest.user_id)}
+                                        className="p-1"
+                                        title="Auto-approve"
+                                      >
+                                        <UserCheck className="h-4 w-4" />
+                                      </Button>
+                                    )}
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => setEmailDialog({
+                                        open: true,
+                                        guestId: guest.id,
+                                        email: guest.profiles?.email || ''
+                                      })}
+                                      className="p-1"
+                                      title="Send message"
+                                    >
+                                      <MessageCircle className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => viewSocialMedia(guest.user_id)}
+                                      className="p-1"
+                                      title="View socials"
+                                    >
+                                      <Users className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                      
+                      {/* Action buttons */}
+                      <div className="space-y-3 pt-4 border-t">
+                        <Button
+                          onClick={sendQRToAll}
+                          disabled={arrivingGuests.length === 0}
+                          className="w-full"
+                        >
+                          Send QR to All ({arrivingGuests.length})
+                        </Button>
+                        
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <Button
+                            variant="outline"
+                            onClick={() => setEmailDialog({
+                              open: true,
+                              guestId: 'all',
+                              email: 'all-guests'
+                            })}
+                            className="flex-1 text-xs sm:text-sm"
+                          >
+                            <MessageCircle className="h-4 w-4 mr-1 flex-shrink-0" />
+                            <span className="truncate">Message All ({arrivingGuests.length})</span>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={messageSelected}
+                            disabled={selectedGuests.size === 0}
+                            className="flex-1 text-xs sm:text-sm"
+                          >
+                            <Users className="h-4 w-4 mr-1 flex-shrink-0" />
+                            <span className="truncate">Message Selected ({selectedGuests.size})</span>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="scanned" className="space-y-4">
+                  {loading ? (
+                    <p className="text-center text-muted-foreground py-8">Loading guests...</p>
+                  ) : scannedGuests.length === 0 ? (
+                    <p className="text-muted-foreground text-center py-4">
+                      No checked-in guests yet
+                    </p>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="w-16">#</TableHead>
+                            <TableHead className="min-w-[100px]">First Name</TableHead>
+                            <TableHead className="min-w-[100px]">Last Name</TableHead>
+                            <TableHead className="min-w-[200px] hidden sm:table-cell">Email</TableHead>
+                            <TableHead className="min-w-[120px] hidden md:table-cell">Phone</TableHead>
+                            <TableHead className="min-w-[120px]">Check-in Time</TableHead>
+                            <TableHead className="w-16">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {scannedGuests.map((guest, index) => (
+                            <TableRow key={guest.id}>
+                              <TableCell className="font-medium">{index + 1}</TableCell>
+                              <TableCell className="font-medium">
+                                {guest.profiles?.first_name || 'Unknown'}
+                              </TableCell>
+                              <TableCell>
+                                {guest.profiles?.last_name || 'Unknown'}
+                              </TableCell>
+                              <TableCell className="text-sm hidden sm:table-cell">
+                                {guest.profiles?.email || 'No email'}
+                              </TableCell>
+                              <TableCell className="text-sm hidden md:table-cell">
+                                {guest.profiles?.phone_number || 'No phone'}
+                              </TableCell>
+                              <TableCell className="text-sm">
+                                {new Date(guest.scanned_at).toLocaleDateString('en-GB', { 
+                                  day: 'numeric', 
+                                  month: 'short',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </TableCell>
+                              <TableCell>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => viewSocialMedia(guest.user_id)}
+                                  className="p-1"
+                                  title="View social media"
+                                >
+                                  <Users className="h-4 w-4" />
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  )}
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Guest Tables */}
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex flex-col space-y-2">
-              <div className="flex justify-between items-center">
-                <CardTitle className="text-lg">
-                  {activeTab === 'scanned' ? 'Scanned Guests' : 'Arriving Guests'}
-                </CardTitle>
-                <Badge variant="secondary" className="text-xs">
-                  {activeTab === 'scanned' ? scannedGuests.length : arrivingGuests.length} guests
-                </Badge>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="text-center py-4">Loading...</div>
-            ) : activeTab === 'scanned' ? (
-              scannedGuests.length === 0 ? (
-                <p className="text-muted-foreground text-center py-4">
-                  No guests scanned yet
-                </p>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-black">#</TableHead>
-                      <TableHead className="text-black">First Name</TableHead>
-                      <TableHead className="text-black">Last Name</TableHead>
-                      <TableHead className="text-black">Email</TableHead>
-                      <TableHead className="text-black">Phone</TableHead>
-                      <TableHead className="text-black">Scanned At</TableHead>
-                      <TableHead className="text-black">Social</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {scannedGuests.map((guest, index) => (
-                      <TableRow key={guest.id}>
-                        <TableCell className="text-black font-medium">{index + 1}</TableCell>
-                        <TableCell className="text-black">
-                          {guest.profiles?.first_name || 'Unknown'}
-                        </TableCell>
-                        <TableCell className="text-black">
-                          {guest.profiles?.last_name || 'Unknown'}
-                        </TableCell>
-                        <TableCell className="text-black text-sm">
-                          {guest.profiles?.email || 'No email'}
-                        </TableCell>
-                        <TableCell className="text-black text-sm">
-                          {guest.profiles?.phone_number || 'No phone'}
-                        </TableCell>
-                        <TableCell className="text-black text-sm">
-                          {new Date(guest.scanned_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => viewSocialMedia(guest.user_id)}
-                            className="p-1"
-                            title="View social media"
-                          >
-                            <Users className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )
-            ) : (
-              arrivingGuests.length === 0 ? (
-                <p className="text-muted-foreground text-center py-4">
-                  No arriving guests yet
-                </p>
-              ) : (
-                <>
-                  {/* Sort dropdown */}
-                  <div className="mb-4">
-                    <label className="text-sm font-medium text-black mr-2">Order by:</label>
-                    <select 
-                      className="p-2 border rounded-md text-black bg-white"
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value as 'name' | 'surname' | 'recent' | 'approved')}
-                    >
-                      <option value="recent">Recently Added</option>
-                      <option value="name">First Name</option>
-                      <option value="surname">Last Name</option>
-                      <option value="approved">Approval Status</option>
-                    </select>
-                  </div>
-                   <Table>
-                   <TableHeader>
-                     <TableRow>
-                       <TableHead className="text-black">
-                         <input
-                           type="checkbox"
-                           checked={selectedGuests.size === arrivingGuests.length && arrivingGuests.length > 0}
-                           onChange={selectAllGuests}
-                           className="mr-2"
-                         />
-                         #
-                       </TableHead>
-                       <TableHead className="text-black">First Name</TableHead>
-                       <TableHead className="text-black">Last Name</TableHead>
-                       <TableHead className="text-black">Email</TableHead>
-                       <TableHead className="text-black">Phone</TableHead>
-                       <TableHead className="text-black">Status</TableHead>
-                       <TableHead className="text-black">Actions</TableHead>
-                     </TableRow>
-                   </TableHeader>
-                   <TableBody>
-                      {sortedArrivingGuests.map((guest, index) => (
-                        <TableRow key={guest.id}>
-                          <TableCell className="text-black font-medium">
-                            <input
-                              type="checkbox"
-                              checked={selectedGuests.has(guest.id)}
-                              onChange={() => toggleGuestSelection(guest.id)}
-                              className="mr-2"
-                            />
-                            {index + 1}
-                          </TableCell>
-                         <TableCell className="text-black">
-                           {guest.profiles?.first_name || 'Unknown'}
-                         </TableCell>
-                         <TableCell className="text-black">
-                           {guest.profiles?.last_name || 'Unknown'}
-                         </TableCell>
-                          <TableCell className="text-black text-sm">
-                            {guest.profiles?.email || 'No email'}
-                          </TableCell>
-                          <TableCell className="text-black text-sm">
-                            {guest.profiles?.phone_number || 'No phone'}
-                          </TableCell>
-                         <TableCell>
-                          {guest.is_approved ? (
-                            <Badge variant="default" className="bg-green-600">Approved</Badge>
-                          ) : (
-                            <Badge variant="secondary">Pending</Badge>
-                          )}
-                          {guest.auto_approved && (
-                            <Badge variant="outline" className="ml-1">Auto</Badge>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex gap-1">
-                            {!guest.is_approved && (
-                              <Button
-                                size="sm"
-                                onClick={() => approveQR(guest.id)}
-                                className="p-1"
-                              >
-                                <Check className="h-4 w-4" />
-                              </Button>
-                            )}
-                            {!guest.auto_approved && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => approveAlways(guest.user_id)}
-                                className="p-1 text-black border-black hover:bg-black/10"
-                                title="Approve always"
-                              >
-                                <UserCheck className="h-4 w-4" />
-                              </Button>
-                            )}
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => setEmailDialog({
-                                open: true,
-                                guestId: guest.id,
-                                email: guest.profiles?.email || ''
-                              })}
-                              className="p-1 text-black border-black hover:bg-black/10"
-                              title="Send message"
-                            >
-                              <MessageCircle className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => viewSocialMedia(guest.user_id)}
-                              className="p-1 text-black border-black hover:bg-black/10"
-                              title="View social media"
-                            >
-                              <Users className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                 </Table>
-                </>
-              )
-            )}
-            
-            {/* Message Actions - Only show for arriving tab */}
-            {activeTab === 'arriving' && arrivingGuests.length > 0 && (
-              <div className="space-y-3 mt-4 pt-4 border-t">
-                {/* Send QR to All - separate row */}
-                <div className="w-full">
-                  <Button
-                    onClick={sendQRToAll}
-                    disabled={arrivingGuests.length === 0}
-                    className="w-full"
-                  >
-                    Send QR to All ({arrivingGuests.length})
-                  </Button>
-                </div>
-                
-                {/* Message buttons - second row */}
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setEmailDialog({
-                      open: true,
-                      guestId: 'all',
-                      email: 'all-guests'
-                    })}
-                    className="flex-1 min-w-0 text-xs sm:text-sm"
-                  >
-                    <MessageCircle className="h-4 w-4 mr-1" />
-                    Message All ({arrivingGuests.length})
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={messageSelected}
-                    disabled={selectedGuests.size === 0}
-                    className="flex-1 min-w-0 text-xs sm:text-sm"
-                  >
-                    <Users className="h-4 w-4 mr-1" />
-                    Message Selected ({selectedGuests.size})
-                  </Button>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Email Dialog */}
+        {/* Message Dialog */}
         <Dialog open={emailDialog.open} onOpenChange={(open) => setEmailDialog(prev => ({ ...prev, open }))}>
-          <DialogContent>
+          <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle className="text-black">Send Message</DialogTitle>
-              <DialogDescription className="text-gray-600">
-                Send a custom message to the selected guest(s) about their party registration.
+              <DialogTitle>Send Message</DialogTitle>
+              <DialogDescription>
+                Send a custom message to the selected guest(s).
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-black">To: {
+                <label className="text-sm font-medium">To: {
                   emailDialog.guestId === 'all' ? 'All arriving guests' : 
                   emailDialog.guestId === 'selected' ? `${selectedGuests.size} selected guests` : 
                   emailDialog.email
                 }</label>
               </div>
               <div>
-                <label className="text-sm font-medium text-black">Message</label>
+                <label className="text-sm font-medium">Message</label>
                 <textarea
-                  className="w-full p-2 border rounded-md h-32 text-black"
+                  className="w-full p-2 border rounded-md h-32 resize-none"
                   placeholder="Enter your message..."
                   value={emailMessage}
                   onChange={(e) => setEmailMessage(e.target.value)}
                 />
               </div>
             </div>
-            <DialogFooter>
+            <DialogFooter className="gap-2 sm:gap-0">
               <Button variant="outline" onClick={() => setEmailDialog({ open: false, guestId: '', email: '' })}>
                 Cancel
               </Button>
-              <Button onClick={sendMessage}>Send Message</Button>
+              <Button onClick={sendMessage} disabled={!emailMessage.trim()}>
+                <Send className="h-4 w-4 mr-2" />
+                Send
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -847,6 +747,9 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
           onOpenChange={(open) => setSocialDialog(prev => ({ ...prev, open }))}
           socials={socialDialog.socials}
         />
+        
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );
