@@ -20,8 +20,6 @@ import HayaNinja from './HayaNinja';
 import SocialNetworks from './SocialNetworks';
 import VIPHub from './VIP/VIPHub';
 import VIPProduction from './VIP/VIPProduction';
-import ReorderableTiles from './ReorderableTiles';
-import ReorderableTilesLogic from './ReorderableTilesLogic';
 import Insurance from './Insurance';
 import PersonalCode from './PersonalCode';
 import FriendsCodes from './FriendsCodes';
@@ -297,7 +295,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
       {/* Hamburger Menu */}
       <HamburgerMenu 
         isAdmin={false}
-        onNavigate={setCurrentView}
+        onNavigate={(view: string) => setCurrentView(view as any)}
         onSignOut={handleSignOut}
         unreadMessageCount={unreadMessageCount}
         unreadDirectMessageCount={unreadDirectMessageCount}
@@ -373,7 +371,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
         {/* QR Codes Section */}
         {userQRCodes.length > 0 && (
-          <div className="mt-12 max-w-4xl mx-auto">
+          <div className="mt-12 max-w-4xl mx-auto animate-fade-in delay-1000">
             <h2 className="text-2xl font-bold gradient-primary bg-clip-text text-transparent mb-6 text-center">
               {t('your_tickets')}
             </h2>
@@ -381,55 +379,61 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
               {userQRCodes.map((qrCode) => (
                 <div 
                   key={qrCode.id} 
-                  className="glass p-6 rounded-3xl border border-white/10 cursor-pointer group hover:scale-[1.02] transition-all duration-300"
+                  className="glass p-6 rounded-3xl border border-white/10 cursor-pointer group hover:scale-[1.02] transition-all duration-300 hover:shadow-premium"
                   onClick={() => {
                     localStorage.setItem('selectedPartyId', qrCode.party_id);
                     setCurrentView('parties');
                   }}
                 >
-                  <h3 className="font-bold text-xl text-foreground mb-2">
-                    {qrCode.parties?.name}
-                  </h3>
-                  <p className="text-muted-foreground">
-                    {qrCode.parties?.date ? new Date(qrCode.parties.date).toLocaleDateString() : ''}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <ModernFooter />
-      </div>
-    </div>
-  );
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors">
                           {qrCode.parties?.name}
                         </h3>
                         <p className="text-sm text-muted-foreground">
-                          {new Date(qrCode.parties?.date).toLocaleDateString('en-GB', { 
+                          {qrCode.parties?.date ? new Date(qrCode.parties.date).toLocaleDateString('en-GB', { 
                             day: 'numeric', 
                             month: 'long', 
                             year: 'numeric',
                             weekday: 'short'
-                          })}
+                          }) : ''}
                         </p>
                       </div>
                       
-                      {/* QR Code Ready Action */}
-                        {qrCode.is_approved && !qrCode.is_scanned && (
-                        <Button 
-                          size="sm"
-                          className="w-full bg-primary text-white hover:bg-primary/90"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedQRCode(qrCode);
-                            setShowQRDialog(true);
-                          }}
-                        >
-                          Show QR Code
-                        </Button>
-                      )}
+                      {/* Status Badge */}
+                      <div>
+                        {qrCode.is_scanned ? (
+                          <div className="glass bg-green-500/80 text-white px-3 py-1 text-xs font-semibold rounded-full">
+                            ✓ Used
+                          </div>
+                        ) : qrCode.is_approved ? (
+                          <div className="glass bg-primary/80 text-white px-3 py-1 text-xs font-semibold rounded-full">
+                            ✓ Ready
+                          </div>
+                        ) : (
+                          <div className="glass bg-orange-500/80 text-white px-3 py-1 text-xs font-semibold rounded-full">
+                            Pending
+                          </div>
+                        )}
+                      </div>
                     </div>
+                    
+                    {/* QR Code Ready Action */}
+                    {qrCode.is_approved && !qrCode.is_scanned && (
+                      <Button 
+                        size="sm"
+                        variant="premium"
+                        className="w-full"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedQRCode(qrCode);
+                          setShowQRDialog(true);
+                        }}
+                      >
+                        Show QR Code
+                      </Button>
+                    )}
                   </div>
                 </div>
               ))}
@@ -439,33 +443,35 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         
         {/* QR Code Dialog */}
         <Dialog open={showQRDialog} onOpenChange={setShowQRDialog}>
-          <DialogContent className="max-w-sm z-[9999] bg-black/95 backdrop-blur-sm">
+          <DialogContent className="max-w-sm z-[9999] glass border border-white/20">
             <DialogHeader>
-              <DialogTitle className="text-white">Your QR Code</DialogTitle>
+              <DialogTitle className="text-foreground">Your QR Code</DialogTitle>
             </DialogHeader>
             <div className="text-center space-y-4">
               {selectedQRCode && (
                 <>
-                  <div className="bg-white p-4 rounded-lg inline-block">
+                  <div className="bg-white p-4 rounded-2xl inline-block">
                     <QRCodeSVG value={selectedQRCode.code} size={200} />
                   </div>
                   <div className="space-y-2">
-                    <p className="font-medium">{selectedQRCode.parties?.name}</p>
+                    <p className="font-medium text-foreground">{selectedQRCode.parties?.name}</p>
                     <p className="text-sm text-muted-foreground">
-                      {new Date(selectedQRCode.parties?.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                      {selectedQRCode.parties?.date ? new Date(selectedQRCode.parties.date).toLocaleDateString('en-GB', { 
+                        day: 'numeric', 
+                        month: 'long', 
+                        year: 'numeric' 
+                      }) : ''}
                     </p>
-                    <p className="text-xs text-green-600">✓ Approved - Show this QR code at the entrance</p>
+                    <p className="text-xs text-green-400">✓ Approved - Show this QR code at the entrance</p>
                   </div>
                 </>
               )}
             </div>
           </DialogContent>
         </Dialog>
-        
-      {/* Footer */}
+
         <ModernFooter />
       </div>
-    </div>
     </div>
   );
 };
