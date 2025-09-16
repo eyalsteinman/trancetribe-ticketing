@@ -7,14 +7,12 @@ import AuthPage from './Auth';
 import UserDashboard from '@/components/UserDashboard';
 import AdminDashboard from '@/components/AdminDashboard';
 import ProfileCompletion from '@/components/ProfileCompletion';
-import Onboarding from '@/components/Onboarding';
 import { useProfileCompletion } from '@/hooks/useProfileCompletion';
 
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [showSplash, setShowSplash] = useState(true);
-  const [showOnboarding, setShowOnboarding] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const { backgroundColor, isBackgroundDark } = useBackground();
@@ -73,22 +71,11 @@ const Index = () => {
 
   const handleSplashComplete = () => {
     setShowSplash(false);
-    // Skip onboarding for now to see the app
-    localStorage.setItem('hasSeenOnboarding', 'true');
-  };
-
-  const handleOnboardingComplete = () => {
-    setShowOnboarding(false);
-    localStorage.setItem('hasSeenOnboarding', 'true');
   };
 
   if (showSplash) {
     console.log('Showing splash screen');
     return <SplashScreen onComplete={handleSplashComplete} />;
-  }
-
-  if (showOnboarding && user) {
-    return <Onboarding user={user} onComplete={handleOnboardingComplete} />;
   }
 
   if (loading || profileLoading) {
