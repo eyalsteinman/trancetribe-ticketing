@@ -63,7 +63,6 @@ export const translations = {
     'trance_tribes': 'TRANCE\nTRIBES',
     'ticket_generator': 'ticket generator',
     'choose_access_type': 'Choose your access type',
-    'created_by_eyal': 'Created by Eyal Steinman, all rights reserved',
     
     // Dashboard
     'dashboard': 'Dashboard',
@@ -327,7 +326,6 @@ export const translations = {
     'trance_tribes': 'טראנס\nשבטים',
     'ticket_generator': 'מחולל כרטיסים',
     'choose_access_type': 'בחר את סוג הגישה שלך',
-    'created_by_eyal': 'נוצר על ידי אייל שטיינמן, כל הזכויות שמורות',
     
     // Dashboard
     'dashboard': 'לוח בקרה',
@@ -591,7 +589,6 @@ export const translations = {
     'trance_tribes': 'TRANCE\nTRIBUS',
     'ticket_generator': 'generador de boletos',
     'choose_access_type': 'Elige tu tipo de acceso',
-    'created_by_eyal': 'Creado por Eyal Steinman, todos los derechos reservados',
     
     // Dashboard
     'dashboard': 'Panel',
@@ -855,7 +852,6 @@ export const translations = {
     'trance_tribes': 'TRANCE\nTRIBUS',
     'ticket_generator': 'générateur de billets',
     'choose_access_type': 'Choisissez votre type d\'accès',
-    'created_by_eyal': 'Créé par Eyal Steinman, tous droits réservés',
     
     // Dashboard
     'dashboard': 'Tableau de bord',
@@ -1119,7 +1115,6 @@ export const translations = {
     'trance_tribes': 'TRANCE\nTRIBÙ',
     'ticket_generator': 'generatore di biglietti',
     'choose_access_type': 'Scegli il tuo tipo di accesso',
-    'created_by_eyal': 'Creato da Eyal Steinman, tutti i diritti riservati',
     
     // Dashboard
     'dashboard': 'Dashboard',

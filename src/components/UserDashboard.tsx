@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { User } from '@supabase/supabase-js';
-import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut, Users, IdCard, Heart, Wine, MessageCircle, Mail } from 'lucide-react';
+import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut, Users, IdCard, Heart, Wine, Moon, Sun, MessageCircle, ArrowLeft, Mail } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { QRCodeSVG } from 'qrcode.react';
-import ModernFooter from '@/components/ui/modern-footer';
-import HamburgerMenu from '@/components/ui/hamburger-menu';
+import Footer from '@/components/ui/footer';
 import UserParties from './UserParties';
 import UserGames from './UserGames';
 import PersonalizeEdit from './PersonalizeEdit';
@@ -20,6 +20,8 @@ import HayaNinja from './HayaNinja';
 import SocialNetworks from './SocialNetworks';
 import VIPHub from './VIP/VIPHub';
 import VIPProduction from './VIP/VIPProduction';
+import ReorderableTiles from './ReorderableTiles';
+import ReorderableTilesLogic from './ReorderableTilesLogic';
 import Insurance from './Insurance';
 import PersonalCode from './PersonalCode';
 import FriendsCodes from './FriendsCodes';
@@ -28,6 +30,7 @@ import FAQContact from './FAQContact';
 import UserMessages from './UserMessages';
 import UserMessaging from './UserMessaging';
 import { useTheme } from '@/hooks/useDarkMode';
+import PageHeader from './ui/page-header';
 
 interface UserDashboardProps {
   user: User;
@@ -283,157 +286,215 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   return (
-    <div className="min-h-screen w-full bg-background text-foreground overflow-hidden">
-      {/* Animated background */}
-      <div className="fixed inset-0 gradient-primary opacity-20"></div>
-      <div className="fixed inset-0">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-accent/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-electric-blue/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-3/4 left-1/2 w-48 h-48 bg-neon-pink/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
+    <div className="min-h-screen w-full transition-colors duration-500 p-4">
+      {/* Header */}
+      <div className="relative pt-2 pb-6">
+        <h1 className="text-2xl font-bold text-foreground mb-1">
+          {nickname ? t('welcome_back') : t('user_dashboard')}
+        </h1>
+        {nickname && (
+          <p className="text-lg text-primary font-semibold">{nickname}!</p>
+        )}
+        <Button 
+          variant="outline" 
+          size="icon"
+          onClick={async () => {
+            await handleSignOut();
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+          }} 
+          className="absolute top-2 right-4 z-50 border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200"
+          aria-label="Sign Out"
+        >
+          <LogOut className="h-4 w-4" />
+        </Button>
       </div>
 
-      {/* Hamburger Menu */}
-      <HamburgerMenu 
-        isAdmin={false}
-        onNavigate={(view: string) => setCurrentView(view as any)}
-        onSignOut={handleSignOut}
-        unreadMessageCount={unreadMessageCount}
-        unreadDirectMessageCount={unreadDirectMessageCount}
-      />
-
-      <div className="relative z-10 min-h-screen p-4 pt-20">
-        {/* Header */}
-        <div className="text-center mb-8 animate-fade-in">
-          <h1 className="text-4xl font-bold gradient-primary bg-clip-text text-transparent mb-2">
-            {nickname ? t('welcome_back') : t('user_dashboard')}
-          </h1>
-          {nickname && (
-            <p className="text-2xl text-accent font-semibold animate-scale-in delay-300">{nickname}!</p>
-          )}
+      <div className="w-full">
+          {(() => {
+            const items = [
+              {
+                id: 'parties',
+                title: t('events_parties'),
+                icon: <Calendar className="h-12 w-12" />,
+                onClick: () => setCurrentView('parties' as const),
+              },
+              {
+                id: 'nickname',
+                title: t('my_info'),
+                icon: <UserIcon className="h-12 w-12" />,
+                onClick: () => setCurrentView('nickname' as const),
+              },
+              {
+                id: 'social',
+                title: t('social_networks'),
+                icon: <Users className="h-12 w-12" />,
+                onClick: () => setCurrentView('social' as const),
+              },
+              {
+                id: 'insurance',
+                title: t('insurance'),
+                icon: <ShieldCheck className="h-12 w-12" />,
+                onClick: () => setCurrentView('insurance' as const),
+              },
+              {
+                id: 'vip',
+                title: t('vip'),
+                icon: <Crown className="h-12 w-12" />,
+                onClick: () => setCurrentView('vip' as const),
+              },
+              {
+                id: 'personal-code',
+                title: t('personal_code'),
+                icon: <IdCard className="h-12 w-12" />,
+                onClick: () => setCurrentView('personal-code' as const),
+              },
+              {
+                id: 'friends-codes',
+                title: t('friends_codes'),
+                icon: <Heart className="h-12 w-12" />,
+                onClick: () => setCurrentView('friends-codes' as const),
+              },
+              {
+                id: 'bar-tab',
+                title: t('bar_tab'),
+                icon: <Wine className="h-12 w-12" />,
+                onClick: () => setCurrentView('bar-tab' as const),
+              },
+                {
+                  id: 'faq',
+                  title: t('faq_contact'),
+                  icon: <Users className="h-12 w-12" />,
+                  onClick: () => setCurrentView('faq' as const),
+                },
+                {
+                  id: 'messages',
+                  title: t('messages'),
+                  icon: (
+                    <div className="relative">
+                      <MessageCircle className="h-12 w-12" />
+                      {unreadMessageCount > 0 && (
+                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                          {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
+                        </div>
+                      )}
+                    </div>
+                  ),
+                  onClick: () => setCurrentView('messages' as const),
+                },
+                {
+                  id: 'direct-messages',
+                  title: t('direct_messages'),
+                  icon: (
+                    <div className="relative">
+                      <Mail className="h-12 w-12" />
+                      {unreadDirectMessageCount > 0 && (
+                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                          {unreadDirectMessageCount > 9 ? '9+' : unreadDirectMessageCount}
+                        </div>
+                      )}
+                    </div>
+                  ),
+                  onClick: () => setCurrentView('direct-messages' as const),
+                },
+            ];
+            return (
+              <ReorderableTilesLogic 
+                items={items} 
+                orderKey={`dashboard-order-user-${user.id}`}
+                onLongPress={(id) => {
+                  // Handle long press for reordering
+                  console.log('Long press on:', id);
+                }} 
+              />
+            );
+          })()}
         </div>
 
-        {/* Dashboard Grid - Modern Circle Buttons */}
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-3 md:grid-cols-4 gap-6 animate-fade-in delay-500">
-            {[
-              { id: 'parties', title: t('events_parties'), icon: Calendar, gradient: 'gradient-primary' },
-              { id: 'nickname', title: t('my_info'), icon: UserIcon, gradient: 'gradient-electric' },
-              { id: 'social', title: t('social_networks'), icon: Users, gradient: 'gradient-cyber' },
-              { id: 'insurance', title: t('insurance'), icon: ShieldCheck, gradient: 'gradient-primary' },
-              { id: 'vip', title: t('vip'), icon: Crown, gradient: 'gradient-electric' },
-              { id: 'personal-code', title: t('personal_code'), icon: IdCard, gradient: 'gradient-cyber' },
-              { id: 'friends-codes', title: t('friends_codes'), icon: Heart, gradient: 'gradient-primary' },
-              { id: 'bar-tab', title: t('bar_tab'), icon: Wine, gradient: 'gradient-electric' },
-              { id: 'faq', title: t('faq_contact'), icon: Users, gradient: 'gradient-cyber' },
-              { 
-                id: 'messages', 
-                title: t('messages'), 
-                icon: MessageCircle, 
-                gradient: 'gradient-primary',
-                badge: unreadMessageCount > 0 ? unreadMessageCount : undefined
-              },
-              { 
-                id: 'direct-messages', 
-                title: t('direct_messages'), 
-                icon: Mail, 
-                gradient: 'gradient-electric',
-                badge: unreadDirectMessageCount > 0 ? unreadDirectMessageCount : undefined
-              },
-            ].map((item, index) => {
-              const Icon = item.icon;
-              return (
-                <div 
-                  key={item.id} 
-                  className="flex flex-col items-center space-y-3 group animate-scale-in"
-                  style={{ animationDelay: `${index * 100 + 600}ms` }}
-                >
-                  <Button
-                    variant="circle"
-                    size="circle"
-                    onClick={() => setCurrentView(item.id as any)}
-                    className={`relative ${item.gradient} hover:scale-110 transition-all duration-300 hover:shadow-neon active:scale-95 circle-button`}
-                  >
-                    <Icon className="h-8 w-8 text-white" />
-                    {item.badge && (
-                      <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold border-2 border-white">
-                        {item.badge > 9 ? '9+' : item.badge}
-                      </div>
-                    )}
-                  </Button>
-                  <p className="text-sm text-center text-foreground font-medium group-hover:text-primary transition-colors">
-                    {item.title}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* QR Codes Section */}
-        {userQRCodes.length > 0 && (
-          <div className="mt-12 max-w-4xl mx-auto animate-fade-in delay-1000">
-            <h2 className="text-2xl font-bold gradient-primary bg-clip-text text-transparent mb-6 text-center">
-              {t('your_tickets')}
-            </h2>
-            <div className="grid gap-6">
+      {/* QR Codes Section */}
+      {userQRCodes.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-lg font-bold text-foreground mb-4">{t('your_tickets')}</h2>
+            <div className="space-y-4">
               {userQRCodes.map((qrCode) => (
                 <div 
                   key={qrCode.id} 
-                  className="glass p-6 rounded-3xl border border-white/10 cursor-pointer group hover:scale-[1.02] transition-all duration-300 hover:shadow-premium"
+                  className="cursor-pointer group overflow-hidden border border-border bg-card"
                   onClick={() => {
+                    const party = { 
+                      id: qrCode.party_id, 
+                      name: qrCode.parties?.name, 
+                      date: qrCode.parties?.date,
+                      photo_url: qrCode.parties?.photo_url
+                    };
                     localStorage.setItem('selectedPartyId', qrCode.party_id);
                     setCurrentView('parties');
                   }}
                 >
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors">
-                          {qrCode.parties?.name}
-                        </h3>
-                        <p className="text-sm text-muted-foreground">
-                          {qrCode.parties?.date ? new Date(qrCode.parties.date).toLocaleDateString('en-GB', { 
-                            day: 'numeric', 
-                            month: 'long', 
-                            year: 'numeric',
-                            weekday: 'short'
-                          }) : ''}
-                        </p>
-                      </div>
+                  <div className="p-0">
+                    <div className="relative">
+                      {/* Event Image */}
+                       {qrCode.parties?.photo_url && (
+                         <div className="h-64 w-full overflow-hidden">
+                           <img 
+                             src={qrCode.parties.photo_url} 
+                             alt={qrCode.parties.name}
+                             className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                           />
+                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                         </div>
+                       )}
                       
                       {/* Status Badge */}
-                      <div>
+                      <div className="absolute top-4 right-4">
                         {qrCode.is_scanned ? (
-                          <div className="glass bg-green-500/80 text-white px-3 py-1 text-xs font-semibold rounded-full">
+                          <div className="bg-green-500 text-white px-3 py-1 text-xs font-semibold">
                             ✓ Used
                           </div>
                         ) : qrCode.is_approved ? (
-                          <div className="glass bg-primary/80 text-white px-3 py-1 text-xs font-semibold rounded-full">
+                          <div className="bg-primary text-primary-foreground px-3 py-1 text-xs font-semibold">
                             ✓ Ready
                           </div>
                         ) : (
-                          <div className="glass bg-orange-500/80 text-white px-3 py-1 text-xs font-semibold rounded-full">
+                          <div className="bg-orange-500 text-white px-3 py-1 text-xs font-semibold">
                             Pending
                           </div>
                         )}
                       </div>
                     </div>
                     
-                    {/* QR Code Ready Action */}
-                    {qrCode.is_approved && !qrCode.is_scanned && (
-                      <Button 
-                        size="sm"
-                        variant="premium"
-                        className="w-full"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedQRCode(qrCode);
-                          setShowQRDialog(true);
-                        }}
-                      >
-                        Show QR Code
-                      </Button>
-                    )}
+                    {/* Event Info */}
+                    <div className="p-4 space-y-3">
+                      <div>
+                        <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors">
+                          {qrCode.parties?.name}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {new Date(qrCode.parties?.date).toLocaleDateString('en-GB', { 
+                            day: 'numeric', 
+                            month: 'long', 
+                            year: 'numeric',
+                            weekday: 'short'
+                          })}
+                        </p>
+                      </div>
+                      
+                      {/* QR Code Ready Action */}
+                        {qrCode.is_approved && !qrCode.is_scanned && (
+                        <Button 
+                          size="sm"
+                          className="w-full bg-primary text-white hover:bg-primary/90"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedQRCode(qrCode);
+                            setShowQRDialog(true);
+                          }}
+                        >
+                          Show QR Code
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -443,35 +504,31 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         
         {/* QR Code Dialog */}
         <Dialog open={showQRDialog} onOpenChange={setShowQRDialog}>
-          <DialogContent className="max-w-sm z-[9999] glass border border-white/20">
+          <DialogContent className="max-w-sm z-[9999] bg-black/95 backdrop-blur-sm">
             <DialogHeader>
-              <DialogTitle className="text-foreground">Your QR Code</DialogTitle>
+              <DialogTitle className="text-white">Your QR Code</DialogTitle>
             </DialogHeader>
             <div className="text-center space-y-4">
               {selectedQRCode && (
                 <>
-                  <div className="bg-white p-4 rounded-2xl inline-block">
+                  <div className="bg-white p-4 rounded-lg inline-block">
                     <QRCodeSVG value={selectedQRCode.code} size={200} />
                   </div>
                   <div className="space-y-2">
-                    <p className="font-medium text-foreground">{selectedQRCode.parties?.name}</p>
+                    <p className="font-medium">{selectedQRCode.parties?.name}</p>
                     <p className="text-sm text-muted-foreground">
-                      {selectedQRCode.parties?.date ? new Date(selectedQRCode.parties.date).toLocaleDateString('en-GB', { 
-                        day: 'numeric', 
-                        month: 'long', 
-                        year: 'numeric' 
-                      }) : ''}
+                      {new Date(selectedQRCode.parties?.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </p>
-                    <p className="text-xs text-green-400">✓ Approved - Show this QR code at the entrance</p>
+                    <p className="text-xs text-green-600">✓ Approved - Show this QR code at the entrance</p>
                   </div>
                 </>
               )}
             </div>
           </DialogContent>
         </Dialog>
-
-        <ModernFooter />
-      </div>
+        
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
