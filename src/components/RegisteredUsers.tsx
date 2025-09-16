@@ -534,13 +534,14 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
         {filteredUsers.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span>User Selection ({selectedUsers.size} selected)</span>
-                <div className="flex gap-2">
+              <div className="space-y-3">
+                <CardTitle>User Selection ({selectedUsers.size} selected)</CardTitle>
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={selectAllUsers}
+                    className="w-full sm:w-auto"
                   >
                     {selectedUsers.size === filteredUsers.length ? 'Deselect All' : 'Select All'}
                   </Button>
@@ -548,7 +549,8 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                     <DialogTrigger asChild>
                       <Button
                         disabled={selectedUsers.size === 0}
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-2 w-full sm:w-auto"
+                        size="sm"
                       >
                         <Send className="h-4 w-4" />
                         Send Ticket Offers
@@ -663,7 +665,7 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                     </DialogContent>
                   </Dialog>
                 </div>
-              </CardTitle>
+              </div>
             </CardHeader>
           </Card>
         )}
