@@ -9,6 +9,7 @@ import BuyTicketsForFriends from './BuyTicketsForFriends';
 import SocialNetworksDialog from './SocialNetworksDialog';
 import SocialNetworks from './SocialNetworks';
 import RtlText from './RtlText';
+import BuyTicket from './BuyTicket';
 
 interface Party {
   id: string;
@@ -22,6 +23,7 @@ interface Party {
   start_time?: string | null;
   end_time?: string | null;
   required_socials?: string[];
+  created_by?: string;
 }
 
 interface TicketType {
@@ -541,13 +543,14 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
                             </div>
                           </div>
                           {ticketType.price > 0 && !hasPaid ? (
-                            <Button
-                              onClick={() => handlePayment(ticketType)}
-                              disabled={loading || status === 'sold-out'}
+                            <BuyTicket
+                              ticketAmount={ticketType.price}
+                              currency="ILS"
+                              adminId={party.created_by}
+                              partyId={party.id}
+                              ticketTypeId={ticketType.id}
                               className="w-full"
-                            >
-                              {loading ? "Processing..." : status === 'sold-out' ? 'Sold Out' : `Pay ${ticketType.price} ILS`}
-                            </Button>
+                            />
                           ) : (
                             <Button
                               onClick={() => generateQR(ticketType)}
@@ -564,13 +567,13 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
                 ) : (
                   <div>
                     {!party.is_free && party.price && !hasPaid ? (
-                      <Button
-                        onClick={() => handlePayment()}
-                        disabled={loading}
+                      <BuyTicket
+                        ticketAmount={party.price}
+                        currency="ILS"
+                        adminId={party.created_by}
+                        partyId={party.id}
                         className="w-full"
-                      >
-                        {loading ? "Processing..." : `Pay ${party.price} ILS`}
-                      </Button>
+                      />
                     ) : (
                       <Button
                         onClick={() => generateQR()}
