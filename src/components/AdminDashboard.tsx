@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,6 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ScanBarcode, Wine, Cog, ArrowLeft, LogOut, MessageCircle } from 'lucide-react';
 import Footer from '@/components/ui/footer';
 import PageHeader from '@/components/ui/page-header';
+import { useProfileData } from '@/hooks/useProfileData';
+import { useSignOut } from '@/hooks/useSignOut';
 import CreateParty from './CreateParty';
 import EditParties from './EditParties';
 import QRScanner from './QRScanner';
@@ -54,37 +56,21 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [parties, setParties] = useState<any[]>([]);
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
+  const [sortAscending, setSortAscending] = useState(true);
   const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'nickname' | 'my-productions' | 'manage-productions' | 'guest-list' | 'bar-tab' | 'bar-tab-scanner' | 'faq' | 'message'>('dashboard');
-  const [adminNickname, setAdminNickname] = useState('');
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [nicknameInput, setNicknameInput] = useState('');
   const [newRegisteredUsers, setNewRegisteredUsers] = useState(0);
   const [newArrivingGuests, setNewArrivingGuests] = useState(0);
   
   const { toast } = useToast();
-  const { backgroundColor, isBackgroundDark } = useBackground();
-  const { currentTheme, cycleTheme, getThemeDisplayName } = useTheme();
+  const { backgroundColor } = useBackground();
+  const { profile } = useProfileData(user.id);
+  const { signOut } = useSignOut();
 
-  useEffect(() => {
-    loadParties();
-    loadAdminProfile();
-    loadNotificationCounts();
-  }, []);
-
-  useEffect(() => {
-    loadParties();
-  }, [sortAscending]);
-
-  useEffect(() => {
-    if (selectedParty) {
-      loadScannedUsers();
-    }
-  }, [selectedParty]);
-
-  const loadParties = async () => {
+  const loadParties = useCallback(async () => {
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('parties')
         .select(`
           *,
@@ -92,24 +78,33 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         `)
         .order('date', { ascending: sortAscending });
 
-      if (error) {
-        console.error('Error loading parties:', error);
-      } else {
-        // Add approved guest count to each party
-        const partiesWithCounts = (data || []).map((party: any) => ({
+      if (!error && data) {
+        const partiesWithCounts = data.map((party: any) => ({
           ...party,
           approved_count: party.qr_codes?.filter((qr: any) => qr.is_approved).length || 0
         }));
         setParties(partiesWithCounts);
-        // Set the first party as selected by default
-        if (partiesWithCounts && partiesWithCounts.length > 0 && !selectedParty) {
+        if (partiesWithCounts.length > 0 && !selectedParty) {
           setSelectedParty(partiesWithCounts[0].id);
         }
       }
     } catch (error) {
-      console.error('Error loading parties:', error);
+      // Handle silently
     }
-  };
+  }, [sortAscending, selectedParty]);
+
+  useEffect(() => {
+    loadParties();
+    loadNotificationCounts();
+  }, [loadParties]);
+
+
+  useEffect(() => {
+    if (selectedParty) {
+      loadScannedUsers();
+    }
+  }, [selectedParty]);
+
 
   const loadScannedUsers = async () => {
     if (!selectedParty) return;
@@ -250,26 +245,6 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     }
   };
 
-  const loadAdminProfile = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('nickname')
-        .eq('user_id', user.id)
-        .single();
-
-      if (error) {
-        console.error('Error loading admin profile:', error);
-        return;
-      }
-
-      if (data?.nickname) {
-        setAdminNickname(data.nickname);
-      }
-    } catch (error) {
-      console.error('Error loading admin profile:', error);
-    }
-  };
 
   const saveNickname = async () => {
     if (!nicknameInput.trim()) {
@@ -296,7 +271,6 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         return;
       }
 
-      setAdminNickname(nicknameInput.trim());
       setIsEditingNickname(false);
       setNicknameInput('');
       
@@ -304,9 +278,6 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         title: "Success",
         description: "Nickname saved successfully!",
       });
-
-      // Refresh the page
-      window.location.reload();
     } catch (error) {
       toast({
         title: "Error",
@@ -391,34 +362,6 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     }
   };
 
-  const handleSignOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut({ scope: 'local' });
-      
-      if (error && !error.message.includes('Session not found')) {
-        console.error('Sign out error:', error);
-        toast({
-          title: "Warning",
-          description: "Logged out locally, but server logout failed.",
-          variant: "destructive"
-        });
-      } else {
-        toast({
-          title: "Success",
-          description: "Signed out successfully!",
-        });
-      }
-    } catch (error) {
-      console.error('Sign out catch error:', error);
-      toast({
-        title: "Info", 
-        description: "Logged out locally.",
-      });
-    }
-    setTimeout(() => {
-      window.location.reload();
-    }, 2000);
-  };
 
   if (currentView === 'nickname') {
     return <PersonalizeEdit user={user} onBack={() => setCurrentView('dashboard')} />;
@@ -449,15 +392,15 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   }
 
   if (currentView === 'dot-circle') {
-    return <DotCircleGame onBack={() => setCurrentView('admin-games')} adminId={user.id} adminNickname={adminNickname} />;
+    return <DotCircleGame onBack={() => setCurrentView('admin-games')} adminId={user.id} adminNickname={profile?.nickname || ''} />;
   }
 
   if (currentView === 'exploder') {
-    return <ExploderGame onBack={() => setCurrentView('admin-games')} scope="admin" playerNickname={adminNickname} />;
+    return <ExploderGame onBack={() => setCurrentView('admin-games')} scope="admin" playerNickname={profile?.nickname || ''} />;
   }
 
   if (currentView === 'haya-ninja') {
-    return <HayaNinja onBack={() => setCurrentView('admin-games')} scope="admin" playerNickname={adminNickname} />;
+    return <HayaNinja onBack={() => setCurrentView('admin-games')} scope="admin" playerNickname={profile?.nickname || ''} />;
   }
 
   if (currentView === 'my-productions') {
@@ -648,7 +591,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           <Button 
             variant="outline" 
             size="icon"
-            onClick={handleSignOut} 
+            onClick={signOut} 
             className="border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200"
             aria-label="Sign Out"
           >
@@ -656,13 +599,10 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           </Button>
         </div>
         
-        {adminNickname && (
+        {profile?.nickname && (
           <div className="container-section">
-            <p 
-              className="text-sm"
-              style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-            >
-              Welcome back {adminNickname}
+            <p className="text-sm text-foreground">
+              Welcome back {profile.nickname}
             </p>
           </div>
         )}
@@ -702,7 +642,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             { id: 'bar-tab', title: 'Bar Tab', icon: <Wine className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'bar-tab-scanner', title: 'Bartab Scanner', icon: <ScanBarcode className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab-scanner' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'faq', title: 'FAQ & Contact', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('faq' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'theme-changer', title: `Change Theme\n(${getThemeDisplayName(currentTheme)})`, icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: cycleTheme },
+            { id: 'settings', title: 'Settings', icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('nickname') },
             { id: 'message', title: 'Message Users', icon: <MessageCircle className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('message' as const); setTimeout(() => loadParties(), 100); } },
           ];
           return (
