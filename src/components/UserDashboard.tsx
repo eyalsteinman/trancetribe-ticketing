@@ -284,14 +284,14 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   return (
-    <div className="min-h-screen w-full transition-colors duration-500 p-4">
+    <div className="min-h-screen w-full transition-colors duration-500 p-2 sm:p-4">
       {/* Header */}
-      <div className="relative pt-2 pb-6">
-        <h1 className="text-2xl font-bold text-foreground mb-1">
+      <div className="relative pt-2 pb-4 lg:pb-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-1 pr-12">
           {nickname ? `Welcome back,` : 'User Dashboard'}
         </h1>
         {nickname && (
-          <p className="text-lg text-primary font-semibold">{nickname}!</p>
+          <p className="text-base sm:text-lg text-primary font-semibold pr-12">{nickname}!</p>
         )}
         <Button 
           variant="outline" 
@@ -302,10 +302,10 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
               window.location.reload();
             }, 2000);
           }} 
-          className="absolute top-2 right-4 z-50 border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200"
+          className="absolute top-2 right-0 z-50 border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200 h-8 w-8 sm:h-10 sm:w-10"
           aria-label="Sign Out"
         >
-          <LogOut className="h-4 w-4" />
+          <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
         </Button>
       </div>
 

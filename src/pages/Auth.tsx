@@ -141,30 +141,30 @@ const AuthPage = () => {
         <div className="absolute top-1/2 right-1/4 w-1.5 h-1.5 bg-secondary rounded-full animate-ping opacity-50 delay-500"></div>
       </div>
 
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-        <div className="w-full max-w-6xl mx-auto grid lg:grid-cols-2 gap-8 items-center">
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
+        <div className="w-full max-w-6xl mx-auto grid lg:grid-cols-2 gap-6 lg:gap-8 items-center">
           
           {/* Left side - Hero Section */}
-          <div className="text-center lg:text-left space-y-6 order-2 lg:order-1">
+          <div className="text-center lg:text-left space-y-4 lg:space-y-6 order-2 lg:order-1">
             <div className="relative">
               <LanguageSelector />
-              <div className="mt-6">
-                <h1 className="text-6xl lg:text-7xl font-black bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent animate-fade-in leading-tight">
+              <div className="mt-4 lg:mt-6">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent animate-fade-in leading-tight">
                   TRANCE
                   <br />
                   <span className="text-glow">TRIBES</span>
                 </h1>
-                <p className="text-xl text-muted-foreground font-medium mt-4 animate-fade-in delay-200">
+                <p className="text-lg sm:text-xl text-muted-foreground font-medium mt-3 lg:mt-4 animate-fade-in delay-200 px-4 lg:px-0">
                   Join the ultimate electronic music community
                 </p>
-                <div className="flex flex-wrap gap-3 justify-center lg:justify-start mt-6 animate-fade-in delay-300">
-                  <Badge variant="outline" className="bg-primary/10 border-primary/30 text-primary">
+                <div className="flex flex-wrap gap-2 lg:gap-3 justify-center lg:justify-start mt-4 lg:mt-6 animate-fade-in delay-300 px-4 lg:px-0">
+                  <Badge variant="outline" className="bg-primary/10 border-primary/30 text-primary text-xs sm:text-sm">
                     🎵 Events
                   </Badge>
-                  <Badge variant="outline" className="bg-accent/10 border-accent/30 text-accent">
+                  <Badge variant="outline" className="bg-accent/10 border-accent/30 text-accent text-xs sm:text-sm">
                     🎮 Games
                   </Badge>
-                  <Badge variant="outline" className="bg-secondary/10 border-secondary/30 text-secondary">
+                  <Badge variant="outline" className="bg-secondary/10 border-secondary/30 text-secondary text-xs sm:text-sm">
                     👥 Community
                   </Badge>
                 </div>
@@ -178,8 +178,8 @@ const AuthPage = () => {
           </div>
 
           {/* Right side - Auth Form */}
-          <div className="order-1 lg:order-2 animate-fade-in delay-400">
-            <div className="bg-glass backdrop-blur-xl rounded-3xl border border-white/20 p-8 shadow-neon">
+          <div className="order-1 lg:order-2 animate-fade-in delay-400 w-full max-w-md mx-auto lg:max-w-none">
+            <div className="bg-glass backdrop-blur-xl rounded-2xl lg:rounded-3xl border border-white/20 p-4 sm:p-6 lg:p-8 shadow-neon">
               <AuthForm 
                 onShowAdminPassword={showAdminPasswordForm}
                 pendingAdminSignup={pendingAdminSignup}
