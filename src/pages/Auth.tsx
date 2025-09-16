@@ -141,30 +141,32 @@ const AuthPage = () => {
         <div className="absolute top-1/2 right-1/4 w-1.5 h-1.5 bg-secondary rounded-full animate-ping opacity-50 delay-500"></div>
       </div>
 
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
-        <div className="w-full max-w-6xl mx-auto grid lg:grid-cols-2 gap-6 lg:gap-8 items-center">
+      <div className="relative z-10 min-h-screen flex flex-col lg:flex-row items-center justify-center p-3 sm:p-4 lg:p-6 xl:p-8 overflow-x-hidden">
+        <div className="w-full max-w-7xl mx-auto flex flex-col lg:grid lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 xl:gap-12 items-center justify-center min-h-[calc(100vh-2rem)]">
           
           {/* Left side - Hero Section */}
-          <div className="text-center lg:text-left space-y-4 lg:space-y-6 order-2 lg:order-1">
+          <div className="w-full text-center lg:text-left space-y-3 sm:space-y-4 lg:space-y-6 order-2 lg:order-1 max-w-xl lg:max-w-none mx-auto">
             <div className="relative">
-              <LanguageSelector />
-              <div className="mt-4 lg:mt-6">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent animate-fade-in leading-tight">
+              <div className="absolute top-0 right-0 lg:relative lg:top-auto lg:right-auto">
+                <LanguageSelector />
+              </div>
+              <div className="pt-12 lg:pt-0">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent animate-fade-in leading-tight break-words">
                   TRANCE
                   <br />
                   <span className="text-glow">TRIBES</span>
                 </h1>
-                <p className="text-lg sm:text-xl text-muted-foreground font-medium mt-3 lg:mt-4 animate-fade-in delay-200 px-4 lg:px-0">
+                <p className="text-base sm:text-lg lg:text-xl text-muted-foreground font-medium mt-3 lg:mt-4 animate-fade-in delay-200 px-2 lg:px-0 max-w-md mx-auto lg:mx-0">
                   Join the ultimate electronic music community
                 </p>
-                <div className="flex flex-wrap gap-2 lg:gap-3 justify-center lg:justify-start mt-4 lg:mt-6 animate-fade-in delay-300 px-4 lg:px-0">
-                  <Badge variant="outline" className="bg-primary/10 border-primary/30 text-primary text-xs sm:text-sm">
+                <div className="flex flex-wrap gap-2 lg:gap-3 justify-center lg:justify-start mt-4 lg:mt-6 animate-fade-in delay-300 px-2 lg:px-0">
+                  <Badge variant="outline" className="bg-primary/10 border-primary/30 text-primary text-xs sm:text-sm whitespace-nowrap">
                     🎵 Events
                   </Badge>
-                  <Badge variant="outline" className="bg-accent/10 border-accent/30 text-accent text-xs sm:text-sm">
+                  <Badge variant="outline" className="bg-accent/10 border-accent/30 text-accent text-xs sm:text-sm whitespace-nowrap">
                     🎮 Games
                   </Badge>
-                  <Badge variant="outline" className="bg-secondary/10 border-secondary/30 text-secondary text-xs sm:text-sm">
+                  <Badge variant="outline" className="bg-secondary/10 border-secondary/30 text-secondary text-xs sm:text-sm whitespace-nowrap">
                     👥 Community
                   </Badge>
                 </div>
@@ -172,14 +174,14 @@ const AuthPage = () => {
             </div>
             
             {/* Production Browser */}
-            <div className="animate-fade-in delay-500">
+            <div className="animate-fade-in delay-500 w-full overflow-hidden">
               <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} carouselOnly />
             </div>
           </div>
 
           {/* Right side - Auth Form */}
-          <div className="order-1 lg:order-2 animate-fade-in delay-400 w-full max-w-md mx-auto lg:max-w-none">
-            <div className="bg-glass backdrop-blur-xl rounded-2xl lg:rounded-3xl border border-white/20 p-4 sm:p-6 lg:p-8 shadow-neon">
+          <div className="order-1 lg:order-2 animate-fade-in delay-400 w-full max-w-md mx-auto lg:max-w-lg xl:max-w-xl">
+            <div className="bg-glass backdrop-blur-xl rounded-2xl lg:rounded-3xl border border-white/20 p-3 sm:p-4 lg:p-6 xl:p-8 shadow-neon w-full">
               <AuthForm 
                 onShowAdminPassword={showAdminPasswordForm}
                 pendingAdminSignup={pendingAdminSignup}
