@@ -260,6 +260,7 @@ export const translations = {
     'signing_in': 'Signing in...',
     'sign_in_as_admin': 'Sign In as Admin',
     'create_admin_account': 'Create Admin Account',
+    'buy_ticket': 'Buy Ticket',
   },
   
   he: {
@@ -523,6 +524,7 @@ export const translations = {
     'signing_in': 'מתחבר...',
     'sign_in_as_admin': 'התחבר כמנהל',
     'create_admin_account': 'צור חשבון מנהל',
+    'buy_ticket': 'קנה כרטיס',
   },
   
   sp: {
@@ -786,6 +788,7 @@ export const translations = {
     'signing_in': 'Iniciando sesión...',
     'sign_in_as_admin': 'Iniciar Sesión como Administrador',
     'create_admin_account': 'Crear Cuenta de Administrador',
+    'buy_ticket': 'Comprar Boleto',
   },
   
   fr: {
@@ -1049,6 +1052,7 @@ export const translations = {
     'signing_in': 'Connexion...',
     'sign_in_as_admin': 'Se Connecter en tant qu\'Administrateur',
     'create_admin_account': 'Créer un Compte Administrateur',
+    'buy_ticket': 'Acheter un Billet',
   },
   
   it: {
@@ -1312,5 +1316,6 @@ export const translations = {
     'signing_in': 'Accedendo...',
     'sign_in_as_admin': 'Accedi come Amministratore',
     'create_admin_account': 'Crea Account Amministratore',
+    'buy_ticket': 'Compra Biglietto',
   },
 };
