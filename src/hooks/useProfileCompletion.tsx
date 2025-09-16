@@ -11,7 +11,17 @@ export const useProfileCompletion = () => {
     
     try {
       console.log('📡 Getting user from Supabase...');
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      // Add timeout to prevent hanging
+      const userPromise = supabase.auth.getUser();
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout')), 10000)
+      );
+      
+      const { data: { user }, error: userError } = await Promise.race([
+        userPromise, 
+        timeoutPromise
+      ]) as any;
       
       if (userError) {
         console.error('❌ Error getting user:', userError);
@@ -30,11 +40,12 @@ export const useProfileCompletion = () => {
       console.log('✅ User found:', user.id);
       console.log('📊 Fetching user profile...');
       
+      // Use maybeSingle() instead of single() to handle cases where no profile exists
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('first_name, last_name, phone_number, email')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (profileError) {
         console.error('❌ Error fetching profile:', profileError);
@@ -60,6 +71,10 @@ export const useProfileCompletion = () => {
       }
     } catch (error) {
       console.error('💥 Catch error in profile completion check:', error);
+      // If it's a timeout or network error, assume no user and allow app to continue
+      if (error.message === 'Timeout') {
+        console.log('⏰ Timeout occurred, assuming no user');
+      }
       setIsProfileComplete(false);
     } finally {
       console.log('🏁 Profile completion check finished');
@@ -68,14 +83,26 @@ export const useProfileCompletion = () => {
   };
 
   useEffect(() => {
-    checkProfileCompletion();
+    // Add a fallback timeout to prevent infinite loading
+    const fallbackTimeout = setTimeout(() => {
+      console.log('⚠️ Fallback timeout triggered - forcing loading to false');
+      setLoading(false);
+      setIsProfileComplete(false);
+    }, 15000);
+
+    checkProfileCompletion().finally(() => {
+      clearTimeout(fallbackTimeout);
+    });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
       checkProfileCompletion();
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(fallbackTimeout);
+    };
   }, []);
 
   return {
