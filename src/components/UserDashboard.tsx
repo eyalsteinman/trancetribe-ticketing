@@ -31,7 +31,6 @@ import UserMessages from './UserMessages';
 import UserMessaging from './UserMessaging';
 import { useTheme } from '@/hooks/useDarkMode';
 import PageHeader from './ui/page-header';
-import LanguageSelector from './LanguageSelector';
 
 interface UserDashboardProps {
   user: User;
@@ -288,11 +287,6 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
   return (
     <div className="min-h-screen w-full transition-colors duration-500 p-4">
-      {/* Language Selector */}
-      <div className="fixed top-4 left-4 z-50">
-        <LanguageSelector />
-      </div>
-      
       {/* Header */}
       <div className="relative pt-2 pb-6">
         <h1 className="text-2xl font-bold text-foreground mb-1">
@@ -322,7 +316,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
             const items = [
               {
                 id: 'parties',
-                title: t('events_and_parties'),
+                title: t('events_parties'),
                 icon: <Calendar className="h-12 w-12" />,
                 onClick: () => setCurrentView('parties' as const),
               },
