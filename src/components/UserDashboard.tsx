@@ -297,36 +297,36 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         <div className="absolute top-1/2 right-1/4 w-1.5 h-1.5 bg-secondary rounded-full animate-ping opacity-50 delay-500"></div>
       </div>
 
-        <div className="relative z-10 min-h-screen p-4 sm:p-6 max-w-sm mx-auto">>
-          {/* Modern Header */}
-          <div className="relative mb-4 sm:mb-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-                  {nickname ? `Welcome back,` : 'Dashboard'}
-                </h1>
-                {nickname && (
-                  <p className="text-sm sm:text-base text-primary font-medium">{nickname}!</p>
-                )}
-              </div>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={async () => {
-                  await handleSignOut();
-                  setTimeout(() => {
-                    window.location.reload();
-                  }, 2000);
-                }} 
-                className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg bg-glass backdrop-blur-xl border border-white/20 hover:bg-white/10 hover:border-primary/50 transition-all duration-300"
-                aria-label="Sign Out"
-              >
-                <LogOut className="h-4 w-4" />
-              </Button>
+      <div className="relative z-10 min-h-screen p-4 sm:p-6 max-w-sm mx-auto">
+        {/* Modern Header */}
+        <div className="relative mb-4 sm:mb-6">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+                {nickname ? `Welcome back,` : 'Dashboard'}
+              </h1>
+              {nickname && (
+                <p className="text-sm sm:text-base text-primary font-medium">{nickname}!</p>
+              )}
             </div>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={async () => {
+                await handleSignOut();
+                setTimeout(() => {
+                  window.location.reload();
+                }, 2000);
+              }} 
+              className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg bg-glass backdrop-blur-xl border border-white/20 hover:bg-white/10 hover:border-primary/50 transition-all duration-300"
+              aria-label="Sign Out"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
           </div>
+        </div>
 
-      <div className="w-full">
+        <div className="w-full">
           {(() => {
             const items = [
               {
@@ -377,42 +377,42 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 icon: <Wine className="h-5 w-5 sm:h-6 sm:w-6" />,
                 onClick: () => setCurrentView('bar-tab' as const),
               },
-                {
-                  id: 'faq',
-                  title: 'FAQ & Contact',
-                  icon: <Users className="h-5 w-5 sm:h-6 sm:w-6" />,
-                  onClick: () => setCurrentView('faq' as const),
-                },
-                {
-                  id: 'messages',
-                  title: 'Messages',
-                  icon: (
-                    <div className="relative">
-                      <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />
-                      {unreadMessageCount > 0 && (
-                        <div className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center font-bold text-[10px] sm:text-xs">
-                          {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
-                        </div>
-                      )}
-                    </div>
-                  ),
-                  onClick: () => setCurrentView('messages' as const),
-                },
-                {
-                  id: 'direct-messages',
-                  title: 'Direct Messages',
-                  icon: (
-                    <div className="relative">
-                      <Mail className="h-5 w-5 sm:h-6 sm:w-6" />
-                      {unreadDirectMessageCount > 0 && (
-                        <div className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center font-bold text-[10px] sm:text-xs">
-                          {unreadDirectMessageCount > 9 ? '9+' : unreadDirectMessageCount}
-                        </div>
-                      )}
-                    </div>
-                  ),
-                  onClick: () => setCurrentView('direct-messages' as const),
-                },
+              {
+                id: 'faq',
+                title: 'FAQ & Contact',
+                icon: <Users className="h-5 w-5 sm:h-6 sm:w-6" />,
+                onClick: () => setCurrentView('faq' as const),
+              },
+              {
+                id: 'messages',
+                title: 'Messages',
+                icon: (
+                  <div className="relative">
+                    <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />
+                    {unreadMessageCount > 0 && (
+                      <div className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center font-bold text-[10px] sm:text-xs">
+                        {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
+                      </div>
+                    )}
+                  </div>
+                ),
+                onClick: () => setCurrentView('messages' as const),
+              },
+              {
+                id: 'direct-messages',
+                title: 'Direct Messages',
+                icon: (
+                  <div className="relative">
+                    <Mail className="h-5 w-5 sm:h-6 sm:w-6" />
+                    {unreadDirectMessageCount > 0 && (
+                      <div className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center font-bold text-[10px] sm:text-xs">
+                        {unreadDirectMessageCount > 9 ? '9+' : unreadDirectMessageCount}
+                      </div>
+                    )}
+                  </div>
+                ),
+                onClick: () => setCurrentView('direct-messages' as const),
+              },
             ];
             return (
               <ReorderableTilesLogic 
@@ -427,10 +427,10 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           })()}
         </div>
 
-      {/* QR Codes Section */}
-      {userQRCodes.length > 0 && (
-        <div className="mt-6 sm:mt-8">
-          <h2 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">Your Tickets</h2>
+        {/* QR Codes Section */}
+        {userQRCodes.length > 0 && (
+          <div className="mt-6 sm:mt-8">
+            <h2 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">Your Tickets</h2>
             <div className="space-y-4">
               {userQRCodes.map((qrCode) => (
                 <div 
@@ -450,65 +450,38 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                   <div className="p-0">
                     <div className="relative">
                       {/* Event Image */}
-                       {qrCode.parties?.photo_url && (
-                         <div className="h-64 w-full overflow-hidden">
-                           <img 
-                             src={qrCode.parties.photo_url} 
-                             alt={qrCode.parties.name}
-                             className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                           />
-                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                         </div>
-                       )}
+                      {qrCode.parties?.photo_url && (
+                        <div className="h-64 w-full overflow-hidden">
+                          <img 
+                            src={qrCode.parties.photo_url} 
+                            alt={qrCode.parties?.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                      )}
                       
-                      {/* Status Badge */}
-                      <div className="absolute top-4 right-4">
-                        {qrCode.is_scanned ? (
-                          <div className="bg-green-500 text-white px-3 py-1 text-xs font-semibold">
-                            ✓ Used
-                          </div>
-                        ) : qrCode.is_approved ? (
-                          <div className="bg-primary text-primary-foreground px-3 py-1 text-xs font-semibold">
-                            ✓ Ready
-                          </div>
-                        ) : (
-                          <div className="bg-orange-500 text-white px-3 py-1 text-xs font-semibold">
-                            Pending
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    
-                    {/* Event Info */}
-                    <div className="p-4 space-y-3">
-                      <div>
-                        <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors">
+                      {/* Overlay Content */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4">
+                        <h3 className="text-white font-bold text-lg mb-1">
                           {qrCode.parties?.name}
                         </h3>
-                        <p className="text-sm text-muted-foreground">
-                          {new Date(qrCode.parties?.date).toLocaleDateString('en-GB', { 
-                            day: 'numeric', 
-                            month: 'long', 
-                            year: 'numeric',
-                            weekday: 'short'
-                          })}
+                        <p className="text-white/80 text-sm">
+                          {new Date(qrCode.parties?.date).toLocaleDateString()}
                         </p>
+                        
+                        {/* Status Badge */}
+                        <div className="mt-2">
+                          {qrCode.is_approved ? (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-500 text-white">
+                              ✓ Approved
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-500 text-black">
+                              ⏳ Pending
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      
-                      {/* QR Code Ready Action */}
-                        {qrCode.is_approved && !qrCode.is_scanned && (
-                        <Button 
-                          size="sm"
-                          className="w-full bg-primary text-white hover:bg-primary/90"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedQRCode(qrCode);
-                            setShowQRDialog(true);
-                          }}
-                        >
-                          Show QR Code
-                        </Button>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -516,33 +489,41 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
             </div>
           </div>
         )}
-        
+
         {/* QR Code Dialog */}
         <Dialog open={showQRDialog} onOpenChange={setShowQRDialog}>
-          <DialogContent className="max-w-sm z-[9999] bg-black/95 backdrop-blur-sm">
+          <DialogContent className="w-80">
             <DialogHeader>
-              <DialogTitle className="text-white">Your QR Code</DialogTitle>
+              <DialogTitle>Your QR Code</DialogTitle>
             </DialogHeader>
-            <div className="text-center space-y-4">
+            <div className="flex flex-col items-center space-y-4">
               {selectedQRCode && (
                 <>
-                  <div className="bg-white p-4 rounded-lg inline-block">
-                    <QRCodeSVG value={selectedQRCode.code} size={200} />
+                  <div className="bg-white p-4 rounded-lg">
+                    <QRCodeSVG 
+                      value={selectedQRCode.code}
+                      size={200}
+                      level="M"
+                      includeMargin
+                    />
                   </div>
-                  <div className="space-y-2">
+                  <div className="text-center">
                     <p className="font-medium">{selectedQRCode.parties?.name}</p>
                     <p className="text-sm text-muted-foreground">
-                      {new Date(selectedQRCode.parties?.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                      {new Date(selectedQRCode.parties?.date).toLocaleDateString()}
                     </p>
-                    <p className="text-xs text-green-600">✓ Approved - Show this QR code at the entrance</p>
+                    {selectedQRCode.friend_display_name && (
+                      <p className="text-sm text-accent mt-2">
+                        For: {selectedQRCode.friend_display_name}
+                      </p>
+                    )}
                   </div>
                 </>
               )}
             </div>
           </DialogContent>
         </Dialog>
-        
-        {/* Footer */}
+
         <Footer />
       </div>
     </div>

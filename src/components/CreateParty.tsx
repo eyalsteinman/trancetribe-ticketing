@@ -209,20 +209,19 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
   };
 
   return (
-  <div 
-      className="min-h-screen p-4 transition-colors duration-500"
-      style={{ 
-        backgroundColor
-      }}
-    >
-      <PageHeader
-        title="Create Party"
-        onBack={onBack}
-      />
+    <div className="min-h-screen bg-gradient-mesh relative overflow-hidden">
+      {/* Background elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 animate-pulse-slow"></div>
       
-      <div className="w-full max-w-none pt-20 space-y-6 text-left">
-
-        <Card className="w-full max-w-none mx-4">
+      <div className="relative z-10 min-h-screen p-4">
+        <div className="container mx-auto max-w-md">
+          <PageHeader
+            title="Create Party"
+            onBack={onBack}
+          />
+          
+          <div className="pt-20 space-y-6">
+            <Card>
           <CardHeader>
             <CardTitle>Party Details</CardTitle>
           </CardHeader>
@@ -397,9 +396,11 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
               {loading ? "Creating..." : "Create Party"}
             </Button>
           </CardContent>
-        </Card>
-        
-        <Footer />
+            </Card>
+            
+            <Footer />
+          </div>
+        </div>
       </div>
     </div>
   );
