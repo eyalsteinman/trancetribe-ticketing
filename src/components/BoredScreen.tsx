@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, RotateCcw } from 'lucide-react';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { useToast } from '@/hooks/use-toast';
-import Footer from '@/components/ui/footer';
 
 interface BoredScreenProps {
   onBack: () => void;
@@ -149,9 +148,6 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
           </span>
         </Button>
 
-        
-        {/* Footer */}
-        <Footer />
       </div>
 
     </div>

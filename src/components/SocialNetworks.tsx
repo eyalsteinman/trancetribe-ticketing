@@ -191,7 +191,7 @@ const SocialNetworks = ({ userId, onBack, onSaved, isFromTicketPurchase }: Socia
         onBack={onBack}
       />
       
-      <div className="w-full pt-20 space-y-6 text-left px-4">
+      <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
 
         {platforms.map((p) => (
           <Card key={p.key}>

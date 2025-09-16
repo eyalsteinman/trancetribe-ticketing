@@ -349,7 +349,7 @@ const ManageAdmins = ({ onBack }: ManageAdminsProps) => {
         onBack={onBack}
       />
       
-      <div className="w-full pt-20 space-y-6 text-left px-4">
+      <div className="max-w-2xl mx-auto pt-20 space-y-6 text-left">
 
         <Alert>
           <AlertDescription className="surface">

@@ -125,7 +125,7 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
 
   return (
     <div className="min-h-screen p-4" style={{ backgroundColor }}>
-      <div className="w-full space-y-8 text-left">
+      <div className="max-w-md mx-auto space-y-6 text-left">
         <div className="flex items-center justify-between w-full py-4">
           <h1 className="text-2xl font-bold text-foreground">
             Manage Productions

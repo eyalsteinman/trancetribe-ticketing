@@ -262,7 +262,7 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
   if (loading) {
     return (
       <div className="min-h-screen p-4">
-        <div className="w-full space-y-6 px-4">
+        <div className="max-w-md mx-auto space-y-6">
           <PageHeader
             title="FAQ & Contact"
             onBack={onBack}
@@ -276,7 +276,7 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
 
   return (
     <div className="min-h-screen p-4">
-      <div className="w-full space-y-6 px-4">
+      <div className="max-w-md mx-auto space-y-6">
         <PageHeader
           title="FAQ & Contact"
           onBack={onBack}

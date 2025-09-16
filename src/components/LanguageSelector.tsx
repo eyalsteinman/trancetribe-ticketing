@@ -15,7 +15,7 @@ const LanguageSelector = () => {
   return (
     <div className="flex items-center justify-center gap-2 mb-4">
       {languages.map((lang, index) => (
-        <div key={lang.code} className="flex items-center gap-2">
+        <React.Fragment key={lang.code}>
           <button
             onClick={() => setLanguage(lang.code)}
             className={`text-sm font-medium transition-colors ${
@@ -29,7 +29,7 @@ const LanguageSelector = () => {
           {index < languages.length - 1 && (
             <span className="text-muted-foreground">/</span>
           )}
-        </div>
+        </React.Fragment>
       ))}
     </div>
   );

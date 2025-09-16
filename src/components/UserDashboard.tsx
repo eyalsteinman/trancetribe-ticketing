@@ -284,187 +284,141 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   return (
-    <div className="min-h-screen w-full app-background relative">
-      {/* Ultra Dynamic Parallax Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Primary floating orb */}
-        <div className="absolute top-10 left-10 w-96 h-96 bg-gradient-radial from-primary/40 to-transparent rounded-full blur-3xl animate-float opacity-60"></div>
-        
-        {/* Secondary floating orb */}
-        <div className="absolute bottom-20 right-10 w-80 h-80 bg-gradient-radial from-accent/35 to-transparent rounded-full blur-3xl animate-float-delayed opacity-70"></div>
-        
-        {/* Tertiary floating orb */}
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-gradient-radial from-secondary/30 to-transparent rounded-full blur-3xl animate-bounce-gentle opacity-50"></div>
-        
-        {/* Floating particles with varied sizes */}
-        <div className="absolute top-1/4 left-1/5 w-3 h-3 bg-primary rounded-full animate-ping opacity-60"></div>
-        <div className="absolute top-3/4 right-1/5 w-2 h-2 bg-accent rounded-full animate-ping opacity-40 animation-delay-1000"></div>
-        <div className="absolute top-1/2 right-1/3 w-4 h-4 bg-secondary rounded-full animate-ping opacity-50 animation-delay-500"></div>
-        <div className="absolute bottom-1/4 left-1/3 w-2 h-2 bg-primary rounded-full animate-ping opacity-70 animation-delay-1500"></div>
-        
-        {/* Gradient mesh overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-primary/5 to-accent/10 animate-gradient-shift"></div>
+    <div className="min-h-screen w-full transition-colors duration-500 p-4">
+      {/* Header */}
+      <div className="relative pt-2 pb-6">
+        <h1 className="text-2xl font-bold text-foreground mb-1">
+          {nickname ? `Welcome back,` : 'User Dashboard'}
+        </h1>
+        {nickname && (
+          <p className="text-lg text-primary font-semibold">{nickname}!</p>
+        )}
+        <Button 
+          variant="outline" 
+          size="icon"
+          onClick={async () => {
+            await handleSignOut();
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+          }} 
+          className="absolute top-2 right-4 z-50 border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200"
+          aria-label="Sign Out"
+        >
+          <LogOut className="h-4 w-4" />
+        </Button>
       </div>
 
-      <div className="relative z-10 min-h-screen w-full">
-        {/* Ultra Modern Fixed Header */}
-        <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-background/95 via-background/90 to-background/95 backdrop-blur-xl border-b border-border/30 shadow-modern">
-          <div className="w-full px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <h1 className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent animate-shimmer bg-[length:200%_100%]">
-                  {nickname ? `Welcome back,` : 'Dashboard'}
-                </h1>
-                {nickname && (
-                  <p className="text-lg sm:text-xl text-primary font-bold drop-shadow-glow">{nickname}!</p>
-                )}
-              </div>
-              <Button 
-                variant="ghost" 
-                size="icon"
-                onClick={async () => {
-                  await handleSignOut();
-                  setTimeout(() => {
-                    window.location.reload();
-                  }, 2000);
-                }} 
-                className="h-12 w-12 rounded-2xl bg-glass border-2 border-border/30 hover:border-primary/60 hover:shadow-glow transition-all duration-500"
-                aria-label="Sign Out"
-              >
-                <LogOut className="h-6 w-6" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Ultra Modern Dashboard Tiles */}
-        <div className="pt-24 px-6 pb-6">
+      <div className="w-full">
           {(() => {
             const items = [
               {
                 id: 'parties',
-                title: 'Events & Parties',
-                subtitle: 'Manage your tickets',
-                icon: <Calendar className="dashboard-icon" />,
+                title: 'Events\n& Parties',
+                icon: <Calendar className="h-12 w-12" />,
                 onClick: () => setCurrentView('parties' as const),
               },
               {
                 id: 'nickname',
-                title: 'My Profile',
-                subtitle: 'Personal details',
-                icon: <UserIcon className="dashboard-icon" />,
+                title: 'My Info',
+                icon: <UserIcon className="h-12 w-12" />,
                 onClick: () => setCurrentView('nickname' as const),
               },
               {
                 id: 'social',
                 title: 'Social Networks',
-                subtitle: 'Connect & share',
-                icon: <Users className="dashboard-icon" />,
+                icon: <Users className="h-12 w-12" />,
                 onClick: () => setCurrentView('social' as const),
               },
               {
                 id: 'insurance',
                 title: 'Insurance',
-                subtitle: 'Coverage details',
-                icon: <ShieldCheck className="dashboard-icon" />,
+                icon: <ShieldCheck className="h-12 w-12" />,
                 onClick: () => setCurrentView('insurance' as const),
               },
               {
                 id: 'vip',
-                title: 'VIP Access',
-                subtitle: 'Premium features',
-                icon: <Crown className="dashboard-icon" />,
+                title: 'VIP',
+                icon: <Crown className="h-12 w-12" />,
                 onClick: () => setCurrentView('vip' as const),
               },
               {
                 id: 'personal-code',
                 title: 'Personal Code',
-                subtitle: 'Your unique ID',
-                icon: <IdCard className="dashboard-icon" />,
+                icon: <IdCard className="h-12 w-12" />,
                 onClick: () => setCurrentView('personal-code' as const),
               },
               {
                 id: 'friends-codes',
                 title: 'Friends Codes',
-                subtitle: 'Connect with friends',
-                icon: <Heart className="dashboard-icon" />,
+                icon: <Heart className="h-12 w-12" />,
                 onClick: () => setCurrentView('friends-codes' as const),
               },
               {
                 id: 'bar-tab',
                 title: 'Bar Tab',
-                subtitle: 'Manage purchases',
-                icon: <Wine className="dashboard-icon" />,
+                icon: <Wine className="h-12 w-12" />,
                 onClick: () => setCurrentView('bar-tab' as const),
               },
-              {
-                id: 'faq',
-                title: 'Help & Support',
-                subtitle: 'Get assistance',
-                icon: <Users className="dashboard-icon" />,
-                onClick: () => setCurrentView('faq' as const),
-              },
-              {
-                id: 'messages',
-                title: 'Messages',
-                subtitle: `${unreadMessageCount > 0 ? `${unreadMessageCount} unread` : 'All caught up'}`,
-                icon: (
-                  <div className="relative dashboard-icon">
-                    <MessageCircle className="h-12 w-12" />
-                    {unreadMessageCount > 0 && (
-                      <div className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground text-sm rounded-full h-6 w-6 flex items-center justify-center font-black animate-pulse-glow">
-                        {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
-                      </div>
-                    )}
-                  </div>
-                ),
-                onClick: () => setCurrentView('messages' as const),
-              },
-              {
-                id: 'direct-messages',
-                title: 'Direct Chat',
-                subtitle: `${unreadDirectMessageCount > 0 ? `${unreadDirectMessageCount} new` : 'No new messages'}`,
-                icon: (
-                  <div className="relative dashboard-icon">
-                    <Mail className="h-12 w-12" />
-                    {unreadDirectMessageCount > 0 && (
-                      <div className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground text-sm rounded-full h-6 w-6 flex items-center justify-center font-black animate-pulse-glow">
-                        {unreadDirectMessageCount > 9 ? '9+' : unreadDirectMessageCount}
-                      </div>
-                    )}
-                  </div>
-                ),
-                onClick: () => setCurrentView('direct-messages' as const),
-              },
+                {
+                  id: 'faq',
+                  title: 'FAQ & Contact',
+                  icon: <Users className="h-12 w-12" />,
+                  onClick: () => setCurrentView('faq' as const),
+                },
+                {
+                  id: 'messages',
+                  title: 'Messages',
+                  icon: (
+                    <div className="relative">
+                      <MessageCircle className="h-12 w-12" />
+                      {unreadMessageCount > 0 && (
+                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                          {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
+                        </div>
+                      )}
+                    </div>
+                  ),
+                  onClick: () => setCurrentView('messages' as const),
+                },
+                {
+                  id: 'direct-messages',
+                  title: 'Direct Messages',
+                  icon: (
+                    <div className="relative">
+                      <Mail className="h-12 w-12" />
+                      {unreadDirectMessageCount > 0 && (
+                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                          {unreadDirectMessageCount > 9 ? '9+' : unreadDirectMessageCount}
+                        </div>
+                      )}
+                    </div>
+                  ),
+                  onClick: () => setCurrentView('direct-messages' as const),
+                },
             ];
             return (
-              <div className="dashboard-grid animate-fade-in-up">
-                {items.map((item, index) => (
-                  <button
-                    key={item.id}
-                    onClick={item.onClick}
-                    className="dashboard-button"
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    {item.icon}
-                    <h3 className="dashboard-title">{item.title}</h3>
-                    <p className="dashboard-subtitle">{item.subtitle}</p>
-                  </button>
-                ))}
-              </div>
+              <ReorderableTilesLogic 
+                items={items} 
+                orderKey={`dashboard-order-user-${user.id}`}
+                onLongPress={(id) => {
+                  // Handle long press for reordering
+                  console.log('Long press on:', id);
+                }} 
+              />
             );
           })()}
         </div>
 
-        {/* Ultra Modern QR Codes Section */}
-        {userQRCodes.length > 0 && (
-          <div className="px-6 pb-6">
-            <h2 className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent mb-8 animate-shimmer bg-[length:200%_100%]">Your Tickets</h2>
-            <div className="space-y-6">
+      {/* QR Codes Section */}
+      {userQRCodes.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-lg font-bold text-foreground mb-4">Your Tickets</h2>
+            <div className="space-y-4">
               {userQRCodes.map((qrCode) => (
                 <div 
                   key={qrCode.id} 
-                  className="cursor-pointer group overflow-hidden rounded-3xl bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl border-2 border-border/30 hover:border-primary/60 hover:shadow-neon transition-all duration-500 hover:scale-105"
+                  className="cursor-pointer group overflow-hidden border border-border bg-card"
                   onClick={() => {
                     const party = { 
                       id: qrCode.party_id, 
@@ -479,38 +433,65 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                   <div className="p-0">
                     <div className="relative">
                       {/* Event Image */}
-                      {qrCode.parties?.photo_url && (
-                        <div className="h-64 w-full overflow-hidden rounded-t-3xl">
-                          <img 
-                            src={qrCode.parties.photo_url} 
-                            alt={qrCode.parties?.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        </div>
-                      )}
+                       {qrCode.parties?.photo_url && (
+                         <div className="h-64 w-full overflow-hidden">
+                           <img 
+                             src={qrCode.parties.photo_url} 
+                             alt={qrCode.parties.name}
+                             className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                           />
+                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                         </div>
+                       )}
                       
-                      {/* Overlay Content */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4">
-                        <h3 className="text-white font-bold text-lg mb-1">
+                      {/* Status Badge */}
+                      <div className="absolute top-4 right-4">
+                        {qrCode.is_scanned ? (
+                          <div className="bg-green-500 text-white px-3 py-1 text-xs font-semibold">
+                            ✓ Used
+                          </div>
+                        ) : qrCode.is_approved ? (
+                          <div className="bg-primary text-primary-foreground px-3 py-1 text-xs font-semibold">
+                            ✓ Ready
+                          </div>
+                        ) : (
+                          <div className="bg-orange-500 text-white px-3 py-1 text-xs font-semibold">
+                            Pending
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* Event Info */}
+                    <div className="p-4 space-y-3">
+                      <div>
+                        <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors">
                           {qrCode.parties?.name}
                         </h3>
-                        <p className="text-white/80 text-sm">
-                          {new Date(qrCode.parties?.date).toLocaleDateString()}
+                        <p className="text-sm text-muted-foreground">
+                          {new Date(qrCode.parties?.date).toLocaleDateString('en-GB', { 
+                            day: 'numeric', 
+                            month: 'long', 
+                            year: 'numeric',
+                            weekday: 'short'
+                          })}
                         </p>
-                        
-                        {/* Status Badge */}
-                        <div className="mt-2">
-                          {qrCode.is_approved ? (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-500 text-white">
-                              ✓ Approved
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-500 text-black">
-                              ⏳ Pending
-                            </span>
-                          )}
-                        </div>
                       </div>
+                      
+                      {/* QR Code Ready Action */}
+                        {qrCode.is_approved && !qrCode.is_scanned && (
+                        <Button 
+                          size="sm"
+                          className="w-full bg-primary text-white hover:bg-primary/90"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedQRCode(qrCode);
+                            setShowQRDialog(true);
+                          }}
+                        >
+                          Show QR Code
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -518,46 +499,34 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
             </div>
           </div>
         )}
-
+        
         {/* QR Code Dialog */}
         <Dialog open={showQRDialog} onOpenChange={setShowQRDialog}>
-          <DialogContent className="w-80">
+          <DialogContent className="max-w-sm z-[9999] bg-black/95 backdrop-blur-sm">
             <DialogHeader>
-              <DialogTitle>Your QR Code</DialogTitle>
+              <DialogTitle className="text-white">Your QR Code</DialogTitle>
             </DialogHeader>
-            <div className="flex flex-col items-center space-y-4">
+            <div className="text-center space-y-4">
               {selectedQRCode && (
                 <>
-                  <div className="bg-white p-4 rounded-lg">
-                    <QRCodeSVG 
-                      value={selectedQRCode.code}
-                      size={200}
-                      level="M"
-                      includeMargin
-                    />
+                  <div className="bg-white p-4 rounded-lg inline-block">
+                    <QRCodeSVG value={selectedQRCode.code} size={200} />
                   </div>
-                  <div className="text-center">
+                  <div className="space-y-2">
                     <p className="font-medium">{selectedQRCode.parties?.name}</p>
                     <p className="text-sm text-muted-foreground">
-                      {new Date(selectedQRCode.parties?.date).toLocaleDateString()}
+                      {new Date(selectedQRCode.parties?.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </p>
-                    {selectedQRCode.friend_display_name && (
-                      <p className="text-sm text-accent mt-2">
-                        For: {selectedQRCode.friend_display_name}
-                      </p>
-                    )}
+                    <p className="text-xs text-green-600">✓ Approved - Show this QR code at the entrance</p>
                   </div>
                 </>
               )}
             </div>
           </DialogContent>
         </Dialog>
-
-        {/* Footer */}
-        <div className="floating-section">
-          <Footer />
-        </div>
-      </div>
+        
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

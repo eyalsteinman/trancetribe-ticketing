@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import BackButton from '@/components/ui/back-button';
 import { useBackground } from '@/contexts/BackgroundContext';
-import Footer from '@/components/ui/footer';
 
 interface DotCircleGameProps {
   onBack: () => void;
@@ -294,9 +293,6 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
           <div className="text-white font-extrabold text-3xl drop-shadow-lg">{centerMessage}</div>
         </div>
       )}
-      
-      {/* Footer */}
-      <Footer />
     </div>
   );
 };

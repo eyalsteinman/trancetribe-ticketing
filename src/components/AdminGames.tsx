@@ -24,7 +24,7 @@ const AdminGames = ({ onBack, onGameSelect }: AdminGamesProps) => {
         onBack={onBack}
       />
       
-      <div className="w-full pt-20 space-y-6 text-left px-4">
+      <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
 
         <div className="grid grid-cols-2 gap-4">
           <Card className="cursor-pointer hover:bg-accent surface text-black [&_svg]:text-black" onClick={() => onGameSelect('color-changer')}>

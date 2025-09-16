@@ -9,7 +9,6 @@ import BuyTicketsForFriends from './BuyTicketsForFriends';
 import SocialNetworksDialog from './SocialNetworksDialog';
 import SocialNetworks from './SocialNetworks';
 import RtlText from './RtlText';
-import Footer from '@/components/ui/footer';
 
 interface Party {
   id: string;
@@ -443,16 +442,16 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
 
   return (
     <div className="min-h-screen p-4">
-      <div className="w-full space-y-4 px-4">
+      <div className="w-full max-w-none mx-auto space-y-6 px-4">
         {/* Header with Back Button */}
-        <div className="flex items-center justify-between mb-4">
-          <Button variant="outline" size="sm" onClick={onBack}>
+        <div className="flex items-center justify-between">
+          <Button variant="outline" size="icon" onClick={onBack}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-lg font-bold text-center flex-1 px-2">
+          <h1 className="text-xl font-bold">
             <RtlText text={party.name} />
           </h1>
-          <div className="w-8"></div>
+          <div></div>
         </div>
 
         {/* D. Production Photo Container */}
@@ -478,7 +477,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
         )}
 
         {/* F. Party Details Container */}
-        <div className="floating-section space-y-3">
+        <div className="w-full p-4 space-y-3 bg-card">
           <h2 className="text-lg font-bold">Party Details</h2>
             <div className="text-sm">
               <strong>Date:</strong> {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -509,7 +508,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
         </div>
 
         {/* G. Ticket Options Container */}
-        <div className="floating-section space-y-4">
+        <div className="w-full p-4 space-y-4 bg-card">
           <h2 className="text-lg font-bold">
             {party.is_free ? 'Get Your Free Ticket' : 'Purchase Ticket'}
           </h2>
@@ -594,7 +593,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
         </div>
 
         {/* H. Buy for Friends Container - Always Available */}
-        <div className="floating-section">
+        <div className="w-full p-4 bg-card">
           <h2 className="text-lg font-bold mb-4">Buy Tickets for Friends</h2>
           <Button
             variant="outline"
@@ -705,8 +704,6 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
           missingSocials={missingSocials}
           onFillNow={handleSocialDialogFillNow}
         />
-        {/* Footer */}
-        <Footer />
       </div>
     </div>
   );

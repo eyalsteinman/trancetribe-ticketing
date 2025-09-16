@@ -89,7 +89,7 @@ const PartyPreview = ({ party, onBack, onLoginRequired }: PartyPreviewProps) => 
 
   return (
     <div className="min-h-screen p-4">
-      <div className="w-full space-y-8">
+      <div className="max-w-md mx-auto space-y-6">
         {/* Header with Back Button */}
         <div className="flex items-center justify-between">
           <Button variant="outline" size="icon" onClick={onBack}>
@@ -103,29 +103,36 @@ const PartyPreview = ({ party, onBack, onLoginRequired }: PartyPreviewProps) => 
 
         {/* Production Photo Container */}
         {production?.logo_url && (
-          <div className="floating-section-sm p-0">
-            <img 
-              src={production.logo_url} 
-              alt={`${production.name} logo`}
-              className="w-full h-auto object-contain rounded-xl"
-            />
-          </div>
+          <Card>
+            <CardContent className="p-0">
+              <img 
+                src={production.logo_url} 
+                alt={`${production.name} logo`}
+                className="w-full h-auto object-contain rounded-md"
+              />
+            </CardContent>
+          </Card>
         )}
 
         {/* Party Photo Container */}
         {party.photo_url && (
-          <div className="floating-section-sm p-0">
-            <img 
-              src={party.photo_url} 
-              alt={party.name}
-              className="w-full h-auto object-contain rounded-xl"
-            />
-          </div>
+          <Card>
+            <CardContent className="p-0">
+              <img 
+                src={party.photo_url} 
+                alt={party.name}
+                className="w-full h-auto object-contain rounded-md"
+              />
+            </CardContent>
+          </Card>
         )}
 
         {/* Party Details Container */}
-        <div className="floating-section space-y-3">
-          <h2 className="text-lg font-bold">Party Details</h2>
+        <Card>
+          <CardHeader>
+            <CardTitle>Party Details</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
             <div className="text-sm">
               <strong>Date:</strong> {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
             </div>
@@ -152,13 +159,17 @@ const PartyPreview = ({ party, onBack, onLoginRequired }: PartyPreviewProps) => 
                 </div>
               </div>
             )}
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Ticket Options Container - Preview Only */}
-        <div className="floating-section space-y-4">
-          <h2 className="text-lg font-bold">
-            {party.is_free ? 'Free Ticket Available' : 'Ticket Pricing'}
-          </h2>
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              {party.is_free ? 'Free Ticket Available' : 'Ticket Pricing'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             {ticketTypes.length > 0 ? (
               <div className="space-y-3">
                 {ticketTypes.map((ticketType) => {
@@ -214,7 +225,8 @@ const PartyPreview = ({ party, onBack, onLoginRequired }: PartyPreviewProps) => 
                 Login or create an account to purchase tickets
               </p>
             </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Login Dialog */}
         <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>

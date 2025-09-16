@@ -58,12 +58,12 @@ const SortableTile: React.FC<{
       data-id={item.id}
       style={style}
       className={`
-        relative p-2 sm:p-3 bg-card select-none aspect-square w-full
-        border border-border rounded-xl flex flex-col items-center justify-center text-center space-y-1
-        transition-all duration-300 ease-out shadow-md hover:shadow-lg backdrop-blur-xl
-        ${!isReordering ? 'hover:scale-105 hover:border-primary/50' : ''}
+        relative p-4 bg-card select-none h-32 min-h-32
+        border border-border flex flex-col items-center justify-center text-center space-y-2
+        transition-transform duration-200 ease-out
+        ${!isReordering ? 'hover:scale-102' : ''}
         ${tiltedTileId === item.id ? 'animate-[tilt_0.3s_ease-in-out] rotate-12' : ''}
-        ${isDragging ? 'z-10 shadow-lg' : ''}
+        ${isDragging ? 'z-10' : ''}
       `}
       onClick={() => {
         if (!isReordering) onTileClick();
@@ -73,12 +73,12 @@ const SortableTile: React.FC<{
       <div className="text-primary">
         {item.icon}
       </div>
-      <span className="text-xs sm:text-sm font-medium text-foreground whitespace-pre-line leading-tight">
+      <span className="text-sm font-medium text-foreground whitespace-pre-line">
         {item.title}
       </span>
       {item.notificationCount && item.notificationCount > 0 && (
-        <div className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full min-w-4 h-4 flex items-center justify-center font-bold text-[10px]">
-          {item.notificationCount > 9 ? '9+' : item.notificationCount}
+        <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full min-w-6 h-6 flex items-center justify-center font-bold">
+          {item.notificationCount}
         </div>
       )}
     </div>
@@ -178,9 +178,9 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
   };
 
   return (
-    <div className="w-full">
+    <div className="container-section">
       <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 gap-4">
           <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
             {orderedItems.map((item, index) => (
               <div

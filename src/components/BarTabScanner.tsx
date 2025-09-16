@@ -111,7 +111,7 @@ const BarTabScanner = ({ user, onBack }: BarTabScannerProps) => {
 
   return (
     <div className="min-h-screen p-4">
-      <div className="w-full space-y-6 px-4">
+      <div className="max-w-md mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <Button variant="outline" size="icon" onClick={onBack}>
             <ArrowLeft className="h-4 w-4" />
