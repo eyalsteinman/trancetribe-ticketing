@@ -37,7 +37,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
       {/* Main content container */}
       <div className="flex-1 flex flex-col items-center justify-center relative z-10">
         {/* Welcome text */}
-        <div className={`text-center mb-4 transition-all duration-1000 ease-out ${
+        <div className={`text-center mb-2 transition-all duration-1000 ease-out ${
           animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
           <p className="text-2xl font-bold bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
@@ -45,25 +45,25 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           </p>
         </div>
         
-        {/* Main title */}
+        {/* Main title with minimal spacing */}
         <div className={`text-center transition-all duration-1200 delay-300 ease-out ${
           animate ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-95'
         }`}>
-          <h1 className="text-8xl font-black leading-tight tracking-tight bg-gradient-to-r from-white via-purple-100 to-white bg-clip-text text-transparent">
+          <h1 className="text-8xl font-black leading-none tracking-tight bg-gradient-to-r from-white via-purple-100 to-white bg-clip-text text-transparent">
             TRANCE
           </h1>
-          <h1 className="text-8xl font-black leading-tight tracking-tight bg-gradient-to-r from-white via-purple-100 to-white bg-clip-text text-transparent">
+          <h1 className="text-8xl font-black leading-none tracking-tight bg-gradient-to-r from-white via-purple-100 to-white bg-clip-text text-transparent">
             TRIBES
           </h1>
           
-          {/* Hebrew text directly under TRIBES */}
-          <p className="text-xl font-bold mt-1 text-purple-200" dir="rtl">
+          {/* Hebrew text directly under TRIBES with minimal spacing */}
+          <p className="text-xl font-bold mt-0 text-purple-200" dir="rtl">
             תודה שטוב לך
           </p>
         </div>
         
-        {/* Ticket generator text */}
-        <div className={`text-center mt-8 transition-all duration-1200 delay-700 ease-out ${
+        {/* Ticket generator text with space above loader */}
+        <div className={`text-center mt-12 transition-all duration-1200 delay-700 ease-out ${
           animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
           <p className="text-xl font-semibold bg-gradient-to-r from-purple-200 to-white bg-clip-text text-transparent">
