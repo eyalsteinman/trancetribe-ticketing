@@ -19,6 +19,7 @@ const Index = () => {
   const { isProfileComplete, loading: profileLoading, refetchProfile } = useProfileCompletion();
 
   const checkAdminRole = async (userId: string) => {
+    console.log('🔐 Checking admin role for user:', userId);
     try {
       const { data, error } = await (supabase as any)
         .from('user_roles')
@@ -26,12 +27,15 @@ const Index = () => {
         .eq('user_id', userId)
         .eq('role', 'admin');
       
-      console.log('Admin role check:', { data, error, userId });
-      setIsAdmin(data && data.length > 0);
+      console.log('👑 Admin role check result:', { data, error, userId });
+      const isAdminUser = data && data.length > 0;
+      console.log('🎯 Final admin status:', isAdminUser);
+      setIsAdmin(isAdminUser);
     } catch (error) {
-      console.error('Error checking admin role:', error);
+      console.error('💥 Error checking admin role:', error);
       setIsAdmin(false);
     } finally {
+      console.log('🏁 Admin check finished, setting loading to false');
       setLoading(false);
     }
   };
@@ -79,16 +83,24 @@ const Index = () => {
   }
 
   if (loading || profileLoading) {
-    console.log('Loading state, user:', user, 'isAdmin:', isAdmin, 'profileLoading:', profileLoading);
+    console.log('⏳ Still loading...', { 
+      loading, 
+      profileLoading, 
+      user: user?.id, 
+      isAdmin, 
+      timestamp: new Date().toISOString() 
+    });
+    
     return (
       <div 
-        className="min-h-screen flex items-center justify-center transition-colors duration-500"
-        style={{ 
-          backgroundColor
-        }}
+        className="min-h-screen flex items-center justify-center transition-colors duration-500 bg-background"
       >
-        <div className="text-center">
-          <h1 className="text-xl">Loading...</h1>
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <h1 className="text-2xl font-bold text-foreground">Loading...</h1>
+          <p className="text-muted-foreground">
+            {loading ? 'Checking authentication...' : 'Loading profile...'}
+          </p>
         </div>
       </div>
     );
