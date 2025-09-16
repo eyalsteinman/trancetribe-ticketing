@@ -284,141 +284,205 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   return (
-    <div className="min-h-screen w-full transition-colors duration-500 p-4">
-      {/* Header */}
-      <div className="relative pt-2 pb-6">
-        <h1 className="text-2xl font-bold text-foreground mb-1">
-          {nickname ? `Welcome back,` : 'User Dashboard'}
-        </h1>
-        {nickname && (
-          <p className="text-lg text-primary font-semibold">{nickname}!</p>
-        )}
-        <Button 
-          variant="outline" 
-          size="icon"
-          onClick={async () => {
-            await handleSignOut();
-            setTimeout(() => {
-              window.location.reload();
-            }, 2000);
-          }} 
-          className="absolute top-2 right-4 z-50 border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200"
-          aria-label="Sign Out"
-        >
-          <LogOut className="h-4 w-4" />
-        </Button>
+    <div className="app-container dynamic-bg">
+      {/* Floating background elements */}
+      <div className="floating-orb" />
+      <div className="floating-orb" />
+      <div className="floating-orb" />
+      
+      {/* Animated particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(15)].map((_, i) => (
+          <div
+            key={i}
+            className="particle"
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 20}s`,
+              animationDuration: `${20 + Math.random() * 10}s`
+            }}
+          />
+        ))}
       </div>
 
-      <div className="w-full">
+      <div className="page-container relative z-10">
+        {/* Enhanced Header */}
+        <div className="page-header">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold text-glow">
+              {nickname ? 'Welcome back,' : 'User Dashboard'}
+            </h1>
+            {nickname && (
+              <p className="text-xl gradient-text font-semibold animate-shimmer">{nickname}!</p>
+            )}
+          </div>
+          <Button 
+            variant="glass" 
+            size="icon"
+            onClick={async () => {
+              await handleSignOut();
+              setTimeout(() => {
+                window.location.reload();
+              }, 2000);
+            }} 
+            className="hover:text-destructive"
+            aria-label="Sign Out"
+          >
+            <LogOut className="h-5 w-5" />
+          </Button>
+        </div>
+
+        {/* Dashboard Grid */}
+        <div className="grid-responsive animate-slideInUp">
           {(() => {
             const items = [
               {
                 id: 'parties',
-                title: 'Events\n& Parties',
-                icon: <Calendar className="h-12 w-12" />,
+                title: 'Events & Parties',
+                description: 'Browse and join events',
+                icon: <Calendar className="h-16 w-16 text-primary" />,
                 onClick: () => setCurrentView('parties' as const),
+                gradient: 'from-purple-500/20 to-pink-500/20'
               },
               {
                 id: 'nickname',
-                title: 'My Info',
-                icon: <UserIcon className="h-12 w-12" />,
+                title: 'My Profile',
+                description: 'Edit your information',
+                icon: <UserIcon className="h-16 w-16 text-accent" />,
                 onClick: () => setCurrentView('nickname' as const),
+                gradient: 'from-blue-500/20 to-cyan-500/20'
               },
               {
                 id: 'social',
                 title: 'Social Networks',
-                icon: <Users className="h-12 w-12" />,
+                description: 'Connect with friends',
+                icon: <Users className="h-16 w-16 text-primary" />,
                 onClick: () => setCurrentView('social' as const),
+                gradient: 'from-green-500/20 to-emerald-500/20'
               },
               {
                 id: 'insurance',
                 title: 'Insurance',
-                icon: <ShieldCheck className="h-12 w-12" />,
+                description: 'Protection & coverage',
+                icon: <ShieldCheck className="h-16 w-16 text-success" />,
                 onClick: () => setCurrentView('insurance' as const),
+                gradient: 'from-emerald-500/20 to-teal-500/20'
               },
               {
                 id: 'vip',
-                title: 'VIP',
-                icon: <Crown className="h-12 w-12" />,
+                title: 'VIP Access',
+                description: 'Premium experiences',
+                icon: <Crown className="h-16 w-16 text-warning" />,
                 onClick: () => setCurrentView('vip' as const),
+                gradient: 'from-yellow-500/20 to-orange-500/20'
               },
               {
                 id: 'personal-code',
                 title: 'Personal Code',
-                icon: <IdCard className="h-12 w-12" />,
+                description: 'Your unique identifier',
+                icon: <IdCard className="h-16 w-16 text-primary" />,
                 onClick: () => setCurrentView('personal-code' as const),
+                gradient: 'from-indigo-500/20 to-purple-500/20'
               },
               {
                 id: 'friends-codes',
-                title: 'Friends Codes',
-                icon: <Heart className="h-12 w-12" />,
+                title: 'Friends Network',
+                description: 'Connect with codes',
+                icon: <Heart className="h-16 w-16 text-destructive" />,
                 onClick: () => setCurrentView('friends-codes' as const),
+                gradient: 'from-rose-500/20 to-pink-500/20'
               },
               {
                 id: 'bar-tab',
                 title: 'Bar Tab',
-                icon: <Wine className="h-12 w-12" />,
+                description: 'Manage your orders',
+                icon: <Wine className="h-16 w-16 text-accent" />,
                 onClick: () => setCurrentView('bar-tab' as const),
+                gradient: 'from-amber-500/20 to-orange-500/20'
               },
-                {
-                  id: 'faq',
-                  title: 'FAQ & Contact',
-                  icon: <Users className="h-12 w-12" />,
-                  onClick: () => setCurrentView('faq' as const),
-                },
-                {
-                  id: 'messages',
-                  title: 'Messages',
-                  icon: (
-                    <div className="relative">
-                      <MessageCircle className="h-12 w-12" />
-                      {unreadMessageCount > 0 && (
-                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                          {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
-                        </div>
-                      )}
-                    </div>
-                  ),
-                  onClick: () => setCurrentView('messages' as const),
-                },
-                {
-                  id: 'direct-messages',
-                  title: 'Direct Messages',
-                  icon: (
-                    <div className="relative">
-                      <Mail className="h-12 w-12" />
-                      {unreadDirectMessageCount > 0 && (
-                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                          {unreadDirectMessageCount > 9 ? '9+' : unreadDirectMessageCount}
-                        </div>
-                      )}
-                    </div>
-                  ),
-                  onClick: () => setCurrentView('direct-messages' as const),
-                },
+              {
+                id: 'faq',
+                title: 'Support',
+                description: 'Help & contact',
+                icon: <Users className="h-16 w-16 text-muted-foreground" />,
+                onClick: () => setCurrentView('faq' as const),
+                gradient: 'from-slate-500/20 to-gray-500/20'
+              },
+              {
+                id: 'messages',
+                title: 'Messages',
+                description: 'Community chat',
+                icon: (
+                  <div className="relative">
+                    <MessageCircle className="h-16 w-16 text-primary" />
+                    {unreadMessageCount > 0 && (
+                      <div className="notification-badge">
+                        {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
+                      </div>
+                    )}
+                  </div>
+                ),
+                onClick: () => setCurrentView('messages' as const),
+                gradient: 'from-blue-500/20 to-indigo-500/20',
+                hasNotification: unreadMessageCount > 0
+              },
+              {
+                id: 'direct-messages',
+                title: 'Direct Messages',
+                description: 'Private conversations',
+                icon: (
+                  <div className="relative">
+                    <Mail className="h-16 w-16 text-accent" />
+                    {unreadDirectMessageCount > 0 && (
+                      <div className="notification-badge">
+                        {unreadDirectMessageCount > 9 ? '9+' : unreadDirectMessageCount}
+                      </div>
+                    )}
+                  </div>
+                ),
+                onClick: () => setCurrentView('direct-messages' as const),
+                gradient: 'from-violet-500/20 to-purple-500/20',
+                hasNotification: unreadDirectMessageCount > 0
+              },
             ];
+
             return (
-              <ReorderableTilesLogic 
-                items={items} 
-                orderKey={`dashboard-order-user-${user.id}`}
-                onLongPress={(id) => {
-                  // Handle long press for reordering
-                  console.log('Long press on:', id);
-                }} 
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {items.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className={`dashboard-tile bg-gradient-to-br ${item.gradient} ${item.hasNotification ? 'animate-glow-pulse' : ''}`}
+                    onClick={item.onClick}
+                    style={{
+                      animationDelay: `${index * 0.1}s`
+                    }}
+                  >
+                    <div className="relative z-10 flex flex-col items-center space-y-4">
+                      <div className="p-4 rounded-full bg-card/50 backdrop-blur-sm border border-border/50">
+                        {item.icon}
+                      </div>
+                      <div className="text-center space-y-2">
+                        <h3 className="text-lg font-bold text-foreground">{item.title}</h3>
+                        <p className="text-sm text-muted-foreground">{item.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             );
           })()}
         </div>
 
-      {/* QR Codes Section */}
-      {userQRCodes.length > 0 && (
-        <div className="mt-6">
-          <h2 className="text-lg font-bold text-foreground mb-4">Your Tickets</h2>
-            <div className="space-y-4">
-              {userQRCodes.map((qrCode) => (
+        {/* Enhanced Tickets Section */}
+        {userQRCodes.length > 0 && (
+          <div className="mt-12 animate-slideInUp" style={{ animationDelay: '0.4s' }}>
+            <h2 className="text-2xl font-bold text-glow mb-6 text-center">Your Active Tickets</h2>
+            <div className="space-y-6">
+              {userQRCodes.map((qrCode, index) => (
                 <div 
                   key={qrCode.id} 
-                  className="cursor-pointer group overflow-hidden border border-border bg-card"
+                  className="glass-card hover-glow cursor-pointer group overflow-hidden modern-radius-lg animate-fadeInScale"
+                  style={{ animationDelay: `${0.5 + index * 0.1}s` }}
                   onClick={() => {
                     const party = { 
                       id: qrCode.party_id, 
@@ -430,44 +494,46 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                     setCurrentView('parties');
                   }}
                 >
-                  <div className="p-0">
-                    <div className="relative">
-                      {/* Event Image */}
-                       {qrCode.parties?.photo_url && (
-                         <div className="h-64 w-full overflow-hidden">
-                           <img 
-                             src={qrCode.parties.photo_url} 
-                             alt={qrCode.parties.name}
-                             className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                           />
-                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                         </div>
-                       )}
-                      
-                      {/* Status Badge */}
-                      <div className="absolute top-4 right-4">
-                        {qrCode.is_scanned ? (
-                          <div className="bg-green-500 text-white px-3 py-1 text-xs font-semibold">
-                            ✓ Used
-                          </div>
-                        ) : qrCode.is_approved ? (
-                          <div className="bg-primary text-primary-foreground px-3 py-1 text-xs font-semibold">
-                            ✓ Ready
-                          </div>
-                        ) : (
-                          <div className="bg-orange-500 text-white px-3 py-1 text-xs font-semibold">
-                            Pending
-                          </div>
-                        )}
+                  <div className="relative">
+                    {/* Enhanced Event Image */}
+                    {qrCode.parties?.photo_url && (
+                      <div className="h-48 w-full overflow-hidden relative">
+                        <img 
+                          src={qrCode.parties.photo_url} 
+                          alt={qrCode.parties.name}
+                          className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                        
+                        {/* Animated overlay effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                       </div>
-                    </div>
+                    )}
                     
-                    {/* Event Info */}
-                    <div className="p-4 space-y-3">
-                      <div>
-                        <h3 className="font-bold text-lg text-foreground group-hover:text-primary transition-colors">
-                          {qrCode.parties?.name}
-                        </h3>
+                    {/* Enhanced Status Badge */}
+                    <div className="absolute top-4 right-4 z-10">
+                      {qrCode.is_scanned ? (
+                        <div className="status-badge status-success">
+                          ✓ Used
+                        </div>
+                      ) : qrCode.is_approved ? (
+                        <div className="status-badge bg-primary text-primary-foreground animate-glow-pulse">
+                          ✓ Ready
+                        </div>
+                      ) : (
+                        <div className="status-badge status-warning">
+                          ⏳ Pending
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Enhanced Event Info */}
+                  <div className="p-6 space-y-4 relative">
+                    <div>
+                      <h3 className="font-bold text-xl text-foreground group-hover:gradient-text transition-all duration-300">
+                        {qrCode.parties?.name}
+                      </h3>
                         <p className="text-sm text-muted-foreground">
                           {new Date(qrCode.parties?.date).toLocaleDateString('en-GB', { 
                             day: 'numeric', 
@@ -491,7 +557,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                         >
                           Show QR Code
                         </Button>
-                      )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -499,6 +565,36 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
             </div>
           </div>
         )}
+
+        {/* Enhanced Games Shortcut */}
+        {userQRCodes.length === 0 && (
+          <div className="mt-16 text-center animate-slideInUp">
+            <div className="glass-card p-8 max-w-md mx-auto">
+              <div className="space-y-6">
+                <div className="w-20 h-20 mx-auto bg-gradient-primary rounded-full flex items-center justify-center animate-float">
+                  <Gamepad2 className="h-10 w-10 text-primary-foreground" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold text-foreground">No Tickets Yet</h3>
+                  <p className="text-muted-foreground">
+                    Join an event to get your first ticket, or explore our games while you wait!
+                  </p>
+                </div>
+                <Button 
+                  onClick={() => setCurrentView('games')} 
+                  variant="premium"
+                  size="lg"
+                  className="w-full"
+                >
+                  <Gamepad2 className="h-5 w-5 mr-2" />
+                  Explore Games
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
         
         {/* QR Code Dialog */}
         <Dialog open={showQRDialog} onOpenChange={setShowQRDialog}>
