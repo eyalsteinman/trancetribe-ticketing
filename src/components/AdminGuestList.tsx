@@ -402,11 +402,12 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
   };
 
   return (
-    <div 
-      className="min-h-screen p-4"
-      style={{ backgroundColor }}
-    >
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-mesh relative overflow-hidden">
+      {/* Background elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 animate-pulse-slow"></div>
+      
+      <div className="relative z-10 min-h-screen p-4">
+        <div className="container mx-auto max-w-4xl">
         <PageHeader
           title="Guest Management"
           onBack={onBack}
@@ -486,18 +487,18 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                         </Select>
                       </div>
                       
-                      {/* Responsive table wrapper */}
-                      <div className="overflow-x-auto">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead className="w-16">
-                                <input
-                                  type="checkbox"
-                                  checked={selectedGuests.size === arrivingGuests.length && arrivingGuests.length > 0}
-                                  onChange={selectAllGuests}
-                                  className="mr-2"
-                                />
+                       {/* Responsive table wrapper */}
+                       <div className="overflow-x-auto">
+                         <Table className="text-sm">
+                           <TableHeader>
+                             <TableRow>
+                               <TableHead className="w-12 px-2">
+                                 <input
+                                   type="checkbox"
+                                   checked={selectedGuests.size === arrivingGuests.length && arrivingGuests.length > 0}
+                                   onChange={selectAllGuests}
+                                   className="scale-90"
+                                 />
                                 #
                               </TableHead>
                               <TableHead className="min-w-[100px]">First Name</TableHead>
@@ -748,8 +749,9 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
           socials={socialDialog.socials}
         />
         
-        {/* Footer */}
-        <Footer />
+          {/* Footer */}
+          <Footer />
+        </div>
       </div>
     </div>
   );

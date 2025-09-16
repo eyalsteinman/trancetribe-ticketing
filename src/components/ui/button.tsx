@@ -19,11 +19,11 @@ const buttonVariants = cva(
         neon: "bg-transparent border-2 border-accent text-accent hover:bg-accent hover:text-background rounded-2xl shadow-glow hover:shadow-intense hover:scale-105 font-black uppercase tracking-wider",
       },
       size: {
-        default: "h-14 px-8 py-4 text-base",
-        sm: "h-11 px-6 py-3",
-        lg: "h-16 px-10 py-5 text-lg",
-        icon: "h-14 w-14",
-        xs: "h-9 px-4 py-2 text-sm",
+        default: "h-10 px-4 py-2 text-sm",
+        sm: "h-8 px-3 py-1.5 text-xs",
+        lg: "h-12 px-6 py-3 text-base",
+        icon: "h-10 w-10",
+        xs: "h-7 px-2 py-1 text-xs",
       },
     },
     defaultVariants: {

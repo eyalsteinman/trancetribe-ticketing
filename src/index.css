@@ -257,31 +257,37 @@ All colors MUST be HSL.
     max-width: 100vw;
   }
 
-  .container,
-  .container-section,
-  .max-w-md,
-  .max-w-lg,
-  .max-w-xl,
-  .max-w-2xl,
-  .max-w-3xl,
-  .max-w-4xl,
-  .max-w-5xl,
-  .max-w-6xl,
-  .max-w-7xl {
-    max-width: 100vw !important;
-    width: 100% !important;
+  /* Responsive container system */
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
-  .container-section {
-    @apply w-full px-4 py-6;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
+  @media (min-width: 640px) {
+    .container {
+      max-width: 640px;
+    }
   }
 
-  .min-h-screen {
-    width: 100vw !important;
-    max-width: 100vw !important;
+  @media (min-width: 768px) {
+    .container {
+      max-width: 768px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      max-width: 1024px;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .container {
+      max-width: 1280px;
+    }
   }
 
   /* Modern rounded corners for depth and visual hierarchy */
