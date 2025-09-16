@@ -5,11 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { User } from '@supabase/supabase-js';
 import { Badge } from '@/components/ui/badge';
 import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ScanBarcode, Wine, Cog, ArrowLeft, LogOut, MessageCircle } from 'lucide-react';
 import Footer from '@/components/ui/footer';
 import PageHeader from '@/components/ui/page-header';
+import LanguageSelector from './LanguageSelector';
 import CreateParty from './CreateParty';
 import EditParties from './EditParties';
 import QRScanner from './QRScanner';
@@ -65,6 +67,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
   const { currentTheme, cycleTheme, getThemeDisplayName } = useTheme();
+  const { t } = useLanguage();
 
   useEffect(() => {
     loadParties();

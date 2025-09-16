@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { User } from '@supabase/supabase-js';
 import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut, Users, IdCard, Heart, Wine, Moon, Sun, MessageCircle, ArrowLeft, Mail } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -30,6 +31,7 @@ import UserMessages from './UserMessages';
 import UserMessaging from './UserMessaging';
 import { useTheme } from '@/hooks/useDarkMode';
 import PageHeader from './ui/page-header';
+import LanguageSelector from './LanguageSelector';
 
 interface UserDashboardProps {
   user: User;
@@ -47,6 +49,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
   const { currentTheme, cycleTheme, getThemeDisplayName } = useTheme();
+  const { t } = useLanguage();
 
   useEffect(() => {
     loadUserQRCodes();
@@ -160,21 +163,21 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
       if (error && !error.message.includes('Session not found')) {
         console.error('Sign out error:', error);
         toast({
-          title: "Warning",
-          description: "Logged out locally, but server logout failed.",
+          title: t('warning'),
+          description: t('logged_out_locally_server_failed'),
           variant: "destructive"
         });
       } else {
         toast({
-          title: "Success",
-          description: "Signed out successfully!",
+          title: t('success'),
+          description: t('signed_out_successfully'),
         });
       }
     } catch (error) {
       console.error('Sign out catch error:', error);
       toast({
-        title: "Info", 
-        description: "Logged out locally.",
+        title: t('info'), 
+        description: t('logged_out_locally'),
       });
     }
   };
@@ -285,10 +288,15 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
   return (
     <div className="min-h-screen w-full transition-colors duration-500 p-4">
+      {/* Language Selector */}
+      <div className="fixed top-4 left-4 z-50">
+        <LanguageSelector />
+      </div>
+      
       {/* Header */}
       <div className="relative pt-2 pb-6">
         <h1 className="text-2xl font-bold text-foreground mb-1">
-          {nickname ? `Welcome back,` : 'User Dashboard'}
+          {nickname ? t('welcome_back') : t('user_dashboard')}
         </h1>
         {nickname && (
           <p className="text-lg text-primary font-semibold">{nickname}!</p>
@@ -314,61 +322,61 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
             const items = [
               {
                 id: 'parties',
-                title: 'Events\n& Parties',
+                title: t('events_and_parties'),
                 icon: <Calendar className="h-12 w-12" />,
                 onClick: () => setCurrentView('parties' as const),
               },
               {
                 id: 'nickname',
-                title: 'My Info',
+                title: t('my_info'),
                 icon: <UserIcon className="h-12 w-12" />,
                 onClick: () => setCurrentView('nickname' as const),
               },
               {
                 id: 'social',
-                title: 'Social Networks',
+                title: t('social_networks'),
                 icon: <Users className="h-12 w-12" />,
                 onClick: () => setCurrentView('social' as const),
               },
               {
                 id: 'insurance',
-                title: 'Insurance',
+                title: t('insurance'),
                 icon: <ShieldCheck className="h-12 w-12" />,
                 onClick: () => setCurrentView('insurance' as const),
               },
               {
                 id: 'vip',
-                title: 'VIP',
+                title: t('vip'),
                 icon: <Crown className="h-12 w-12" />,
                 onClick: () => setCurrentView('vip' as const),
               },
               {
                 id: 'personal-code',
-                title: 'Personal Code',
+                title: t('personal_code'),
                 icon: <IdCard className="h-12 w-12" />,
                 onClick: () => setCurrentView('personal-code' as const),
               },
               {
                 id: 'friends-codes',
-                title: 'Friends Codes',
+                title: t('friends_codes'),
                 icon: <Heart className="h-12 w-12" />,
                 onClick: () => setCurrentView('friends-codes' as const),
               },
               {
                 id: 'bar-tab',
-                title: 'Bar Tab',
+                title: t('bar_tab'),
                 icon: <Wine className="h-12 w-12" />,
                 onClick: () => setCurrentView('bar-tab' as const),
               },
                 {
                   id: 'faq',
-                  title: 'FAQ & Contact',
+                  title: t('faq_contact'),
                   icon: <Users className="h-12 w-12" />,
                   onClick: () => setCurrentView('faq' as const),
                 },
                 {
                   id: 'messages',
-                  title: 'Messages',
+                  title: t('messages'),
                   icon: (
                     <div className="relative">
                       <MessageCircle className="h-12 w-12" />
@@ -383,7 +391,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 },
                 {
                   id: 'direct-messages',
-                  title: 'Direct Messages',
+                  title: t('direct_messages'),
                   icon: (
                     <div className="relative">
                       <Mail className="h-12 w-12" />
@@ -413,7 +421,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
       {/* QR Codes Section */}
       {userQRCodes.length > 0 && (
         <div className="mt-6">
-          <h2 className="text-lg font-bold text-foreground mb-4">Your Tickets</h2>
+          <h2 className="text-lg font-bold text-foreground mb-4">{t('your_tickets')}</h2>
             <div className="space-y-4">
               {userQRCodes.map((qrCode) => (
                 <div 

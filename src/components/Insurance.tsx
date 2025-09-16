@@ -3,6 +3,7 @@ import { ShieldCheck } from 'lucide-react';
 import PageHeader from '@/components/ui/page-header';
 import Footer from '@/components/ui/footer';
 import { useBackground } from '@/contexts/BackgroundContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 interface InsuranceProps {
@@ -11,6 +12,7 @@ interface InsuranceProps {
 
 const Insurance = ({ onBack }: InsuranceProps) => {
   const { backgroundColor, isBackgroundDark } = useBackground();
+  const { t } = useLanguage();
   
   useBackNavigation({
     onBackNavigation: onBack,
@@ -25,7 +27,7 @@ const Insurance = ({ onBack }: InsuranceProps) => {
       }}
     >
       <PageHeader
-        title="Insurance"
+        title={t('insurance')}
         onBack={onBack}
       />
       
@@ -33,16 +35,16 @@ const Insurance = ({ onBack }: InsuranceProps) => {
 
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Buy insurance for parties. 19 ILS a month. Get covered for any party and any unused tickets for up to 400 ILS per year.
+            {t('insurance_description')}
           </p>
 
-          <Button size="lg" className="mt-2">Buy Now!</Button>
+          <Button size="lg" className="mt-2">{t('buy_now')}</Button>
 
           <div className="text-xs text-muted-foreground">
-            For terms
+            {t('for_terms')}
             {' '}
             <a className="underline underline-offset-4" href="/insurance-terms.pdf" download>
-              press here
+              {t('press_here')}
             </a>
             .
           </div>

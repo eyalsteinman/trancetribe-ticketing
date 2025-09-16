@@ -1,5 +1,6 @@
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface BrowseMenuProps {
   value: string;
@@ -7,15 +8,17 @@ interface BrowseMenuProps {
 }
 
 const BrowseMenu = ({ value, onValueChange }: BrowseMenuProps) => {
+  const { t } = useLanguage();
+  
   return (
     <Select value={value} onValueChange={onValueChange}>
       <SelectTrigger className="w-full mb-4">
-        <SelectValue placeholder="Browse by production" />
+        <SelectValue placeholder={t('browse_by_production')} />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="production">Browse by production</SelectItem>
-        <SelectItem value="party">Browse by party</SelectItem>
-        <SelectItem value="date">Browse by date</SelectItem>
+        <SelectItem value="production">{t('browse_by_production')}</SelectItem>
+        <SelectItem value="party">{t('browse_by_party')}</SelectItem>
+        <SelectItem value="date">{t('browse_by_date')}</SelectItem>
       </SelectContent>
     </Select>
   );

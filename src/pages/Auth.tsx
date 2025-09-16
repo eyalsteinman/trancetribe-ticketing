@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AuthForm } from '@/components/auth/AuthForm';
 import Footer from '@/components/ui/footer';
 import { useBackground } from '@/contexts/BackgroundContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import ProductionBrowser from '@/components/ProductionBrowser';
 import LanguageSelector from '@/components/LanguageSelector';
 import AdminPasswordForm from '@/components/AdminPasswordForm';
@@ -12,6 +13,7 @@ const AuthPage = () => {
   const [isUserLogin, setIsUserLogin] = useState(false);
   const [pendingAdminSignup, setPendingAdminSignup] = useState<{email: string, password: string} | null>(null);
   const { backgroundColor, isBackgroundDark } = useBackground();
+  const { t } = useLanguage();
 
   const handleAdminPasswordSuccess = async () => {
     setShowAdminPassword(false);
@@ -140,8 +142,8 @@ const AuthPage = () => {
         <div className="w-full">
           <div className="text-center">
             <LanguageSelector />
-            <h1 className="text-3xl font-bold">TRANCE TRIBES</h1>
-            <p className="opacity-75 mt-2">Choose your access type</p>
+            <h1 className="text-3xl font-bold">{t('trance_tribes')}</h1>
+            <p className="opacity-75 mt-2">{t('choose_access_type')}</p>
           </div>
 
           <AuthForm 

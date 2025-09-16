@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface BackButtonProps {
   onBack: () => void;
@@ -9,6 +10,8 @@ interface BackButtonProps {
 }
 
 const BackButton = ({ onBack, className }: BackButtonProps) => {
+  const { t } = useLanguage();
+  
   return (
     <Button
       variant="outline"
@@ -22,7 +25,7 @@ const BackButton = ({ onBack, className }: BackButtonProps) => {
       )}
     >
       <ArrowLeft className="h-4 w-4" />
-      Back
+      {t('back')}
     </Button>
   );
 };
