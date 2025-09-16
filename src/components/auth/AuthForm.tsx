@@ -19,63 +19,94 @@ export const AuthForm = ({
   onToggleUserLogin 
 }: AuthFormProps) => {
   return (
-    <Tabs defaultValue="user" className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="user">User</TabsTrigger>
-        <TabsTrigger value="admin">Admin</TabsTrigger>
-      </TabsList>
-      
-      <TabsContent value="user">
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between mb-2">
-              <CardTitle>User Login/Registration</CardTitle>
-            {/* Toggle Button - Right side without overlap */}
-            <button
-              onClick={onToggleUserLogin}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-xs font-medium leading-tight ml-auto"
-            >
-              {isUserLogin ? (
-                <>
-                  <div>Don't have account?</div>
-                  <div>Sign Up</div>
-                </>
-              ) : (
-                <>
-                  <div>Have account?</div>
-                  <div>Sign In</div>
-                </>
-              )}
-            </button>
+    <div className="w-full">
+      <Tabs defaultValue="user" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 mb-6 bg-white/5 backdrop-blur-sm border border-white/10">
+          <TabsTrigger 
+            value="user" 
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-accent data-[state=active]:text-white font-semibold"
+          >
+            🎵 User Access
+          </TabsTrigger>
+          <TabsTrigger 
+            value="admin"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-accent data-[state=active]:to-secondary data-[state=active]:text-white font-semibold"
+          >
+            👑 Admin Access
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="user" className="space-y-0">
+          <div className="space-y-6">
+            <div className="text-center space-y-2">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-neon">
+                  <span className="text-2xl">🎵</span>
+                </div>
+                <div>
+                  <h2 className="text-2xl font-black text-glow">
+                    {isUserLogin ? "Welcome Back!" : "Join the Tribe"}
+                  </h2>
+                  <p className="text-muted-foreground font-medium">
+                    {isUserLogin ? "Sign in to your account" : "Create your account and get instant access"}
+                  </p>
+                </div>
+              </div>
+              
+              {/* Toggle Button */}
+              <button
+                onClick={onToggleUserLogin}
+                className="bg-gradient-to-r from-primary to-accent hover:from-primary-dark hover:to-accent-dark text-white px-6 py-3 rounded-2xl font-semibold shadow-neon hover-lift transition-all duration-300"
+              >
+                {isUserLogin ? (
+                  <div className="flex items-center gap-2">
+                    <span>✨</span>
+                    <span>New here? Sign Up</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <span>🔑</span>
+                    <span>Already a member? Sign In</span>
+                  </div>
+                )}
+              </button>
             </div>
-            <CardDescription>
-              {isUserLogin ? "Sign in to your account" : "Create your account with your full name and get instant access"}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isUserLogin ? (
-              <SignInForm />
-            ) : (
-              <SignUpForm />
-            )}
-          </CardContent>
-        </Card>
-      </TabsContent>
-      
-      <TabsContent value="admin">
-        <Card>
-          <CardHeader>
-            <CardTitle>Admin Access</CardTitle>
-            <CardDescription>Sign in with your admin credentials</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <AdminForm 
-              onShowAdminPassword={onShowAdminPassword}
-              pendingAdminSignup={pendingAdminSignup}
-            />
-          </CardContent>
-        </Card>
-      </TabsContent>
-    </Tabs>
+            
+            <div className="bg-glass backdrop-blur-xl rounded-2xl border border-white/10 p-6 shadow-modern">
+              {isUserLogin ? (
+                <SignInForm />
+              ) : (
+                <SignUpForm />
+              )}
+            </div>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="admin" className="space-y-0">
+          <div className="space-y-6">
+            <div className="text-center space-y-2">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent to-secondary flex items-center justify-center shadow-neon">
+                  <span className="text-2xl">👑</span>
+                </div>
+                <div>
+                  <h2 className="text-2xl font-black text-glow">Admin Portal</h2>
+                  <p className="text-muted-foreground font-medium">
+                    Sign in with your admin credentials
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-glass backdrop-blur-xl rounded-2xl border border-white/10 p-6 shadow-modern">
+              <AdminForm 
+                onShowAdminPassword={onShowAdminPassword}
+                pendingAdminSignup={pendingAdminSignup}
+              />
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 };

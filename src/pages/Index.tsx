@@ -7,6 +7,8 @@ import AuthPage from './Auth';
 import UserDashboard from '@/components/UserDashboard';
 import AdminDashboard from '@/components/AdminDashboard';
 import ProfileCompletion from '@/components/ProfileCompletion';
+import OnboardingFlow from '@/components/OnboardingFlow';
+import WelcomeToast from '@/components/WelcomeToast';
 import { useProfileCompletion } from '@/hooks/useProfileCompletion';
 
 const Index = () => {
@@ -15,6 +17,8 @@ const Index = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [isFirstLogin, setIsFirstLogin] = useState(false);
   const { backgroundColor, isBackgroundDark } = useBackground();
   const { isProfileComplete, loading: profileLoading, refetchProfile } = useProfileCompletion();
 
@@ -31,9 +35,11 @@ const Index = () => {
       const isAdminUser = data && data.length > 0;
       console.log('🎯 Final admin status:', isAdminUser);
       setIsAdmin(isAdminUser);
+      return isAdminUser;
     } catch (error) {
       console.error('💥 Error checking admin role:', error);
       setIsAdmin(false);
+      return false;
     } finally {
       console.log('🏁 Admin check finished, setting loading to false');
       setLoading(false);
@@ -43,17 +49,28 @@ const Index = () => {
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         console.log('Auth state change:', event, session);
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
           // Check if user is admin
-          checkAdminRole(session.user.id);
+          const adminRole = await checkAdminRole(session.user.id);
+          
+          // Check if this is a first login by looking at user metadata
+          const isNew = event === 'SIGNED_IN' && session.user.created_at && 
+                       new Date(session.user.created_at) > new Date(Date.now() - 5 * 60 * 1000); // Last 5 minutes
+          
+          if (isNew) {
+            setIsFirstLogin(true);
+            setShowOnboarding(true);
+          }
         } else {
           // User logged out - reset all states
           setIsAdmin(false);
+          setIsFirstLogin(false);
+          setShowOnboarding(false);
           setLoading(false);
         }
       }
@@ -115,6 +132,25 @@ const Index = () => {
   if (!isAdmin && !isProfileComplete) {
     console.log('User profile incomplete, showing profile completion');
     return <ProfileCompletion onProfileComplete={refetchProfile} />;
+  }
+
+  // Show onboarding for first-time users
+  if (showOnboarding) {
+    return (
+      <>
+        {isAdmin ? <AdminDashboard user={user} /> : <UserDashboard user={user} />}
+        <OnboardingFlow 
+          userType={isAdmin ? 'admin' : 'user'} 
+          onComplete={() => setShowOnboarding(false)} 
+        />
+        {isFirstLogin && (
+          <WelcomeToast 
+            userType={isAdmin ? 'admin' : 'user'}
+            userName={user.user_metadata?.display_name || user.email}
+          />
+        )}
+      </>
+    );
   }
 
   if (isAdmin) {

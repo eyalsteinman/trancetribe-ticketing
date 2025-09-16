@@ -112,6 +112,10 @@ export default {
 					'0%': { opacity: '0', transform: 'scale(0.9)' },
 					'100%': { opacity: '1', transform: 'scale(1)' }
 				},
+				'scale-in': {
+					'0%': { transform: 'scale(0.9)', opacity: '0' },
+					'100%': { transform: 'scale(1)', opacity: '1' }
+				},
 				'pulse-glow': {
 					'0%, 100%': { boxShadow: '0 0 20px hsla(var(--primary) / 0.5)' },
 					'50%': { boxShadow: '0 0 40px hsla(var(--primary) / 0.8), 0 0 60px hsla(var(--primary) / 0.4)' }
@@ -121,10 +125,13 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'float': 'float 3s ease-in-out infinite',
+				'float-delayed': 'float 4s ease-in-out infinite 1s',
 				'glow': 'glow 2s ease-in-out infinite alternate',
 				'slide-up': 'slide-up 0.5s ease-out',
 				'fade-in': 'fade-in 0.3s ease-out',
-				'pulse-glow': 'pulse-glow 2s ease-in-out infinite alternate'
+				'scale-in': 'scale-in 0.2s ease-out',
+				'pulse-glow': 'pulse-glow 2s ease-in-out infinite alternate',
+				'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite'
 			},
 			backdropBlur: {
 				xs: '2px',

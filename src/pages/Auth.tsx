@@ -5,6 +5,7 @@ import { useBackground } from '@/contexts/BackgroundContext';
 import ProductionBrowser from '@/components/ProductionBrowser';
 import LanguageSelector from '@/components/LanguageSelector';
 import AdminPasswordForm from '@/components/AdminPasswordForm';
+import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 
 const AuthPage = () => {
@@ -127,29 +128,67 @@ const AuthPage = () => {
   }
 
   return (
-    <div 
-      className="min-h-screen w-full flex items-center justify-center p-4 transition-colors duration-500"
-      style={{ 
-        backgroundColor,
-        color: isBackgroundDark ? '#ffffff' : '#000000'
-      }}
-    >
-      <div className="w-full space-y-6">
-        <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} carouselOnly />
+    <div className="min-h-screen w-full bg-gradient-mesh overflow-hidden relative">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 animate-pulse-slow"></div>
+      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-radial from-primary/30 to-transparent rounded-full blur-3xl animate-float"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-radial from-accent/30 to-transparent rounded-full blur-3xl animate-float-delayed"></div>
+      
+      {/* Floating particles */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary rounded-full animate-ping opacity-40"></div>
+        <div className="absolute top-3/4 left-3/4 w-1 h-1 bg-accent rounded-full animate-ping opacity-60 delay-1000"></div>
+        <div className="absolute top-1/2 right-1/4 w-1.5 h-1.5 bg-secondary rounded-full animate-ping opacity-50 delay-500"></div>
+      </div>
 
-        <div className="w-full">
-          <div className="text-center">
-            <LanguageSelector />
-            <h1 className="text-3xl font-bold">TRANCE TRIBES</h1>
-            <p className="opacity-75 mt-2">Choose your access type</p>
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+        <div className="w-full max-w-6xl mx-auto grid lg:grid-cols-2 gap-8 items-center">
+          
+          {/* Left side - Hero Section */}
+          <div className="text-center lg:text-left space-y-6 order-2 lg:order-1">
+            <div className="relative">
+              <LanguageSelector />
+              <div className="mt-6">
+                <h1 className="text-6xl lg:text-7xl font-black bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent animate-fade-in leading-tight">
+                  TRANCE
+                  <br />
+                  <span className="text-glow">TRIBES</span>
+                </h1>
+                <p className="text-xl text-muted-foreground font-medium mt-4 animate-fade-in delay-200">
+                  Join the ultimate electronic music community
+                </p>
+                <div className="flex flex-wrap gap-3 justify-center lg:justify-start mt-6 animate-fade-in delay-300">
+                  <Badge variant="outline" className="bg-primary/10 border-primary/30 text-primary">
+                    🎵 Events
+                  </Badge>
+                  <Badge variant="outline" className="bg-accent/10 border-accent/30 text-accent">
+                    🎮 Games
+                  </Badge>
+                  <Badge variant="outline" className="bg-secondary/10 border-secondary/30 text-secondary">
+                    👥 Community
+                  </Badge>
+                </div>
+              </div>
+            </div>
+            
+            {/* Production Browser */}
+            <div className="animate-fade-in delay-500">
+              <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} carouselOnly />
+            </div>
           </div>
 
-          <AuthForm 
-            onShowAdminPassword={showAdminPasswordForm}
-            pendingAdminSignup={pendingAdminSignup}
-            isUserLogin={isUserLogin}
-            onToggleUserLogin={() => setIsUserLogin(!isUserLogin)}
-          />
+          {/* Right side - Auth Form */}
+          <div className="order-1 lg:order-2 animate-fade-in delay-400">
+            <div className="bg-glass backdrop-blur-xl rounded-3xl border border-white/20 p-8 shadow-neon">
+              <AuthForm 
+                onShowAdminPassword={showAdminPasswordForm}
+                pendingAdminSignup={pendingAdminSignup}
+                isUserLogin={isUserLogin}
+                onToggleUserLogin={() => setIsUserLogin(!isUserLogin)}
+              />
+            </div>
+          </div>
+          
         </div>
       </div>
     </div>
