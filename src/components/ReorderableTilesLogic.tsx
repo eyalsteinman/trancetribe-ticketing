@@ -124,6 +124,7 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
       setIsReordering(true);
       setTiltedTileId(id);
       onLongPress?.(id);
+      // Disable page scroll during reordering
       document.body.classList.add('no-refresh', 'hide-scrollbar');
       document.body.style.overflow = 'hidden';
     }, 3000); // 3 second long press
@@ -140,6 +141,7 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
   const exitReorderMode = () => {
     setIsReordering(false);
     setTiltedTileId(null);
+    // Re-enable page refresh and scrolling
     document.body.classList.remove('no-refresh', 'hide-scrollbar');
     document.body.style.overflow = 'auto';
   };
@@ -198,6 +200,8 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
                 onTouchEnd={(e) => {
                   handleEnd();
                   if (isReordering) {
+                    // Let onDragEnd handle exit when a drop occurs
+                    // If user taps without dragging, exit immediately
                     exitReorderMode();
                   }
                 }}
