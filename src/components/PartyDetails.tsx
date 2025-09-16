@@ -9,6 +9,7 @@ import BuyTicketsForFriends from './BuyTicketsForFriends';
 import SocialNetworksDialog from './SocialNetworksDialog';
 import SocialNetworks from './SocialNetworks';
 import RtlText from './RtlText';
+import Footer from '@/components/ui/footer';
 
 interface Party {
   id: string;
@@ -442,16 +443,16 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
 
   return (
     <div className="min-h-screen p-4">
-      <div className="w-full max-w-none mx-auto space-y-6 px-4">
+      <div className="w-full max-w-md mx-auto space-y-4">
         {/* Header with Back Button */}
-        <div className="flex items-center justify-between">
-          <Button variant="outline" size="icon" onClick={onBack}>
+        <div className="flex items-center justify-between mb-4">
+          <Button variant="outline" size="sm" onClick={onBack}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-xl font-bold">
+          <h1 className="text-lg font-bold text-center flex-1 px-2">
             <RtlText text={party.name} />
           </h1>
-          <div></div>
+          <div className="w-8"></div>
         </div>
 
         {/* D. Production Photo Container */}
@@ -477,8 +478,8 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
         )}
 
         {/* F. Party Details Container */}
-        <div className="w-full p-4 space-y-3 bg-card">
-          <h2 className="text-lg font-bold">Party Details</h2>
+        <div className="w-full p-3 space-y-2 bg-card rounded-lg">
+          <h2 className="text-base font-bold">Party Details</h2>
             <div className="text-sm">
               <strong>Date:</strong> {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
             </div>
@@ -704,6 +705,8 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
           missingSocials={missingSocials}
           onFillNow={handleSocialDialogFillNow}
         />
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );

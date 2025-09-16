@@ -4,6 +4,7 @@ import BackButton from '@/components/ui/back-button';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
+import Footer from '@/components/ui/footer';
 
 interface HayaNinjaProps {
   onBack: () => void;
@@ -258,6 +259,11 @@ const handleBack = () => {
 
       {/* Game name footer */}
       <div className="absolute bottom-8 left-0 right-0 text-center text-white/80 text-lg font-semibold z-[9000]">Haya Ninja</div>
+      
+      {/* Footer */}
+      <div className="absolute bottom-0 left-0 right-0 z-10">
+        <Footer />
+      </div>
     </div>
   );
 };

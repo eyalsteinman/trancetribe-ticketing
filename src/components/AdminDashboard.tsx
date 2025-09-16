@@ -658,11 +658,11 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         <div className="w-full">
           <div className="container-section flex items-center justify-between mb-4 lg:mb-6">
             <div className="space-y-1 sm:space-y-2">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent text-glow">
+              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
                 {adminNickname ? `Welcome back,` : 'Admin Dashboard'}
               </h1>
               {adminNickname && (
-                <p className="text-lg sm:text-xl lg:text-2xl text-primary font-bold">{adminNickname}!</p>
+                <p className="text-sm sm:text-base text-primary font-medium">{adminNickname}!</p>
               )}
           </div>
           <Button 

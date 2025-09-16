@@ -488,7 +488,7 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
         backgroundColor
       }}
     >
-        <div className="max-w-4xl mx-auto space-y-6 text-left">
+        <div className="max-w-6xl mx-auto space-y-4 text-left">
         <PageHeader
           title="Registered Users"
           onBack={onBack}
