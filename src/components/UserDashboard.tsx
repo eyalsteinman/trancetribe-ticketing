@@ -534,31 +534,35 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                       <h3 className="font-bold text-xl text-foreground group-hover:gradient-text transition-all duration-300">
                         {qrCode.parties?.name}
                       </h3>
+                      {qrCode.parties?.date && (
                         <p className="text-sm text-muted-foreground">
-                          {new Date(qrCode.parties?.date).toLocaleDateString('en-GB', { 
+                          {new Date(qrCode.parties.date).toLocaleDateString('en-GB', { 
                             day: 'numeric', 
                             month: 'long', 
                             year: 'numeric',
                             weekday: 'short'
                           })}
                         </p>
-                      </div>
-                      
-                      {/* QR Code Ready Action */}
-                        {qrCode.is_approved && !qrCode.is_scanned && (
-                        <Button 
-                          size="sm"
-                          className="w-full bg-primary text-white hover:bg-primary/90"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedQRCode(qrCode);
-                            setShowQRDialog(true);
-                          }}
-                        >
-                          Show QR Code
-                        </Button>
-                      </div>
+                      )}
                     </div>
+                    
+                    {/* QR Code Ready Action */}
+                    {qrCode.is_approved && !qrCode.is_scanned && (
+                      <Button 
+                        size="sm"
+                        className="w-full bg-primary text-white hover:bg-primary/90"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedQRCode(qrCode);
+                          setShowQRDialog(true);
+                        }}
+                      >
+                        Show QR Code
+                      </Button>
+                    )}
+                    
+                    {/* Action Gradient Bar */}
+                    <div className="h-1 w-full bg-gradient-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </div>
                 </div>
               ))}
@@ -593,9 +597,35 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
             </div>
           </div>
         )}
-      </div>
-    </div>
         
+        {/* Enhanced Games Shortcut */}
+        {userQRCodes.length === 0 && (
+          <div className="mt-16 text-center animate-slideInUp">
+            <div className="glass-card p-8 max-w-md mx-auto">
+              <div className="space-y-6">
+                <div className="w-20 h-20 mx-auto bg-gradient-primary rounded-full flex items-center justify-center animate-float">
+                  <Gamepad2 className="h-10 w-10 text-primary-foreground" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold text-foreground">No Tickets Yet</h3>
+                  <p className="text-muted-foreground">
+                    Join an event to get your first ticket, or explore our games while you wait!
+                  </p>
+                </div>
+                <Button 
+                  onClick={() => setCurrentView('games')} 
+                  variant="premium"
+                  size="lg"
+                  className="w-full"
+                >
+                  <Gamepad2 className="h-5 w-5 mr-2" />
+                  Explore Games
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* QR Code Dialog */}
         <Dialog open={showQRDialog} onOpenChange={setShowQRDialog}>
           <DialogContent className="max-w-sm z-[9999] bg-black/95 backdrop-blur-sm">
@@ -621,8 +651,9 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           </DialogContent>
         </Dialog>
         
-      {/* Footer */}
-      <Footer />
+        {/* Footer */}
+        <Footer />
+      </div>
     </div>
   );
 };

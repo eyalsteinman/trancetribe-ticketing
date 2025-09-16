@@ -641,18 +641,42 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   }
 
   return (
-    <div className={`min-h-screen transition-colors duration-500`}>
-      <div className="w-full">
-        <div className="container-section flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
+    <div className="app-container dynamic-bg">
+      {/* Floating background elements */}
+      <div className="floating-orb" />
+      <div className="floating-orb" />
+      <div className="floating-orb" />
+      
+      {/* Animated particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(12)].map((_, i) => (
+          <div
+            key={i}
+            className="particle"
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 20}s`,
+              animationDuration: `${20 + Math.random() * 10}s`
+            }}
+          />
+        ))}
+      </div>
+
+      <div className="page-container relative z-10">
+        {/* Enhanced Header */}
+        <div className="page-header">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold text-glow">Admin Control Center</h1>
+            <p className="text-lg text-primary font-semibold animate-shimmer">Manage Everything</p>
+          </div>
           <Button 
-            variant="outline" 
+            variant="glass" 
             size="icon"
             onClick={handleSignOut} 
-            className="border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200"
+            className="hover:text-destructive"
             aria-label="Sign Out"
           >
-            <LogOut className="h-4 w-4" />
+            <LogOut className="h-5 w-5" />
           </Button>
         </div>
         
