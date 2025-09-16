@@ -1,17 +1,16 @@
 import { useState } from 'react';
-import { AuthForm } from '@/components/auth/AuthForm';
-import Footer from '@/components/ui/footer';
-import { useBackground } from '@/contexts/BackgroundContext';
+import ModernAuthForm from '@/components/auth/ModernAuthForm';
+import ModernFooter from '@/components/ui/modern-footer';
 import ProductionBrowser from '@/components/ProductionBrowser';
 import LanguageSelector from '@/components/LanguageSelector';
 import AdminPasswordForm from '@/components/AdminPasswordForm';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const AuthPage = () => {
   const [showAdminPassword, setShowAdminPassword] = useState(false);
-  const [isUserLogin, setIsUserLogin] = useState(false);
   const [pendingAdminSignup, setPendingAdminSignup] = useState<{email: string, password: string} | null>(null);
-  const { backgroundColor, isBackgroundDark } = useBackground();
+  const { toast } = useToast();
 
   const handleAdminPasswordSuccess = async () => {
     setShowAdminPassword(false);
@@ -32,8 +31,6 @@ const AuthPage = () => {
   };
 
   const handleAdminSignup = async (email: string, password: string) => {
-    // This function will be called after password verification
-    // Include the admin signup logic from the original AuthForm
     try {
       console.log('=== STARTING ADMIN SIGNUP ===');
       console.log('Email:', email);
@@ -65,6 +62,11 @@ const AuthPage = () => {
         
         if (signupError) {
           console.error('Signup failed:', signupError);
+          toast({
+            title: "Signup Failed",
+            description: signupError.message,
+            variant: "destructive",
+          });
           return;
         }
 
@@ -93,6 +95,10 @@ const AuthPage = () => {
 
       if (existingRole) {
         console.log('User already has admin privileges');
+        toast({
+          title: "Success",
+          description: "Admin account already exists and is active",
+        });
         return;
       }
       
@@ -107,51 +113,72 @@ const AuthPage = () => {
       
       if (roleError) {
         console.error('Admin role assignment failed:', roleError);
+        toast({
+          title: "Error",
+          description: "Failed to assign admin role",
+          variant: "destructive",
+        });
       } else {
         console.log('Admin role assigned successfully');
+        toast({
+          title: "Success",
+          description: "Admin account created successfully!",
+        });
       }
       
     } catch (error: any) {
       console.error('=== ADMIN SIGNUP ERROR ===');
       console.error('Error details:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create admin account",
+        variant: "destructive",
+      });
     }
   };
 
   if (showAdminPassword) {
     return (
-      <AdminPasswordForm 
-        onSuccess={handleAdminPasswordSuccess}
-        onBack={handleAdminPasswordBack}
-      />
+      <div className="page-container">
+        <AdminPasswordForm 
+          onSuccess={handleAdminPasswordSuccess}
+          onBack={handleAdminPasswordBack}
+        />
+      </div>
     );
   }
 
   return (
-    <div 
-      className="min-h-screen w-full flex items-center justify-center p-4 transition-colors duration-500"
-      style={{ 
-        backgroundColor,
-        color: isBackgroundDark ? '#ffffff' : '#000000'
-      }}
-    >
-      <div className="w-full space-y-6">
-        <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} carouselOnly />
+    <div className="page-container">
+      {/* Parallax Background Elements */}
+      <div className="fixed inset-0 overflow-hidden opacity-30">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-primary/10 rounded-full animate-float"></div>
+        <div className="absolute top-40 right-20 w-20 h-20 bg-accent/10 rounded-full animate-float" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute bottom-40 left-1/4 w-24 h-24 bg-primary/5 rounded-full animate-float" style={{ animationDelay: '4s' }}></div>
+      </div>
 
-        <div className="w-full">
-          <div className="text-center">
-            <LanguageSelector />
-            <h1 className="text-3xl font-bold">TRANCE TRIBES</h1>
-            <p className="opacity-75 mt-2">Choose your access type</p>
-          </div>
-
-          <AuthForm 
-            onShowAdminPassword={showAdminPasswordForm}
-            pendingAdminSignup={pendingAdminSignup}
-            isUserLogin={isUserLogin}
-            onToggleUserLogin={() => setIsUserLogin(!isUserLogin)}
-          />
+      {/* Language Selector - Fixed Top Right */}
+      <div className="fixed top-4 right-4 z-40">
+        <div className="glass p-2 rounded-xl">
+          <LanguageSelector />
         </div>
       </div>
+
+      {/* Production Browser */}
+      <div className="content-wrapper py-8">
+        <ProductionBrowser onLoginPrompt={() => {}} carouselOnly />
+      </div>
+
+      {/* Main Auth Form */}
+      <div className="content-wrapper">
+        <ModernAuthForm 
+          onShowAdminPassword={showAdminPasswordForm}
+          pendingAdminSignup={pendingAdminSignup}
+        />
+      </div>
+
+      {/* Modern Footer */}
+      <ModernFooter />
     </div>
   );
 };
