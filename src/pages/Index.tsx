@@ -61,101 +61,110 @@ const Index = () => {
   const checkAdminRole = async (userId: string) => {
     console.log('🔐 Checking admin role for user:', userId);
     try {
-      // Add timeout to prevent hanging
-      const adminPromise = supabase
+      const { data, error } = await supabase
         .from('user_roles')
         .select('role')
         .eq('user_id', userId)
         .eq('role', 'admin');
       
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Admin check timeout')), 10000)
-      );
+      if (error) {
+        console.error('❌ Admin role check error:', error);
+        setIsAdmin(false);
+        return false;
+      }
       
-      const { data, error } = await Promise.race([
-        adminPromise, 
-        timeoutPromise
-      ]) as any;
-      
-      console.log('👑 Admin role check result:', { data, error, userId });
       const isAdminUser = data && data.length > 0;
-      console.log('🎯 Final admin status:', isAdminUser);
+      console.log('🎯 Admin status:', isAdminUser);
       setIsAdmin(isAdminUser);
       return isAdminUser;
     } catch (error) {
       console.error('💥 Error checking admin role:', error);
-      // If it's a timeout, assume not admin and continue
-      if (error.message === 'Admin check timeout') {
-        console.log('⏰ Admin check timeout, assuming not admin');
-      }
       setIsAdmin(false);
       return false;
     }
   };
 
   useEffect(() => {
-    // Add fallback timeout for the entire loading process
-    const fallbackTimeout = setTimeout(() => {
-      console.log('⚠️ Global fallback timeout triggered - forcing loading to false');
-      setLoading(false);
-    }, 15000);
+    let mounted = true;
 
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state change:', event, session);
+        if (!mounted) return;
+        
+        console.log('Auth state change:', event, session?.user?.id || 'no user');
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          // Check both admin role and profile completion
-          const [adminRole, profileComplete] = await Promise.all([
-            checkAdminRole(session.user.id),
-            checkProfileCompletion(session.user.id)
-          ]);
-          
-          // Check if this is a first login by looking at user metadata
-          const isNew = event === 'SIGNED_IN' && session.user.created_at && 
-                       new Date(session.user.created_at) > new Date(Date.now() - 5 * 60 * 1000); // Last 5 minutes
-          
-          if (isNew) {
-            setIsFirstLogin(true);
-            setShowOnboarding(true);
+          try {
+            // Run checks in parallel but handle each independently
+            const [adminRole, profileComplete] = await Promise.allSettled([
+              checkAdminRole(session.user.id),
+              checkProfileCompletion(session.user.id)
+            ]);
+            
+            // Check if this is a first login
+            const isNew = event === 'SIGNED_IN' && session.user.created_at && 
+                        new Date(session.user.created_at) > new Date(Date.now() - 5 * 60 * 1000);
+            
+            if (isNew && mounted) {
+              setIsFirstLogin(true);
+              setShowOnboarding(true);
+            }
+            
+            console.log('✅ All checks completed, setting loading to false');
+          } catch (error) {
+            console.error('💥 Error in auth state checks:', error);
+          } finally {
+            if (mounted) {
+              setLoading(false);
+            }
           }
-          
-          setLoading(false);
         } else {
           // User logged out - reset all states
-          setIsAdmin(false);
-          setIsFirstLogin(false);
-          setShowOnboarding(false);
-          setIsProfileComplete(false);
-          setLoading(false);
+          if (mounted) {
+            setIsAdmin(false);
+            setIsFirstLogin(false);
+            setShowOnboarding(false);
+            setIsProfileComplete(false);
+            setLoading(false);
+          }
         }
-        
-        clearTimeout(fallbackTimeout);
       }
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        await Promise.all([
-          checkAdminRole(session.user.id),
-          checkProfileCompletion(session.user.id)
-        ]);
-        setLoading(false);
-      } else {
-        setLoading(false);
-        clearTimeout(fallbackTimeout);
+    const checkInitialSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!mounted) return;
+        
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          const [adminResult, profileResult] = await Promise.allSettled([
+            checkAdminRole(session.user.id),
+            checkProfileCompletion(session.user.id)
+          ]);
+          
+          console.log('✅ Initial session checks completed');
+        }
+      } catch (error) {
+        console.error('💥 Error checking initial session:', error);
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
       }
-    });
+    };
+
+    checkInitialSession();
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
-      clearTimeout(fallbackTimeout);
     };
   }, []);
 
