@@ -512,10 +512,10 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         <div className="floating-orb" />
         
         <div className="page-container relative z-10">
-          <PageHeader
+        <PageHeader
             title="QR Scanner"
             onBack={() => setCurrentView('dashboard')}
-        />
+          />
         
         <div className="w-full pt-20">
           {parties.length > 0 && (
@@ -558,6 +558,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             </div>
           )}
         </div>
+        </div>
       </div>
     );
   }
@@ -574,7 +575,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           <PageHeader
             title="Guest Management"
             onBack={() => setCurrentView('dashboard')}
-        />
+          />
         
         <div className="w-full pt-20">
           {parties.length > 0 && (
@@ -637,6 +638,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
               </div>
             </div>
           )}
+        </div>
         </div>
       </div>
     );
