@@ -554,21 +554,24 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                         Send Ticket Offers
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
+                    <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
                       <DialogHeader>
-                        <DialogTitle>Send Ticket Offers to {selectedUsers.size} Users</DialogTitle>
+                        <DialogTitle className="text-lg">Send Ticket Offers to {selectedUsers.size} Users</DialogTitle>
                       </DialogHeader>
-                      <div className="space-y-4">
+                      <div className="space-y-4 pr-2">
                         <div>
-                          <label className="text-sm font-medium">Select Party</label>
+                          <label className="text-sm font-medium mb-1 block">Select Party</label>
                           <Select value={messageForm.partyId} onValueChange={(value) => setMessageForm({...messageForm, partyId: value})}>
-                            <SelectTrigger>
+                            <SelectTrigger className="w-full">
                               <SelectValue placeholder="Choose a party..." />
                             </SelectTrigger>
                             <SelectContent>
                               {parties.map(party => (
                                 <SelectItem key={party.id} value={party.id}>
-                                  {party.name} - {new Date(party.date).toLocaleDateString()}
+                                  <div className="text-sm">
+                                    <div className="font-medium">{party.name}</div>
+                                    <div className="text-muted-foreground">{new Date(party.date).toLocaleDateString()}</div>
+                                  </div>
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -576,28 +579,30 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                         </div>
 
                         <div>
-                          <label className="text-sm font-medium">Message Subject</label>
+                          <label className="text-sm font-medium mb-1 block">Message Subject</label>
                           <Input
                             value={messageForm.messageSubject}
                             onChange={(e) => setMessageForm({...messageForm, messageSubject: e.target.value})}
                             placeholder="Enter message subject..."
+                            className="w-full"
                           />
                         </div>
 
                         <div>
-                          <label className="text-sm font-medium">Message Content</label>
+                          <label className="text-sm font-medium mb-1 block">Message Content</label>
                           <Textarea
                             value={messageForm.messageContent}
                             onChange={(e) => setMessageForm({...messageForm, messageContent: e.target.value})}
                             placeholder="Enter your message..."
-                            rows={4}
+                            rows={3}
+                            className="w-full resize-none"
                           />
                         </div>
 
                         <div>
-                          <label className="text-sm font-medium">Ticket Type</label>
+                          <label className="text-sm font-medium mb-1 block">Ticket Type</label>
                           <Select value={messageForm.ticketType} onValueChange={(value: 'free' | 'discounted') => setMessageForm({...messageForm, ticketType: value})}>
-                            <SelectTrigger>
+                            <SelectTrigger className="w-full">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -618,36 +623,39 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                         </div>
 
                         {messageForm.ticketType === 'discounted' && (
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-3">
                             <div>
-                              <label className="text-sm font-medium">Original Price (₪)</label>
+                              <label className="text-sm font-medium mb-1 block">Original Price (₪)</label>
                               <Input
                                 type="number"
                                 value={messageForm.originalPrice || ''}
                                 onChange={(e) => setMessageForm({...messageForm, originalPrice: Number(e.target.value)})}
                                 placeholder="0"
+                                className="w-full"
                               />
                             </div>
                             <div>
-                              <label className="text-sm font-medium">Discounted Price (₪)</label>
+                              <label className="text-sm font-medium mb-1 block">Discounted Price (₪)</label>
                               <Input
                                 type="number"
                                 value={messageForm.discountedPrice || ''}
                                 onChange={(e) => setMessageForm({...messageForm, discountedPrice: Number(e.target.value)})}
                                 placeholder="0"
+                                className="w-full"
                               />
                             </div>
                           </div>
                         )}
 
-                        <div className="flex gap-2 justify-end">
+                        <div className="flex gap-2 justify-end pt-4 border-t">
                           <Button
                             variant="outline"
                             onClick={() => setShowMessageForm(false)}
+                            size="sm"
                           >
                             Cancel
                           </Button>
-                          <Button onClick={sendTicketOffers}>
+                          <Button onClick={sendTicketOffers} size="sm">
                             Send Offers
                           </Button>
                         </div>
