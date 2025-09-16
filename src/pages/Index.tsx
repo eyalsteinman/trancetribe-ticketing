@@ -25,11 +25,21 @@ const Index = () => {
   const checkAdminRole = async (userId: string) => {
     console.log('🔐 Checking admin role for user:', userId);
     try {
-      const { data, error } = await (supabase as any)
+      // Add timeout to prevent hanging
+      const adminPromise = supabase
         .from('user_roles')
         .select('role')
         .eq('user_id', userId)
         .eq('role', 'admin');
+      
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Admin check timeout')), 10000)
+      );
+      
+      const { data, error } = await Promise.race([
+        adminPromise, 
+        timeoutPromise
+      ]) as any;
       
       console.log('👑 Admin role check result:', { data, error, userId });
       const isAdminUser = data && data.length > 0;
@@ -38,6 +48,10 @@ const Index = () => {
       return isAdminUser;
     } catch (error) {
       console.error('💥 Error checking admin role:', error);
+      // If it's a timeout, assume not admin and continue
+      if (error.message === 'Admin check timeout') {
+        console.log('⏰ Admin check timeout, assuming not admin');
+      }
       setIsAdmin(false);
       return false;
     } finally {
@@ -47,6 +61,12 @@ const Index = () => {
   };
 
   useEffect(() => {
+    // Add fallback timeout for the entire loading process
+    const fallbackTimeout = setTimeout(() => {
+      console.log('⚠️ Global fallback timeout triggered - forcing loading to false');
+      setLoading(false);
+    }, 15000);
+
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -73,6 +93,8 @@ const Index = () => {
           setShowOnboarding(false);
           setLoading(false);
         }
+        
+        clearTimeout(fallbackTimeout);
       }
     );
 
@@ -84,10 +106,14 @@ const Index = () => {
         checkAdminRole(session.user.id);
       } else {
         setLoading(false);
+        clearTimeout(fallbackTimeout);
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(fallbackTimeout);
+    };
   }, []);
 
   const handleSplashComplete = () => {
