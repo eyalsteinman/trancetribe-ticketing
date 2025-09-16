@@ -58,7 +58,7 @@ const SortableTile: React.FC<{
       data-id={item.id}
       style={style}
       className={`
-        relative p-2 sm:p-3 bg-card select-none h-20 sm:h-24 min-h-20 sm:min-h-24
+        relative p-2 sm:p-3 bg-card select-none aspect-square w-full
         border border-border rounded-xl flex flex-col items-center justify-center text-center space-y-1
         transition-all duration-300 ease-out shadow-md hover:shadow-lg backdrop-blur-xl
         ${!isReordering ? 'hover:scale-105 hover:border-primary/50' : ''}
@@ -178,9 +178,9 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
   };
 
   return (
-    <div className="container-section">
+    <div className="w-full px-4">
       <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
             {orderedItems.map((item, index) => (
               <div

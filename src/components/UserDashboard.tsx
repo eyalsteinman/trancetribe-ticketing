@@ -299,7 +299,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
       <div className="relative z-10 min-h-screen p-4 sm:p-6 w-full">
         {/* Modern Header */}
-        <div className="relative mb-4 sm:mb-6">
+        <div className="relative mb-6 sm:mb-8 px-4">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
@@ -326,7 +326,8 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           </div>
         </div>
 
-        <div className="w-full">
+        {/* Dashboard Tiles */}
+        <div className="mb-8 sm:mb-12">
           {(() => {
             const items = [
               {
@@ -427,15 +428,15 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           })()}
         </div>
 
-        {/* QR Codes Section */}
+        {/* QR Codes Section with proper spacing */}
         {userQRCodes.length > 0 && (
-          <div className="mt-6 sm:mt-8">
-            <h2 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">Your Tickets</h2>
-            <div className="space-y-4">
+          <div className="px-4 mb-8 sm:mb-12">
+            <h2 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-6 sm:mb-8">Your Tickets</h2>
+            <div className="space-y-6">
               {userQRCodes.map((qrCode) => (
                 <div 
                   key={qrCode.id} 
-                  className="cursor-pointer group overflow-hidden border border-border bg-card"
+                  className="cursor-pointer group overflow-hidden border border-border bg-card rounded-xl"
                   onClick={() => {
                     const party = { 
                       id: qrCode.party_id, 
@@ -524,7 +525,10 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           </DialogContent>
         </Dialog>
 
-        <Footer />
+        {/* Footer with proper spacing */}
+        <div className="px-4">
+          <Footer />
+        </div>
       </div>
     </div>
   );
