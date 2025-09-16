@@ -590,4 +590,24 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+
+  /* Container sections */
+  .container-section {
+    @apply w-full max-w-4xl mx-auto px-4 py-4;
+  }
+
+  /* Modern panel styling */
+  .modern-panel {
+    @apply bg-card border border-border modern-radius-lg p-6;
+    @apply shadow-modern backdrop-blur-sm;
+  }
+
+  /* Dashboard specific styles */
+  .dashboard-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4;
+  }
+
+  .dashboard-header {
+    @apply flex items-center justify-between p-4 border-b border-border;
+  }
 }

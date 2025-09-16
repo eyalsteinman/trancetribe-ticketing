@@ -9,13 +9,13 @@ interface PageHeaderProps {
 
 const PageHeader = ({ title, onBack, showBackButton = true }: PageHeaderProps) => {
   return (
-    <div className="container-section flex items-center justify-between">
-      <h1 className="text-2xl font-bold text-foreground">
-        {title}
-      </h1>
-      {showBackButton && onBack && (
-        <BackButton onBack={onBack} />
-      )}
+    <div className="page-header">
+      <div className="flex items-center gap-4">
+        {showBackButton && onBack && (
+          <BackButton onBack={onBack} />
+        )}
+        <h1 className="page-title">{title}</h1>
+      </div>
     </div>
   );
 };
