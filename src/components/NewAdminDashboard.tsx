@@ -1,10 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LogOut, Menu, X } from 'lucide-react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
+import RotatableDial from '@/components/RotatableDial';
 
 // Import all the existing admin views
 import QRScanner from '@/components/QRScanner';
@@ -37,13 +38,6 @@ const NewAdminDashboard: React.FC<NewAdminDashboardProps> = ({ user }) => {
   const [currentView, setCurrentView] = useState<string>('dashboard');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [adminName, setAdminName] = useState<string>('');
-  
-  // Swipe navigation state
-  const [isDragging, setIsDragging] = useState(false);
-  const [currentTileIndex, setCurrentTileIndex] = useState(0);
-  const [dragStartX, setDragStartX] = useState(0);
-  const [dragCurrentX, setDragCurrentX] = useState(0);
-  const buttonRef = useRef<HTMLDivElement>(null);
 
   const tiles: Tile[] = [
     { id: 'scanner', title: 'Camera Scan', action: () => setCurrentView('scanner') },
@@ -91,35 +85,8 @@ const NewAdminDashboard: React.FC<NewAdminDashboardProps> = ({ user }) => {
     }
   };
 
-  // Touch/Mouse handlers for swipe navigation
-  const handlePointerDown = (e: React.PointerEvent) => {
-    setIsDragging(true);
-    setDragStartX(e.clientX);
-    setDragCurrentX(e.clientX);
-    e.preventDefault();
-  };
-
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDragging) return;
-    
-    setDragCurrentX(e.clientX);
-    const deltaX = e.clientX - dragStartX;
-    const sensitivity = 100; // pixels needed to change tile
-    
-    let newIndex = currentTileIndex - Math.floor(deltaX / sensitivity);
-    newIndex = Math.max(0, Math.min(tiles.length - 1, newIndex));
-    
-    if (newIndex !== currentTileIndex) {
-      setCurrentTileIndex(newIndex);
-    }
-  };
-
-  const handlePointerUp = () => {
-    if (isDragging) {
-      setIsDragging(false);
-      // Execute the current tile's action
-      tiles[currentTileIndex].action();
-    }
+  const handleTileSelect = (tile: Tile) => {
+    tile.action();
   };
 
   // Render different views
@@ -217,33 +184,7 @@ const NewAdminDashboard: React.FC<NewAdminDashboardProps> = ({ user }) => {
 
       {/* Center Content */}
       <div className="flex flex-col items-center justify-center min-h-screen p-8">
-        {/* Current Tile Display */}
-        <div className="text-center mb-12">
-          <h1 className="text-white text-4xl font-bold opacity-80 transition-all duration-300">
-            {tiles[currentTileIndex]?.title}
-          </h1>
-        </div>
-
-        {/* Navigation Instructions */}
-        <div className="text-center mb-8">
-          <p className="text-white text-sm opacity-70">
-            move from side to side to navigate
-          </p>
-        </div>
-
-        {/* Swipe Button */}
-        <div
-          ref={buttonRef}
-          className={`w-20 h-20 rounded-full cursor-pointer select-none transition-all duration-200 ${
-            isDragging 
-              ? 'bg-green-500 shadow-lg shadow-green-500/50 scale-110' 
-              : 'bg-gray-400 shadow-lg shadow-gray-400/30'
-          }`}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          style={{ touchAction: 'none' }}
-        />
+        <RotatableDial tiles={tiles} onTileSelect={handleTileSelect} />
       </div>
     </div>
   );
