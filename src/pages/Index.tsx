@@ -86,23 +86,33 @@ const Index = () => {
 
   useEffect(() => {
     let mounted = true;
+    console.log('🚀 Starting auth initialization');
+
+    // Failsafe: Always stop loading after 3 seconds maximum
+    const failsafeTimeout = setTimeout(() => {
+      if (mounted) {
+        console.log('🚨 FAILSAFE: Setting loading to false after 3 seconds');
+        setLoading(false);
+      }
+    }, 3000);
 
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         if (!mounted) return;
         
-        console.log('Auth state change:', event, session?.user?.id || 'no user');
+        console.log('🔄 Auth state change:', event, session?.user?.id || 'no user');
         setSession(session);
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          try {
-            // Run checks in parallel but handle each independently
-            const [adminRole, profileComplete] = await Promise.allSettled([
-              checkAdminRole(session.user.id),
-              checkProfileCompletion(session.user.id)
-            ]);
+          console.log('👤 User found, starting async checks');
+          // Start async operations but don't wait for them to set loading to false
+          Promise.allSettled([
+            checkAdminRole(session.user.id),
+            checkProfileCompletion(session.user.id)
+          ]).then(() => {
+            console.log('✅ Async checks completed');
             
             // Check if this is a first login
             const isNew = event === 'SIGNED_IN' && session.user.created_at && 
@@ -112,16 +122,15 @@ const Index = () => {
               setIsFirstLogin(true);
               setShowOnboarding(true);
             }
-            
-            console.log('✅ All checks completed, setting loading to false');
-          } catch (error) {
-            console.error('💥 Error in auth state checks:', error);
-          } finally {
-            if (mounted) {
-              setLoading(false);
-            }
-          }
+          }).catch(error => {
+            console.error('💥 Error in async checks:', error);
+          });
+          
+          // Set loading to false immediately when we have a user
+          console.log('⚡ Setting loading to false for authenticated user');
+          setLoading(false);
         } else {
+          console.log('🚪 No user, resetting states');
           // User logged out - reset all states
           if (mounted) {
             setIsAdmin(false);
@@ -134,36 +143,45 @@ const Index = () => {
       }
     );
 
-    // Check for existing session
-    const checkInitialSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!mounted) return;
+    // Check for existing session immediately
+    console.log('🔍 Checking for existing session');
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!mounted) return;
+      
+      console.log('📋 Initial session check result:', session?.user?.id || 'no user');
+      setSession(session);
+      setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        console.log('👤 Initial user found, starting async checks');
+        // Start async operations but set loading to false immediately
+        Promise.allSettled([
+          checkAdminRole(session.user.id),
+          checkProfileCompletion(session.user.id)
+        ]).then(() => {
+          console.log('✅ Initial async checks completed');
+        }).catch(error => {
+          console.error('💥 Error in initial async checks:', error);
+        });
         
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          const [adminResult, profileResult] = await Promise.allSettled([
-            checkAdminRole(session.user.id),
-            checkProfileCompletion(session.user.id)
-          ]);
-          
-          console.log('✅ Initial session checks completed');
-        }
-      } catch (error) {
-        console.error('💥 Error checking initial session:', error);
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
+        console.log('⚡ Setting loading to false for initial user');
+        setLoading(false);
+      } else {
+        console.log('⚡ No initial user, setting loading to false');
+        setLoading(false);
       }
-    };
-
-    checkInitialSession();
+    }).catch(error => {
+      console.error('💥 Error getting initial session:', error);
+      console.log('⚡ Error occurred, setting loading to false');
+      if (mounted) {
+        setLoading(false);
+      }
+    });
 
     return () => {
+      console.log('🧹 Cleaning up auth subscription');
       mounted = false;
+      clearTimeout(failsafeTimeout);
       subscription.unsubscribe();
     };
   }, []);
