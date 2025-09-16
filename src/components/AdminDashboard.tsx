@@ -505,15 +505,16 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
 
   if (currentView === 'scanner') {
     return (
-      <div 
-        className="min-h-screen transition-colors duration-500"
-        style={{ 
-          backgroundColor
-        }}
-      >
-        <PageHeader
-          title="QR Scanner"
-          onBack={() => setCurrentView('dashboard')}
+      <div className="app-container dynamic-bg min-h-screen">
+        {/* Floating background elements */}
+        <div className="floating-orb" />
+        <div className="floating-orb" />
+        <div className="floating-orb" />
+        
+        <div className="page-container relative z-10">
+          <PageHeader
+            title="QR Scanner"
+            onBack={() => setCurrentView('dashboard')}
         />
         
         <div className="w-full pt-20">
@@ -563,15 +564,16 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
 
   if (currentView === 'guests') {
     return (
-      <div 
-        className="min-h-screen transition-colors duration-500"
-        style={{ 
-          backgroundColor
-        }}
-      >
-        <PageHeader
-          title="Guest Management"
-          onBack={() => setCurrentView('dashboard')}
+      <div className="app-container dynamic-bg min-h-screen">
+        {/* Floating background elements */}
+        <div className="floating-orb" />
+        <div className="floating-orb" />
+        <div className="floating-orb" />
+        
+        <div className="page-container relative z-10">
+          <PageHeader
+            title="Guest Management"
+            onBack={() => setCurrentView('dashboard')}
         />
         
         <div className="w-full pt-20">
