@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
 import RotatableDial from '@/components/RotatableDial';
+import ReorderableMenuItems from '@/components/ReorderableMenuItems';
 
 // Import all the existing views
 import UserParties from '@/components/UserParties';
@@ -67,6 +68,8 @@ const NewUserDashboard: React.FC<NewUserDashboardProps> = ({ user }) => {
     { id: 'bored', title: 'Bored Screen', action: () => setCurrentView('bored') },
   ];
 
+  const [orderedTiles, setOrderedTiles] = useState<Tile[]>(tiles);
+
   useEffect(() => {
     loadUserProfile();
   }, [user]);
@@ -98,6 +101,10 @@ const NewUserDashboard: React.FC<NewUserDashboardProps> = ({ user }) => {
 
   const handleTileSelect = (tile: Tile) => {
     tile.action();
+  };
+
+  const handleReorder = (newTiles: Tile[]) => {
+    setOrderedTiles(newTiles);
   };
 
   // Render different views
@@ -178,39 +185,31 @@ const NewUserDashboard: React.FC<NewUserDashboardProps> = ({ user }) => {
       {isMenuOpen && (
         <div className="fixed inset-0 z-30 flex">
           <div className="bg-black/50 flex-1" onClick={() => setIsMenuOpen(false)} />
-          <div className="bg-purple-900 w-80 p-6 animate-slide-in-right">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-white text-xl font-bold">Navigation</h2>
+          <div className="bg-purple-900 w-64 p-4 animate-slide-in-right">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-white text-lg font-bold">Navigation</h2>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsMenuOpen(false)}
                 className="text-white hover:bg-white/10"
               >
-                <X className="h-6 w-6" />
+                <X className="h-5 w-5" />
               </Button>
             </div>
-            <div className="space-y-2">
-              {tiles.map((tile) => (
-                <button
-                  key={tile.id}
-                  onClick={() => {
-                    tile.action();
-                    setIsMenuOpen(false);
-                  }}
-                  className="w-full text-left p-3 text-white hover:bg-white/10 rounded-lg transition-colors"
-                >
-                  {tile.title}
-                </button>
-              ))}
-            </div>
+            <ReorderableMenuItems
+              tiles={orderedTiles}
+              onTileClick={(tile) => tile.action()}
+              onCloseMenu={() => setIsMenuOpen(false)}
+              onReorder={handleReorder}
+            />
           </div>
         </div>
       )}
 
       {/* Center Content */}
       <div className="flex flex-col items-center justify-center min-h-screen p-8">
-        <RotatableDial tiles={tiles} onTileSelect={handleTileSelect} />
+        <RotatableDial tiles={orderedTiles} onTileSelect={handleTileSelect} />
       </div>
     </div>
   );

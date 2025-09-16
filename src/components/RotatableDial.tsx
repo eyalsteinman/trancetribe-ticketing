@@ -95,7 +95,7 @@ const RotatableDial: React.FC<RotatableDialProps> = ({ tiles, onTileSelect }) =>
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center mt-16">
       {/* Current Tile Display */}
       <div className="text-center mb-12">
         <h1 className="text-white text-4xl font-bold opacity-80 transition-all duration-300">
@@ -103,15 +103,8 @@ const RotatableDial: React.FC<RotatableDialProps> = ({ tiles, onTileSelect }) =>
         </h1>
       </div>
 
-      {/* Navigation Instructions */}
-      <div className="text-center mb-8">
-        <p className="text-white text-sm opacity-70">
-          move from side to side to navigate
-        </p>
-      </div>
-
       {/* Dial Container */}
-      <div className="relative">
+      <div className="relative mb-8">
         {/* Dots around the dial */}
         <div 
           className="absolute inset-0"
@@ -123,7 +116,7 @@ const RotatableDial: React.FC<RotatableDialProps> = ({ tiles, onTileSelect }) =>
         {/* Glass Dial */}
         <div
           ref={dialRef}
-          className={`relative cursor-pointer select-none transition-all duration-200 rounded-full backdrop-blur-md bg-white/10 border border-white/20 shadow-lg ${
+          className={`relative cursor-pointer select-none transition-all duration-200 backdrop-blur-md bg-white/10 border border-white/20 shadow-lg ${
             isDragging 
               ? 'bg-green-500/20 border-green-400/40 scale-110' 
               : 'hover:bg-white/15'
@@ -131,6 +124,7 @@ const RotatableDial: React.FC<RotatableDialProps> = ({ tiles, onTileSelect }) =>
           style={{ 
             width: dialSize, 
             height: dialSize,
+            borderRadius: '50%',
             transform: `rotate(${rotation}deg)`,
             touchAction: 'none',
             transition: isDragging ? 'none' : 'transform 0.3s ease-out'
@@ -152,6 +146,13 @@ const RotatableDial: React.FC<RotatableDialProps> = ({ tiles, onTileSelect }) =>
             }}
           />
         </div>
+      </div>
+
+      {/* Navigation Instructions */}
+      <div className="text-center">
+        <p className="text-white text-sm opacity-70">
+          spin navigation
+        </p>
       </div>
     </div>
   );
