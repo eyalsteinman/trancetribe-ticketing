@@ -11,12 +11,12 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const { t } = useLanguage();
 
   useEffect(() => {
-    const stageTimer = setTimeout(() => setAnimationStage(1), 500);
-    const secondStageTimer = setTimeout(() => setAnimationStage(2), 1500);
+    const stageTimer = setTimeout(() => setAnimationStage(1), 300);
+    const secondStageTimer = setTimeout(() => setAnimationStage(2), 800);
     const completeTimer = setTimeout(() => {
       setIsVisible(false);
       onComplete();
-    }, 3000);
+    }, 1500); // Reduced from 3000 to 1500ms
 
     return () => {
       clearTimeout(stageTimer);

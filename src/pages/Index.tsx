@@ -73,11 +73,8 @@ const Index = () => {
 
   const handleSplashComplete = () => {
     setShowSplash(false);
-    // Show onboarding for new users
-    const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding');
-    if (!hasSeenOnboarding) {
-      setShowOnboarding(true);
-    }
+    // Skip onboarding for now to see the app
+    localStorage.setItem('hasSeenOnboarding', 'true');
   };
 
   const handleOnboardingComplete = () => {
