@@ -177,7 +177,7 @@ const BarTabManager = ({ user, onBack }: BarTabManagerProps) => {
         onBack={onBack}
       />
       
-      <div className="max-w-md mx-auto pt-20 space-y-6">
+      <div className="w-full pt-20 space-y-6 px-4">
 
         <Card>
           <CardHeader>

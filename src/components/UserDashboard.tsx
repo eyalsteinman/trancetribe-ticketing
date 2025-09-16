@@ -297,7 +297,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         <div className="absolute top-1/2 right-1/4 w-1.5 h-1.5 bg-secondary rounded-full animate-ping opacity-50 delay-500"></div>
       </div>
 
-      <div className="relative z-10 min-h-screen p-4 sm:p-6 max-w-sm mx-auto">
+      <div className="relative z-10 min-h-screen p-4 sm:p-6 w-full">
         {/* Modern Header */}
         <div className="relative mb-4 sm:mb-6">
           <div className="flex items-center justify-between">

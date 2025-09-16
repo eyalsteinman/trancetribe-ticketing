@@ -443,7 +443,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
 
   return (
     <div className="min-h-screen p-4">
-      <div className="w-full max-w-md mx-auto space-y-4">
+      <div className="w-full space-y-4 px-4">
         {/* Header with Back Button */}
         <div className="flex items-center justify-between mb-4">
           <Button variant="outline" size="sm" onClick={onBack}>

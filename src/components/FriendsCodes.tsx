@@ -169,7 +169,7 @@ const FriendsCodes = ({ user, onBack }: FriendsCodesProps) => {
       className="min-h-screen p-4 transition-colors duration-500"
       style={{ backgroundColor }}
     >
-      <div className="max-w-md mx-auto space-y-6">
+      <div className="w-full space-y-6 px-4">
         <div className="flex items-center justify-between">
           <h1 
             className="text-xl font-bold"

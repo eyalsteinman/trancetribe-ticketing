@@ -29,7 +29,7 @@ const Insurance = ({ onBack }: InsuranceProps) => {
         onBack={onBack}
       />
       
-      <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
+      <div className="w-full pt-20 space-y-6 text-left px-4">
 
         <div className="space-y-4">
           <p className="text-sm text-muted-foreground">

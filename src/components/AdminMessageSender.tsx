@@ -160,7 +160,7 @@ const AdminMessageSender: React.FC<AdminMessageSenderProps> = ({
 
   return (
     <div className="min-h-screen bg-background p-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="w-full px-4">
         <div className="flex items-center justify-between w-full py-4">
           <h1 className="text-2xl font-bold text-foreground">
             Message Users

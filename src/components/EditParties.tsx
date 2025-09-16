@@ -404,7 +404,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
             onBack={cancelEdit}
           />
           
-          <div className="w-full max-w-2xl mx-auto pt-20 px-4 space-y-6 text-left">
+          <div className="w-full pt-20 px-4 space-y-6 text-left">
 
           <Card className="w-full">
             <CardHeader>
@@ -654,7 +654,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           onBack={onBack}
         />
         
-        <div className="w-full max-w-4xl mx-auto pt-20 px-4 space-y-6 text-left">
+        <div className="w-full pt-20 px-4 space-y-6 text-left">
           <Card className="w-full">
             <CardHeader>
               <div className="flex justify-between items-center">

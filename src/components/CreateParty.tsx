@@ -214,7 +214,7 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
       <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 animate-pulse-slow"></div>
       
       <div className="relative z-10 min-h-screen p-4">
-        <div className="container mx-auto max-w-md">
+        <div className="container mx-auto w-full px-4">
           <PageHeader
             title="Create Party"
             onBack={onBack}

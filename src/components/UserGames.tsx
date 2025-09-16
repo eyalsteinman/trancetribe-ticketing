@@ -21,7 +21,7 @@ const UserGames = ({ onBack, onGameSelect }: UserGamesProps) => {
         onBack={onBack}
       />
       
-      <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
+      <div className="w-full pt-20 space-y-6 text-left px-4">
 
         <div className="grid grid-cols-2 gap-4">
           <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-black [&_svg]:text-black aspect-square" onClick={() => onGameSelect('color-changer')}>

@@ -141,7 +141,7 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId, onOpenTribe
   if (selectedMessage) {
     return (
       <div className="min-h-screen bg-background p-4">
-        <div className="max-w-4xl mx-auto">
+        <div className="w-full px-4">
           <Button
             variant="ghost"
             onClick={() => setSelectedMessage(null)}
@@ -174,7 +174,7 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId, onOpenTribe
 
   return (
     <div className="min-h-screen p-4">
-      <div className="max-w-md mx-auto space-y-6">
+      <div className="w-full space-y-6 px-4">
         <PageHeader
           title="Tribe Messages"
           onBack={onBack}
