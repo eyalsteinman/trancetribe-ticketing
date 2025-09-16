@@ -284,29 +284,33 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   return (
-    <div className="min-h-screen w-full transition-colors duration-500 p-2 sm:p-4">
-      {/* Header */}
-      <div className="relative pt-2 pb-4 lg:pb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-1 pr-12">
-          {nickname ? `Welcome back,` : 'User Dashboard'}
-        </h1>
-        {nickname && (
-          <p className="text-base sm:text-lg text-primary font-semibold pr-12">{nickname}!</p>
-        )}
-        <Button 
-          variant="outline" 
-          size="icon"
-          onClick={async () => {
-            await handleSignOut();
-            setTimeout(() => {
-              window.location.reload();
-            }, 2000);
-          }} 
-          className="absolute top-2 right-0 z-50 border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200 h-8 w-8 sm:h-10 sm:w-10"
-          aria-label="Sign Out"
-        >
-          <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
-        </Button>
+    <div className="min-h-screen w-full bg-gradient-to-br from-background via-background to-card/20 p-3 sm:p-6">
+      {/* Modern Header */}
+      <div className="relative mb-6 sm:mb-8">
+        <div className="flex items-center justify-between">
+          <div className="space-y-1 sm:space-y-2">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+              {nickname ? `Welcome back,` : 'User Dashboard'}
+            </h1>
+            {nickname && (
+              <p className="text-lg sm:text-xl lg:text-2xl text-primary font-bold">{nickname}!</p>
+            )}
+          </div>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={async () => {
+              await handleSignOut();
+              setTimeout(() => {
+                window.location.reload();
+              }, 2000);
+            }} 
+            className="h-10 w-10 sm:h-12 sm:w-12 rounded-2xl bg-card/50 backdrop-blur-xl border border-border/50 hover:bg-card hover:border-primary/50 transition-all duration-300 hover:scale-105"
+            aria-label="Sign Out"
+          >
+            <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
+          </Button>
+        </div>
       </div>
 
       <div className="w-full">
@@ -315,55 +319,55 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
               {
                 id: 'parties',
                 title: 'Events\n& Parties',
-                icon: <Calendar className="h-12 w-12" />,
+                icon: <Calendar className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />,
                 onClick: () => setCurrentView('parties' as const),
               },
               {
                 id: 'nickname',
                 title: 'My Info',
-                icon: <UserIcon className="h-12 w-12" />,
+                icon: <UserIcon className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />,
                 onClick: () => setCurrentView('nickname' as const),
               },
               {
                 id: 'social',
                 title: 'Social Networks',
-                icon: <Users className="h-12 w-12" />,
+                icon: <Users className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />,
                 onClick: () => setCurrentView('social' as const),
               },
               {
                 id: 'insurance',
                 title: 'Insurance',
-                icon: <ShieldCheck className="h-12 w-12" />,
+                icon: <ShieldCheck className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />,
                 onClick: () => setCurrentView('insurance' as const),
               },
               {
                 id: 'vip',
                 title: 'VIP',
-                icon: <Crown className="h-12 w-12" />,
+                icon: <Crown className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />,
                 onClick: () => setCurrentView('vip' as const),
               },
               {
                 id: 'personal-code',
                 title: 'Personal Code',
-                icon: <IdCard className="h-12 w-12" />,
+                icon: <IdCard className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />,
                 onClick: () => setCurrentView('personal-code' as const),
               },
               {
                 id: 'friends-codes',
                 title: 'Friends Codes',
-                icon: <Heart className="h-12 w-12" />,
+                icon: <Heart className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />,
                 onClick: () => setCurrentView('friends-codes' as const),
               },
               {
                 id: 'bar-tab',
                 title: 'Bar Tab',
-                icon: <Wine className="h-12 w-12" />,
+                icon: <Wine className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />,
                 onClick: () => setCurrentView('bar-tab' as const),
               },
                 {
                   id: 'faq',
                   title: 'FAQ & Contact',
-                  icon: <Users className="h-12 w-12" />,
+                  icon: <Users className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />,
                   onClick: () => setCurrentView('faq' as const),
                 },
                 {
@@ -371,9 +375,9 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                   title: 'Messages',
                   icon: (
                     <div className="relative">
-                      <MessageCircle className="h-12 w-12" />
+                      <MessageCircle className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />
                       {unreadMessageCount > 0 && (
-                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                        <div className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center font-bold text-[10px] sm:text-xs">
                           {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
                         </div>
                       )}
@@ -386,9 +390,9 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                   title: 'Direct Messages',
                   icon: (
                     <div className="relative">
-                      <Mail className="h-12 w-12" />
+                      <Mail className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />
                       {unreadDirectMessageCount > 0 && (
-                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                        <div className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center font-bold text-[10px] sm:text-xs">
                           {unreadDirectMessageCount > 9 ? '9+' : unreadDirectMessageCount}
                         </div>
                       )}
@@ -412,8 +416,8 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
       {/* QR Codes Section */}
       {userQRCodes.length > 0 && (
-        <div className="mt-6">
-          <h2 className="text-lg font-bold text-foreground mb-4">Your Tickets</h2>
+        <div className="mt-8 sm:mt-12">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-black bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-6">Your Tickets</h2>
             <div className="space-y-4">
               {userQRCodes.map((qrCode) => (
                 <div 

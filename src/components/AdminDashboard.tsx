@@ -644,15 +644,22 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     <div className={`min-h-screen transition-colors duration-500 p-2 sm:p-4`}>
       <div className="w-full">
         <div className="container-section flex items-center justify-between mb-4 lg:mb-6">
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground pr-4">{adminNickname ? `Welcome back, ${adminNickname}!` : 'Admin Dashboard'}</h1>
+          <div className="space-y-1 sm:space-y-2">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+              {adminNickname ? `Welcome back,` : 'Admin Dashboard'}
+            </h1>
+            {adminNickname && (
+              <p className="text-lg sm:text-xl lg:text-2xl text-primary font-bold">{adminNickname}!</p>
+            )}
+          </div>
           <Button 
-            variant="outline" 
+            variant="ghost" 
             size="icon"
             onClick={handleSignOut} 
-            className="border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200 h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0"
+            className="h-10 w-10 sm:h-12 sm:w-12 rounded-2xl bg-card/50 backdrop-blur-xl border border-border/50 hover:bg-card hover:border-primary/50 transition-all duration-300 hover:scale-105"
             aria-label="Sign Out"
           >
-            <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
+            <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
         </div>
         
@@ -669,7 +676,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
 
         {(() => {
           const tiles = [
-            { id: 'scanner', title: 'Camera Scan', icon: <Camera className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('scanner' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'scanner', title: 'Camera Scan', icon: <Camera className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />, onClick: () => { setCurrentView('scanner' as const); setTimeout(() => loadParties(), 100); } },
             { 
               id: 'guests', 
               title: 'Guest List', 
@@ -689,21 +696,21 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             { 
               id: 'registered-users', 
               title: 'Registered Users', 
-              icon: <UserCheck className="h-8 w-8 mb-2" />, 
+              icon: <UserCheck className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />, 
               onClick: () => { 
-                markTileAsOpened('registered-users'); 
+                markTileAsOpened('registered-users');
                 setCurrentView('registered-users' as const); 
                 setTimeout(() => loadParties(), 100); 
               },
               notificationCount: newRegisteredUsers
             },
-            { id: 'admin-games', title: 'Admin Games', icon: <Gamepad2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('admin-games' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'nickname', title: 'My Info', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('nickname' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'bar-tab', title: 'Bar Tab', icon: <Wine className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'bar-tab-scanner', title: 'Bartab Scanner', icon: <ScanBarcode className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab-scanner' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'faq', title: 'FAQ & Contact', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('faq' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'theme-changer', title: `Change Theme\n(${getThemeDisplayName(currentTheme)})`, icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: cycleTheme },
-            { id: 'message', title: 'Message Users', icon: <MessageCircle className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('message' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'admin-games', title: 'Admin Games', icon: <Gamepad2 className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />, onClick: () => { setCurrentView('admin-games' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'nickname', title: 'My Info', icon: <UserIcon className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />, onClick: () => { setCurrentView('nickname' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'bar-tab', title: 'Bar Tab', icon: <Wine className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />, onClick: () => { setCurrentView('bar-tab' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'bar-tab-scanner', title: 'Bartab Scanner', icon: <ScanBarcode className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />, onClick: () => { setCurrentView('bar-tab-scanner' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'faq', title: 'FAQ & Contact', icon: <Users className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />, onClick: () => { setCurrentView('faq' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'theme-changer', title: `Change Theme\n(${getThemeDisplayName(currentTheme)})`, icon: <Settings2 className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />, onClick: cycleTheme },
+            { id: 'message', title: 'Message Users', icon: <MessageCircle className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10" />, onClick: () => { setCurrentView('message' as const); setTimeout(() => loadParties(), 100); } },
           ];
           return (
             <ReorderableTilesLogic 

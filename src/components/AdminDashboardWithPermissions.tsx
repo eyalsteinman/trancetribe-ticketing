@@ -100,12 +100,9 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
 
   if (loading) {
     return (
-      <div 
-        className="min-h-screen p-4 transition-colors duration-500 flex items-center justify-center"
-        style={{ backgroundColor }}
-      >
+      <div className="min-h-screen w-full bg-gradient-to-br from-background via-background to-card/20 p-3 sm:p-6 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-lg font-semibold" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>
+          <div className="text-xl sm:text-2xl font-bold text-primary animate-pulse">
             Loading admin dashboard...
           </div>
         </div>
@@ -119,164 +116,156 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
 
   // Here you would render tiles based on adminProfile.allowed_tiles
   return (
-    <div 
-      className="min-h-screen p-4 transition-colors duration-500"
-      style={{ backgroundColor }}
-    >
-      <PageHeader
-        title="Admin Dashboard"
-      />
-      
-      <div className="max-w-4xl mx-auto pt-20 space-y-6">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 
-              className="text-xl font-semibold"
-              style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-            >
+    <div className="min-h-screen w-full bg-gradient-to-br from-background via-background to-card/20 p-3 sm:p-6">
+      <div className="relative flex items-center justify-between mb-6 sm:mb-8">
+        <div className="flex-1">
+          <div className="space-y-1 sm:space-y-2">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
               Welcome, Admin
-            </h2>
-            <p 
-              className="text-sm opacity-75"
-              style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-            >
+            </h1>
+            <p className="text-lg sm:text-xl text-muted-foreground font-medium">
               Level: {adminProfile?.admin_level.replace('level', 'Level ')}
             </p>
           </div>
-          <Button variant="outline" onClick={() => supabase.auth.signOut()}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
-          </Button>
         </div>
+        <Button 
+          variant="ghost" 
+          size="icon"
+          onClick={() => supabase.auth.signOut()}
+          className="h-10 w-10 sm:h-12 sm:w-12 rounded-2xl bg-card/50 backdrop-blur-xl border border-border/50 hover:bg-card hover:border-primary/50 transition-all duration-300 hover:scale-105"
+          aria-label="Sign Out"
+        >
+          <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
+        </Button>
+      </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {hasAccess('registered-users') && (
-            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  Users
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">Manage registered users</p>
-              </CardContent>
-            </Card>
-          )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+        {hasAccess('registered-users') && (
+          <Card className="cursor-pointer group hover:scale-105 transition-all duration-300">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base sm:text-lg flex items-center gap-3">
+                <Users className="h-5 w-5 sm:h-6 sm:w-6 text-primary group-hover:text-accent transition-colors" />
+                <span className="font-bold">Users</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">Manage registered users</p>
+            </CardContent>
+          </Card>
+        )}
 
-          {hasAccess('guest-list') && (
-            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <List className="h-4 w-4" />
-                  Guest List
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">View event guests</p>
-              </CardContent>
-            </Card>
-          )}
+        {hasAccess('guest-list') && (
+          <Card className="cursor-pointer group hover:scale-105 transition-all duration-300">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base sm:text-lg flex items-center gap-3">
+                <List className="h-5 w-5 sm:h-6 sm:w-6 text-primary group-hover:text-accent transition-colors" />
+                <span className="font-bold">Guest List</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">View event guests</p>
+            </CardContent>
+          </Card>
+        )}
 
-          {hasAccess('parties') && (
-            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <Plus className="h-4 w-4" />
-                  Parties
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">Create and manage parties</p>
-              </CardContent>
-            </Card>
-          )}
+        {hasAccess('parties') && (
+          <Card className="cursor-pointer group hover:scale-105 transition-all duration-300">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base sm:text-lg flex items-center gap-3">
+                <Plus className="h-5 w-5 sm:h-6 sm:w-6 text-primary group-hover:text-accent transition-colors" />
+                <span className="font-bold">Parties</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">Create and manage parties</p>
+            </CardContent>
+          </Card>
+        )}
 
-          {hasAccess('productions') && (
-            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <Building2 className="h-4 w-4" />
-                  Productions
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">Manage productions</p>
-              </CardContent>
-            </Card>
-          )}
+        {hasAccess('productions') && (
+          <Card className="cursor-pointer group hover:scale-105 transition-all duration-300">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base sm:text-lg flex items-center gap-3">
+                <Building2 className="h-5 w-5 sm:h-6 sm:w-6 text-primary group-hover:text-accent transition-colors" />
+                <span className="font-bold">Productions</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">Manage productions</p>
+            </CardContent>
+          </Card>
+        )}
 
-          {hasAccess('messages') && (
-            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <MessageCircle className="h-4 w-4" />
-                  Messages
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">Send messages to users</p>
-              </CardContent>
-            </Card>
-          )}
+        {hasAccess('messages') && (
+          <Card className="cursor-pointer group hover:scale-105 transition-all duration-300">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base sm:text-lg flex items-center gap-3">
+                <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6 text-primary group-hover:text-accent transition-colors" />
+                <span className="font-bold">Messages</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">Send messages to users</p>
+            </CardContent>
+          </Card>
+        )}
 
-          {hasAccess('games') && (
-            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <Gamepad2 className="h-4 w-4" />
-                  Games
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">Admin games and fun</p>
-              </CardContent>
-            </Card>
-          )}
+        {hasAccess('games') && (
+          <Card className="cursor-pointer group hover:scale-105 transition-all duration-300">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base sm:text-lg flex items-center gap-3">
+                <Gamepad2 className="h-5 w-5 sm:h-6 sm:w-6 text-primary group-hover:text-accent transition-colors" />
+                <span className="font-bold">Games</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">Admin games and fun</p>
+            </CardContent>
+          </Card>
+        )}
 
-          {hasAccess('bar-tabs') && (
-            <Card className="cursor-pointer hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <Wine className="h-4 w-4" />
-                  Bar Tabs
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">Manage bar transactions</p>
-              </CardContent>
-            </Card>
-          )}
+        {hasAccess('bar-tabs') && (
+          <Card className="cursor-pointer group hover:scale-105 transition-all duration-300">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base sm:text-lg flex items-center gap-3">
+                <Wine className="h-5 w-5 sm:h-6 sm:w-6 text-primary group-hover:text-accent transition-colors" />
+                <span className="font-bold">Bar Tabs</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">Manage bar transactions</p>
+            </CardContent>
+          </Card>
+        )}
 
-          {isSuperAdmin() && (
-            <Card 
-              className="cursor-pointer hover:shadow-lg transition-shadow"
-              onClick={() => setCurrentView('manage-admins')}
-            >
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <UserCheck className="h-4 w-4" />
-                  Manage Admins
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">Add new admins</p>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        {adminProfile?.allowed_tiles.length === 0 && (
-          <Card>
-            <CardContent className="pt-6">
-              <div className="text-center text-muted-foreground">
-                <p>No tiles have been assigned to your admin account.</p>
-                <p className="text-sm mt-2">Please contact a super admin to configure your permissions.</p>
-              </div>
+        {isSuperAdmin() && (
+          <Card 
+            className="cursor-pointer group hover:scale-105 transition-all duration-300"
+            onClick={() => setCurrentView('manage-admins')}
+          >
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base sm:text-lg flex items-center gap-3">
+                <UserCheck className="h-5 w-5 sm:h-6 sm:w-6 text-primary group-hover:text-accent transition-colors" />
+                <span className="font-bold">Manage Admins</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">Add new admins</p>
             </CardContent>
           </Card>
         )}
       </div>
+
+      {adminProfile?.allowed_tiles.length === 0 && (
+        <Card className="mt-8">
+          <CardContent className="pt-6">
+            <div className="text-center text-muted-foreground">
+              <p>No tiles have been assigned to your admin account.</p>
+              <p className="text-sm mt-2">Please contact a super admin to configure your permissions.</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
