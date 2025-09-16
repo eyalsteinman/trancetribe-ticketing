@@ -368,6 +368,60 @@ All colors MUST be HSL.
     overflow: hidden;
   }
 
+  /* Floating sections without visible containers */
+  .floating-section {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    @apply rounded-2xl p-4 sm:p-6 shadow-modern mb-6 sm:mb-8;
+  }
+
+  .floating-section-sm {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    @apply rounded-xl p-3 sm:p-4 shadow-modern mb-4 sm:mb-6;
+  }
+
+  /* Main app background matching login */
+  .app-background {
+    background: var(--gradient-mesh);
+    min-height: 100vh;
+    position: relative;
+  }
+
+  .app-background::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom right, hsl(var(--primary) / 0.2), hsl(var(--accent) / 0.1), hsl(var(--secondary) / 0.2));
+    animation: pulse 4s ease-in-out infinite alternate;
+  }
+
+  .app-background::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 24rem;
+    height: 24rem;
+    background: radial-gradient(circle, hsl(var(--primary) / 0.3), transparent);
+    border-radius: 50%;
+    filter: blur(3rem);
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(30px, -30px) rotate(120deg); }
+    66% { transform: translate(-20px, 20px) rotate(240deg); }
+  }
+
+  @keyframes pulse {
+    0% { opacity: 0.5; }
+    100% { opacity: 0.8; }
+  }
+
   /* Responsive containers with improved spacing */
   .container-section {
     @apply px-4 sm:px-6 lg:px-8 py-6 sm:py-8;

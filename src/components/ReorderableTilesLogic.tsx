@@ -178,7 +178,7 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
   };
 
   return (
-    <div className="w-full px-4">
+    <div className="w-full">
       <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>

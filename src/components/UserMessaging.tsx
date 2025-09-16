@@ -318,13 +318,21 @@ const UserMessaging: React.FC<UserMessagingProps> = ({ onBack, userId }) => {
 
   if (currentView === 'chat' && selectedConversation) {
     return (
-      <div className="min-h-screen bg-background p-4">
-        <div className="w-full px-4">
-          <Button
-            variant="ghost"
-            onClick={() => {
-              setCurrentView('conversations');
-              setSelectedConversation(null);
+      <div className="app-background min-h-screen">
+        {/* Floating particles */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary rounded-full animate-ping opacity-40"></div>
+          <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-accent rounded-full animate-ping opacity-60 delay-1000"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-radial from-accent/30 to-transparent rounded-full blur-3xl animate-float"></div>
+        </div>
+        
+        <div className="relative z-10 p-4 w-full">
+          <div className="floating-section">
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setCurrentView('conversations');
+                setSelectedConversation(null);
             }}
             className="mb-4"
           >
@@ -370,6 +378,7 @@ const UserMessaging: React.FC<UserMessagingProps> = ({ onBack, userId }) => {
               </div>
             </CardContent>
           </Card>
+          </div>
         </div>
       </div>
     );
@@ -377,13 +386,21 @@ const UserMessaging: React.FC<UserMessagingProps> = ({ onBack, userId }) => {
 
   if (currentView === 'new-message') {
     return (
-      <div className="min-h-screen bg-background p-4">
-        <div className="w-full px-4">
-          <Button
-            variant="ghost"
-            onClick={() => setCurrentView('conversations')}
-            className="mb-4"
-          >
+      <div className="app-background min-h-screen">
+        {/* Floating particles */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary rounded-full animate-ping opacity-40"></div>
+          <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-accent rounded-full animate-ping opacity-60 delay-1000"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-radial from-accent/30 to-transparent rounded-full blur-3xl animate-float"></div>
+        </div>
+        
+        <div className="relative z-10 p-4 w-full">
+          <div className="floating-section">
+            <Button
+              variant="ghost"
+              onClick={() => setCurrentView('conversations')}
+              className="mb-4"
+            >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Conversations
           </Button>
@@ -471,19 +488,28 @@ const UserMessaging: React.FC<UserMessagingProps> = ({ onBack, userId }) => {
               </div>
             </CardContent>
           </Card>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="w-full px-4">
-        <div className="flex items-center justify-between w-full py-4">
-          <h1 className="text-2xl font-bold text-foreground">
-            Direct Messages
-          </h1>
-          <Button 
+    <div className="app-background min-h-screen">
+      {/* Floating particles */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary rounded-full animate-ping opacity-40"></div>
+        <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-accent rounded-full animate-ping opacity-60 delay-1000"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-radial from-accent/30 to-transparent rounded-full blur-3xl animate-float"></div>
+      </div>
+      
+      <div className="relative z-10 p-4 w-full">
+        <div className="floating-section">
+          <div className="flex items-center justify-between w-full">
+            <h1 className="text-2xl font-bold text-foreground">
+              Direct Messages
+            </h1>
+            <Button
             variant="outline" 
             onClick={onBack} 
             className="flex items-center gap-2 px-3 py-2 h-auto text-sm font-medium border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200"
@@ -557,6 +583,7 @@ const UserMessaging: React.FC<UserMessagingProps> = ({ onBack, userId }) => {
 
         {/* Footer */}
         <Footer />
+        </div>
       </div>
     </div>
   );

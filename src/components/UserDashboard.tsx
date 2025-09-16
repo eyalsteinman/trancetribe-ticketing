@@ -327,7 +327,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         </div>
 
         {/* Dashboard Tiles */}
-        <div className="mb-8 sm:mb-12">
+        <div className="floating-section">
           {(() => {
             const items = [
               {
@@ -428,15 +428,15 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           })()}
         </div>
 
-        {/* QR Codes Section with proper spacing */}
+        {/* QR Codes Section */}
         {userQRCodes.length > 0 && (
-          <div className="px-4 mb-8 sm:mb-12">
-            <h2 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-6 sm:mb-8">Your Tickets</h2>
-            <div className="space-y-6">
+          <div className="floating-section">
+            <h2 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-6">Your Tickets</h2>
+            <div className="space-y-4">
               {userQRCodes.map((qrCode) => (
                 <div 
                   key={qrCode.id} 
-                  className="cursor-pointer group overflow-hidden border border-border bg-card rounded-xl"
+                  className="cursor-pointer group overflow-hidden floating-section-sm"
                   onClick={() => {
                     const party = { 
                       id: qrCode.party_id, 
@@ -525,8 +525,8 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           </DialogContent>
         </Dialog>
 
-        {/* Footer with proper spacing */}
-        <div className="px-4">
+        {/* Footer */}
+        <div className="floating-section">
           <Footer />
         </div>
       </div>
