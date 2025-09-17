@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Users, Calendar as CalendarIcon, Sparkles } from 'lucide-react';
+import { ArrowLeft, Users, Calendar as CalendarIcon } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { format, parseISO, isSameDay } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -152,159 +153,127 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId }) => {
       position: 'relative' as const,
     },
     approvedEvent: {
-      border: '2px solid hsl(var(--primary))',
+      border: '2px solid #22c55e',
       borderRadius: '50%',
-      backgroundColor: 'hsl(var(--primary) / 0.1)',
+      backgroundColor: 'rgba(34, 197, 94, 0.1)',
     },
     pendingEvent: {
-      border: '2px solid hsl(var(--secondary))',
+      border: '2px solid #f97316',
       borderRadius: '50%',
-      backgroundColor: 'hsl(var(--secondary) / 0.1)',
+      backgroundColor: 'rgba(249, 115, 22, 0.1)',
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 flex flex-col items-center justify-center p-4">
-        <div className="absolute top-6 left-6">
-          <Button variant="ghost" size="icon" onClick={onBack}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        </div>
-        <div className="flex flex-col items-center space-y-4">
-          <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
-          <p className="text-foreground font-medium">{t('loading')}</p>
+      <div className="min-h-screen bg-gradient-to-br from-background via-background/80 to-primary/5">
+        <div className="container mx-auto max-w-6xl p-4">
+          <div className="flex items-center mb-6">
+            <Button variant="ghost" size="icon" onClick={onBack} className="mr-2">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <h1 className="text-2xl font-bold">{t('event_calendar')}</h1>
+          </div>
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 flex flex-col items-center justify-center p-4 relative">
-      {/* Floating back button */}
-      <div className="absolute top-6 left-6 z-10">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={onBack}
-          className="bg-white/10 backdrop-blur-md border border-white/20 text-foreground hover:bg-white/20 transition-all duration-300"
-        >
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 space-y-6">
+      <div className="flex items-center mb-6">
+        <Button variant="ghost" size="icon" onClick={onBack} className="mr-2">
           <ArrowLeft className="h-5 w-5" />
         </Button>
+        <h1 className="text-2xl font-bold">{t('event_calendar')}</h1>
       </div>
 
-      {/* Floating title */}
-      <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-10">
-        <h1 className="text-2xl font-bold text-foreground bg-white/10 backdrop-blur-md px-6 py-2 rounded-full border border-white/20">
-          {t('event_calendar')}
-        </h1>
-      </div>
-
-      {/* Main calendar floating in center */}
-      <div className="w-full max-w-sm mx-auto mt-20">
-        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-8 hover:shadow-3xl transition-all duration-500">
+      <div className="w-full max-w-md mx-auto">
+        <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-2xl p-6">
           <Calendar
             mode="single"
             selected={selectedDate}
             onSelect={handleDateSelect}
             modifiers={modifiers}
             modifiersStyles={modifiersStyles}
-            className="w-full"
+            className="w-full calendar-modern"
             classNames={{
-              months: "space-y-4",
-              month: "space-y-4",
-              caption: "flex justify-center pt-1 relative items-center text-foreground font-bold text-lg",
-              caption_label: "text-sm font-medium",
-              nav: "space-x-1 flex items-center",
-              nav_button: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 text-foreground",
-              nav_button_previous: "absolute left-1",
-              nav_button_next: "absolute right-1",
-              table: "w-full border-collapse space-y-1",
-              head_row: "flex",
-              head_cell: "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
-              row: "flex w-full mt-2",
-              cell: "text-center text-sm p-0 relative",
-              day: "h-9 w-9 p-0 font-normal text-foreground hover:bg-primary/20 rounded-full transition-all duration-200 flex items-center justify-center cursor-pointer",
-              day_selected: "bg-primary text-primary-foreground hover:bg-primary/90 font-bold",
-              day_today: "bg-secondary text-secondary-foreground font-bold",
-              day_outside: "text-muted-foreground opacity-50",
-              day_disabled: "text-muted-foreground opacity-50 cursor-not-allowed",
-              day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
-              day_hidden: "invisible",
+              day: "h-12 w-12 text-center text-sm rounded-full hover:bg-primary/20 transition-colors",
+              day_selected: "bg-primary text-primary-foreground hover:bg-primary/90",
+              day_today: "bg-accent text-accent-foreground font-bold"
             }}
           />
         </div>
       </div>
 
-      {/* Floating event details */}
+      {/* Event Details Section */}
       {selectedEvent && (
-        <div className="fixed bottom-4 left-4 right-4 max-w-md mx-auto">
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl overflow-hidden hover:shadow-3xl transition-all duration-500">
-            {/* Party image or placeholder */}
+        <div className="w-full max-w-md mx-auto space-y-6">
+          {/* Party Photo and Details */}
+          <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-2xl overflow-hidden">
             {selectedEvent.party.photo_url ? (
               <div 
-                className="w-full h-48 bg-cover bg-center cursor-pointer relative group"
+                className="w-full h-64 bg-cover bg-center cursor-pointer hover:scale-105 transition-transform duration-500"
                 style={{ backgroundImage: `url(${selectedEvent.party.photo_url})` }}
                 onClick={handlePartyClick}
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute bottom-4 left-4 right-4">
-                  <h3 className="text-xl font-bold text-white drop-shadow-lg">{selectedEvent.party.name}</h3>
-                  <p className="text-white/90 font-medium drop-shadow">
-                    {format(parseISO(selectedEvent.party.date), 'MMMM d, yyyy')}
-                  </p>
-                </div>
-                <Sparkles className="absolute top-4 right-4 h-6 w-6 text-white/80" />
-              </div>
+                title="Click to view party details"
+              />
             ) : (
               <div 
-                className="w-full h-48 bg-gradient-to-br from-primary/30 to-secondary/20 cursor-pointer relative group flex items-center justify-center"
+                className="w-full h-64 bg-gradient-to-br from-primary/20 to-primary/5 cursor-pointer hover:scale-105 transition-transform duration-500 flex items-center justify-center"
                 onClick={handlePartyClick}
+                title="Click to view party details"
               >
-                <CalendarIcon className="h-16 w-16 text-primary/60" />
-                <div className="absolute bottom-4 left-4 right-4">
-                  <h3 className="text-xl font-bold text-foreground">{selectedEvent.party.name}</h3>
-                  <p className="text-muted-foreground font-medium">
-                    {format(parseISO(selectedEvent.party.date), 'MMMM d, yyyy')}
-                  </p>
-                </div>
+                <CalendarIcon className="h-16 w-16 text-primary/40" />
               </div>
             )}
             
-            {/* Status and friends info */}
-            <div className="p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <Badge 
-                  variant={selectedEvent.qrStatus === 'approved' ? 'default' : 'secondary'}
-                  className="px-3 py-1 text-sm font-medium"
-                >
-                  {selectedEvent.qrStatus === 'approved' ? t('approved') : t('pending')}
-                </Badge>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Users className="h-4 w-4" />
-                  <span>{selectedEvent.friends.length} {t('friends_going')}</span>
-                </div>
+            <div className="p-6 space-y-3">
+              <h3 className="text-xl font-bold text-white">{selectedEvent.party.name}</h3>
+              <p className="text-white/80 font-medium">
+                {format(parseISO(selectedEvent.party.date), 'MMMM d, yyyy')}
+              </p>
+              <div className={`px-3 py-1 rounded-full text-sm font-medium inline-block ${
+                selectedEvent.qrStatus === 'approved' ? 'bg-green-500/20 text-green-300' : 'bg-orange-500/20 text-orange-300'
+              }`}>
+                {selectedEvent.qrStatus === 'approved' ? t('approved') : t('pending')}
               </div>
-              
-              {selectedEvent.friends.length > 0 && (
-                <div className="flex -space-x-2">
-                  {selectedEvent.friends.slice(0, 5).map((friend, index) => (
-                    <div 
-                      key={index} 
-                      className="w-8 h-8 bg-gradient-to-br from-primary/30 to-secondary/20 rounded-full flex items-center justify-center border-2 border-white text-xs font-bold text-foreground"
-                    >
-                      {friend.friend_first_name?.charAt(0) || friend.friend_display_name.charAt(0)}
-                    </div>
-                  ))}
-                  {selectedEvent.friends.length > 5 && (
-                    <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center border-2 border-white text-xs font-bold text-muted-foreground">
-                      +{selectedEvent.friends.length - 5}
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
+          </div>
+
+          {/* Friends Going Section */}
+          <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-2xl p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Users className="h-5 w-5 text-primary" />
+              <h3 className="text-lg font-bold text-white">
+                {t('friends_going')} ({selectedEvent.friends.length})
+              </h3>
+            </div>
+            {selectedEvent.friends.length > 0 ? (
+              <div className="space-y-3">
+                {selectedEvent.friends.map((friend, index) => (
+                  <div key={index} className="flex items-center gap-3 p-3 bg-white/10 rounded-xl">
+                    <div className="w-10 h-10 bg-gradient-to-br from-primary/30 to-primary/10 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-bold text-white">
+                        {friend.friend_first_name?.charAt(0) || friend.friend_display_name.charAt(0)}
+                      </span>
+                    </div>
+                    <span className="font-medium text-white">
+                      {friend.friend_first_name && friend.friend_last_name 
+                        ? `${friend.friend_first_name} ${friend.friend_last_name}`
+                        : friend.friend_display_name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-white/60 text-center py-6 text-sm">
+                {t('no_friends_going')}
+              </p>
+            )}
           </div>
         </div>
       )}
