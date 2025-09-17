@@ -434,7 +434,6 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                   className="cursor-pointer group overflow-hidden border border-border bg-card"
                   onClick={() => {
                     localStorage.setItem('selectedPartyId', qrCode.party_id);
-                    localStorage.setItem('viewPartyDetails', 'true');
                     setCurrentView('parties');
                   }}
                 >

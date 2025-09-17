@@ -60,7 +60,7 @@ export const translations = {
     'invalid_credentials': 'Invalid credentials',
     'password_mismatch': 'Passwords do not match',
     'welcome_to': 'welcome to',
-    'trance_tribes': 'TRANCE TRIBES',
+    'trance_tribes': 'TRANCE\nTRIBES',
     'ticket_generator': 'ticket generator',
     'choose_access_type': 'Choose your access type',
     
@@ -325,7 +325,7 @@ export const translations = {
     'invalid_credentials': 'פרטי התחברות שגויים',
     'password_mismatch': 'הסיסמאות אינן תואמות',
     'welcome_to': 'ברוכים הבאים ל',
-    'trance_tribes': 'טראנס שבטים',
+    'trance_tribes': 'טראנס\nשבטים',
     'ticket_generator': 'מחולל כרטיסים',
     'choose_access_type': 'בחר את סוג הגישה שלך',
     
@@ -590,7 +590,7 @@ export const translations = {
     'invalid_credentials': 'Credenciales inválidas',
     'password_mismatch': 'Las contraseñas no coinciden',
     'welcome_to': 'bienvenido a',
-    'trance_tribes': 'TRANCE TRIBUS',
+    'trance_tribes': 'TRANCE\nTRIBUS',
     'ticket_generator': 'generador de boletos',
     'choose_access_type': 'Elige tu tipo de acceso',
     
