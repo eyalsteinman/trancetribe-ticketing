@@ -52,6 +52,8 @@ export default function UserParties({ user, onBack }) {
     loadParties();
 
     const selectedPartyId = localStorage.getItem('selectedPartyId');
+    const savedParty = localStorage.getItem('selectedParty');
+    
     if (selectedPartyId) {
       localStorage.removeItem('selectedPartyId');
       setTimeout(() => {
@@ -60,6 +62,20 @@ export default function UserParties({ user, onBack }) {
           setSelectedParty(party);
         }
       }, 100);
+    } else if (savedParty) {
+      try {
+        const party = JSON.parse(savedParty);
+        localStorage.removeItem('selectedParty');
+        setTimeout(() => {
+          const fullParty = parties.find(p => p.id === party.id);
+          if (fullParty) {
+            setSelectedParty(fullParty);
+          }
+        }, 100);
+      } catch (error) {
+        console.error('Error parsing saved party:', error);
+        localStorage.removeItem('selectedParty');
+      }
     }
 
     const subscription = supabase

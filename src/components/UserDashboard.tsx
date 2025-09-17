@@ -6,7 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { User } from '@supabase/supabase-js';
-import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut, Users, IdCard, Heart, Wine, Moon, Sun, MessageCircle, ArrowLeft, Mail } from 'lucide-react';
+import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut, Users, IdCard, Heart, Wine, Moon, Sun, MessageCircle, ArrowLeft, Mail, CalendarDays } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { QRCodeSVG } from 'qrcode.react';
 import Footer from '@/components/ui/footer';
@@ -29,6 +29,7 @@ import UserBarTab from './UserBarTab';
 import FAQContact from './FAQContact';
 import UserMessages from './UserMessages';
 import UserMessaging from './UserMessaging';
+import EventCalendar from './EventCalendar';
 import { useTheme } from '@/hooks/useDarkMode';
 import PageHeader from './ui/page-header';
 
@@ -37,7 +38,7 @@ interface UserDashboardProps {
 }
 
 const UserDashboard = ({ user }: UserDashboardProps) => {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance' | 'personal-code' | 'friends-codes' | 'bar-tab' | 'faq' | 'messages' | 'tribes' | 'direct-messages'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance' | 'personal-code' | 'friends-codes' | 'bar-tab' | 'faq' | 'messages' | 'tribes' | 'direct-messages' | 'event-calendar'>('dashboard');
   const [nickname, setNickname] = useState<string>('');
   const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
   const [selectedProduction, setSelectedProduction] = useState<{id: string; name: string; logo_url: string | null; vip_description: string | null; vip_price: number | null} | null>(null);
@@ -186,6 +187,10 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     return <UserParties user={user} onBack={() => setCurrentView('dashboard')} />;
   }
 
+  if (currentView === 'event-calendar') {
+    return <EventCalendar onBack={() => setCurrentView('dashboard')} userId={user.id} />;
+  }
+
   if (currentView === 'nickname') {
     return <PersonalizeEdit user={user} onBack={() => {
       setCurrentView('dashboard');
@@ -319,6 +324,12 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 title: t('events_parties'),
                 icon: <Calendar className="h-12 w-12" />,
                 onClick: () => setCurrentView('parties' as const),
+              },
+              {
+                id: 'event-calendar',
+                title: t('event_calendar'),
+                icon: <CalendarDays className="h-12 w-12" />,
+                onClick: () => setCurrentView('event-calendar' as const),
               },
               {
                 id: 'nickname',
