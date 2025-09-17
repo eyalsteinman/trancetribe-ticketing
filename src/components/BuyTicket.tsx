@@ -13,6 +13,7 @@ interface BuyTicketProps {
   partyId?: string;
   ticketTypeId?: string;
   className?: string;
+  onPaymentSuccess?: () => void;
 }
 
 interface PayPalWindow extends Window {
@@ -31,7 +32,8 @@ const BuyTicket: React.FC<BuyTicketProps> = ({
   adminId,
   partyId,
   ticketTypeId,
-  className = ''
+  className = '',
+  onPaymentSuccess
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [paypalOrderId, setPaypalOrderId] = useState<string | null>(null);
@@ -135,8 +137,11 @@ const BuyTicket: React.FC<BuyTicketProps> = ({
               description: 'Payment completed successfully!',
             });
             
-            // Here you would typically capture the payment and update your database
-            // For now, we'll just show a success message
+            // Call the success callback if provided
+            if (onPaymentSuccess) {
+              onPaymentSuccess();
+            }
+            
             setShowPayPalButtons(false);
             setPaypalOrderId(null);
           },
