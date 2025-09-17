@@ -49,35 +49,30 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         <div className={`text-center transition-all duration-1200 delay-300 ease-out ${
           animate ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-95'
         }`}>
-          <h1 className="text-4xl font-black leading-tight tracking-tight bg-gradient-to-r from-white via-purple-100 to-white bg-clip-text text-transparent">
+          <h1 className="text-3xl font-black leading-none tracking-tight bg-gradient-to-r from-white via-purple-100 to-white bg-clip-text text-transparent">
             {isRTL ? 'שבטי טראנס' : 'TRANCE TRIBES'}
           </h1>
+          {/* Hebrew text under tribes */}
+          <p className="text-lg font-medium text-center text-purple-100 mt-2" dir="rtl">
+            תודה שטוב לך
+          </p>
         </div>
       </div>
       
-      {/* Dynamic loader with floating particles */}
+      {/* Dynamic white dot loader */}
       <div className={`pb-6 transition-all duration-1000 delay-1000 ease-out ${
         animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}>
         <div className="relative flex justify-center items-center">
-          {/* Dynamic 3D loader */}
-          <div className="relative">
-            <div className="w-16 h-16 rounded-full border-4 border-primary/30 animate-pulse"></div>
-            <div className="absolute inset-2 w-12 h-12 bg-gradient-to-r from-primary to-secondary rounded-full animate-spin"></div>
-            <div className="absolute inset-4 w-8 h-8 bg-accent rounded-full animate-bounce"></div>
-          </div>
-          
-          {/* Magical particles */}
-          <div className="absolute w-24 h-24">
-            {[...Array(8)].map((_, i) => (
+          {/* White dot loader */}
+          <div className="flex space-x-2">
+            {[...Array(5)].map((_, i) => (
               <div
                 key={i}
-                className="absolute w-1.5 h-1.5 bg-gradient-to-r from-primary to-accent rounded-full animate-ping"
+                className="w-3 h-3 bg-white rounded-full animate-bounce"
                 style={{
-                  top: `${50 + 35 * Math.cos((i * Math.PI * 2) / 8)}%`,
-                  left: `${50 + 35 * Math.sin((i * Math.PI * 2) / 8)}%`,
-                  animationDelay: `${i * 0.3}s`,
-                  animationDuration: '2s',
+                  animationDelay: `${i * 0.2}s`,
+                  animationDuration: '1.4s',
                 }}
               />
             ))}
@@ -91,15 +86,6 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
       }`}>
         <p className="text-lg font-semibold bg-gradient-to-r from-purple-200 to-white bg-clip-text text-transparent">
           {t('ticket_generator')}
-        </p>
-      </div>
-      
-      {/* Hebrew text centered and raised */}
-      <div className={`flex justify-center items-center min-h-[80px] pb-8 transition-all duration-1400 delay-1400 ease-out ${
-        animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-      }`}>
-        <p className="text-xl font-medium text-center text-purple-100" dir="rtl">
-          תודה שטוב לך
         </p>
       </div>
       

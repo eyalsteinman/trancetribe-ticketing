@@ -431,7 +431,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
               {userQRCodes.map((qrCode) => (
                 <div 
                   key={qrCode.id} 
-                  className="cursor-pointer group overflow-hidden border border-border bg-card"
+                  className="cursor-pointer group overflow-hidden border border-border bg-card rounded-xl"
                   onClick={() => {
                     localStorage.setItem('selectedPartyId', qrCode.party_id);
                     localStorage.setItem('viewPartyDetails', 'true');

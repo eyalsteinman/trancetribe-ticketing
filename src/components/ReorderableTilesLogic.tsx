@@ -58,10 +58,8 @@ const SortableTile: React.FC<{
       data-id={item.id}
       style={style}
       className={`
-        relative p-4 bg-card select-none h-32 min-h-32
-        border border-border flex flex-col items-center justify-center text-center space-y-2
-        transition-transform duration-200 ease-out
-        ${!isReordering ? 'hover:scale-102' : ''}
+        relative rounded-full w-24 h-24 bg-gradient-to-br from-purple-500/80 via-purple-600/90 to-purple-700/80 backdrop-blur-lg border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer hover:scale-110 group flex flex-col items-center justify-center text-center select-none
+        ${!isReordering ? 'hover:scale-110' : ''}
         ${tiltedTileId === item.id ? 'animate-[tilt_0.3s_ease-in-out] rotate-12' : ''}
         ${isDragging ? 'z-10' : ''}
       `}
@@ -70,10 +68,10 @@ const SortableTile: React.FC<{
       }}
       {...(isReordering ? { ...attributes, ...listeners } : {})}
     >
-      <div className="text-primary">
+      <div className="group-hover:scale-110 transition-transform duration-200">
         {item.icon}
       </div>
-      <span className="text-sm font-medium text-foreground whitespace-pre-line">
+      <span className="text-xs font-bold text-white group-hover:text-white/90 transition-colors duration-200 whitespace-pre-line leading-tight px-1">
         {item.title}
       </span>
       {item.notificationCount && item.notificationCount > 0 && (

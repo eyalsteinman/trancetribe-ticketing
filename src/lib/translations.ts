@@ -855,9 +855,9 @@ export const translations = {
     'invalid_credentials': 'Identifiants invalides',
     'password_mismatch': 'Les mots de passe ne correspondent pas',
     'welcome_to': 'bienvenue à',
-    'trance_tribes': 'TRANCE\nTRIBUS',
+    'trance_tribes': 'TRANCE TRIBUS',
     'ticket_generator': 'générateur de billets',
-    'choose_access_type': 'Choisissez votre type d\'accès',
+    'choose_access_type': 'Choisissez votre type',
     
     // Dashboard
     'dashboard': 'Tableau de bord',
@@ -1298,9 +1298,9 @@ export const translations = {
     'dont_have_account': 'Non hai un account?',
     'have_account': 'Hai un account?',
     'sign_in_to_account': 'Accedi al tuo account',
-    'create_account_description': 'Crea il tuo account con il tuo nome completo e ottieni accesso istantaneo',
+    'create_account_description': 'Crea il tuo account e ottieni accesso',
     'admin_access': 'Accesso Amministratore',
-    'admin_credentials_description': 'Accedi con le tue credenziali di amministratore',
+    'admin_credentials_description': 'Accedi come amministratore',
     'enter_email': 'Inserisci la tua email',
     'enter_password': 'Inserisci la tua password',
     'enter_first_name': 'Inserisci nome',
