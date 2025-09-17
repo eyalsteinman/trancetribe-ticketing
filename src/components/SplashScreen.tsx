@@ -63,22 +63,45 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
             </p>
           </div>
         </div>
-        
-        {/* Ticket generator text */}
-        <div className={`text-center mt-8 transition-all duration-1200 delay-700 ease-out ${
-          animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}>
-          <p className="text-xl font-semibold bg-gradient-to-r from-purple-200 to-white bg-clip-text text-transparent">
-            {t('ticket_generator')}
-          </p>
+      </div>
+      
+      {/* Dynamic loader with particles */}
+      <div className={`pb-8 transition-all duration-1000 delay-1000 ease-out ${
+        animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      }`}>
+        <div className="relative flex justify-center items-center">
+          {/* Multi-ring loader */}
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
+            <div className="absolute top-1 left-1 w-14 h-14 border-4 border-transparent border-t-purple-300 rounded-full animate-spin animation-delay-200"></div>
+            <div className="absolute top-2 left-2 w-12 h-12 border-4 border-transparent border-t-pink-300 rounded-full animate-spin animation-delay-400"></div>
+          </div>
+          
+          {/* Orbiting particles */}
+          <div className="absolute w-20 h-20">
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-2 h-2 bg-white/60 rounded-full animate-bounce"
+                style={{
+                  top: `${50 + 30 * Math.cos((i * Math.PI * 2) / 6)}%`,
+                  left: `${50 + 30 * Math.sin((i * Math.PI * 2) / 6)}%`,
+                  animationDelay: `${i * 0.2}s`,
+                  animationDuration: '1.5s',
+                }}
+              />
+            ))}
+          </div>
         </div>
       </div>
       
-      {/* Loader at bottom */}
-      <div className={`pb-12 transition-all duration-1000 delay-1000 ease-out ${
+      {/* Ticket generator text */}
+      <div className={`text-center pb-8 transition-all duration-1200 delay-1200 ease-out ${
         animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}>
-        <Loader2 className="w-8 h-8 text-white/70 animate-spin" />
+        <p className="text-lg font-semibold bg-gradient-to-r from-purple-200 to-white bg-clip-text text-transparent">
+          {t('ticket_generator')}
+        </p>
       </div>
       
       {/* Elegant floating orbs */}
