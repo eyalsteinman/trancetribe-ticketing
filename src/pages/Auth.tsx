@@ -142,10 +142,10 @@ const AuthPage = () => {
         <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} carouselOnly />
 
         <div className="w-full">
-          <div className={`text-center ${isRTL ? 'space-y-4' : 'space-y-2'}`}>
+          <div className="flex flex-col items-center justify-center space-y-4">
             <LanguageSelector />
-            <RtlText text={t('trance_tribes')} className="text-3xl font-bold whitespace-pre-line" />
-            <RtlText text={t('choose_access_type')} className="opacity-75 mt-2" />
+            <RtlText text={t('trance_tribes')} className="text-3xl font-bold whitespace-pre-line text-center" />
+            <RtlText text={t('choose_access_type')} className="opacity-75 text-center" />
           </div>
 
           <div className={`mt-6 ${isRTL ? 'rtl-form' : ''}`}>

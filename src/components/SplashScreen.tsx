@@ -9,7 +9,7 @@ interface SplashScreenProps {
 const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const [animate, setAnimate] = useState(false);
-  const { t } = useLanguage();
+  const { t, isRTL } = useLanguage();
 
   useEffect(() => {
     // Start animation immediately
@@ -45,49 +45,39 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           </p>
         </div>
         
-        {/* Main title */}
+        {/* Main title - smaller with less spacing */}
         <div className={`text-center transition-all duration-1200 delay-300 ease-out ${
           animate ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-95'
         }`}>
-          <h1 className="text-6xl font-black leading-none tracking-tight bg-gradient-to-r from-white via-purple-100 to-white bg-clip-text text-transparent">
-            TRANCE
+          <h1 className="text-4xl font-black leading-tight tracking-tight bg-gradient-to-r from-white via-purple-100 to-white bg-clip-text text-transparent">
+            {isRTL ? 'שבטי טראנס' : 'TRANCE TRIBES'}
           </h1>
-          <h1 className="text-6xl font-black leading-none tracking-tight bg-gradient-to-r from-white via-purple-100 to-white bg-clip-text text-transparent mb-6">
-            TRIBES
-          </h1>
-          
-          {/* Hebrew text centered and raised */}
-          <div className="flex justify-center -mt-2">
-            <p className="text-2xl font-bold text-center text-purple-100" dir="rtl">
-              תודה שטוב לך
-            </p>
-          </div>
         </div>
       </div>
       
-      {/* Dynamic loader with particles */}
-      <div className={`pb-8 transition-all duration-1000 delay-1000 ease-out ${
+      {/* Dynamic loader with floating particles */}
+      <div className={`pb-6 transition-all duration-1000 delay-1000 ease-out ${
         animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}>
         <div className="relative flex justify-center items-center">
-          {/* Multi-ring loader */}
+          {/* Dynamic 3D loader */}
           <div className="relative">
-            <div className="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
-            <div className="absolute top-1 left-1 w-14 h-14 border-4 border-transparent border-t-purple-300 rounded-full animate-spin animation-delay-200"></div>
-            <div className="absolute top-2 left-2 w-12 h-12 border-4 border-transparent border-t-pink-300 rounded-full animate-spin animation-delay-400"></div>
+            <div className="w-16 h-16 rounded-full border-4 border-primary/30 animate-pulse"></div>
+            <div className="absolute inset-2 w-12 h-12 bg-gradient-to-r from-primary to-secondary rounded-full animate-spin"></div>
+            <div className="absolute inset-4 w-8 h-8 bg-accent rounded-full animate-bounce"></div>
           </div>
           
-          {/* Orbiting particles */}
-          <div className="absolute w-20 h-20">
-            {[...Array(6)].map((_, i) => (
+          {/* Magical particles */}
+          <div className="absolute w-24 h-24">
+            {[...Array(8)].map((_, i) => (
               <div
                 key={i}
-                className="absolute w-2 h-2 bg-white/60 rounded-full animate-bounce"
+                className="absolute w-1.5 h-1.5 bg-gradient-to-r from-primary to-accent rounded-full animate-ping"
                 style={{
-                  top: `${50 + 30 * Math.cos((i * Math.PI * 2) / 6)}%`,
-                  left: `${50 + 30 * Math.sin((i * Math.PI * 2) / 6)}%`,
-                  animationDelay: `${i * 0.2}s`,
-                  animationDuration: '1.5s',
+                  top: `${50 + 35 * Math.cos((i * Math.PI * 2) / 8)}%`,
+                  left: `${50 + 35 * Math.sin((i * Math.PI * 2) / 8)}%`,
+                  animationDelay: `${i * 0.3}s`,
+                  animationDuration: '2s',
                 }}
               />
             ))}
@@ -101,6 +91,15 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
       }`}>
         <p className="text-lg font-semibold bg-gradient-to-r from-purple-200 to-white bg-clip-text text-transparent">
           {t('ticket_generator')}
+        </p>
+      </div>
+      
+      {/* Hebrew text centered and raised */}
+      <div className={`flex justify-center items-center min-h-[80px] pb-8 transition-all duration-1400 delay-1400 ease-out ${
+        animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      }`}>
+        <p className="text-xl font-medium text-center text-purple-100" dir="rtl">
+          תודה שטוב לך
         </p>
       </div>
       

@@ -13,6 +13,8 @@ export const SignUpForm = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [facebookProfile, setFacebookProfile] = useState('');
+  const [instagramProfile, setInstagramProfile] = useState('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const { t } = useLanguage();
@@ -22,6 +24,25 @@ export const SignUpForm = () => {
       toast({
         title: t('error'),
         description: t('fields_required'),
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validate social media URLs if provided
+    if (facebookProfile && !facebookProfile.includes('facebook.com')) {
+      toast({
+        title: t('error'),
+        description: 'Please enter a valid Facebook profile URL',
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (instagramProfile && !instagramProfile.includes('instagram.com')) {
+      toast({
+        title: t('error'),
+        description: 'Please enter a valid Instagram profile URL',
         variant: "destructive"
       });
       return;
@@ -38,6 +59,8 @@ export const SignUpForm = () => {
             first_name: firstName,
             last_name: lastName,
             phone_number: phoneNumber,
+            facebook_profile: facebookProfile,
+            instagram_profile: instagramProfile,
             display_name: `${firstName} ${lastName}`
           }
         }
@@ -99,6 +122,32 @@ export const SignUpForm = () => {
           className="bg-white text-black border-gray-300"
           style={{ color: '#000000', backgroundColor: '#ffffff' }}
         />
+      </div>
+      
+      <div>
+        <label className="text-sm font-medium text-black">Facebook Profile</label>
+        <Input
+          type="url"
+          value={facebookProfile}
+          onChange={(e) => setFacebookProfile(e.target.value)}
+          placeholder="https://facebook.com/yourprofile"
+          className="bg-white text-black border-gray-300"
+          style={{ color: '#000000', backgroundColor: '#ffffff' }}
+        />
+        <p className="text-xs text-gray-500 mt-1">You can do this later</p>
+      </div>
+      
+      <div>
+        <label className="text-sm font-medium text-black">Instagram Profile</label>
+        <Input
+          type="url"
+          value={instagramProfile}
+          onChange={(e) => setInstagramProfile(e.target.value)}
+          placeholder="https://instagram.com/yourprofile"
+          className="bg-white text-black border-gray-300"
+          style={{ color: '#000000', backgroundColor: '#ffffff' }}
+        />
+        <p className="text-xs text-gray-500 mt-1">You can do this later</p>
       </div>
       
       <div>

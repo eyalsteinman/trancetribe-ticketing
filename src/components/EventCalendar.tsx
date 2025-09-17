@@ -183,121 +183,100 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/80 to-primary/5">
-      <div className="container mx-auto max-w-6xl p-4">
-        <div className="flex items-center mb-6">
-          <Button variant="ghost" size="icon" onClick={onBack} className="mr-2">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-2xl font-bold">{t('event_calendar')}</h1>
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 space-y-6">
+      <div className="flex items-center mb-6">
+        <Button variant="ghost" size="icon" onClick={onBack} className="mr-2">
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <h1 className="text-2xl font-bold">{t('event_calendar')}</h1>
+      </div>
+
+      <div className="w-full max-w-md mx-auto">
+        <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-2xl p-6">
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={handleDateSelect}
+            modifiers={modifiers}
+            modifiersStyles={modifiersStyles}
+            className="w-full calendar-modern"
+            classNames={{
+              day: "h-12 w-12 text-center text-sm rounded-full hover:bg-primary/20 transition-colors",
+              day_selected: "bg-primary text-primary-foreground hover:bg-primary/90",
+              day_today: "bg-accent text-accent-foreground font-bold"
+            }}
+          />
         </div>
-        
-        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] space-y-8">
-          <div className="w-full max-w-7xl grid lg:grid-cols-2 gap-8 items-start">
-            {/* Calendar Section - Modern floating design */}
-            <div className="flex justify-center lg:justify-end">
-              <div className="bg-card/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-border/50 p-8 hover:shadow-3xl transition-all duration-300">
-                <div className="text-center mb-6">
-                  <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent flex items-center justify-center gap-2">
-                    <CalendarIcon className="h-6 w-6 text-primary" />
-                    {t('your_events')}
-                  </h2>
-                </div>
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={handleDateSelect}
-                  modifiers={modifiers}
-                  modifiersStyles={modifiersStyles}
-                  className="rounded-2xl border-0 shadow-inner bg-background/50"
-                />
+      </div>
+
+      {/* Event Details Section */}
+      {selectedEvent && (
+        <div className="w-full max-w-md mx-auto space-y-6">
+          {/* Party Photo and Details */}
+          <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-2xl overflow-hidden">
+            {selectedEvent.party.photo_url ? (
+              <div 
+                className="w-full h-64 bg-cover bg-center cursor-pointer hover:scale-105 transition-transform duration-500"
+                style={{ backgroundImage: `url(${selectedEvent.party.photo_url})` }}
+                onClick={handlePartyClick}
+                title="Click to view party details"
+              />
+            ) : (
+              <div 
+                className="w-full h-64 bg-gradient-to-br from-primary/20 to-primary/5 cursor-pointer hover:scale-105 transition-transform duration-500 flex items-center justify-center"
+                onClick={handlePartyClick}
+                title="Click to view party details"
+              >
+                <CalendarIcon className="h-16 w-16 text-primary/40" />
               </div>
-            </div>
-
-            {/* Event Details Section - Modern floating design */}
-            <div className="flex justify-center lg:justify-start">
-              <div className="w-full max-w-md space-y-6">
-                {selectedEvent ? (
-                  <>
-                    {/* Party Photo and Details */}
-                    <div className="bg-card/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-border/50 overflow-hidden hover:shadow-3xl transition-all duration-300">
-                      {selectedEvent.party.photo_url ? (
-                        <div 
-                          className="w-full h-64 bg-cover bg-center cursor-pointer hover:scale-105 transition-transform duration-500"
-                          style={{ backgroundImage: `url(${selectedEvent.party.photo_url})` }}
-                          onClick={handlePartyClick}
-                          title="Click to view party details"
-                        />
-                      ) : (
-                        <div 
-                          className="w-full h-64 bg-gradient-to-br from-primary/20 to-primary/5 cursor-pointer hover:scale-105 transition-transform duration-500 flex items-center justify-center"
-                          onClick={handlePartyClick}
-                          title="Click to view party details"
-                        >
-                          <CalendarIcon className="h-16 w-16 text-primary/40" />
-                        </div>
-                      )}
-                      
-                      <div className="p-6 space-y-3">
-                        <h3 className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">{selectedEvent.party.name}</h3>
-                        <p className="text-muted-foreground font-medium">
-                          {format(parseISO(selectedEvent.party.date), 'MMMM d, yyyy')}
-                        </p>
-                        <Badge 
-                          variant={selectedEvent.qrStatus === 'approved' ? 'default' : 'secondary'}
-                          className="shadow-md"
-                        >
-                          {selectedEvent.qrStatus === 'approved' ? t('approved') : t('pending')}
-                        </Badge>
-                      </div>
-                    </div>
-
-                    {/* Friends Going Section */}
-                    <div className="bg-card/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-border/50 p-6 hover:shadow-3xl transition-all duration-300">
-                      <div className="flex items-center gap-2 mb-4">
-                        <Users className="h-5 w-5 text-primary" />
-                        <h3 className="text-lg font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                          {t('friends_going')} ({selectedEvent.friends.length})
-                        </h3>
-                      </div>
-                      {selectedEvent.friends.length > 0 ? (
-                        <div className="space-y-3">
-                          {selectedEvent.friends.map((friend, index) => (
-                            <div key={index} className="flex items-center gap-3 p-3 bg-background/50 rounded-2xl border border-border/30 hover:bg-background/70 transition-colors">
-                              <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-primary/10 rounded-full flex items-center justify-center shadow-sm">
-                                <span className="text-sm font-bold text-primary">
-                                  {friend.friend_first_name?.charAt(0) || friend.friend_display_name.charAt(0)}
-                                </span>
-                              </div>
-                              <span className="font-medium">
-                                {friend.friend_first_name && friend.friend_last_name 
-                                  ? `${friend.friend_first_name} ${friend.friend_last_name}`
-                                  : friend.friend_display_name}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-muted-foreground text-center py-6 text-sm">
-                          {t('no_friends_going')}
-                        </p>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <div className="bg-card/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-border/50 p-8 text-center hover:shadow-3xl transition-all duration-300">
-                    <CalendarIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                    <h3 className="text-lg font-semibold mb-2">{t('select_date')}</h3>
-                    <p className="text-muted-foreground text-sm">
-                      {t('click_on_highlighted_date')}
-                    </p>
-                  </div>
-                )}
+            )}
+            
+            <div className="p-6 space-y-3">
+              <h3 className="text-xl font-bold text-white">{selectedEvent.party.name}</h3>
+              <p className="text-white/80 font-medium">
+                {format(parseISO(selectedEvent.party.date), 'MMMM d, yyyy')}
+              </p>
+              <div className={`px-3 py-1 rounded-full text-sm font-medium inline-block ${
+                selectedEvent.qrStatus === 'approved' ? 'bg-green-500/20 text-green-300' : 'bg-orange-500/20 text-orange-300'
+              }`}>
+                {selectedEvent.qrStatus === 'approved' ? t('approved') : t('pending')}
               </div>
             </div>
           </div>
+
+          {/* Friends Going Section */}
+          <div className="backdrop-blur-lg bg-white/10 border border-white/20 rounded-2xl shadow-2xl p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Users className="h-5 w-5 text-primary" />
+              <h3 className="text-lg font-bold text-white">
+                {t('friends_going')} ({selectedEvent.friends.length})
+              </h3>
+            </div>
+            {selectedEvent.friends.length > 0 ? (
+              <div className="space-y-3">
+                {selectedEvent.friends.map((friend, index) => (
+                  <div key={index} className="flex items-center gap-3 p-3 bg-white/10 rounded-xl">
+                    <div className="w-10 h-10 bg-gradient-to-br from-primary/30 to-primary/10 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-bold text-white">
+                        {friend.friend_first_name?.charAt(0) || friend.friend_display_name.charAt(0)}
+                      </span>
+                    </div>
+                    <span className="font-medium text-white">
+                      {friend.friend_first_name && friend.friend_last_name 
+                        ? `${friend.friend_first_name} ${friend.friend_last_name}`
+                        : friend.friend_display_name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-white/60 text-center py-6 text-sm">
+                {t('no_friends_going')}
+              </p>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
