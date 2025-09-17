@@ -13,15 +13,47 @@ export const SignUpForm = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [facebookProfile, setFacebookProfile] = useState('');
+  const [instagramProfile, setInstagramProfile] = useState('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const { t } = useLanguage();
+
+  const validateSocialUrl = (url: string, platform: 'facebook' | 'instagram'): boolean => {
+    if (!url) return true; // Empty is okay since it's optional
+    
+    const patterns = {
+      facebook: /^https?:\/\/(www\.)?(facebook\.com|fb\.com)\/.+/i,
+      instagram: /^https?:\/\/(www\.)?instagram\.com\/.+/i
+    };
+    
+    return patterns[platform].test(url);
+  };
 
   const handleSignUp = async () => {
     if (!email || !password || !firstName || !lastName) {
       toast({
         title: t('error'),
         description: t('fields_required'),
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validate social network URLs if provided
+    if (facebookProfile && !validateSocialUrl(facebookProfile, 'facebook')) {
+      toast({
+        title: t('error'),
+        description: t('invalid_facebook_url'),
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (instagramProfile && !validateSocialUrl(instagramProfile, 'instagram')) {
+      toast({
+        title: t('error'),
+        description: t('invalid_instagram_url'),
         variant: "destructive"
       });
       return;
@@ -34,12 +66,14 @@ export const SignUpForm = () => {
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-            phone_number: phoneNumber,
-            display_name: `${firstName} ${lastName}`
-          }
+            data: {
+              first_name: firstName,
+              last_name: lastName,
+              phone_number: phoneNumber,
+              facebook_profile: facebookProfile,
+              instagram_profile: instagramProfile,
+              display_name: `${firstName} ${lastName}`
+            }
         }
       });
       
@@ -99,6 +133,32 @@ export const SignUpForm = () => {
           className="bg-white text-black border-gray-300"
           style={{ color: '#000000', backgroundColor: '#ffffff' }}
         />
+      </div>
+      
+      <div>
+        <label className="text-sm font-medium text-black">{t('facebook_profile')}</label>
+        <Input
+          type="url"
+          value={facebookProfile}
+          onChange={(e) => setFacebookProfile(e.target.value)}
+          placeholder="https://facebook.com/yourprofile"
+          className="bg-white text-black border-gray-300"
+          style={{ color: '#000000', backgroundColor: '#ffffff' }}
+        />
+        <p className="text-xs text-gray-500 mt-1">{t('can_do_later')}</p>
+      </div>
+      
+      <div>
+        <label className="text-sm font-medium text-black">{t('instagram_profile')}</label>
+        <Input
+          type="url"
+          value={instagramProfile}
+          onChange={(e) => setInstagramProfile(e.target.value)}
+          placeholder="https://instagram.com/yourprofile"
+          className="bg-white text-black border-gray-300"
+          style={{ color: '#000000', backgroundColor: '#ffffff' }}
+        />
+        <p className="text-xs text-gray-500 mt-1">{t('can_do_later')}</p>
       </div>
       
       <div>

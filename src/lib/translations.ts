@@ -262,6 +262,11 @@ export const translations = {
     'sign_in_as_admin': 'Sign In as Admin',
     'create_admin_account': 'Create Admin Account',
     'buy_ticket': 'Buy Ticket',
+    'facebook_profile': 'Facebook Profile',
+    'instagram_profile': 'Instagram Profile',
+    'can_do_later': 'You can do this later',
+    'invalid_facebook_url': 'Please enter a valid Facebook profile URL',
+    'invalid_instagram_url': 'Please enter a valid Instagram profile URL',
   },
   
   he: {
@@ -527,6 +532,11 @@ export const translations = {
     'sign_in_as_admin': 'התחבר כמנהל',
     'create_admin_account': 'צור חשבון מנהל',
     'buy_ticket': 'קנה כרטיס',
+    'facebook_profile': 'פרופיל פייסבוק',
+    'instagram_profile': 'פרופיל אינסטגרם',
+    'can_do_later': 'אפשר לעשות את זה מאוחר יותר',
+    'invalid_facebook_url': 'הזן כתובת פרופיל פייסבוק תקינה',
+    'invalid_instagram_url': 'הזן כתובת פרופיל אינסטגרם תקינה',
   },
   
   sp: {
@@ -792,6 +802,11 @@ export const translations = {
     'sign_in_as_admin': 'Iniciar Sesión como Administrador',
     'create_admin_account': 'Crear Cuenta de Administrador',
     'buy_ticket': 'Comprar Boleto',
+    'facebook_profile': 'Perfil de Facebook',
+    'instagram_profile': 'Perfil de Instagram',
+    'can_do_later': 'Puedes hacer esto más tarde',
+    'invalid_facebook_url': 'Ingresa una URL válida de perfil de Facebook',
+    'invalid_instagram_url': 'Ingresa una URL válida de perfil de Instagram',
   },
   
   fr: {
@@ -1057,6 +1072,11 @@ export const translations = {
     'sign_in_as_admin': 'Se Connecter en tant qu\'Administrateur',
     'create_admin_account': 'Créer un Compte Administrateur',
     'buy_ticket': 'Acheter un Billet',
+    'facebook_profile': 'Profil Facebook',
+    'instagram_profile': 'Profil Instagram',
+    'can_do_later': 'Vous pouvez le faire plus tard',
+    'invalid_facebook_url': 'Veuillez entrer une URL de profil Facebook valide',
+    'invalid_instagram_url': 'Veuillez entrer une URL de profil Instagram valide',
   },
   
   it: {
@@ -1322,5 +1342,10 @@ export const translations = {
     'sign_in_as_admin': 'Accedi come Amministratore',
     'create_admin_account': 'Crea Account Amministratore',
     'buy_ticket': 'Compra Biglietto',
+    'facebook_profile': 'Profilo Facebook',
+    'instagram_profile': 'Profilo Instagram',
+    'can_do_later': 'Puoi farlo più tardi',
+    'invalid_facebook_url': 'Inserisci un URL valido del profilo Facebook',
+    'invalid_instagram_url': 'Inserisci un URL valido del profilo Instagram',
   },
 };
