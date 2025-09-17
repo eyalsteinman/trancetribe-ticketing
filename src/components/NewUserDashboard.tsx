@@ -185,7 +185,7 @@ const NewUserDashboard: React.FC<NewUserDashboardProps> = ({ user }) => {
       {isMenuOpen && (
         <div className="fixed inset-0 z-30 flex">
           <div className="bg-black/50 flex-1" onClick={() => setIsMenuOpen(false)} />
-          <div className="bg-purple-900 w-64 p-4 animate-slide-in-right">
+          <div className="bg-purple-900 w-52 p-3 animate-slide-in-right">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-white text-lg font-bold">Navigation</h2>
               <Button
