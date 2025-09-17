@@ -80,7 +80,7 @@ function SortableItem({ tile, onTileClick, onCloseMenu }: SortableItemProps) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`w-full text-left p-2 text-white hover:bg-white/10 rounded-lg transition-all text-sm cursor-pointer ${
+      className={`w-full text-left py-1.5 px-2 text-white hover:bg-white/10 rounded-lg transition-all text-sm cursor-pointer leading-tight ${
         isLongPress ? 'bg-white/20 scale-105' : ''
       }`}
       onPointerDown={handlePointerDown}
@@ -141,7 +141,7 @@ const ReorderableMenuItems: React.FC<ReorderableMenuItemsProps> = ({
       onDragEnd={handleDragEnd}
     >
       <SortableContext items={items.map(item => item.id)} strategy={verticalListSortingStrategy}>
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           {items.map((tile) => (
             <SortableItem
               key={tile.id}
