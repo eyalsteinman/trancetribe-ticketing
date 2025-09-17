@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { LogOut, Menu, X } from 'lucide-react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
-import RotatableDial from '@/components/RotatableDial';
-import ReorderableMenuItems from '@/components/ReorderableMenuItems';
 
 // Import all the existing views
 import UserParties from '@/components/UserParties';
@@ -45,6 +43,13 @@ const NewUserDashboard: React.FC<NewUserDashboardProps> = ({ user }) => {
   const [currentView, setCurrentView] = useState<string>('dashboard');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [userName, setUserName] = useState<string>('');
+  
+  // Swipe navigation state
+  const [isDragging, setIsDragging] = useState(false);
+  const [currentTileIndex, setCurrentTileIndex] = useState(0);
+  const [dragStartX, setDragStartX] = useState(0);
+  const [dragCurrentX, setDragCurrentX] = useState(0);
+  const buttonRef = useRef<HTMLDivElement>(null);
 
   const tiles: Tile[] = [
     { id: 'parties', title: 'My Events', action: () => setCurrentView('parties') },
@@ -67,8 +72,6 @@ const NewUserDashboard: React.FC<NewUserDashboardProps> = ({ user }) => {
     { id: 'bar-tab', title: 'Bar Tab', action: () => setCurrentView('bar-tab') },
     { id: 'bored', title: 'Bored Screen', action: () => setCurrentView('bored') },
   ];
-
-  const [orderedTiles, setOrderedTiles] = useState<Tile[]>(tiles);
 
   useEffect(() => {
     loadUserProfile();
@@ -99,12 +102,35 @@ const NewUserDashboard: React.FC<NewUserDashboardProps> = ({ user }) => {
     }
   };
 
-  const handleTileSelect = (tile: Tile) => {
-    tile.action();
+  // Touch/Mouse handlers for swipe navigation
+  const handlePointerDown = (e: React.PointerEvent) => {
+    setIsDragging(true);
+    setDragStartX(e.clientX);
+    setDragCurrentX(e.clientX);
+    e.preventDefault();
   };
 
-  const handleReorder = (newTiles: Tile[]) => {
-    setOrderedTiles(newTiles);
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDragging) return;
+    
+    setDragCurrentX(e.clientX);
+    const deltaX = e.clientX - dragStartX;
+    const sensitivity = 100; // pixels needed to change tile
+    
+    let newIndex = currentTileIndex - Math.floor(deltaX / sensitivity);
+    newIndex = Math.max(0, Math.min(tiles.length - 1, newIndex));
+    
+    if (newIndex !== currentTileIndex) {
+      setCurrentTileIndex(newIndex);
+    }
+  };
+
+  const handlePointerUp = () => {
+    if (isDragging) {
+      setIsDragging(false);
+      // Execute the current tile's action
+      tiles[currentTileIndex].action();
+    }
   };
 
   // Render different views
@@ -185,31 +211,65 @@ const NewUserDashboard: React.FC<NewUserDashboardProps> = ({ user }) => {
       {isMenuOpen && (
         <div className="fixed inset-0 z-30 flex">
           <div className="bg-black/50 flex-1" onClick={() => setIsMenuOpen(false)} />
-          <div className="bg-purple-900 w-52 p-3 animate-slide-in-right">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-white text-lg font-bold">Navigation</h2>
+          <div className="bg-purple-900 w-80 p-6 animate-slide-in-right">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-white text-xl font-bold">Navigation</h2>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsMenuOpen(false)}
                 className="text-white hover:bg-white/10"
               >
-                <X className="h-5 w-5" />
+                <X className="h-6 w-6" />
               </Button>
             </div>
-            <ReorderableMenuItems
-              tiles={orderedTiles}
-              onTileClick={(tile) => tile.action()}
-              onCloseMenu={() => setIsMenuOpen(false)}
-              onReorder={handleReorder}
-            />
+            <div className="space-y-2">
+              {tiles.map((tile) => (
+                <button
+                  key={tile.id}
+                  onClick={() => {
+                    tile.action();
+                    setIsMenuOpen(false);
+                  }}
+                  className="w-full text-left p-3 text-white hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  {tile.title}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )}
 
       {/* Center Content */}
       <div className="flex flex-col items-center justify-center min-h-screen p-8">
-        <RotatableDial tiles={orderedTiles} onTileSelect={handleTileSelect} />
+        {/* Current Tile Display */}
+        <div className="text-center mb-12">
+          <h1 className="text-white text-4xl font-bold opacity-80 transition-all duration-300">
+            {tiles[currentTileIndex]?.title}
+          </h1>
+        </div>
+
+        {/* Navigation Instructions */}
+        <div className="text-center mb-8">
+          <p className="text-white text-sm opacity-70">
+            move from side to side to navigate
+          </p>
+        </div>
+
+        {/* Swipe Button */}
+        <div
+          ref={buttonRef}
+          className={`w-20 h-20 rounded-full cursor-pointer select-none transition-all duration-200 ${
+            isDragging 
+              ? 'bg-green-500 shadow-lg shadow-green-500/50 scale-110' 
+              : 'bg-gray-400 shadow-lg shadow-gray-400/30'
+          }`}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          style={{ touchAction: 'none' }}
+        />
       </div>
     </div>
   );
