@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ScanBarcode, Wine, Cog, ArrowLeft, LogOut, MessageCircle } from 'lucide-react';
 import Footer from '@/components/ui/footer';
 import PageHeader from '@/components/ui/page-header';
+import DialDash from './DialDash';
 import LanguageSelector from './LanguageSelector';
 import CreateParty from './CreateParty';
 import EditParties from './EditParties';
@@ -57,7 +58,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [sortAscending, setSortAscending] = useState(true); // Default to soonest first
-  const [currentView, setCurrentView] = useState<'dashboard' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'nickname' | 'my-productions' | 'manage-productions' | 'guest-list' | 'bar-tab' | 'bar-tab-scanner' | 'faq' | 'message'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'dial-dash' | 'scanner' | 'guests' | 'create-party' | 'edit-parties' | 'manage-admins' | 'registered-users' | 'admin-games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'nickname' | 'my-productions' | 'manage-productions' | 'guest-list' | 'bar-tab' | 'bar-tab-scanner' | 'faq' | 'message'>('dashboard');
   const [adminNickname, setAdminNickname] = useState('');
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [nicknameInput, setNicknameInput] = useState('');
@@ -423,6 +424,78 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
     }, 2000);
   };
 
+  if (currentView === 'dial-dash') {
+    const dialTiles = [
+      {
+        id: 'create-party',
+        title: t('create_party'),
+        onClick: () => setCurrentView('create-party' as const),
+      },
+      {
+        id: 'edit-parties',
+        title: t('edit_parties'),
+        onClick: () => setCurrentView('edit-parties' as const),
+      },
+      {
+        id: 'scanner',
+        title: t('qr_scanner'),
+        onClick: () => setCurrentView('scanner' as const),
+      },
+      {
+        id: 'manage-admins',
+        title: t('manage_admins'),
+        onClick: () => setCurrentView('manage-admins' as const),
+      },
+      {
+        id: 'registered-users',
+        title: t('registered_users'),
+        onClick: () => setCurrentView('registered-users' as const),
+      },
+      {
+        id: 'admin-games',
+        title: t('admin_games'),
+        onClick: () => setCurrentView('admin-games' as const),
+      },
+      {
+        id: 'my-productions',
+        title: t('my_productions'),
+        onClick: () => setCurrentView('my-productions' as const),
+      },
+      {
+        id: 'guest-list',
+        title: t('guest_list'),
+        onClick: () => setCurrentView('guest-list' as const),
+      },
+      {
+        id: 'bar-tab',
+        title: t('bar_tab'),
+        onClick: () => setCurrentView('bar-tab' as const),
+      },
+      {
+        id: 'faq',
+        title: t('faq_contact'),
+        onClick: () => setCurrentView('faq' as const),
+      },
+      {
+        id: 'message',
+        title: t('send_message'),
+        onClick: () => setCurrentView('message' as const),
+      },
+    ];
+
+    return (
+      <DialDash
+        user={user}
+        isAdmin={true}
+        onBack={() => {
+          setCurrentView('dashboard');
+          window.location.reload();
+        }}
+        tiles={dialTiles}
+      />
+    );
+  }
+
   if (currentView === 'nickname') {
     return <PersonalizeEdit user={user} onBack={() => setCurrentView('dashboard')} />;
   }
@@ -707,6 +780,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             { id: 'faq', title: 'FAQ & Contact', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('faq' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'theme-changer', title: `Change Theme\n(${getThemeDisplayName(currentTheme)})`, icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: cycleTheme },
             { id: 'message', title: 'Message Users', icon: <MessageCircle className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('message' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'dial-dash', title: 'Dial Dash', icon: <Gamepad2 className="h-8 w-8 mb-2" />, onClick: () => setCurrentView('dial-dash' as const) },
           ];
           return (
             <ReorderableTilesLogic 

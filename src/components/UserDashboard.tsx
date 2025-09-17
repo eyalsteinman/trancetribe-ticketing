@@ -10,6 +10,7 @@ import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut, Users, IdCard
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { QRCodeSVG } from 'qrcode.react';
 import Footer from '@/components/ui/footer';
+import DialDash from './DialDash';
 import UserParties from './UserParties';
 import UserGames from './UserGames';
 import PersonalizeEdit from './PersonalizeEdit';
@@ -37,7 +38,7 @@ interface UserDashboardProps {
 }
 
 const UserDashboard = ({ user }: UserDashboardProps) => {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance' | 'personal-code' | 'friends-codes' | 'bar-tab' | 'faq' | 'messages' | 'tribes' | 'direct-messages'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'dial-dash' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance' | 'personal-code' | 'friends-codes' | 'bar-tab' | 'faq' | 'messages' | 'tribes' | 'direct-messages'>('dashboard');
   const [nickname, setNickname] = useState<string>('');
   const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
   const [selectedProduction, setSelectedProduction] = useState<{id: string; name: string; logo_url: string | null; vip_description: string | null; vip_price: number | null} | null>(null);
@@ -182,6 +183,79 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   };
 
   // Handle different views
+  if (currentView === 'dial-dash') {
+    const dialTiles = [
+      {
+        id: 'parties',
+        title: t('events_parties'),
+        onClick: () => setCurrentView('parties' as const),
+      },
+      {
+        id: 'nickname',
+        title: t('my_info'),
+        onClick: () => setCurrentView('nickname' as const),
+      },
+      {
+        id: 'social',
+        title: t('social_networks'),
+        onClick: () => setCurrentView('social' as const),
+      },
+      {
+        id: 'insurance',
+        title: t('insurance'),
+        onClick: () => setCurrentView('insurance' as const),
+      },
+      {
+        id: 'vip',
+        title: t('vip'),
+        onClick: () => setCurrentView('vip' as const),
+      },
+      {
+        id: 'personal-code',
+        title: t('personal_code'),
+        onClick: () => setCurrentView('personal-code' as const),
+      },
+      {
+        id: 'friends-codes',
+        title: t('friends_codes'),
+        onClick: () => setCurrentView('friends-codes' as const),
+      },
+      {
+        id: 'bar-tab',
+        title: t('bar_tab'),
+        onClick: () => setCurrentView('bar-tab' as const),
+      },
+      {
+        id: 'faq',
+        title: t('faq_contact'),
+        onClick: () => setCurrentView('faq' as const),
+      },
+      {
+        id: 'messages',
+        title: t('messages'),
+        onClick: () => setCurrentView('messages' as const),
+      },
+      {
+        id: 'direct-messages',
+        title: t('direct_messages'),
+        onClick: () => setCurrentView('direct-messages' as const),
+      },
+    ];
+
+    return (
+      <DialDash
+        user={user}
+        isAdmin={false}
+        onBack={() => {
+          setCurrentView('dashboard');
+          window.location.reload();
+        }}
+        
+        tiles={dialTiles}
+      />
+    );
+  }
+
   if (currentView === 'parties') {
     return <UserParties user={user} onBack={() => setCurrentView('dashboard')} />;
   }
@@ -383,21 +457,27 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                   ),
                   onClick: () => setCurrentView('messages' as const),
                 },
-                {
-                  id: 'direct-messages',
-                  title: t('direct_messages'),
-                  icon: (
-                    <div className="relative">
-                      <Mail className="h-12 w-12" />
-                      {unreadDirectMessageCount > 0 && (
-                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                          {unreadDirectMessageCount > 9 ? '9+' : unreadDirectMessageCount}
-                        </div>
-                      )}
-                    </div>
-                  ),
-                  onClick: () => setCurrentView('direct-messages' as const),
-                },
+                 {
+                   id: 'direct-messages',
+                   title: t('direct_messages'),
+                   icon: (
+                     <div className="relative">
+                       <Mail className="h-12 w-12" />
+                       {unreadDirectMessageCount > 0 && (
+                         <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                           {unreadDirectMessageCount > 9 ? '9+' : unreadDirectMessageCount}
+                         </div>
+                       )}
+                     </div>
+                   ),
+                   onClick: () => setCurrentView('direct-messages' as const),
+                 },
+                 {
+                   id: 'dial-dash',
+                   title: 'Dial Dash',
+                   icon: <Gamepad2 className="h-12 w-12" />,
+                   onClick: () => setCurrentView('dial-dash' as const),
+                 },
             ];
             return (
               <ReorderableTilesLogic 

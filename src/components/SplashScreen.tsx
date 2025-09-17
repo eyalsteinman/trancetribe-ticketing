@@ -34,7 +34,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-violet-400/10 rounded-full blur-2xl animate-ping delay-500" />
       </div>
       
-      {/* Main content container */}
+      {/* Main content container - centered */}
       <div className="flex-1 flex flex-col items-center justify-center relative z-10">
         {/* Welcome text */}
         <div className={`text-center mb-4 transition-all duration-1000 ease-out ${
@@ -45,19 +45,16 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           </p>
         </div>
         
-        {/* Main title */}
+        {/* Main title - smaller and centered */}
         <div className={`text-center transition-all duration-1200 delay-300 ease-out ${
           animate ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-95'
         }`}>
-          <h1 className="text-8xl font-black leading-tight tracking-tight bg-gradient-to-r from-white via-purple-100 to-white bg-clip-text text-transparent">
-            TRANCE
-          </h1>
-          <h1 className="text-8xl font-black leading-tight tracking-tight bg-gradient-to-r from-white via-purple-100 to-white bg-clip-text text-transparent">
-            TRIBES
+          <h1 className="text-6xl font-black leading-tight tracking-normal bg-gradient-to-r from-white via-purple-100 to-white bg-clip-text text-transparent">
+            TRANCE TRIBES
           </h1>
           
           {/* Hebrew text directly under TRIBES */}
-          <p className="text-xl font-bold mt-1 text-purple-200" dir="rtl">
+          <p className="text-xl font-bold mt-2 text-purple-200" dir="rtl">
             תודה שטוב לך
           </p>
         </div>
