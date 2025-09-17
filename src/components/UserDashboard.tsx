@@ -433,12 +433,6 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                   key={qrCode.id} 
                   className="cursor-pointer group overflow-hidden border border-border bg-card"
                   onClick={() => {
-                    const party = { 
-                      id: qrCode.party_id, 
-                      name: qrCode.parties?.name, 
-                      date: qrCode.parties?.date,
-                      photo_url: qrCode.parties?.photo_url
-                    };
                     localStorage.setItem('selectedPartyId', qrCode.party_id);
                     setCurrentView('parties');
                   }}

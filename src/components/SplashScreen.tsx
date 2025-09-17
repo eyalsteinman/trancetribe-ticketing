@@ -49,17 +49,19 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         <div className={`text-center transition-all duration-1200 delay-300 ease-out ${
           animate ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-95'
         }`}>
-          <h1 className="text-8xl font-black leading-tight tracking-tight bg-gradient-to-r from-white via-purple-100 to-white bg-clip-text text-transparent">
+          <h1 className="text-6xl font-black leading-none tracking-tight bg-gradient-to-r from-white via-purple-100 to-white bg-clip-text text-transparent">
             TRANCE
           </h1>
-          <h1 className="text-8xl font-black leading-tight tracking-tight bg-gradient-to-r from-white via-purple-100 to-white bg-clip-text text-transparent">
+          <h1 className="text-6xl font-black leading-none tracking-tight bg-gradient-to-r from-white via-purple-100 to-white bg-clip-text text-transparent mb-6">
             TRIBES
           </h1>
           
-          {/* Hebrew text directly under TRIBES */}
-          <p className="text-xl font-bold mt-1 text-purple-200" dir="rtl">
-            תודה שטוב לך
-          </p>
+          {/* Hebrew text centered and raised */}
+          <div className="flex justify-center -mt-2">
+            <p className="text-2xl font-bold text-center text-purple-100" dir="rtl">
+              תודה שטוב לך
+            </p>
+          </div>
         </div>
         
         {/* Ticket generator text */}
