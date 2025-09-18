@@ -71,14 +71,26 @@ const FriendsCodes = ({ user, onBack }: FriendsCodesProps) => {
       // First, find the profile with this personal code
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('personal_code, display_name, first_name, last_name')
+        .select('user_id, personal_code, display_name, first_name, last_name')
         .eq('personal_code', newCode.trim())
         .single();
 
       if (profileError || !profileData) {
+        console.log('Profile error:', profileError);
         toast({
           title: "Friend Not Found",
           description: "No user found with this personal code",
+          variant: "destructive"
+        });
+        setIsAdding(false);
+        return;
+      }
+
+      // Check if user is trying to add themselves
+      if (profileData.user_id === user.id) {
+        toast({
+          title: "Cannot Add Yourself",
+          description: "You cannot add your own personal code",
           variant: "destructive"
         });
         setIsAdding(false);
