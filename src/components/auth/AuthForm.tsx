@@ -23,39 +23,50 @@ export const AuthForm = ({
   
   return (
     <Tabs defaultValue="user" className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="user">{t('user')}</TabsTrigger>
-        <TabsTrigger value="admin">{t('admin')}</TabsTrigger>
+      <TabsList className="grid w-full grid-cols-2 glass-card border-glass-border mb-6">
+        <TabsTrigger 
+          value="user" 
+          className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-300"
+        >
+          {t('user')}
+        </TabsTrigger>
+        <TabsTrigger 
+          value="admin"
+          className="data-[state=active]:bg-secondary data-[state=active]:text-secondary-foreground transition-all duration-300"
+        >
+          {t('admin')}
+        </TabsTrigger>
       </TabsList>
       
-      <TabsContent value="user">
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between mb-2">
-              <CardTitle>{t('user_login_registration')}</CardTitle>
-            {/* Toggle Button - Right side without overlap */}
-            <button
-              onClick={onToggleUserLogin}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-xs font-medium leading-tight ml-auto"
-            >
-              {isUserLogin ? (
-                <>
-                  <div>{t('dont_have_account')}</div>
-                  <div>{t('sign_up')}</div>
-                </>
-              ) : (
-                <>
-                  <div>{t('have_account')}</div>
-                  <div>{t('sign_in')}</div>
-                </>
-              )}
-            </button>
+      <TabsContent value="user" className="mt-0">
+        <Card className="glass-card border-glass-border shadow-card">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between mb-3">
+              <CardTitle className="text-2xl font-bold text-foreground">
+                {t('user_login_registration')}
+              </CardTitle>
+              <button
+                onClick={onToggleUserLogin}
+                className="glass-button btn-press bg-primary/80 hover:bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-glow"
+              >
+                {isUserLogin ? (
+                  <div className="text-center">
+                    <div>{t('dont_have_account')}</div>
+                    <div className="font-semibold">{t('sign_up')}</div>
+                  </div>
+                ) : (
+                  <div className="text-center">
+                    <div>{t('have_account')}</div>
+                    <div className="font-semibold">{t('sign_in')}</div>
+                  </div>
+                )}
+              </button>
             </div>
-            <CardDescription>
+            <CardDescription className="text-muted-foreground text-base">
               {isUserLogin ? t('sign_in_to_account') : t('create_account_description')}
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             {isUserLogin ? (
               <SignInForm />
             ) : (
@@ -65,13 +76,17 @@ export const AuthForm = ({
         </Card>
       </TabsContent>
       
-      <TabsContent value="admin">
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('admin_access')}</CardTitle>
-            <CardDescription>{t('admin_credentials_description')}</CardDescription>
+      <TabsContent value="admin" className="mt-0">
+        <Card className="glass-card border-glass-border shadow-card">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-2xl font-bold text-foreground">
+              {t('admin_access')}
+            </CardTitle>
+            <CardDescription className="text-muted-foreground text-base">
+              {t('admin_credentials_description')}
+            </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-0">
             <AdminForm 
               onShowAdminPassword={onShowAdminPassword}
               pendingAdminSignup={pendingAdminSignup}
