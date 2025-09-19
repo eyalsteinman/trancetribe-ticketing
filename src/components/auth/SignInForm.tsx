@@ -104,64 +104,60 @@ export const SignInForm = () => {
   return (
     <div className="space-y-4">
       <div>
-        <label className="text-sm font-medium text-black">{t('email')} *</label>
+        <label className="text-sm font-medium text-white block mb-2">{t('email')} *</label>
         <Input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder={t('enter_email')}
           required
-          className="bg-white text-black border-gray-300"
-          style={{ color: '#000000', backgroundColor: '#ffffff' }}
+          className="auth-input rounded-xl h-12 px-4 text-white placeholder:text-white/60"
         />
       </div>
       
       <div>
-        <label className="text-sm font-medium text-black">{t('password')} *</label>
+        <label className="text-sm font-medium text-white block mb-2">{t('password')} *</label>
         <Input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder={t('enter_password')}
           required
-          className="bg-white text-black border-gray-300"
-          style={{ color: '#000000', backgroundColor: '#ffffff' }}
+          className="auth-input rounded-xl h-12 px-4 text-white placeholder:text-white/60"
         />
       </div>
 
       <Button 
         onClick={handleSignIn}
         disabled={loading}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
+        className="w-full auth-button rounded-xl h-12 font-semibold text-base"
       >
         {loading ? t('processing') : t('sign_in')}
       </Button>
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
+          <span className="w-full border-t border-white/30" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
+          <span className="bg-transparent px-3 text-white/80">
             {t('or_continue_with')}
           </span>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-3">
         <Button
-          variant="outline"
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="w-full"
+          className="w-full auth-button rounded-xl h-12"
         >
           {t('google')}
         </Button>
         <Button
-          variant="outline"
           onClick={handleFacebookLogin}
           disabled={loading}
-          className="w-full"
+          className="w-full auth-button rounded-xl h-12"
         >
           {t('facebook')}
         </Button>

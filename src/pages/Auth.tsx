@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AuthForm } from '@/components/auth/AuthForm';
 import Footer from '@/components/ui/footer';
 import { useBackground } from '@/contexts/BackgroundContext';
@@ -13,8 +13,15 @@ const AuthPage = () => {
   const [showAdminPassword, setShowAdminPassword] = useState(false);
   const [isUserLogin, setIsUserLogin] = useState(false);
   const [pendingAdminSignup, setPendingAdminSignup] = useState<{email: string, password: string} | null>(null);
+  const [scrollY, setScrollY] = useState(0);
   const { backgroundColor, isBackgroundDark } = useBackground();
   const { t, isRTL } = useLanguage();
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleAdminPasswordSuccess = async () => {
     setShowAdminPassword(false);
@@ -130,37 +137,45 @@ const AuthPage = () => {
   }
 
   return (
-    <div 
-      className={`min-h-screen w-full flex items-center justify-center p-4 transition-colors duration-500 ${isRTL ? 'rtl' : 'ltr'}`}
-      style={{ 
-        backgroundColor,
-        color: isBackgroundDark ? '#ffffff' : '#000000'
-      }}
-      dir={isRTL ? 'rtl' : 'ltr'}
-    >
-      <div className="w-full space-y-6">
-        <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} carouselOnly />
-
-        <div className="w-full flex flex-col items-center">
-          <div className={`text-center ${isRTL ? 'space-y-4' : 'space-y-2'} mb-6`}>
-            <LanguageSelector />
-            <div className="flex flex-col items-center justify-center">
-              <RtlText text={t('trance_tribes')} className="text-3xl font-bold whitespace-pre-line" />
-              <RtlText text={t('choose_access_type')} className="opacity-75 mt-2" />
-            </div>
+    <>
+      {/* Animated background */}
+      <div className="auth-animated-bg" />
+      
+      <div 
+        className={`min-h-screen w-full relative z-10 flex items-center justify-center p-4 ${isRTL ? 'rtl' : 'ltr'}`}
+        dir={isRTL ? 'rtl' : 'ltr'}
+        style={{ '--scroll-y': `${scrollY * 0.5}px` } as React.CSSProperties}
+      >
+        <div className="w-full space-y-8 auth-parallax">
+          <div className="auth-glass p-6 rounded-2xl max-w-md mx-auto">
+            <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} carouselOnly />
           </div>
 
-          <div className={`max-w-md mx-auto ${isRTL ? 'rtl-form' : ''}`}>
-            <AuthForm 
-              onShowAdminPassword={showAdminPasswordForm}
-              pendingAdminSignup={pendingAdminSignup}
-              isUserLogin={isUserLogin}
-              onToggleUserLogin={() => setIsUserLogin(!isUserLogin)}
-            />
+          <div className="w-full flex flex-col items-center space-y-6">
+            <div className="text-center space-y-4">
+              <LanguageSelector />
+              <div className="flex flex-col items-center justify-center">
+                <h1 className="text-4xl font-bold text-white text-center">
+                  {t('trance_tribes')}
+                </h1>
+                <p className="text-white/80 mt-2 text-center">
+                  {t('choose_access_type')}
+                </p>
+              </div>
+            </div>
+
+            <div className="w-full max-w-md mx-auto">
+              <AuthForm 
+                onShowAdminPassword={showAdminPasswordForm}
+                pendingAdminSignup={pendingAdminSignup}
+                isUserLogin={isUserLogin}
+                onToggleUserLogin={() => setIsUserLogin(!isUserLogin)}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
