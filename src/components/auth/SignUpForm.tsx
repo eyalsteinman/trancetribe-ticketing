@@ -98,99 +98,92 @@ export const SignUpForm = () => {
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium text-black">{t('first_name')} *</label>
+          <label className="text-sm font-medium text-foreground">{t('first_name')} *</label>
           <Input
             type="text"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             placeholder={t('enter_first_name')}
             required
-            className="bg-white text-black border-gray-300"
-            style={{ color: '#000000', backgroundColor: '#ffffff' }}
+            className="glass-input"
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-black">{t('last_name')} *</label>
+          <label className="text-sm font-medium text-foreground">{t('last_name')} *</label>
           <Input
             type="text"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             placeholder={t('enter_last_name')}
             required
-            className="bg-white text-black border-gray-300"
-            style={{ color: '#000000', backgroundColor: '#ffffff' }}
+            className="glass-input"
           />
         </div>
       </div>
       
       <div>
-        <label className="text-sm font-medium text-black">{t('phone_number')}</label>
+        <label className="text-sm font-medium text-foreground">{t('phone_number')}</label>
         <Input
           type="tel"
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
           placeholder={t('enter_phone_number')}
-          className="bg-white text-black border-gray-300"
-          style={{ color: '#000000', backgroundColor: '#ffffff' }}
+          className="glass-input"
         />
       </div>
       
       <div>
-        <label className="text-sm font-medium text-black">{t('facebook_profile')}</label>
+        <label className="text-sm font-medium text-foreground">{t('facebook_profile')}</label>
         <Input
           type="url"
           value={facebookProfile}
           onChange={(e) => setFacebookProfile(e.target.value)}
           placeholder="https://facebook.com/yourprofile"
-          className="bg-white text-black border-gray-300"
-          style={{ color: '#000000', backgroundColor: '#ffffff' }}
+          className="glass-input"
         />
-        <p className="text-xs text-gray-500 mt-1">{t('can_do_later')}</p>
+        <p className="text-xs text-muted-foreground mt-1">{t('can_do_later')}</p>
       </div>
       
       <div>
-        <label className="text-sm font-medium text-black">{t('instagram_profile')}</label>
+        <label className="text-sm font-medium text-foreground">{t('instagram_profile')}</label>
         <Input
           type="url"
           value={instagramProfile}
           onChange={(e) => setInstagramProfile(e.target.value)}
           placeholder="https://instagram.com/yourprofile"
-          className="bg-white text-black border-gray-300"
-          style={{ color: '#000000', backgroundColor: '#ffffff' }}
+          className="glass-input"
         />
-        <p className="text-xs text-gray-500 mt-1">{t('can_do_later')}</p>
+        <p className="text-xs text-muted-foreground mt-1">{t('can_do_later')}</p>
       </div>
       
       <div>
-        <label className="text-sm font-medium text-black">{t('email')} *</label>
+        <label className="text-sm font-medium text-foreground">{t('email')} *</label>
         <Input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder={t('enter_email')}
           required
-          className="bg-white text-black border-gray-300"
-          style={{ color: '#000000', backgroundColor: '#ffffff' }}
+          className="glass-input"
         />
       </div>
       
       <div>
-        <label className="text-sm font-medium text-black">{t('password')} *</label>
+        <label className="text-sm font-medium text-foreground">{t('password')} *</label>
         <Input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder={t('enter_password')}
           required
-          className="bg-white text-black border-gray-300"
-          style={{ color: '#000000', backgroundColor: '#ffffff' }}
+          className="glass-input"
         />
       </div>
 
       <Button 
         onClick={handleSignUp}
         disabled={loading}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
+        className="w-full glass-button mt-6"
       >
         {loading ? t('processing') : t('create_account')}
       </Button>

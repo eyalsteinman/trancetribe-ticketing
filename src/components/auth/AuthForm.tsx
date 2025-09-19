@@ -47,17 +47,17 @@ export const AuthForm = ({
               </CardTitle>
               <button
                 onClick={onToggleUserLogin}
-                className="glass-button btn-press bg-primary/80 hover:bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-glow"
+                className="glass-button btn-press px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 hover:shadow-glow whitespace-nowrap min-w-max"
               >
                 {isUserLogin ? (
-                  <div className="text-center">
-                    <div>{t('dont_have_account')}</div>
-                    <div className="font-semibold">{t('sign_up')}</div>
+                  <div className="text-center leading-tight">
+                    <div className="text-xs opacity-80">{t('dont_have_account')}</div>
+                    <div className="font-semibold text-sm">{t('sign_up')}</div>
                   </div>
                 ) : (
-                  <div className="text-center">
-                    <div>{t('have_account')}</div>
-                    <div className="font-semibold">{t('sign_in')}</div>
+                  <div className="text-center leading-tight">
+                    <div className="text-xs opacity-80">{t('have_account')}</div>
+                    <div className="font-semibold text-sm">{t('sign_in')}</div>
                   </div>
                 )}
               </button>

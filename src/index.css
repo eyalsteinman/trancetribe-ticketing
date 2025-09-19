@@ -59,18 +59,18 @@
   100% { transform: rotate(12deg); }
 }
 
-/* Modern vibrant design system with glassmorphism effects. All colors MUST be HSL. */
+/* Vibrant purple design system with screensaver animation. All colors MUST be HSL. */
 
 @layer base {
   :root {
-    /* Vibrant modern theme with glassmorphism */
-    --background: 240 15% 9%;
+    /* Vibrant purple theme */
+    --background: 280 70% 15%;
     --foreground: 0 0% 98%;
 
-    --card: 240 15% 12%;
+    --card: 280 50% 20% / 0.4;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 15% 12%;
+    --popover: 280 50% 20% / 0.9;
     --popover-foreground: 0 0% 98%;
 
     --primary: 280 100% 65%;
@@ -79,13 +79,13 @@
     --primary-light: 280 100% 85%;
     --primary-glow: 280 100% 75%;
 
-    --secondary: 200 100% 60%;
+    --secondary: 260 100% 60%;
     --secondary-foreground: 0 0% 98%;
-    --secondary-hover: 200 100% 65%;
+    --secondary-hover: 260 100% 65%;
 
-    --accent: 320 100% 70%;
+    --accent: 300 100% 70%;
     --accent-foreground: 0 0% 98%;
-    --accent-hover: 320 100% 75%;
+    --accent-hover: 300 100% 75%;
 
     --success: 150 100% 60%;
     --success-foreground: 0 0% 98%;
@@ -96,40 +96,44 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --muted: 240 15% 15%;
-    --muted-foreground: 240 5% 65%;
+    --muted: 280 30% 25%;
+    --muted-foreground: 280 15% 75%;
 
-    --border: 240 15% 20%;
-    --input: 240 15% 15%;
+    --border: 280 40% 30% / 0.3;
+    --input: 0 0% 10% / 0.4;
     --ring: 280 100% 65%;
 
-    --radius: 16px;
+    --radius: 20px;
 
-    /* Glass effects */
-    --glass-bg: 240 15% 12% / 0.8;
-    --glass-border: 240 30% 25% / 0.3;
-    --glass-blur: blur(20px);
+    /* Glass effects for black buttons */
+    --glass-bg: 0 0% 10% / 0.7;
+    --glass-border: 0 0% 30% / 0.4;
+    --glass-blur: blur(16px);
+
+    /* Purple glass effects */
+    --purple-glass-bg: 280 100% 65% / 0.7;
+    --purple-glass-border: 280 100% 75% / 0.4;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(280 100% 65%), hsl(320 100% 70%));
-    --gradient-secondary: linear-gradient(135deg, hsl(200 100% 60%), hsl(240 100% 70%));
-    --gradient-bg: linear-gradient(135deg, hsl(240 15% 9%), hsl(260 20% 12%));
+    --gradient-primary: linear-gradient(135deg, hsl(280 100% 65%), hsl(300 100% 70%));
+    --gradient-bg: linear-gradient(135deg, hsl(280 70% 15%), hsl(300 60% 20%));
+    --gradient-screensaver: linear-gradient(45deg, hsl(280 100% 65% / 0.1), hsl(300 100% 70% / 0.1), hsl(260 100% 60% / 0.1));
 
     /* Shadows with glow effects */
-    --shadow-glow: 0 0 40px hsl(280 100% 65% / 0.3);
-    --shadow-card: 0 8px 32px hsl(240 15% 0% / 0.4);
+    --shadow-glow: 0 0 40px hsl(280 100% 65% / 0.4);
+    --shadow-card: 0 8px 32px hsl(280 50% 10% / 0.4);
     --shadow-button: 0 4px 16px hsl(280 100% 65% / 0.25);
 
-    --sidebar-background: 240 15% 12%;
+    --sidebar-background: 280 50% 20%;
     --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 280 100% 65%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 15% 15%;
+    --sidebar-accent: 280 40% 25%;
     --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 15% 20%;
+    --sidebar-border: 280 40% 30%;
     --sidebar-ring: 280 100% 65%;
 
-    --button-icon-on-colored: 0 0% 98%;
+    --button-icon-on-colored: 0 0% 0%;
   }
 
   /* Ocean theme */
@@ -397,13 +401,17 @@
     backdrop-filter: var(--glass-blur) !important;
     border: 1px solid hsl(var(--glass-border)) !important;
     box-shadow: var(--shadow-card) !important;
+    border-radius: var(--radius) !important;
   }
 
   .glass-button {
-    backdrop-filter: blur(12px) !important;
+    background: hsl(var(--glass-bg)) !important;
+    backdrop-filter: var(--glass-blur) !important;
     border: 1px solid hsl(var(--glass-border)) !important;
     box-shadow: var(--shadow-button) !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border-radius: var(--radius) !important;
+    color: hsl(var(--foreground)) !important;
   }
 
   .glass-button:hover {
@@ -411,11 +419,27 @@
     box-shadow: var(--shadow-glow) !important;
   }
 
+  .glass-button:active {
+    background: hsl(var(--purple-glass-bg)) !important;
+    border: 1px solid hsl(var(--purple-glass-border)) !important;
+    color: hsl(var(--button-icon-on-colored)) !important;
+    transform: translateY(0px) scale(0.98) !important;
+  }
+
   .glass-input {
-    background: hsl(var(--glass-bg)) !important;
+    background: hsl(var(--input)) !important;
     backdrop-filter: blur(10px) !important;
-    border: 1px solid hsl(var(--glass-border)) !important;
+    border: 1px solid hsl(var(--border)) !important;
     transition: all 0.3s ease !important;
+    border-radius: var(--radius) !important;
+    color: hsl(var(--foreground)) !important;
+    font-size: 0.875rem !important;
+    padding: 0.75rem !important;
+  }
+
+  .glass-input::placeholder {
+    color: hsl(var(--muted-foreground)) !important;
+    font-size: 0.875rem !important;
   }
 
   .glass-input:focus {
@@ -423,17 +447,48 @@
     box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1) !important;
   }
 
-  /* Parallax background */
+  /* Parallax background with screensaver animation */
   .auth-bg {
     background: var(--gradient-bg);
     background-attachment: fixed;
     background-size: 400% 400%;
     animation: gradientShift 8s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .auth-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-screensaver);
+    background-size: 200% 200%;
+    animation: screensaverLines 15s linear infinite;
+    pointer-events: none;
+    z-index: 1;
   }
 
   @keyframes gradientShift {
     0%, 100% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
+  }
+
+  @keyframes screensaverLines {
+    0% { 
+      background-position: 0% 0%;
+      transform: translateX(-100%);
+    }
+    50% {
+      background-position: 100% 100%;
+      transform: translateX(0%);
+    }
+    100% { 
+      background-position: 200% 200%;
+      transform: translateX(100%);
+    }
   }
 
   /* Button press animations */
