@@ -330,7 +330,7 @@ export const translations = {
     'invalid_credentials': 'פרטי התחברות שגויים',
     'password_mismatch': 'הסיסמאות אינן תואמות',
     'welcome_to': 'ברוכים הבאים ל',
-    'trance_tribes': 'טראנס\nטרייב',
+    'trance_tribes': 'טראנס\nשבטים',
     'ticket_generator': 'מחולל כרטיסים',
     'choose_access_type': 'בחר את סוג הגישה שלך',
     

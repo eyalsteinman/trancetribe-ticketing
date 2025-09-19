@@ -131,43 +131,26 @@ const AuthPage = () => {
 
   return (
     <div 
-      className={`auth-bg min-h-screen w-full flex items-center justify-center p-4 ${isRTL ? 'rtl' : 'ltr'} relative overflow-hidden`}
+      className={`min-h-screen w-full flex items-center justify-center p-4 transition-colors duration-500 ${isRTL ? 'rtl' : 'ltr'}`}
+      style={{ 
+        backgroundColor,
+        color: isBackgroundDark ? '#ffffff' : '#000000'
+      }}
       dir={isRTL ? 'rtl' : 'ltr'}
     >
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/20 blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary/20 blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accent/10 blur-3xl animate-pulse delay-500"></div>
-        <div className="absolute top-20 right-20 w-32 h-32 bg-primary/30 blur-2xl animate-pulse delay-2000"></div>
-        <div className="absolute bottom-32 left-20 w-48 h-48 bg-accent/20 blur-2xl animate-pulse delay-3000"></div>
-      </div>
-
-      <div className="w-full space-y-8 relative z-20 animate-slide-up">
-        <div className="float-animation">
-          <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} carouselOnly />
-        </div>
+      <div className="w-full space-y-6">
+        <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} carouselOnly />
 
         <div className="w-full flex flex-col items-center">
-          <div className={`text-center ${isRTL ? 'space-y-4' : 'space-y-2'} mb-8 animate-slide-in-blur`}>
-            <div className="mb-6">
-              <LanguageSelector />
-            </div>
-            <div className="flex flex-col items-center justify-center space-y-3">
-              <div className="text-center">
-                <RtlText 
-                  text={t('trance_tribes')} 
-                  className="text-4xl font-bold whitespace-pre-line bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent text-center block"
-                />
-              </div>
-              <RtlText 
-                text={t('choose_access_type')} 
-                className="text-muted-foreground text-lg text-center" 
-              />
+          <div className={`text-center ${isRTL ? 'space-y-4' : 'space-y-2'} mb-6`}>
+            <LanguageSelector />
+            <div className="flex flex-col items-center justify-center">
+              <RtlText text={t('trance_tribes')} className="text-3xl font-bold whitespace-pre-line" />
+              <RtlText text={t('choose_access_type')} className="opacity-75 mt-2" />
             </div>
           </div>
 
-          <div className={`max-w-md mx-auto w-full ${isRTL ? 'rtl-form' : ''} animate-slide-in-blur delay-200`}>
+          <div className={`max-w-md mx-auto ${isRTL ? 'rtl-form' : ''}`}>
             <AuthForm 
               onShowAdminPassword={showAdminPasswordForm}
               pendingAdminSignup={pendingAdminSignup}
