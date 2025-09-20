@@ -248,7 +248,7 @@ All colors MUST be HSL.
     --input: 50 100% 70%;
   }
 
-  /* Animated background lines */
+  /* Matrix-style animated background */
   .auth-animated-bg {
     position: fixed;
     top: 0;
@@ -263,26 +263,68 @@ All colors MUST be HSL.
   .auth-animated-bg::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: 
-      linear-gradient(90deg, transparent, hsl(var(--auth-line-primary)) 50%, transparent),
-      linear-gradient(0deg, transparent, hsl(var(--auth-line-secondary)) 50%, transparent);
-    background-size: 100px 100px, 100px 100px;
-    animation: moveLines 20s linear infinite;
-    opacity: 0.3;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        hsla(var(--auth-line-primary) / 0.1) 2px,
+        hsla(var(--auth-line-primary) / 0.1) 4px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        hsla(var(--auth-line-secondary) / 0.1) 2px,
+        hsla(var(--auth-line-secondary) / 0.1) 4px
+      );
+    animation: matrixRain 20s linear infinite;
+    opacity: 0.4;
   }
 
-  @keyframes moveLines {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    100% { transform: translate(-100px, -100px) rotate(360deg); }
+  .auth-animated-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+      circle at 20% 30%,
+      hsla(var(--auth-line-primary) / 0.15) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 70%,
+      hsla(var(--auth-line-secondary) / 0.15) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      hsla(var(--auth-line-primary) / 0.1) 0%,
+      transparent 70%
+    );
+    animation: matrixPulse 15s ease-in-out infinite;
   }
 
-  /* Parallax effect */
+  @keyframes matrixRain {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-20px); }
+  }
+
+  @keyframes matrixPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+
+  /* Smooth parallax effect */
   .auth-parallax {
     transform: translateY(var(--scroll-y, 0px));
+    transition: transform 0.1s ease-out;
   }
 
   /* Glass morphism styles */
@@ -352,6 +394,7 @@ All colors MUST be HSL.
     overflow-x: hidden;
     width: 100vw;
     max-width: 100vw;
+    scroll-behavior: smooth;
   }
 
   .container,

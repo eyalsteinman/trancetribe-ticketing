@@ -267,6 +267,10 @@ export const translations = {
     'can_do_later': 'You can do this later',
     'invalid_facebook_url': 'Please enter a valid Facebook profile URL',
     'invalid_instagram_url': 'Please enter a valid Instagram profile URL',
+    'browse_by_production': 'Browse by production',
+    'browse_by_party': 'Browse by party',
+    'browse_by_date': 'Browse by date',
+    'phone_required': 'Phone number is required',
   },
   
   he: {
@@ -537,6 +541,10 @@ export const translations = {
     'can_do_later': 'אפשר לעשות את זה מאוחר יותר',
     'invalid_facebook_url': 'הזן כתובת פרופיל פייסבוק תקינה',
     'invalid_instagram_url': 'הזן כתובת פרופיל אינסטגרם תקינה',
+    'browse_by_production': 'חפש לפי הפקה',
+    'browse_by_party': 'חפש לפי מסיבה',
+    'browse_by_date': 'חפש לפי תאריך',
+    'phone_required': 'מספר טלפון נדרש',
   },
   
   sp: {

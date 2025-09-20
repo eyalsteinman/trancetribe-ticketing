@@ -6,6 +6,7 @@ import { Search } from "lucide-react";
 import PartyPreview from "./PartyPreview";
 import BrowseMenu from "./BrowseMenu";
 import { useBackground } from "@/contexts/BackgroundContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Production {
   id: string;
@@ -44,6 +45,7 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
   const [searchQuery, setSearchQuery] = useState("");
   const [browseMode, setBrowseMode] = useState("production");
   const { isBackgroundDark } = useBackground();
+  const { t } = useLanguage();
 
   const filteredProductions = productions.filter(production =>
     production.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -234,10 +236,10 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
         <Input
           type="text"
-          placeholder="Search events by name or production"
+          placeholder={t('browse_by_production') || 'Search events by name or production'}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 py-6 text-lg bg-background/50 border-muted focus:bg-background"
+          className="pl-10 py-4 text-base bg-background/50 border-muted focus:bg-background overflow-hidden text-ellipsis"
         />
       </div>
 

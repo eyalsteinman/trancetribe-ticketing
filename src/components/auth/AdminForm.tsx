@@ -66,34 +66,70 @@ export const AdminForm = ({ onShowAdminPassword, pendingAdminSignup }: AdminForm
 
   return (
     <div className="space-y-4">
-      <Input
-        type="email"
-        placeholder={t('admin_email')}
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <Input
-        type="password"
-        placeholder={t('password')}
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <div className="space-y-2">
+      <div>
+        <label className="text-sm font-medium text-white block mb-2">{t('admin_email')} *</label>
+        <Input
+          type="email"
+          placeholder={t('enter_email')}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="auth-input rounded-xl h-12 px-4 text-white placeholder:text-white/60"
+        />
+      </div>
+      <div>
+        <label className="text-sm font-medium text-white block mb-2">{t('password')} *</label>
+        <Input
+          type="password"
+          placeholder={t('enter_password')}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="auth-input rounded-xl h-12 px-4 text-white placeholder:text-white/60"
+        />
+      </div>
+      <div className="space-y-3">
         <Button 
           onClick={handleAdminLogin}
           disabled={loading || !email || !password}
-          className="w-full"
+          className="w-full auth-button rounded-xl h-12 font-semibold text-base"
         >
           {loading ? t('signing_in') : t('sign_in_as_admin')}
         </Button>
         <button 
           onClick={handleCreateAdminClick}
           disabled={!email || !password}
-          className="w-full px-4 py-3 rounded font-medium border border-gray-300 hover:bg-gray-50"
-          style={{ color: '#000000', backgroundColor: '#ffffff' }}
+          className="w-full auth-button rounded-xl h-12 font-semibold text-base"
         >
           {t('create_admin_account')}
         </button>
+
+        <div className="flex items-center my-4">
+          <div className="flex-1 h-px bg-white/20"></div>
+          <span className="px-4 text-white/60 text-sm">{t('or_continue_with')}</span>
+          <div className="flex-1 h-px bg-white/20"></div>
+        </div>
+
+        <div className="flex gap-3">
+          <Button 
+            type="button"
+            variant="outline"
+            className="flex-1 auth-button rounded-xl h-12 font-semibold text-base"
+            onClick={() => {
+              // Add Google OAuth for admin
+            }}
+          >
+            {t('google')}
+          </Button>
+          <Button 
+            type="button"
+            variant="outline"
+            className="flex-1 auth-button rounded-xl h-12 font-semibold text-base"
+            onClick={() => {
+              // Add Facebook OAuth for admin
+            }}
+          >
+            {t('facebook')}
+          </Button>
+        </div>
       </div>
     </div>
   );

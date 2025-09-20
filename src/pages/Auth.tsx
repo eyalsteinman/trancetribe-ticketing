@@ -144,7 +144,7 @@ const AuthPage = () => {
       <div 
         className={`min-h-screen w-full relative z-10 flex items-center justify-center p-4 ${isRTL ? 'rtl' : 'ltr'}`}
         dir={isRTL ? 'rtl' : 'ltr'}
-        style={{ '--scroll-y': `${scrollY * 0.5}px` } as React.CSSProperties}
+        style={{ '--scroll-y': `${scrollY * 0.3}px` } as React.CSSProperties}
       >
         <div className="w-full space-y-8 auth-parallax">
           <div className="auth-glass p-6 rounded-2xl max-w-md mx-auto">
@@ -155,10 +155,10 @@ const AuthPage = () => {
             <div className="text-center space-y-4">
               <LanguageSelector />
               <div className="flex flex-col items-center justify-center">
-                <h1 className="text-4xl font-bold text-white text-center">
+                <h1 className="text-4xl font-bold text-white text-center w-full">
                   {t('trance_tribes')}
                 </h1>
-                <p className="text-white/80 mt-2 text-center">
+                <p className="text-white/80 mt-2 text-center w-full">
                   {t('choose_access_type')}
                 </p>
               </div>

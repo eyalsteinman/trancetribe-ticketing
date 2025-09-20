@@ -35,21 +35,21 @@ export const AuthForm = ({
         
         <TabsContent value="user" className="p-6 space-y-4">
           <div className="space-y-4">
-            <div className="flex flex-col space-y-3">
+            <div className="flex flex-col space-y-4">
               <h3 className="text-xl font-semibold text-white text-center">
                 {t('user_login_registration')}
               </h3>
               <button
                 onClick={onToggleUserLogin}
-                className="auth-button px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 self-center"
+                className="auth-button px-6 py-3 rounded-3xl text-sm font-medium transition-all duration-300 self-center min-w-[160px]"
               >
                 {isUserLogin ? (
-                  <span className="text-center">
-                    {t('dont_have_account')}<br />{t('sign_up')}
+                  <span className="text-center whitespace-nowrap">
+                    {t('dont_have_account')} {t('sign_up')}
                   </span>
                 ) : (
-                  <span className="text-center">
-                    {t('have_account')}<br />{t('sign_in')}
+                  <span className="text-center whitespace-nowrap">
+                    {t('have_account')} {t('sign_in')}
                   </span>
                 )}
               </button>

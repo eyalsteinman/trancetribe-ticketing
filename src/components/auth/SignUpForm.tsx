@@ -31,10 +31,10 @@ export const SignUpForm = () => {
   };
 
   const handleSignUp = async () => {
-    if (!email || !password || !firstName || !lastName) {
+    if (!email || !password || !firstName || !lastName || !phoneNumber) {
       toast({
         title: t('error'),
-        description: t('fields_required'),
+        description: t('phone_required'),
         variant: "destructive"
       });
       return;
@@ -122,12 +122,13 @@ export const SignUpForm = () => {
       </div>
       
       <div>
-        <label className="text-sm font-medium text-white block mb-2">{t('phone_number')}</label>
+        <label className="text-sm font-medium text-white block mb-2">{t('phone_number')} *</label>
         <Input
           type="tel"
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
           placeholder={t('enter_phone_number')}
+          required
           className="auth-input rounded-xl h-12 px-4 text-white placeholder:text-white/60"
         />
       </div>
@@ -187,6 +188,43 @@ export const SignUpForm = () => {
       >
         {loading ? t('processing') : t('create_account')}
       </Button>
+
+      <div className="flex items-center my-4">
+        <div className="flex-1 h-px bg-white/20"></div>
+        <span className="px-4 text-white/60 text-sm">{t('or_continue_with')}</span>
+        <div className="flex-1 h-px bg-white/20"></div>
+      </div>
+
+      <div className="flex gap-3">
+        <Button 
+          type="button"
+          variant="outline"
+          className="flex-1 auth-button rounded-xl h-12 font-semibold text-base"
+          onClick={() => {
+            toast({
+              title: t('info'),
+              description: t('google_signin_failed'),
+              variant: "default"
+            });
+          }}
+        >
+          {t('google')}
+        </Button>
+        <Button 
+          type="button"
+          variant="outline"
+          className="flex-1 auth-button rounded-xl h-12 font-semibold text-base"
+          onClick={() => {
+            toast({
+              title: t('info'),
+              description: t('facebook_signin_failed'),
+              variant: "default"
+            });
+          }}
+        >
+          {t('facebook')}
+        </Button>
+      </div>
     </div>
   );
 };
