@@ -69,22 +69,24 @@ All colors MUST be HSL.
     --background: 0 0% 100%;
     --foreground: 0 0% 0%;
 
-    /* Auth page specific colors */
-    --auth-background: 276 100% 20%;
-    --auth-background-secondary: 276 100% 15%;
+    /* Auth page specific colors - Fixed contrast issues */
+    --auth-background: 276 100% 8%;
+    --auth-background-secondary: 276 100% 12%;
     --auth-foreground: 0 0% 100%;
-    --auth-accent: 142 76% 36%;
-    --auth-accent-hover: 142 76% 40%;
-    --auth-glass: 0 0% 0% / 0.3;
-    --auth-glass-border: 0 0% 100% / 0.2;
-    --auth-button-glass: 0 0% 0% / 0.6;
-    --auth-button-pressed: 276 100% 50%;
+    --auth-accent: 142 76% 50%;
+    --auth-accent-hover: 142 76% 60%;
+    --auth-glass: 0 0% 0% / 0.4;
+    --auth-glass-border: 0 0% 100% / 0.3;
+    --auth-button-glass: 0 0% 0% / 0.8;
+    --auth-button-pressed: 276 100% 60%;
     --auth-button-text: 0 0% 100%;
     --auth-button-text-pressed: 0 0% 0%;
-    --auth-input-bg: 0 0% 100% / 0.1;
-    --auth-input-border: 0 0% 100% / 0.3;
-    --auth-line-primary: 276 100% 60%;
-    --auth-line-secondary: 142 76% 50%;
+    --auth-input-bg: 0 0% 0% / 0.3;
+    --auth-input-border: 0 0% 100% / 0.4;
+    --auth-input-text: 0 0% 100%;
+    --auth-input-placeholder: 0 0% 100% / 0.6;
+    --auth-line-primary: 142 76% 50%;
+    --auth-line-secondary: 276 100% 60%;
 
     --card: 0 0% 100%;
     --card-foreground: 0 0% 0%;
@@ -248,7 +250,7 @@ All colors MUST be HSL.
     --input: 50 100% 70%;
   }
 
-  /* Matrix-style animated background */
+  /* Matrix-style animated background with actual matrix effect */
   .auth-animated-bg {
     position: fixed;
     top: 0;
@@ -261,29 +263,20 @@ All colors MUST be HSL.
   }
 
   .auth-animated-bg::before {
-    content: '';
+    content: '01001010011010010101010100101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010010101010101010101010101010101010101001010101010101010101010101010101010100101010101010101010101010101010101010';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: 
-      repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        hsla(var(--auth-line-primary) / 0.1) 2px,
-        hsla(var(--auth-line-primary) / 0.1) 4px
-      ),
-      repeating-linear-gradient(
-        90deg,
-        transparent,
-        transparent 2px,
-        hsla(var(--auth-line-secondary) / 0.1) 2px,
-        hsla(var(--auth-line-secondary) / 0.1) 4px
-      );
-    animation: matrixRain 20s linear infinite;
-    opacity: 0.4;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 16px;
+    color: hsla(var(--auth-line-primary) / 0.3);
+    word-break: break-all;
+    white-space: pre-wrap;
+    animation: matrixRain 10s linear infinite;
+    overflow: hidden;
   }
 
   .auth-animated-bg::after {
@@ -293,38 +286,28 @@ All colors MUST be HSL.
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(
-      circle at 20% 30%,
-      hsla(var(--auth-line-primary) / 0.15) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 70%,
-      hsla(var(--auth-line-secondary) / 0.15) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 50% 50%,
-      hsla(var(--auth-line-primary) / 0.1) 0%,
-      transparent 70%
-    );
-    animation: matrixPulse 15s ease-in-out infinite;
+    background: 
+      radial-gradient(circle at 20% 30%, hsla(var(--auth-line-primary) / 0.2) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, hsla(var(--auth-line-secondary) / 0.2) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, hsla(var(--auth-line-primary) / 0.1) 0%, transparent 70%);
+    animation: matrixPulse 8s ease-in-out infinite;
   }
 
   @keyframes matrixRain {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-20px); }
+    0% { transform: translateY(-100px); }
+    100% { transform: translateY(100vh); }
   }
 
   @keyframes matrixPulse {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 0.8; }
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
   }
 
   /* Smooth parallax effect */
   .auth-parallax {
     transform: translateY(var(--scroll-y, 0px));
-    transition: transform 0.1s ease-out;
+    transition: transform 0.05s ease-out;
+    will-change: transform;
   }
 
   /* Glass morphism styles */
@@ -377,12 +360,12 @@ All colors MUST be HSL.
   .auth-input {
     background: hsla(var(--auth-input-bg));
     border: 1px solid hsla(var(--auth-input-border));
-    color: hsl(var(--auth-foreground));
+    color: hsl(var(--auth-input-text));
     backdrop-filter: blur(10px);
   }
 
   .auth-input::placeholder {
-    color: hsla(var(--auth-foreground) / 0.6);
+    color: hsla(var(--auth-input-placeholder));
   }
 
   * {

@@ -233,13 +233,13 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
       </div>
 
       <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5" />
         <Input
           type="text"
-          placeholder={t('browse_by_production') || 'Search events by name or production'}
+          placeholder={browseMode === 'production' ? t('browse_by_production') : browseMode === 'party' ? t('browse_by_party') : t('browse_by_date')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 py-4 text-base bg-background/50 border-muted focus:bg-background overflow-hidden text-ellipsis"
+          className="auth-input pl-10 py-4 text-base rounded-xl h-12 overflow-hidden text-ellipsis"
         />
       </div>
 

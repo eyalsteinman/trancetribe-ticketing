@@ -60,7 +60,7 @@ export const translations = {
     'invalid_credentials': 'Invalid credentials',
     'password_mismatch': 'Passwords do not match',
     'welcome_to': 'welcome to',
-    'trance_tribes': 'TRANCE TRIBES',
+    'trance_tribes': 'Trance Tribes',
     'ticket_generator': 'ticket generator',
     'choose_access_type': 'Choose your access type',
     
@@ -267,10 +267,10 @@ export const translations = {
     'can_do_later': 'You can do this later',
     'invalid_facebook_url': 'Please enter a valid Facebook profile URL',
     'invalid_instagram_url': 'Please enter a valid Instagram profile URL',
-    'browse_by_production': 'Browse by production',
-    'browse_by_party': 'Browse by party',
-    'browse_by_date': 'Browse by date',
-    'phone_required': 'Phone number is required',
+     'browse_by_production': 'Browse by production',
+     'browse_by_party': 'Search parties by name',
+     'browse_by_date': 'Search events by date',
+     'phone_required': 'Phone number is required',
   },
   
   he: {
@@ -508,13 +508,13 @@ export const translations = {
     'please_fill_all_fields': 'אנא מלא את כל השדות הנדרשים',
     
     // Additional Auth translations
-    'user_login_registration': 'משתמש',
+    'user_login_registration': 'כניסה והרשמה',
     'dont_have_account': 'אין חשבון?',
     'have_account': 'יש חשבון?',
-    'sign_in_to_account': 'התחבר לחשבון',
-    'create_account_description': 'צור חשבון חדש',
-    'admin_access': 'גישת מנהל',
-    'admin_credentials_description': 'התחבר עם פרטי מנהל',
+    'sign_in_to_account': 'כניסה לחשבון',
+    'create_account_description': 'יצירת חשבון חדש',
+    'admin_access': 'מנהל',
+    'admin_credentials_description': 'פרטי כניסה',
     'enter_email': 'הכנס אימייל',
     'enter_password': 'הכנס סיסמה',
     'enter_first_name': 'שם פרטי',

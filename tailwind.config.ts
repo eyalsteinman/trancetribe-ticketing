@@ -67,8 +67,8 @@ export default {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)',
-				xl: '20px',
-				'2xl': '28px',
+				xl: '16px',
+				'2xl': '24px',
 				'3xl': '32px'
 			},
 			keyframes: {

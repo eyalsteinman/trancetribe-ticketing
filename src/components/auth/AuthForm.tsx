@@ -24,11 +24,11 @@ export const AuthForm = ({
   return (
     <div className="auth-glass rounded-2xl overflow-hidden">
       <Tabs defaultValue="user" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 auth-glass-strong rounded-xl m-2">
-          <TabsTrigger value="user" className="text-white data-[state=active]:bg-white/20 rounded-lg">
+        <TabsList className="grid w-full grid-cols-2 auth-glass-strong rounded-2xl m-2">
+          <TabsTrigger value="user" className="text-white data-[state=active]:bg-white/30 data-[state=active]:text-black rounded-xl font-semibold">
             {t('user')}
           </TabsTrigger>
-          <TabsTrigger value="admin" className="text-white data-[state=active]:bg-white/20 rounded-lg">
+          <TabsTrigger value="admin" className="text-white data-[state=active]:bg-white/30 data-[state=active]:text-black rounded-xl font-semibold">
             {t('admin')}
           </TabsTrigger>
         </TabsList>
@@ -41,16 +41,18 @@ export const AuthForm = ({
               </h3>
               <button
                 onClick={onToggleUserLogin}
-                className="auth-button px-6 py-3 rounded-3xl text-sm font-medium transition-all duration-300 self-center min-w-[160px]"
+                className="auth-button px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-300 self-center w-full max-w-[200px] text-center"
               >
                 {isUserLogin ? (
-                  <span className="text-center whitespace-nowrap">
-                    {t('dont_have_account')} {t('sign_up')}
-                  </span>
+                  <div className="text-center">
+                    <div>{t('dont_have_account')}</div>
+                    <div className="font-bold">{t('sign_up')}</div>
+                  </div>
                 ) : (
-                  <span className="text-center whitespace-nowrap">
-                    {t('have_account')} {t('sign_in')}
-                  </span>
+                  <div className="text-center">
+                    <div>{t('have_account')}</div>
+                    <div className="font-bold">{t('sign_in')}</div>
+                  </div>
                 )}
               </button>
             </div>
