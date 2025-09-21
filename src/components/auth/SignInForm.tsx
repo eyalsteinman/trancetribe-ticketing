@@ -111,7 +111,7 @@ export const SignInForm = () => {
           onChange={(e) => setEmail(e.target.value)}
           placeholder={t('enter_email')}
           required
-          className="auth-input rounded-xl h-12 px-4 text-white placeholder:text-white/60"
+          className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60"
         />
       </div>
       
@@ -123,7 +123,7 @@ export const SignInForm = () => {
           onChange={(e) => setPassword(e.target.value)}
           placeholder={t('enter_password')}
           required
-          className="auth-input rounded-xl h-12 px-4 text-white placeholder:text-white/60"
+          className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60"
         />
       </div>
 
@@ -150,14 +150,14 @@ export const SignInForm = () => {
         <Button
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="w-full auth-button rounded-xl h-12"
+          className="w-full auth-button rounded-xl h-12 text-white"
         >
           {t('google')}
         </Button>
         <Button
           onClick={handleFacebookLogin}
           disabled={loading}
-          className="w-full auth-button rounded-xl h-12"
+          className="w-full auth-button rounded-xl h-12 text-white"
         >
           {t('facebook')}
         </Button>

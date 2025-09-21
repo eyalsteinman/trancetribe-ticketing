@@ -154,13 +154,11 @@ const AuthPage = () => {
           <div className="w-full flex flex-col items-center space-y-6">
             <div className="text-center space-y-4">
               <LanguageSelector />
-              <div className="flex flex-col items-center justify-center">
-                <h1 className="text-4xl font-bold text-white text-center w-full" 
-                    style={{ textAlign: 'center', direction: isRTL ? 'rtl' : 'ltr' }}>
+              <div className="flex flex-col items-center justify-center space-y-2">
+                <h1 className="text-4xl font-bold text-white text-center w-full">
                   {t('trance_tribes')}
                 </h1>
-                <p className="text-white/80 mt-2 text-center w-full"
-                   style={{ textAlign: 'center', direction: isRTL ? 'rtl' : 'ltr' }}>
+                <p className="text-white mt-2 text-center w-full">
                   {t('choose_access_type')}
                 </p>
               </div>

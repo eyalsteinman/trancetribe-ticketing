@@ -303,6 +303,53 @@ All colors MUST be HSL.
     50% { opacity: 1; }
   }
 
+  /* Gentle gradient animated background */
+  .auth-animated-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+    background: linear-gradient(135deg, hsl(var(--auth-background)), hsl(var(--auth-background-secondary)));
+    animation: gradientShift 8s ease-in-out infinite;
+  }
+
+  .auth-animated-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 20% 30%, hsla(var(--auth-line-primary) / 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, hsla(var(--auth-line-secondary) / 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, hsla(var(--auth-line-primary) / 0.1) 0%, transparent 70%);
+    animation: gradientPulse 6s ease-in-out infinite;
+  }
+
+  @keyframes gradientShift {
+    0%, 100% { 
+      background: linear-gradient(135deg, hsl(var(--auth-background)), hsl(var(--auth-background-secondary)));
+    }
+    25% { 
+      background: linear-gradient(225deg, hsl(var(--auth-background)), hsl(var(--auth-background-secondary)));
+    }
+    50% { 
+      background: linear-gradient(315deg, hsl(var(--auth-background)), hsl(var(--auth-background-secondary)));
+    }
+    75% { 
+      background: linear-gradient(45deg, hsl(var(--auth-background)), hsl(var(--auth-background-secondary)));
+    }
+  }
+
+  @keyframes gradientPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+
   /* Smooth parallax effect */
   .auth-parallax {
     transform: translateY(var(--scroll-y, 0px));
@@ -360,7 +407,7 @@ All colors MUST be HSL.
   .auth-input {
     background: hsla(var(--auth-input-bg));
     border: 1px solid hsla(var(--auth-input-border));
-    color: hsl(var(--auth-input-text));
+    color: hsl(var(--foreground));
     backdrop-filter: blur(10px);
   }
 

@@ -105,7 +105,7 @@ export const SignUpForm = () => {
             onChange={(e) => setFirstName(e.target.value)}
             placeholder={t('enter_first_name')}
             required
-            className="auth-input rounded-xl h-12 px-4 text-white placeholder:text-white/60 text-sm"
+            className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60 text-sm"
           />
         </div>
         <div>
@@ -116,7 +116,7 @@ export const SignUpForm = () => {
             onChange={(e) => setLastName(e.target.value)}
             placeholder={t('enter_last_name')}
             required
-            className="auth-input rounded-xl h-12 px-4 text-white placeholder:text-white/60 text-sm"
+            className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60 text-sm"
           />
         </div>
       </div>
@@ -129,7 +129,7 @@ export const SignUpForm = () => {
           onChange={(e) => setPhoneNumber(e.target.value)}
           placeholder={t('enter_phone_number')}
           required
-          className="auth-input rounded-xl h-12 px-4 text-white placeholder:text-white/60"
+          className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60"
         />
       </div>
       
@@ -140,7 +140,7 @@ export const SignUpForm = () => {
           value={facebookProfile}
           onChange={(e) => setFacebookProfile(e.target.value)}
           placeholder="facebook.com/profile"
-          className="auth-input rounded-xl h-12 px-4 text-white placeholder:text-white/60"
+          className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60"
         />
         <p className="text-xs text-white/60 mt-1">{t('can_do_later')}</p>
       </div>
@@ -152,7 +152,7 @@ export const SignUpForm = () => {
           value={instagramProfile}
           onChange={(e) => setInstagramProfile(e.target.value)}
           placeholder="instagram.com/profile"
-          className="auth-input rounded-xl h-12 px-4 text-white placeholder:text-white/60"
+          className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60"
         />
         <p className="text-xs text-white/60 mt-1">{t('can_do_later')}</p>
       </div>
@@ -165,7 +165,7 @@ export const SignUpForm = () => {
           onChange={(e) => setEmail(e.target.value)}
           placeholder={t('enter_email')}
           required
-          className="auth-input rounded-xl h-12 px-4 text-white placeholder:text-white/60"
+          className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60"
         />
       </div>
       
@@ -177,7 +177,7 @@ export const SignUpForm = () => {
           onChange={(e) => setPassword(e.target.value)}
           placeholder={t('enter_password')}
           required
-          className="auth-input rounded-xl h-12 px-4 text-white placeholder:text-white/60"
+          className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60"
         />
       </div>
 
@@ -199,7 +199,7 @@ export const SignUpForm = () => {
         <Button 
           type="button"
           variant="outline"
-          className="flex-1 auth-button rounded-xl h-12 font-semibold text-base"
+          className="flex-1 auth-button rounded-xl h-12 font-semibold text-base text-white"
           onClick={() => {
             toast({
               title: t('info'),
@@ -213,7 +213,7 @@ export const SignUpForm = () => {
         <Button 
           type="button"
           variant="outline"
-          className="flex-1 auth-button rounded-xl h-12 font-semibold text-base"
+          className="flex-1 auth-button rounded-xl h-12 font-semibold text-base text-white"
           onClick={() => {
             toast({
               title: t('info'),
