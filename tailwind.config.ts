@@ -64,12 +64,12 @@ export default {
 				}
 			},
 			borderRadius: {
-				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)',
-				xl: '18px',
-				'2xl': '26px',
-				'3xl': '34px'
+				lg: '12px',
+				md: '8px',
+				sm: '6px',
+				xl: '16px',
+				'2xl': '20px',
+				'3xl': '24px'
 			},
 			keyframes: {
 				'accordion-down': {

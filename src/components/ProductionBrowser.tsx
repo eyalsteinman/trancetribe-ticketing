@@ -202,10 +202,10 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
                 />
               ) : (
                 <div className="w-24 h-24 bg-muted flex items-center justify-center">
-                  <span className="text-xs text-center font-semibold" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{production.name}</span>
+                  <span className="text-xs text-center font-semibold text-white">{production.name}</span>
                 </div>
               )}
-              <p className="text-xs text-center mt-2 truncate" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{production.name}</p>
+              <p className="text-xs text-center mt-2 truncate text-white">{production.name}</p>
             </div>
           ))
         ) : (
@@ -233,7 +233,7 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
       </div>
 
       <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black h-5 w-5" />
         <Input
           type="text"
           placeholder={browseMode === 'production' ? t('browse_by_production') : browseMode === 'party' ? t('browse_by_party') : t('browse_by_date')}
