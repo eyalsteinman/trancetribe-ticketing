@@ -25,10 +25,10 @@ export const AuthForm = ({
     <div className="auth-glass rounded-2xl overflow-hidden">
       <Tabs defaultValue="user" className="w-full">
         <TabsList className="grid w-full grid-cols-2 auth-glass-strong rounded-2xl m-2">
-          <TabsTrigger value="user" className="text-black data-[state=active]:bg-purple-600 data-[state=active]:text-white rounded-xl font-semibold">
+          <TabsTrigger value="user" className="text-black data-[state=active]:text-purple-600 data-[state=active]:bg-transparent rounded-xl font-semibold">
             {t('user')}
           </TabsTrigger>
-          <TabsTrigger value="admin" className="text-black data-[state=active]:bg-purple-600 data-[state=active]:text-white rounded-xl font-semibold">
+          <TabsTrigger value="admin" className="text-black data-[state=active]:text-purple-600 data-[state=active]:bg-transparent rounded-xl font-semibold">
             {t('admin')}
           </TabsTrigger>
         </TabsList>
@@ -41,7 +41,7 @@ export const AuthForm = ({
               </h3>
               <button
                 onClick={onToggleUserLogin}
-                className="auth-button px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-300 self-center w-full max-w-[200px] text-center"
+                className="bg-purple-600 text-white px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-300 self-center w-full max-w-[200px] text-center hover:bg-purple-700"
               >
                 {isUserLogin ? (
                   <div className="text-center">

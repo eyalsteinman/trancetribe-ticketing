@@ -312,8 +312,9 @@ All colors MUST be HSL.
     height: 100%;
     overflow: hidden;
     z-index: 0;
-    background: linear-gradient(135deg, hsl(276 100% 8%), hsl(276 100% 12%));
-    animation: gentleGradient 12s ease-in-out infinite;
+    background: linear-gradient(-45deg, #8B5CF6, #4C1D95, #6B21A8, #581C87);
+    background-size: 400% 400%;
+    animation: gentleGradient 20s ease infinite;
   }
 
   .auth-animated-bg::before {
@@ -330,17 +331,20 @@ All colors MUST be HSL.
   }
 
   @keyframes gentleGradient {
-    0%, 100% { 
-      background: linear-gradient(135deg, hsl(276 100% 8%), hsl(276 100% 12%));
+    0% {
+      background-position: 0% 50%;
     }
-    25% { 
-      background: linear-gradient(165deg, hsl(276 100% 10%), hsl(276 100% 14%));
+    25% {
+      background-position: 50% 100%;
     }
-    50% { 
-      background: linear-gradient(195deg, hsl(276 100% 6%), hsl(276 100% 10%));
+    50% {
+      background-position: 100% 50%;
     }
-    75% { 
-      background: linear-gradient(225deg, hsl(276 100% 8%), hsl(276 100% 12%));
+    75% {
+      background-position: 50% 0%;
+    }
+    100% {
+      background-position: 0% 50%;
     }
   }
 

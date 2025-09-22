@@ -268,8 +268,8 @@ export const translations = {
     'invalid_facebook_url': 'Please enter a valid Facebook profile URL',
     'invalid_instagram_url': 'Please enter a valid Instagram profile URL',
      'browse_by_production': 'Browse by production',
-     'browse_by_party': 'Search parties by name',
-     'browse_by_date': 'Search events by date',
+     'browse_by_party': 'Browse by party',
+     'browse_by_date': 'Browse by date',
      'phone_required': 'Phone number is required',
   },
   
@@ -339,6 +339,7 @@ export const translations = {
     'choose_access_type': 'בחר גישה',
     'browse_by_production': 'חפש הפקה',
     'browse_by_party': 'חפש מסיבה',
+    'browse_by_date': 'חפש תאריך',
     'user': 'משתמש',
     'admin': 'מנהל',
     'user_login_registration': 'התחברות/הרשמה',
@@ -546,7 +547,6 @@ export const translations = {
     'account_created_verify_email': 'החשבון נוצר! בדוק אימייל.',
     'invalid_facebook_url': 'הזן כתובת פרופיל פייסבוק תקינה',
     'invalid_instagram_url': 'הזן כתובת פרופיל אינסטגרם תקינה',
-    'browse_by_date': 'חפש לפי תאריך',
   },
   
   sp: {
