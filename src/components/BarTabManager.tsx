@@ -262,15 +262,12 @@ const BarTabManager = ({ user, onBack }: BarTabManagerProps) => {
                           step="0.1"
                           value={item.discounted_price || ""}
                           onChange={(e) => updateBarTabItem(item.id, 'discounted_price', Number(e.target.value) || 0)}
-                          placeholder="Discount price"
+                         placeholder="Discount price"
                         />
                       </div>
-        </div>
-
-        {/* Footer */}
-        <Footer />
-      </div>
-    </div>
+                    </div>
+                  </div>
+                </div>
               ))}
 
               {barTabItems.length === 0 && (
@@ -292,6 +289,8 @@ const BarTabManager = ({ user, onBack }: BarTabManagerProps) => {
           </Card>
         )}
       </div>
+      
+      <Footer />
     </div>
   );
 };

@@ -25,10 +25,10 @@ export const AuthForm = ({
     <div className="auth-glass rounded-2xl overflow-hidden">
       <Tabs defaultValue="user" className="w-full">
         <TabsList className="grid w-full grid-cols-2 auth-glass-strong rounded-2xl m-2">
-          <TabsTrigger value="user" className="text-black data-[state=active]:text-purple-600 data-[state=active]:bg-transparent rounded-xl font-semibold">
+          <TabsTrigger value="user" className="text-black data-[state=active]:text-purple-600 data-[state=active]:bg-white/20 rounded-xl font-semibold">
             {t('user')}
           </TabsTrigger>
-          <TabsTrigger value="admin" className="text-black data-[state=active]:text-purple-600 data-[state=active]:bg-transparent rounded-xl font-semibold">
+          <TabsTrigger value="admin" className="text-black data-[state=active]:text-purple-600 data-[state=active]:bg-white/20 rounded-xl font-semibold">
             {t('admin')}
           </TabsTrigger>
         </TabsList>

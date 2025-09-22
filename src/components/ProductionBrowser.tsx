@@ -239,7 +239,7 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
           placeholder={browseMode === 'production' ? t('browse_by_production') : browseMode === 'party' ? t('browse_by_party') : t('browse_by_date')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="auth-input pl-10 py-4 text-base rounded-2xl h-12 overflow-hidden text-ellipsis text-black placeholder:text-white/70"
+          className="auth-input pl-10 py-4 text-base rounded-2xl h-12 overflow-hidden text-ellipsis text-black placeholder:text-black/50"
         />
       </div>
 

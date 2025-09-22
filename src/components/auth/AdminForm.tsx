@@ -73,7 +73,7 @@ export const AdminForm = ({ onShowAdminPassword, pendingAdminSignup }: AdminForm
           placeholder={t('enter_email')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60"
+          className="auth-input rounded-2xl h-12 px-4 text-black placeholder:text-black/50"
         />
       </div>
       <div>
@@ -83,21 +83,21 @@ export const AdminForm = ({ onShowAdminPassword, pendingAdminSignup }: AdminForm
           placeholder={t('enter_password')}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60"
+          className="auth-input rounded-2xl h-12 px-4 text-black placeholder:text-black/50"
         />
       </div>
       <div className="space-y-3">
         <Button 
           onClick={handleAdminLogin}
           disabled={loading || !email || !password}
-          className="w-full bg-purple-600 text-white rounded-xl h-12 font-semibold text-base hover:bg-purple-700 disabled:opacity-50"
+          className="w-full bg-purple-600 text-white rounded-2xl h-12 font-semibold text-base hover:bg-purple-700 disabled:opacity-50"
         >
           {loading ? t('signing_in') : t('sign_in_as_admin')}
         </Button>
         <button 
           onClick={handleCreateAdminClick}
           disabled={!email || !password}
-          className="w-full bg-purple-600 text-white rounded-xl h-12 font-semibold text-base hover:bg-purple-700 disabled:opacity-50"
+          className="w-full bg-purple-600 text-white rounded-2xl h-12 font-semibold text-base hover:bg-purple-700 disabled:opacity-50"
         >
           {t('create_admin_account')}
         </button>
@@ -112,7 +112,7 @@ export const AdminForm = ({ onShowAdminPassword, pendingAdminSignup }: AdminForm
           <Button 
             type="button"
             variant="outline"
-            className="flex-1 bg-transparent border-white/30 text-white rounded-xl h-12 font-semibold text-base hover:bg-white/10"
+            className="flex-1 bg-transparent border-white/30 text-white rounded-2xl h-12 font-semibold text-base hover:bg-white/10"
             onClick={() => {
               // Add Google OAuth for admin
             }}
@@ -122,7 +122,7 @@ export const AdminForm = ({ onShowAdminPassword, pendingAdminSignup }: AdminForm
           <Button 
             type="button"
             variant="outline"
-            className="flex-1 bg-transparent border-white/30 text-white rounded-xl h-12 font-semibold text-base hover:bg-white/10"
+            className="flex-1 bg-transparent border-white/30 text-white rounded-2xl h-12 font-semibold text-base hover:bg-white/10"
             onClick={() => {
               // Add Facebook OAuth for admin
             }}
