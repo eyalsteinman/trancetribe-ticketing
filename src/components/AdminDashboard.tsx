@@ -747,8 +747,8 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
                   </div>
                 </div>
                 <div className="p-4">
-                  <div className="space-y-3 max-h-64 overflow-y-auto">
-                    {upcomingParties.map((party, index) => (
+                  <div className="space-y-3 max-h-96 overflow-y-auto">
+                    {upcomingParties.slice(0, 10).map((party, index) => (
                       <div
                         key={party.id}
                         className="border border-border p-3 cursor-pointer hover:bg-accent transition-colors"

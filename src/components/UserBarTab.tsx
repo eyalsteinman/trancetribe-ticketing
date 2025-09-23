@@ -172,7 +172,7 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
     const selectedItem = availableBarTabs.find(tab => tab.id === selectedBarTab);
     if (!selectedItem) return;
 
-    const amount = selectedItem.regular_price;
+    const amount = selectedItem.discounted_price; // Use discounted price instead of regular
     
     // Generate unique barcode with timestamp and random string
     const timestamp = Date.now();

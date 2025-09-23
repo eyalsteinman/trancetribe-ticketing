@@ -196,6 +196,8 @@ const AuthPage = () => {
                     onToggleUserLogin={() => setIsUserLogin(!isUserLogin)}
                   />
                 </div>
+                
+                <ProductionBrowser onLoginPrompt={() => {}} carouselOnly={true} />
               </>
             )}
           </div>

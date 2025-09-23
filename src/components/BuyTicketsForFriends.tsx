@@ -119,11 +119,13 @@ const BuyTicketsForFriends = ({ user, party, onBack }: BuyTicketsForFriendsProps
       // If party is free, generate tickets directly
       if (party.is_free) {
         await generateFreeTickets(profilesWithoutQRs);
+        return;
       } else {
         // Show payment interface
         setShowPayment(true);
       }
     } catch (error) {
+      console.error('Validation error:', error);
       toast({
         title: "Error",
         description: "Failed to validate friend codes",
@@ -364,7 +366,7 @@ const BuyTicketsForFriends = ({ user, party, onBack }: BuyTicketsForFriendsProps
             <Button
               onClick={validateFriendsAndProceed}
               disabled={loading}
-              className="w-full"
+              className={`w-full ${party.is_free ? 'bg-purple-600 hover:bg-purple-700 text-white' : ''}`}
             >
               {loading ? "Validating..." : party.is_free ? "Generate Free Tickets" : "Proceed to Payment"}
             </Button>

@@ -115,42 +115,49 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
             <img
               src={selectedProduction.logo_url}
               alt={selectedProduction.name}
-              className="w-32 h-32 object-cover mx-auto mb-4"
+              className="w-full max-w-sm h-auto object-contain mx-auto mb-4"
             />
           ) : (
-            <div className="w-32 h-32 bg-muted flex items-center justify-center mx-auto mb-4">
-              <span className="font-semibold" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{selectedProduction.name}</span>
+            <div className="w-full max-w-sm h-32 bg-muted flex items-center justify-center mx-auto mb-4">
+              <span className="font-semibold text-center" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{selectedProduction.name}</span>
             </div>
           )}
-          <h2 className="text-2xl font-bold" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{selectedProduction.name}</h2>
+          <h2 className="text-2xl font-bold mb-4" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{selectedProduction.name}</h2>
+          {selectedProduction && (
+            <p className="text-sm mx-auto max-w-md" style={{ color: isBackgroundDark ? '#cccccc' : '#333333' }}>
+              Production description would go here if available in the database.
+            </p>
+          )}
         </div>
         
-        <div className="flex overflow-x-auto gap-4 pb-4">
-          {productionParties.map((party) => (
-            <div
-              key={party.id}
-              onClick={() => handlePartyClick(party)}
-              className="flex-shrink-0 cursor-pointer w-64"
-            >
-              {party.photo_url ? (
-                <img
-                  src={party.photo_url}
-                  alt={party.name}
-                  className="w-full h-48 object-cover"
-                />
-              ) : (
-                <div className="w-full h-48 bg-muted flex items-center justify-center">
-                  <span className="text-center p-4" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{party.name}</span>
+        <div className="w-full max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {productionParties.map((party) => (
+              <div
+                key={party.id}
+                onClick={() => handlePartyClick(party)}
+                className="cursor-pointer w-full bg-card border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+              >
+                {party.photo_url ? (
+                  <img
+                    src={party.photo_url}
+                    alt={party.name}
+                    className="w-full h-48 object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-48 bg-muted flex items-center justify-center">
+                    <span className="text-center p-4" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{party.name}</span>
+                  </div>
+                )}
+                <div className="p-4">
+                  <h3 className="font-semibold" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{party.name}</h3>
+                  <p className="text-sm" style={{ color: isBackgroundDark ? '#888888' : '#666666' }}>
+                    {new Date(party.date).toLocaleDateString()}
+                  </p>
                 </div>
-              )}
-              <div className="p-2">
-                <h3 className="font-semibold" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{party.name}</h3>
-                <p className="text-sm" style={{ color: isBackgroundDark ? '#888888' : '#666666' }}>
-                  {new Date(party.date).toLocaleDateString()}
-                </p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
         
         <button

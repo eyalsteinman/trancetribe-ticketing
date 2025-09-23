@@ -578,7 +578,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
                       <Button
                         onClick={() => generateQR()}
                         disabled={loading}
-                        className="w-full"
+                        className={`w-full ${party.is_free ? 'bg-purple-600 hover:bg-purple-700 text-white' : ''}`}
                       >
                         {loading ? "Generating..." : (party.is_free ? 'Get Free Ticket' : 'Get Ticket')}
                       </Button>
