@@ -18,9 +18,9 @@ const LanguageSelector = () => {
         <React.Fragment key={lang.code}>
           <button
             onClick={() => setLanguage(lang.code)}
-            className={`text-sm font-medium transition-colors px-2 py-1 rounded ${
+            className={`text-sm font-medium transition-colors px-3 py-2 rounded-full ${
               language === lang.code
-                ? 'text-blue-500 font-bold bg-white/20'
+                ? 'text-purple-600 font-bold bg-white'
                 : 'text-white hover:text-white hover:bg-white/10'
             }`}
           >

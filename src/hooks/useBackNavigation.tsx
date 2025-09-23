@@ -15,7 +15,6 @@ export const useBackNavigation = ({ onBackNavigation, isActive, preventBackNavig
         // Push the same state back to prevent actual navigation
         window.history.pushState({ modal: true }, '');
       }
-      event.preventDefault();
       onBackNavigation();
     };
 
@@ -26,12 +25,10 @@ export const useBackNavigation = ({ onBackNavigation, isActive, preventBackNavig
 
     return () => {
       window.removeEventListener('popstate', handlePopState);
-      // Do not navigate back automatically on cleanup to avoid unintended page navigation
-      // Optionally, clear the modal flag without changing history
+      // Go back to clear the pushed state when unmounting
       if (window.history.state?.modal) {
         try {
-          const current = window.history.state;
-          window.history.replaceState({ ...current, modal: false }, '');
+          window.history.back();
         } catch {
           // no-op
         }

@@ -242,14 +242,30 @@ const FriendsCodes = ({ user, onBack }: FriendsCodesProps) => {
                       Code: {friend.friend_personal_code}
                     </div>
                   </div>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => removeFriend(friend.id)}
-                    className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
-                  >
-                    <Trash2 className="h-4 w-4 text-white" />
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        navigator.clipboard.writeText(friend.friend_personal_code);
+                        toast({
+                          title: "Copied!",
+                          description: "Friend code copied to clipboard"
+                        });
+                      }}
+                      className="bg-blue-600 hover:bg-blue-700 border-blue-600 text-white"
+                    >
+                      📋
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => removeFriend(friend.id)}
+                      className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
+                    >
+                      <Trash2 className="h-4 w-4 text-white" />
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))

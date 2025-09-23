@@ -146,18 +146,22 @@ export const SignInForm = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <Button
+      <div className="flex gap-3">
+        <Button 
+          type="button"
+          variant="outline"
+          className="flex-1 bg-transparent border-white/30 text-white rounded-xl h-12 font-semibold text-base hover:bg-white/10"
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="w-full auth-button rounded-xl h-12 text-white"
         >
           {t('google')}
         </Button>
-        <Button
+        <Button 
+          type="button"
+          variant="outline"
+          className="flex-1 bg-transparent border-white/30 text-white rounded-xl h-12 font-semibold text-base hover:bg-white/10"
           onClick={handleFacebookLogin}
           disabled={loading}
-          className="w-full auth-button rounded-xl h-12 text-white"
         >
           {t('facebook')}
         </Button>

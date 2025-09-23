@@ -184,7 +184,7 @@ export const SignUpForm = () => {
       <Button 
         onClick={handleSignUp}
         disabled={loading}
-        className="w-full auth-button rounded-xl h-12 font-semibold text-base"
+        className="w-full bg-purple-600 text-white rounded-xl h-12 font-semibold text-base hover:bg-purple-700 disabled:opacity-50"
       >
         {loading ? t('processing') : t('create_account')}
       </Button>
@@ -199,7 +199,7 @@ export const SignUpForm = () => {
         <Button 
           type="button"
           variant="outline"
-          className="flex-1 auth-button rounded-xl h-12 font-semibold text-base text-white"
+          className="flex-1 bg-transparent border-white/30 text-white rounded-xl h-12 font-semibold text-base hover:bg-white/10"
           onClick={() => {
             toast({
               title: t('info'),
@@ -213,7 +213,7 @@ export const SignUpForm = () => {
         <Button 
           type="button"
           variant="outline"
-          className="flex-1 auth-button rounded-xl h-12 font-semibold text-base text-white"
+          className="flex-1 bg-transparent border-white/30 text-white rounded-xl h-12 font-semibold text-base hover:bg-white/10"
           onClick={() => {
             toast({
               title: t('info'),

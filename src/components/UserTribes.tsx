@@ -611,6 +611,10 @@ const UserTribes: React.FC<UserTribesProps> = ({ onBack, userId }) => {
                 You've reached the maximum of 5 tribes you can create.
               </div>
             )}
+            
+            <div className="text-center mt-4">
+              <p className="text-white text-xs">beta v1.8</p>
+            </div>
           </CardContent>
         </Card>
       </div>
