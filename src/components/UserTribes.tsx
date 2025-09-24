@@ -539,6 +539,7 @@ const UserTribes: React.FC<UserTribesProps> = ({ onBack, userId }) => {
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <span>Your Tribes</span>
+              <div className="text-white text-xs opacity-70">beta v1.8</div>
               <Button
                 size="sm"
                 onClick={() => setCurrentView('create')}

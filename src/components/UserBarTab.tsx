@@ -286,7 +286,7 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
                 disabled={loading}
                 className="w-full"
               >
-                {loading ? "Processing..." : `Purchase ₪${selectedBarTabItem?.regular_price} Bar Tab`}
+                {loading ? "Processing..." : `Purchase ₪${selectedBarTabItem?.discounted_price} Bar Tab`}
               </Button>
             )}
           </CardContent>

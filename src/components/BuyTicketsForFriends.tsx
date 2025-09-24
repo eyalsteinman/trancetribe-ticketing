@@ -119,7 +119,6 @@ const BuyTicketsForFriends = ({ user, party, onBack }: BuyTicketsForFriendsProps
       // If party is free, generate tickets directly
       if (party.is_free) {
         await generateFreeTickets(profilesWithoutQRs);
-        return;
       } else {
         // Show payment interface
         setShowPayment(true);

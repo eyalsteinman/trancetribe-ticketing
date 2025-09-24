@@ -91,7 +91,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
         .from('parties')
         .select(`
           *,
-          qr_codes!inner(is_approved)
+          qr_codes(is_approved)
         `)
         .order('date', { ascending: sortAscending });
 

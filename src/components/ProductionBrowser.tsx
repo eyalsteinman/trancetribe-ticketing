@@ -240,7 +240,7 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
       </div>
 
       <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black h-5 w-5" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black h-5 w-5" style={{ color: '#000000' }} />
         <Input
           type="text"
           placeholder={browseMode === 'production' ? t('browse_by_production') : browseMode === 'party' ? t('browse_by_party') : t('browse_by_date')}
