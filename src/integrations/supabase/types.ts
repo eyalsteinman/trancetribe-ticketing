@@ -14,6 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_offers: {
+        Row: {
+          admin_id: string
+          created_at: string
+          discount_amount: number | null
+          discounted_price: number | null
+          expires_at: string | null
+          id: string
+          message: string | null
+          metadata: Json | null
+          offer_type: Database["public"]["Enums"]["offer_type"]
+          original_price: number | null
+          party_id: string | null
+          production_id: string | null
+          status: Database["public"]["Enums"]["offer_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string
+          discount_amount?: number | null
+          discounted_price?: number | null
+          expires_at?: string | null
+          id?: string
+          message?: string | null
+          metadata?: Json | null
+          offer_type: Database["public"]["Enums"]["offer_type"]
+          original_price?: number | null
+          party_id?: string | null
+          production_id?: string | null
+          status?: Database["public"]["Enums"]["offer_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string
+          discount_amount?: number | null
+          discounted_price?: number | null
+          expires_at?: string | null
+          id?: string
+          message?: string | null
+          metadata?: Json | null
+          offer_type?: Database["public"]["Enums"]["offer_type"]
+          original_price?: number | null
+          party_id?: string | null
+          production_id?: string | null
+          status?: Database["public"]["Enums"]["offer_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_offers_party_id_fkey"
+            columns: ["party_id"]
+            isOneToOne: false
+            referencedRelation: "parties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_offers_production_id_fkey"
+            columns: ["production_id"]
+            isOneToOne: false
+            referencedRelation: "productions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_profiles: {
         Row: {
           admin_level: Database["public"]["Enums"]["admin_level"]
@@ -350,6 +419,58 @@ export type Database = {
             columns: ["production_id"]
             isOneToOne: false
             referencedRelation: "productions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offer_acceptances: {
+        Row: {
+          accepted_at: string
+          id: string
+          metadata: Json | null
+          offer_id: string
+          payment_id: string | null
+          qr_code_id: string | null
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string
+          id?: string
+          metadata?: Json | null
+          offer_id: string
+          payment_id?: string | null
+          qr_code_id?: string | null
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string
+          id?: string
+          metadata?: Json | null
+          offer_id?: string
+          payment_id?: string | null
+          qr_code_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offer_acceptances_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "admin_offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offer_acceptances_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offer_acceptances_qr_code_id_fkey"
+            columns: ["qr_code_id"]
+            isOneToOne: false
+            referencedRelation: "qr_codes"
             referencedColumns: ["id"]
           },
         ]
@@ -858,6 +979,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      expire_old_offers: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       generate_personal_code: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -885,6 +1010,13 @@ export type Database = {
     Enums: {
       admin_level: "level1" | "level2" | "level3"
       app_role: "admin" | "user"
+      offer_status: "pending" | "accepted" | "rejected" | "expired"
+      offer_type:
+        | "free_ticket"
+        | "discount_ticket"
+        | "vip_offer"
+        | "bartab_offer"
+        | "insurance_offer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1014,6 +1146,14 @@ export const Constants = {
     Enums: {
       admin_level: ["level1", "level2", "level3"],
       app_role: ["admin", "user"],
+      offer_status: ["pending", "accepted", "rejected", "expired"],
+      offer_type: [
+        "free_ticket",
+        "discount_ticket",
+        "vip_offer",
+        "bartab_offer",
+        "insurance_offer",
+      ],
     },
   },
 } as const
