@@ -147,11 +147,11 @@ const AuthPage = () => {
         style={{ '--scroll-y': `${scrollY * 0.1}px` } as React.CSSProperties}
       >
         <div className="w-full space-y-8 auth-parallax">
-          <div className="auth-glass p-6 rounded-2xl max-w-md mx-auto">
+          <div className="auth-glass p-6 rounded-2xl max-w-4xl mx-auto">
             <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} carouselOnly />
           </div>
 
-            <div className="w-full flex flex-col items-center space-y-6">
+          <div className="w-full flex flex-col items-center space-y-6">
             {isRTL ? (
               <>
                 <div className="w-full max-w-md mx-auto">
@@ -196,8 +196,6 @@ const AuthPage = () => {
                     onToggleUserLogin={() => setIsUserLogin(!isUserLogin)}
                   />
                 </div>
-                
-                <ProductionBrowser onLoginPrompt={() => {}} carouselOnly={true} />
               </>
             )}
           </div>
