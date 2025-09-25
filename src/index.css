@@ -516,6 +516,25 @@ All colors MUST be HSL.
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
   }
+
+  /* Custom scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary));
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary-hover));
+  }
 }
 
 @layer utilities {

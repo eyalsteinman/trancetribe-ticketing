@@ -8,7 +8,7 @@ import { useBackground } from '@/contexts/BackgroundContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { User } from '@supabase/supabase-js';
 import { Badge } from '@/components/ui/badge';
-import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ScanBarcode, Wine, Cog, ArrowLeft, LogOut, MessageCircle } from 'lucide-react';
+import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ScanBarcode, Wine, Cog, ArrowLeft, LogOut, MessageCircle, Calendar, Clock } from 'lucide-react';
 import Footer from '@/components/ui/footer';
 import PageHeader from '@/components/ui/page-header';
 import LanguageSelector from './LanguageSelector';
@@ -646,29 +646,33 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   return (
     <div className={`min-h-screen transition-colors duration-500`}>
       <div className="w-full">
-        <div className="container-section flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
-          <Button 
-            variant="outline" 
-            size="icon"
-            onClick={handleSignOut} 
-            className="border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200"
-            aria-label="Sign Out"
-          >
-            <LogOut className="h-4 w-4" />
-          </Button>
-        </div>
-        
-        {adminNickname && (
-          <div className="container-section">
-            <p 
-              className="text-sm"
-              style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
-            >
-              Welcome back {adminNickname}
-            </p>
+        {/* Modern Hero Header with Gradient */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-primary/20 via-primary/10 to-background border-b border-border/20">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent" />
+          <div className="container-section relative py-8">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary-hover bg-clip-text text-transparent">
+                  Admin Dashboard
+                </h1>
+                {adminNickname && (
+                  <p className="text-lg text-muted-foreground font-medium">
+                    Welcome back, <span className="text-foreground font-semibold">{adminNickname}</span>
+                  </p>
+                )}
+              </div>
+              <Button 
+                variant="outline" 
+                size="icon"
+                onClick={handleSignOut} 
+                className="border-primary/30 bg-background/80 backdrop-blur-sm text-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-primary/25"
+                aria-label="Sign Out"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-        )}
+        </div>
 
         {(() => {
           const tiles = [
@@ -732,61 +736,79 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
           
           return upcomingParties.length > 0 && (
             <div className="container-section">
-              <div className="border border-border bg-card">
-                <div className="p-4 border-b border-border">
+              <div className="bg-gradient-to-br from-card/90 to-card/70 backdrop-blur-sm border border-border/50 rounded-2xl shadow-xl overflow-hidden">
+                <div className="p-6 border-b border-border/30 bg-gradient-to-r from-primary/5 to-transparent">
                   <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-bold">Upcoming Parties</h3>
+                    <div className="space-y-1">
+                      <h3 className="text-xl font-bold text-foreground">Upcoming Parties</h3>
+                      <p className="text-sm text-muted-foreground">Manage your upcoming events</p>
+                    </div>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setSortAscending(!sortAscending)}
-                      className="text-xs"
+                      className="border-primary/30 bg-background/80 hover:bg-primary hover:text-primary-foreground transition-all duration-300"
                     >
                       {sortAscending ? "Latest First" : "Soonest First"}
                     </Button>
                   </div>
                 </div>
-                <div className="p-4">
-                  <div className="space-y-3 max-h-96 overflow-y-auto">
+                <div className="p-6">
+                  <div className="space-y-4 max-h-96 overflow-y-auto custom-scrollbar">
                     {upcomingParties.slice(0, 10).map((party, index) => (
                       <div
                         key={party.id}
-                        className="border border-border p-3 cursor-pointer hover:bg-accent transition-colors"
+                        className="group relative bg-gradient-to-r from-background/80 to-background/60 border border-border/30 rounded-xl p-4 cursor-pointer hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 hover:scale-[1.02]"
                         onClick={() => {
                           setCurrentView('edit-parties');
-                          // Pass the party ID to edit parties component
                           setTimeout(() => {
                             const editButton = document.querySelector(`[data-party-id="${party.id}"] button[aria-label*="Edit"]`) as HTMLButtonElement;
                             if (editButton) editButton.click();
                           }, 100);
                         }}
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-4">
                           {party.photo_url && (
-                            <img 
-                              src={party.photo_url} 
-                              alt={party.name}
-                              className="w-16 h-16 object-cover"
-                            />
+                            <div className="relative overflow-hidden rounded-lg">
+                              <img 
+                                src={party.photo_url} 
+                                alt={party.name}
+                                className="w-20 h-20 object-cover transition-transform duration-300 group-hover:scale-110"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            </div>
                           )}
-                          <div className="flex-1">
-                            <div className="font-semibold">{party.name}</div>
-                            <div className="text-sm text-muted-foreground">
-                              {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                          <div className="flex-1 space-y-2">
+                            <div className="font-bold text-lg text-foreground group-hover:text-primary transition-colors duration-300">
+                              {party.name}
+                            </div>
+                            <div className="text-sm text-muted-foreground space-y-1">
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4 text-primary" />
+                                <span>{new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                              </div>
                               {(party.start_time || party.end_time) && (
-                                <span className="block text-xs mt-1">
-                                  {party.start_time && `Start: ${party.start_time}`}
-                                  {party.start_time && party.end_time && ' | '}
-                                  {party.end_time && `End: ${party.end_time}`}
-                                </span>
+                                <div className="flex items-center gap-2">
+                                  <Clock className="h-4 w-4 text-primary" />
+                                  <span className="text-xs">
+                                    {party.start_time && `${party.start_time}`}
+                                    {party.start_time && party.end_time && ' - '}
+                                    {party.end_time && `${party.end_time}`}
+                                  </span>
+                                </div>
                               )}
                             </div>
-                            <div className="text-xs text-blue-600 font-medium mt-1">
-                              Guests arriving: {party.approved_count || 0}
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold">
+                                <Users className="h-3 w-3" />
+                                <span>{party.approved_count || 0} guests</span>
+                              </div>
+                              {index === 0 && sortAscending && (
+                                <div className="bg-green-500/10 text-green-600 px-3 py-1 rounded-full text-xs font-semibold">
+                                  Next Event
+                                </div>
+                              )}
                             </div>
-                            {index === 0 && sortAscending && (
-                              <div className="text-xs text-green-600 font-medium">Soonest</div>
-                            )}
                           </div>
                         </div>
                       </div>
