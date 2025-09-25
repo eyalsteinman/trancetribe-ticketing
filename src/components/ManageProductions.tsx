@@ -7,7 +7,6 @@ import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { ArrowLeft, Edit, Trash2, Upload, Save, X, ArrowUpDown } from 'lucide-react';
 import PageHeader from '@/components/ui/page-header';
-import { useBackNavigation } from '@/hooks/useBackNavigation';
 import Footer from '@/components/ui/footer';
 
 interface ManageProductionsProps {
@@ -25,11 +24,6 @@ interface Production {
 
 const ManageProductions = ({ onBack }: ManageProductionsProps) => {
   const [productions, setProductions] = useState<Production[]>([]);
-  
-  useBackNavigation({
-    onBackNavigation: onBack,
-    isActive: true
-  });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');
