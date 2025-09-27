@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ShieldCheck } from 'lucide-react';
 import PageHeader from '@/components/ui/page-header';
 import Footer from '@/components/ui/footer';
@@ -13,26 +15,37 @@ interface InsuranceProps {
   onBack: () => void;
 }
 
+interface Production {
+  id: string;
+  name: string;
+  created_by: string;
+  insurance_description: string | null;
+  insurance_price: number | null;
+  insurance_enabled: boolean;
+}
+
 const Insurance = ({ onBack }: InsuranceProps) => {
   const { backgroundColor, isBackgroundDark } = useBackground();
   const { t } = useLanguage();
-  const [firstAdminId, setFirstAdminId] = useState<string | null>(null);
+  const [productions, setProductions] = useState<Production[]>([]);
+  const [selectedProduction, setSelectedProduction] = useState<Production | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getFirstAdmin = async () => {
+    const loadProductions = async () => {
+      setLoading(true);
       const { data, error } = await supabase
-        .from('user_roles')
-        .select('user_id')
-        .eq('role', 'admin')
-        .limit(1)
-        .single();
+        .from('productions')
+        .select('id, name, created_by, insurance_description, insurance_price, insurance_enabled')
+        .order('name');
       
       if (data) {
-        setFirstAdminId(data.user_id);
+        setProductions(data);
       }
+      setLoading(false);
     };
     
-    getFirstAdmin();
+    loadProductions();
   }, []);
   
   useBackNavigation({
@@ -53,32 +66,82 @@ const Insurance = ({ onBack }: InsuranceProps) => {
       />
       
       <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
+        <Card>
+          <CardHeader>
+            <CardTitle>Select Production</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <p className="text-sm text-muted-foreground">Loading productions...</p>
+            ) : (
+              <Select onValueChange={(value) => {
+                const production = productions.find(p => p.id === value);
+                setSelectedProduction(production || null);
+              }}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose a production to see insurance options" />
+                </SelectTrigger>
+                <SelectContent>
+                  {productions.map((production) => (
+                    <SelectItem key={production.id} value={production.id}>
+                      {production.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </CardContent>
+        </Card>
 
-        <div className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            {t('insurance_description')}
-          </p>
+        {selectedProduction && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Insurance for {selectedProduction.name}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {!selectedProduction.insurance_enabled ? (
+                <p className="text-sm text-muted-foreground">
+                  This production does not offer any kind of insurance.
+                </p>
+              ) : selectedProduction.insurance_description && selectedProduction.insurance_price ? (
+                <>
+                  <div>
+                    <h4 className="font-medium mb-2">Insurance Coverage</h4>
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                      {selectedProduction.insurance_description}
+                    </p>
+                  </div>
+                  
+                  <div className="border-t pt-4">
+                    <p className="text-lg font-semibold mb-4">
+                      Price: ₪{selectedProduction.insurance_price}
+                    </p>
+                    
+                    <BuyTicket
+                      ticketAmount={selectedProduction.insurance_price}
+                      currency="ILS"
+                      adminId={selectedProduction.created_by}
+                      className="w-full"
+                    />
+                  </div>
 
-          {firstAdminId ? (
-            <BuyTicket
-              ticketAmount={50} // Default insurance price
-              currency="ILS"
-              adminId={firstAdminId}
-              className="mt-2"
-            />
-          ) : (
-            <Button size="lg" className="mt-2">{t('buy_now')}</Button>
-          )}
-
-          <div className="text-xs text-muted-foreground">
-            {t('for_terms')}
-            {' '}
-            <a className="underline underline-offset-4" href="/insurance-terms.pdf" download>
-              {t('press_here')}
-            </a>
-            .
-          </div>
-        </div>
+                  <div className="text-xs text-muted-foreground">
+                    {t('for_terms')}
+                    {' '}
+                    <a className="underline underline-offset-4" href="/insurance-terms.pdf" download>
+                      {t('press_here')}
+                    </a>
+                    .
+                  </div>
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  This production does not offer any kind of insurance.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Footer */}
         <Footer />

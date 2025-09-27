@@ -20,6 +20,9 @@ interface Production {
   logo_url: string | null;
   vip_description: string | null;
   vip_price: number | null;
+  insurance_description: string | null;
+  insurance_price: number | null;
+  insurance_enabled: boolean;
 }
 
 const ManageProductions = ({ onBack }: ManageProductionsProps) => {
@@ -29,6 +32,9 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
   const [editDescription, setEditDescription] = useState('');
   const [editVipDescription, setEditVipDescription] = useState('');
   const [editVipPrice, setEditVipPrice] = useState('');
+  const [editInsuranceDescription, setEditInsuranceDescription] = useState('');
+  const [editInsurancePrice, setEditInsurancePrice] = useState('');
+  const [editInsuranceEnabled, setEditInsuranceEnabled] = useState(true);
   const [editLogo, setEditLogo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [sortAscending, setSortAscending] = useState(true);
@@ -38,7 +44,7 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
   const loadProductions = async () => {
     const { data, error } = await (supabase as any)
       .from('productions')
-      .select('id, name, description, logo_url, vip_description, vip_price')
+      .select('id, name, description, logo_url, vip_description, vip_price, insurance_description, insurance_price, insurance_enabled')
       .order('created_at', { ascending: sortAscending });
     if (error) {
       console.error(error);
@@ -56,6 +62,9 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
     setEditDescription(p.description || '');
     setEditVipDescription(p.vip_description || '');
     setEditVipPrice(p.vip_price?.toString() || '');
+    setEditInsuranceDescription(p.insurance_description || '');
+    setEditInsurancePrice(p.insurance_price?.toString() || '');
+    setEditInsuranceEnabled(p.insurance_enabled);
     setEditLogo(null);
   };
 
@@ -79,7 +88,10 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
         name: editName.trim(), 
         description: editDescription.trim() || null,
         vip_description: editVipDescription.trim() || null,
-        vip_price: editVipPrice ? parseFloat(editVipPrice) : null
+        vip_price: editVipPrice ? parseFloat(editVipPrice) : null,
+        insurance_description: editInsuranceDescription.trim() || null,
+        insurance_price: editInsurancePrice ? parseFloat(editInsurancePrice) : null,
+        insurance_enabled: editInsuranceEnabled
       };
       if (logoUrl !== undefined) update.logo_url = logoUrl;
       const { error } = await (supabase as any)
@@ -211,6 +223,42 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
                       />
                     </div>
                     <div>
+                      <label className="text-sm font-medium flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={!editInsuranceEnabled}
+                          onChange={(e) => setEditInsuranceEnabled(!e.target.checked)}
+                          className="rounded"
+                        />
+                        Don't offer insurance
+                      </label>
+                    </div>
+                    {editInsuranceEnabled && (
+                      <>
+                        <div>
+                          <label className="text-sm font-medium">Insurance Description</label>
+                          <textarea
+                            rows={4}
+                            value={editInsuranceDescription}
+                            onChange={(e) => setEditInsuranceDescription(e.target.value)}
+                            placeholder="Describe what insurance coverage this production offers"
+                            className="w-full border rounded-md p-2"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium">Insurance Price (ILS)</label>
+                          <Input 
+                            type="number"
+                            min="0"
+                            step="0.5"
+                            value={editInsurancePrice}
+                            onChange={(e) => setEditInsurancePrice(e.target.value)}
+                            placeholder="Enter price for insurance"
+                          />
+                        </div>
+                      </>
+                    )}
+                    <div>
                       <label className="text-sm font-medium">Logo</label>
                       <div className="flex items-center gap-2">
                         <Input id={`logo-${p.id}`} type="file" accept="image/*" onChange={(e) => setEditLogo(e.target.files?.[0] || null)} className="hidden" />
@@ -247,6 +295,21 @@ const ManageProductions = ({ onBack }: ManageProductionsProps) => {
                     {p.vip_price && (
                       <div className="text-sm text-muted-foreground border-t pt-2">
                         <strong>VIP Price:</strong> ₪{p.vip_price}
+                      </div>
+                    )}
+                    {p.insurance_enabled && p.insurance_description && (
+                      <div className="text-sm text-muted-foreground border-t pt-2">
+                        <strong>Insurance:</strong> {p.insurance_description}
+                      </div>
+                    )}
+                    {p.insurance_enabled && p.insurance_price && (
+                      <div className="text-sm text-muted-foreground border-t pt-2">
+                        <strong>Insurance Price:</strong> ₪{p.insurance_price}
+                      </div>
+                    )}
+                    {!p.insurance_enabled && (
+                      <div className="text-sm text-muted-foreground border-t pt-2">
+                        <strong>Insurance:</strong> Not offered
                       </div>
                     )}
                   </>

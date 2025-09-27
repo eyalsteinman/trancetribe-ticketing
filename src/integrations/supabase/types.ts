@@ -599,6 +599,9 @@ export type Database = {
           created_by: string
           description: string | null
           id: string
+          insurance_description: string | null
+          insurance_enabled: boolean
+          insurance_price: number | null
           logo_url: string | null
           name: string
           updated_at: string
@@ -610,6 +613,9 @@ export type Database = {
           created_by: string
           description?: string | null
           id?: string
+          insurance_description?: string | null
+          insurance_enabled?: boolean
+          insurance_price?: number | null
           logo_url?: string | null
           name: string
           updated_at?: string
@@ -621,6 +627,9 @@ export type Database = {
           created_by?: string
           description?: string | null
           id?: string
+          insurance_description?: string | null
+          insurance_enabled?: boolean
+          insurance_price?: number | null
           logo_url?: string | null
           name?: string
           updated_at?: string
