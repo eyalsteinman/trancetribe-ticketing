@@ -3,6 +3,7 @@ import { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
+import BuyTicket from "@/components/BuyTicket";
 
 interface VIPProductionProps {
   user: User;
@@ -12,6 +13,7 @@ interface VIPProductionProps {
     logo_url: string | null;
     vip_description: string | null;
     vip_price: number | null;
+    created_by: string;
   };
   onBack: () => void;
 }
@@ -45,9 +47,14 @@ const VIPProduction = ({ production, onBack }: VIPProductionProps) => {
           Price: {production.vip_price ? `₪${production.vip_price}` : 'To be decided'}
         </p>
 
-        <Button size="lg" className="w-full" aria-label="Buy VIP">
-          BUY
-        </Button>
+        {production.vip_price && (
+          <BuyTicket
+            ticketAmount={production.vip_price}
+            currency="ILS"
+            adminId={production.created_by}
+            className="w-full"
+          />
+        )}
 
         <Card>
           <CardContent className="py-4 text-sm text-muted-foreground text-center">

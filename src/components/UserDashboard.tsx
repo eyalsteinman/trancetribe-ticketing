@@ -41,7 +41,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance' | 'personal-code' | 'friends-codes' | 'bar-tab' | 'faq' | 'messages' | 'tribes' | 'direct-messages' | 'event-calendar'>('dashboard');
   const [nickname, setNickname] = useState<string>('');
   const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
-  const [selectedProduction, setSelectedProduction] = useState<{id: string; name: string; logo_url: string | null; vip_description: string | null; vip_price: number | null} | null>(null);
+  const [selectedProduction, setSelectedProduction] = useState<{id: string; name: string; logo_url: string | null; vip_description: string | null; vip_price: number | null; created_by: string} | null>(null);
   const [showQRDialog, setShowQRDialog] = useState(false);
   const [selectedQRCode, setSelectedQRCode] = useState<any>(null);
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);

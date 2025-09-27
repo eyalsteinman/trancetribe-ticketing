@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Footer from '@/components/ui/footer';
+import BuyTicket from "@/components/BuyTicket";
 
 interface BarTabItem {
   id: string;
@@ -26,6 +27,7 @@ interface Production {
   id: string;
   name: string;
   logo_url: string | null;
+  created_by: string;
 }
 
 interface BarTab {
@@ -65,7 +67,7 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
   const loadProductions = async () => {
     const { data, error } = await supabase
       .from("productions")
-      .select("id, name, logo_url")
+      .select("id, name, logo_url, created_by")
       .order("name");
 
     if (error) {
@@ -159,55 +161,6 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
     }
   };
 
-  const purchaseBarTab = async () => {
-    if (!selectedBarTab || !selectedProduction) {
-      toast({
-        title: "Error",
-        description: "Please select a bar tab item",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    const selectedItem = availableBarTabs.find(tab => tab.id === selectedBarTab);
-    if (!selectedItem) return;
-
-    const amount = selectedItem.discounted_price; // Use discounted price instead of regular
-    
-    // Generate unique barcode with timestamp and random string
-    const timestamp = Date.now();
-    const randomPart = Math.random().toString(36).substring(2, 15);
-    const barcode = `${userId}-${selectedProduction}-${timestamp}-${randomPart}`;
-
-    setLoading(true);
-    const { error } = await supabase
-      .from("user_bar_tabs")
-      .insert({
-        user_id: userId,
-        production_id: selectedProduction,
-        total_amount: amount,
-        remaining_amount: amount,
-        barcode: barcode,
-        status: "active"
-      });
-
-    if (error) {
-      console.error("Error purchasing bar tab:", error.message);
-      toast({
-        title: "Error",
-        description: "Failed to purchase bar tab",
-        variant: "destructive"
-      });
-    } else {
-      toast({
-        title: "Success",
-        description: "Bar tab purchased successfully"
-      });
-      setSelectedBarTab('');
-      loadUserBarTabs();
-    }
-    setLoading(false);
-  };
 
   const selectedBarTabItem = availableBarTabs.find(tab => tab.id === selectedBarTab);
 
@@ -280,14 +233,17 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
               </div>
             </div>
 
-            {selectedBarTab && (
-              <Button
-                onClick={purchaseBarTab}
-                disabled={loading}
+            {selectedBarTab && selectedBarTabItem && (
+              <BuyTicket
+                ticketAmount={selectedBarTabItem.discounted_price}
+                currency="ILS"
+                adminId={productionsMap[selectedProduction]?.created_by}
                 className="w-full"
-              >
-                {loading ? "Processing..." : `Purchase ₪${selectedBarTabItem?.discounted_price} Bar Tab`}
-              </Button>
+                onPaymentSuccess={() => {
+                  setSelectedBarTab('');
+                  loadUserBarTabs();
+                }}
+              />
             )}
           </CardContent>
         </Card>

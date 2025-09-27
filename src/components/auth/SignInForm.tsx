@@ -130,7 +130,7 @@ export const SignInForm = () => {
       <Button 
         onClick={handleSignIn}
         disabled={loading}
-        className="w-full auth-button rounded-xl h-12 font-semibold text-base"
+        className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl h-12 font-semibold text-base transition-all duration-300"
       >
         {loading ? t('processing') : t('sign_in')}
       </Button>
