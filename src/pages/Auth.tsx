@@ -152,52 +152,37 @@ const AuthPage = () => {
           </div>
 
           <div className="w-full flex flex-col items-center space-y-6">
-            {isRTL ? (
-              <>
-                <div className="w-full max-w-md mx-auto">
-                  <AuthForm 
-                    onShowAdminPassword={showAdminPasswordForm}
-                    pendingAdminSignup={pendingAdminSignup}
-                    isUserLogin={isUserLogin}
-                    onToggleUserLogin={() => setIsUserLogin(!isUserLogin)}
-                  />
-                </div>
-                <div className="text-center space-y-4">
-                  <LanguageSelector />
-                  <div className="flex flex-col items-center justify-center space-y-2">
-                    <h1 className="text-4xl font-bold text-white text-center w-full">
-                      {t('trance_tribes')}
-                    </h1>
-                    <p className="text-white text-center w-full text-sm">
-                      {t('choose_access_type')}
-                    </p>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="text-center space-y-4">
-                  <LanguageSelector />
-                  <div className="flex flex-col items-center justify-center space-y-2">
-                    <h1 className="text-4xl font-bold text-white text-center w-full">
-                      {t('trance_tribes')}
-                    </h1>
-                    <p className="text-white text-center w-full text-sm">
-                      {t('choose_access_type')}
-                    </p>
-                  </div>
-                </div>
+            {/* Language selector at top for both RTL and LTR */}
+            <div className="text-center space-y-4">
+              <LanguageSelector />
+              <div className="flex flex-col items-center justify-center space-y-2">
+                <h1 className="text-4xl font-bold text-white text-center w-full">
+                  {t('trance_tribes')}
+                </h1>
+                <p className="text-white text-center w-full text-sm">
+                  {t('choose_access_type')}
+                </p>
+              </div>
+            </div>
 
-                <div className="w-full max-w-md mx-auto">
-                  <AuthForm 
-                    onShowAdminPassword={showAdminPasswordForm}
-                    pendingAdminSignup={pendingAdminSignup}
-                    isUserLogin={isUserLogin}
-                    onToggleUserLogin={() => setIsUserLogin(!isUserLogin)}
-                  />
-                </div>
-              </>
-            )}
+            <div className="w-full max-w-md mx-auto">
+              <AuthForm 
+                onShowAdminPassword={showAdminPasswordForm}
+                pendingAdminSignup={pendingAdminSignup}
+                isUserLogin={isUserLogin}
+                onToggleUserLogin={() => setIsUserLogin(!isUserLogin)}
+              />
+            </div>
+          </div>
+          
+          {/* Footer in white text */}
+          <div className="mt-8">
+            <div className="text-center space-y-3">
+              <h3 className="font-bold text-xl text-white">Trance Tribes Tickets</h3>
+              <p className="text-sm text-white/80">
+                Created by Eyal Steinman, all rights reserved 2025
+              </p>
+            </div>
           </div>
         </div>
       </div>

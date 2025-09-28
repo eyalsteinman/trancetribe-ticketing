@@ -239,7 +239,33 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
                 currency="ILS"
                 adminId={productionsMap[selectedProduction]?.created_by}
                 className="w-full"
-                onPaymentSuccess={() => {
+                onPaymentSuccess={async () => {
+                  // Create bar tab entry with full regular price as total, discounted price was paid
+                  const barcode = `BARTAB-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+                  
+                  const { error } = await supabase
+                    .from('user_bar_tabs')
+                    .insert({
+                      user_id: userId,
+                      production_id: selectedProduction,
+                      total_amount: selectedBarTabItem.regular_price, // Show full price in wallet
+                      remaining_amount: selectedBarTabItem.regular_price,
+                      barcode: barcode
+                    });
+                  
+                  if (error) {
+                    toast({
+                      title: "Error",
+                      description: "Failed to create bar tab",
+                      variant: "destructive"
+                    });
+                  } else {
+                    toast({
+                      title: "Success",
+                      description: "Bar tab purchased successfully!"
+                    });
+                  }
+                  
                   setSelectedBarTab('');
                   loadUserBarTabs();
                 }}

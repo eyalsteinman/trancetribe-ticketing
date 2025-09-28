@@ -40,6 +40,14 @@ export const SignUpForm = () => {
       return;
     }
 
+    // Check if social networks are filled - show popup if not
+    if (!facebookProfile && !instagramProfile) {
+      toast({
+        title: "Social Networks",
+        description: "You didn't fill in social networks profiles, you can't buy tickets for events if you don't. You can do this now or later in the social networks tab"
+      });
+    }
+
     // Validate social network URLs if provided
     if (facebookProfile && !validateSocialUrl(facebookProfile, 'facebook')) {
       toast({

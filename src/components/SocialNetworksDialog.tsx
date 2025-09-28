@@ -1,6 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { X } from 'lucide-react';
 
 interface SocialNetworksDialogProps {
   isOpen: boolean;
@@ -15,6 +16,12 @@ const SocialNetworksDialog = ({ isOpen, onClose, missingSocials, onFillNow }: So
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-50 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+        >
+          <X className="h-4 w-4" />
+        </button>
         <DialogHeader>
           <DialogTitle>{t('social_media_required')}</DialogTitle>
           <DialogDescription>

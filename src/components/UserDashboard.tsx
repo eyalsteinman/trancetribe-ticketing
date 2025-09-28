@@ -29,6 +29,7 @@ import UserBarTab from './UserBarTab';
 import FAQContact from './FAQContact';
 import UserMessages from './UserMessages';
 import UserMessaging from './UserMessaging';
+import UserDirectMessages from './UserDirectMessages';
 import EventCalendar from './EventCalendar';
 import { useTheme } from '@/hooks/useDarkMode';
 import PageHeader from './ui/page-header';
@@ -271,6 +272,13 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
       setCurrentView('dashboard');
       loadUnreadMessageCount(); // Refresh unread count when returning
     }} userId={user.id} onOpenTribes={() => setCurrentView('tribes')} />;
+  }
+
+  if (currentView === 'direct-messages') {
+    return <UserDirectMessages onBack={() => {
+      setCurrentView('dashboard');
+      loadUnreadDirectMessageCount(); // Refresh unread count when returning
+    }} userId={user.id} />;
   }
 
   if (currentView === 'tribes') {

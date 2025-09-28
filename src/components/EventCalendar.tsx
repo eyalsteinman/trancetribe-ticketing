@@ -215,7 +215,7 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId }) => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
+    <div className="min-h-screen bg-background p-4 scroll-smooth">
       <div className="container mx-auto max-w-4xl px-4">
         <div className="flex items-center mb-6">
           <Button variant="ghost" size="icon" onClick={onBack} className="mr-2">

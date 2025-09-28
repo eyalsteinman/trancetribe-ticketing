@@ -56,8 +56,8 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
             TRIBES
           </h1>
           
-          {/* Hebrew text centered and raised */}
-          <div className="flex justify-center -mt-2">
+          {/* Hebrew text centered and raised higher */}
+          <div className="flex justify-center -mt-6">
             <p className="text-2xl font-bold text-center text-purple-100" dir="rtl">
               תודה שטוב לך
             </p>
@@ -74,11 +74,14 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         </div>
       </div>
       
-      {/* Loader at bottom */}
+      {/* Beta version and Loader at bottom */}
       <div className={`pb-12 transition-all duration-1000 delay-1000 ease-out ${
         animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}>
-        <Loader2 className="w-8 h-8 text-white/70 animate-spin" />
+        <div className="text-center space-y-2">
+          <p className="text-xs text-white/60 font-medium">beta v1.8</p>
+          <Loader2 className="w-8 h-8 text-white/70 animate-spin mx-auto" />
+        </div>
       </div>
       
       {/* Elegant floating orbs */}

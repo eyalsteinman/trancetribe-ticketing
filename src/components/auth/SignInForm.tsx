@@ -101,6 +101,20 @@ export const SignInForm = () => {
     }
   };
 
+  const handleInstagramLogin = async () => {
+    toast({
+      title: "Instagram Login",
+      description: "Instagram login will be available soon",
+    });
+  };
+
+  const handleTikTokLogin = async () => {
+    toast({
+      title: "TikTok Login", 
+      description: "TikTok login will be available soon",
+    });
+  };
+
   return (
     <div className="space-y-4">
       <div>
@@ -111,7 +125,7 @@ export const SignInForm = () => {
           onChange={(e) => setEmail(e.target.value)}
           placeholder={t('enter_email')}
           required
-          className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60"
+          className="auth-input rounded-lg h-12 px-4 text-black placeholder:text-white/60"
         />
       </div>
       
@@ -123,14 +137,14 @@ export const SignInForm = () => {
           onChange={(e) => setPassword(e.target.value)}
           placeholder={t('enter_password')}
           required
-          className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60"
+          className="auth-input rounded-lg h-12 px-4 text-black placeholder:text-white/60"
         />
       </div>
 
       <Button 
         onClick={handleSignIn}
         disabled={loading}
-        className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl h-12 font-semibold text-base transition-all duration-300"
+        className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg h-12 font-semibold text-base transition-all duration-300"
       >
         {loading ? t('processing') : t('sign_in')}
       </Button>
@@ -146,11 +160,11 @@ export const SignInForm = () => {
         </div>
       </div>
 
-      <div className="flex gap-3">
+      <div className="grid grid-cols-2 gap-3">
         <Button 
           type="button"
           variant="outline"
-          className="flex-1 bg-transparent border-white/30 text-white rounded-xl h-12 font-semibold text-base hover:bg-white/10"
+          className="bg-transparent border-white/30 text-white rounded-lg h-12 font-semibold text-base hover:bg-white/10"
           onClick={handleGoogleLogin}
           disabled={loading}
         >
@@ -159,11 +173,29 @@ export const SignInForm = () => {
         <Button 
           type="button"
           variant="outline"
-          className="flex-1 bg-transparent border-white/30 text-white rounded-xl h-12 font-semibold text-base hover:bg-white/10"
+          className="bg-transparent border-white/30 text-white rounded-lg h-12 font-semibold text-base hover:bg-white/10"
           onClick={handleFacebookLogin}
           disabled={loading}
         >
           {t('facebook')}
+        </Button>
+        <Button 
+          type="button"
+          variant="outline"
+          className="bg-transparent border-white/30 text-white rounded-lg h-12 font-semibold text-base hover:bg-white/10"
+          onClick={handleInstagramLogin}
+          disabled={loading}
+        >
+          Instagram
+        </Button>
+        <Button 
+          type="button"
+          variant="outline"
+          className="bg-transparent border-white/30 text-white rounded-lg h-12 font-semibold text-base hover:bg-white/10"
+          onClick={handleTikTokLogin}
+          disabled={loading}
+        >
+          TikTok
         </Button>
       </div>
     </div>

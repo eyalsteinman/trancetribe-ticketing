@@ -97,11 +97,45 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
   if (selectedParty) {
     return (
       <div className="min-h-screen w-full p-4">
-        <PartyPreview 
-          party={selectedParty} 
-          onBack={() => setSelectedParty(null)}
-          onLoginRequired={onLoginPrompt}
-        />
+        <div className="max-w-md mx-auto">
+          <div className="flex justify-center mb-4">
+            <button
+              onClick={() => setSelectedParty(null)}
+              className="px-4 py-2 bg-primary text-white rounded-lg"
+            >
+              ✕ Close
+            </button>
+          </div>
+          
+          <div className="px-4 space-y-4">
+            {selectedParty.photo_url && (
+              <img
+                src={selectedParty.photo_url}
+                alt={selectedParty.name}
+                className="w-full h-auto object-cover rounded-lg"
+              />
+            )}
+            
+            <div className="text-center">
+              <h2 className="text-xl font-bold mb-2" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{selectedParty.name}</h2>
+              <p className="text-sm mb-4" style={{ color: isBackgroundDark ? '#888888' : '#666666' }}>
+                {new Date(selectedParty.date).toLocaleDateString()}
+              </p>
+              {selectedParty.description && (
+                <p className="text-sm mb-4" style={{ color: isBackgroundDark ? '#cccccc' : '#333333' }}>
+                  {selectedParty.description}
+                </p>
+              )}
+              
+              <button
+                onClick={onLoginPrompt}
+                className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold"
+              >
+                Login to Purchase
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -110,63 +144,34 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
     const productionParties = parties.filter(p => p.production_id === selectedProduction.id);
     return (
       <div className="min-h-screen w-full p-4">
-        <div className="mb-6 text-center">
-          {selectedProduction.logo_url ? (
-            <img
-              src={selectedProduction.logo_url}
-              alt={selectedProduction.name}
-              className="w-full max-w-sm h-auto object-contain mx-auto mb-4"
-            />
-          ) : (
-            <div className="w-full max-w-sm h-32 bg-muted flex items-center justify-center mx-auto mb-4">
-              <span className="font-semibold text-center" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{selectedProduction.name}</span>
-            </div>
-          )}
-          <h2 className="text-2xl font-bold mb-4" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{selectedProduction.name}</h2>
-          {selectedProduction && (
-            <p className="text-sm mx-auto max-w-md" style={{ color: isBackgroundDark ? '#cccccc' : '#333333' }}>
+        <div className="max-w-md mx-auto">
+          <div className="flex justify-center mb-4">
+            <button
+              onClick={() => setSelectedProduction(null)}
+              className="px-4 py-2 bg-primary text-white rounded-lg"
+            >
+              ✕ Close
+            </button>
+          </div>
+          
+          <div className="mb-6 text-center px-4">
+            {selectedProduction.logo_url ? (
+              <img
+                src={selectedProduction.logo_url}
+                alt={selectedProduction.name}
+                className="w-full max-w-xs h-auto object-contain mx-auto mb-4"
+              />
+            ) : (
+              <div className="w-full max-w-xs h-32 bg-muted flex items-center justify-center mx-auto mb-4 rounded-lg">
+                <span className="font-semibold text-center" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{selectedProduction.name}</span>
+              </div>
+            )}
+            <h2 className="text-xl font-bold mb-2" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{selectedProduction.name}</h2>
+            <p className="text-sm" style={{ color: isBackgroundDark ? '#cccccc' : '#333333' }}>
               Production description would go here if available in the database.
             </p>
-          )}
-        </div>
-        
-        <div className="w-full max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {productionParties.map((party) => (
-              <div
-                key={party.id}
-                onClick={() => handlePartyClick(party)}
-                className="cursor-pointer w-full bg-card border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
-              >
-                {party.photo_url ? (
-                  <img
-                    src={party.photo_url}
-                    alt={party.name}
-                    className="w-full h-48 object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-48 bg-muted flex items-center justify-center">
-                    <span className="text-center p-4" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{party.name}</span>
-                  </div>
-                )}
-                <div className="p-4">
-                  <h3 className="font-semibold" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{party.name}</h3>
-                  <p className="text-sm" style={{ color: isBackgroundDark ? '#888888' : '#666666' }}>
-                    {new Date(party.date).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
-        
-        <button
-          onClick={() => setSelectedProduction(null)}
-          className="mt-4 px-4 py-2 bg-primary text-white rounded"
-          style={{ color: '#ffffff' }}
-        >
-          Back
-        </button>
       </div>
     );
   }
