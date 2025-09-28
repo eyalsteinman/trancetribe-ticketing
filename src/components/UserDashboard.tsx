@@ -291,11 +291,10 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   if (currentView === 'direct-messages') {
-    return (
-      <React.Suspense fallback={<div className="min-h-screen bg-background p-4"><div className="text-center">Loading...</div></div>}>
-        <UserMessaging onBack={() => setCurrentView('dashboard')} userId={user.id} />
-      </React.Suspense>
-    );
+    return <UserDirectMessages onBack={() => {
+      setCurrentView('dashboard');
+      loadUnreadDirectMessageCount(); // Refresh unread count when returning
+    }} userId={user.id} />;
   }
 
   return (
