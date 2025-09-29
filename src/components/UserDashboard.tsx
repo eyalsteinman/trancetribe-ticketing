@@ -290,12 +290,6 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     );
   }
 
-  if (currentView === 'direct-messages') {
-    return <UserDirectMessages onBack={() => {
-      setCurrentView('dashboard');
-      loadUnreadDirectMessageCount(); // Refresh unread count when returning
-    }} userId={user.id} />;
-  }
 
   return (
     <div className="min-h-screen w-full transition-colors duration-500 p-4">
