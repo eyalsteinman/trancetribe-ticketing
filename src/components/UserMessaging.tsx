@@ -174,11 +174,9 @@ const UserMessaging: React.FC<UserMessagingProps> = ({ onBack, userId }) => {
     if (!newFriendCode.trim()) return;
 
     try {
-      // Find user by personal code
+      // Use secure lookup function
       const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('user_id, display_name, first_name, last_name, personal_code')
-        .eq('personal_code', newFriendCode.trim())
+        .rpc('lookup_friend_by_personal_code', { _personal_code: newFriendCode.trim() })
         .single();
 
       if (error || !profile) {
@@ -251,11 +249,16 @@ const UserMessaging: React.FC<UserMessagingProps> = ({ onBack, userId }) => {
     }
 
     try {
-      // Get user IDs for personal codes
-      const { data: profiles } = await supabase
-        .from('profiles')
-        .select('user_id, personal_code')
-        .in('personal_code', recipients);
+      // Use secure lookup for recipient profiles
+      const profileLookups = await Promise.all(
+        recipients.map(code => 
+          supabase.rpc('lookup_friend_by_personal_code', { _personal_code: code })
+        )
+      );
+      
+      const profiles = profileLookups
+        .filter(result => result.data && !result.error)
+        .map(result => result.data) as any[];
 
       if (!profiles || profiles.length === 0) {
         toast({

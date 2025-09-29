@@ -202,11 +202,9 @@ const UserTribes: React.FC<UserTribesProps> = ({ onBack, userId }) => {
     }
 
     try {
-      // Find user by personal code
+      // Use secure lookup function
       const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('user_id, display_name, first_name, last_name')
-        .eq('personal_code', newMemberCode.trim())
+        .rpc('lookup_friend_by_personal_code', { _personal_code: newMemberCode.trim() })
         .single();
 
       if (profileError || !profileData) {

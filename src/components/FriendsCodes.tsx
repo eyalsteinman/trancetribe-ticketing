@@ -68,11 +68,9 @@ const FriendsCodes = ({ user, onBack }: FriendsCodesProps) => {
     setIsAdding(true);
 
     try {
-      // First, find the profile with this personal code
+      // Use secure lookup function instead of direct table access
       const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('user_id, personal_code, display_name, first_name, last_name')
-        .eq('personal_code', newCode.trim())
+        .rpc('lookup_friend_by_personal_code', { _personal_code: newCode.trim() })
         .single();
 
       if (profileError || !profileData) {

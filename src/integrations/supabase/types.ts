@@ -1015,6 +1015,16 @@ export type Database = {
         Args: { _tribe_id: string; _user_id: string }
         Returns: boolean
       }
+      lookup_friend_by_personal_code: {
+        Args: { _personal_code: string }
+        Returns: {
+          display_name: string
+          first_name: string
+          last_name: string
+          personal_code: string
+          user_id: string
+        }[]
+      }
     }
     Enums: {
       admin_level: "level1" | "level2" | "level3"

@@ -106,10 +106,17 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId }) => {
         const friendPersonalCodes = friends?.map(f => f.friend_personal_code) || [];
         
         if (friendPersonalCodes.length > 0) {
-          const { data: friendProfiles, error: profilesError } = await supabase
-            .from('profiles')
-            .select('user_id, personal_code')
-            .in('personal_code', friendPersonalCodes);
+          // Use secure lookup for friend profiles
+          const friendLookups = await Promise.all(
+            friendPersonalCodes.map(code => 
+              supabase.rpc('lookup_friend_by_personal_code', { _personal_code: code })
+            )
+          );
+          
+          const friendProfiles = friendLookups
+            .filter(result => result.data && !result.error)
+            .map(result => result.data) as any[];
+          const profilesError = friendLookups.find(result => result.error)?.error;
 
           if (profilesError) {
             console.error('Error fetching friend profiles:', profilesError);

@@ -78,11 +78,17 @@ const BuyTicketsForFriends = ({ user, party, onBack }: BuyTicketsForFriendsProps
 
     setLoading(true);
     try {
-      // Verify friend codes exist and get user IDs
-      const { data: profiles, error: profileError } = await supabase
-        .from('profiles')
-        .select('user_id, personal_code, display_name, email')
-        .in('personal_code', validCodes);
+      // Use secure lookup for friend profiles
+      const profileLookups = await Promise.all(
+        validCodes.map(code => 
+          supabase.rpc('lookup_friend_by_personal_code', { _personal_code: code })
+        )
+      );
+      
+      const profiles = profileLookups
+        .filter(result => result.data && !result.error)
+        .map(result => result.data) as any[];
+      const profileError = profileLookups.find(result => result.error)?.error;
 
       if (profileError || !profiles || profiles.length === 0) {
         toast({
