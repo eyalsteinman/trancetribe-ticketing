@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import RtlInput from '@/components/RtlInput';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -104,10 +104,10 @@ export const SignUpForm = () => {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 rtl-grid">
         <div>
           <label className="text-sm font-medium text-white block mb-2">{t('first_name')} *</label>
-          <Input
+          <RtlInput
             type="text"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
@@ -118,7 +118,7 @@ export const SignUpForm = () => {
         </div>
         <div>
           <label className="text-sm font-medium text-white block mb-2">{t('last_name')} *</label>
-          <Input
+          <RtlInput
             type="text"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
@@ -131,7 +131,7 @@ export const SignUpForm = () => {
       
       <div>
         <label className="text-sm font-medium text-white block mb-2">{t('phone_number')} *</label>
-        <Input
+        <RtlInput
           type="tel"
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
@@ -143,7 +143,7 @@ export const SignUpForm = () => {
       
       <div>
         <label className="text-sm font-medium text-white block mb-2">{t('facebook_profile')}</label>
-        <Input
+        <RtlInput
           type="url"
           value={facebookProfile}
           onChange={(e) => setFacebookProfile(e.target.value)}
@@ -155,7 +155,7 @@ export const SignUpForm = () => {
       
       <div>
         <label className="text-sm font-medium text-white block mb-2">{t('instagram_profile')}</label>
-        <Input
+        <RtlInput
           type="url"
           value={instagramProfile}
           onChange={(e) => setInstagramProfile(e.target.value)}
@@ -167,7 +167,7 @@ export const SignUpForm = () => {
       
       <div>
         <label className="text-sm font-medium text-white block mb-2">{t('email')} *</label>
-        <Input
+        <RtlInput
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -179,7 +179,7 @@ export const SignUpForm = () => {
       
       <div>
         <label className="text-sm font-medium text-white block mb-2">{t('password')} *</label>
-        <Input
+        <RtlInput
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -203,7 +203,7 @@ export const SignUpForm = () => {
         <div className="flex-1 h-px bg-white/20"></div>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex gap-3 rtl-flex">
         <Button 
           type="button"
           variant="outline"

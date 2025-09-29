@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import RtlInput from '@/components/RtlInput';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -119,7 +119,7 @@ export const SignInForm = () => {
     <div className="space-y-4">
       <div>
         <label className="text-sm font-medium text-white block mb-2">{t('email')} *</label>
-        <Input
+        <RtlInput
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -131,7 +131,7 @@ export const SignInForm = () => {
       
       <div>
         <label className="text-sm font-medium text-white block mb-2">{t('password')} *</label>
-        <Input
+        <RtlInput
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -160,7 +160,7 @@ export const SignInForm = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 rtl-grid">
         <Button 
           type="button"
           variant="outline"

@@ -2,55 +2,116 @@
 @tailwind components;
 @tailwind utilities;
 
-/* RTL Support */
+/* Enhanced RTL Support - Prevent layout shifts */
 [dir="rtl"] {
   text-align: right;
 }
 
-[dir="rtl"] .flex {
-  flex-direction: row-reverse;
+/* Stable grid layouts for RTL */
+.rtl-grid[dir="rtl"] {
+  direction: rtl;
 }
 
-[dir="rtl"] .grid-cols-2 > * {
-  text-align: center;
+.rtl-grid[dir="ltr"] {
+  direction: ltr;
 }
 
-[dir="rtl"] .justify-between {
-  flex-direction: row-reverse;
+/* Prevent flex direction reversal to avoid jumping */
+.rtl-flex {
+  display: flex;
+  gap: 0.75rem;
 }
 
-[dir="rtl"] .ml-auto {
-  margin-left: 0;
-  margin-right: auto;
+.rtl-flex[dir="rtl"] {
+  flex-direction: row;
 }
 
-[dir="rtl"] .space-x-2 > * + * {
-  margin-left: 0;
-  margin-right: 0.5rem;
+.rtl-flex[dir="ltr"] {
+  flex-direction: row;
 }
 
-[dir="rtl"] .space-x-4 > * + * {
-  margin-left: 0;
-  margin-right: 1rem;
+/* Stable tabs layout */
+.rtl-tabs[dir="rtl"] .grid-cols-2 {
+  grid-template-columns: 1fr 1fr;
+  direction: rtl;
 }
 
-/* Auth form specific RTL styles */
-.rtl-form [dir="rtl"] .grid-cols-2 {
+.rtl-tabs[dir="ltr"] .grid-cols-2 {
+  grid-template-columns: 1fr 1fr;
+  direction: ltr;
+}
+
+/* Auth form specific RTL styles - Enhanced */
+.rtl-form {
+  transition: none;
+}
+
+.rtl-form[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+.rtl-form[dir="ltr"] {
+  direction: ltr;
+  text-align: left;
+}
+
+.rtl-form .space-y-4 {
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
 }
 
-.rtl-form [dir="rtl"] .space-y-4 > * + * {
-  margin-top: 1rem;
+.rtl-form input {
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.rtl-form [dir="rtl"] input {
+.rtl-form[dir="rtl"] input {
   text-align: right;
-  padding-right: 0.75rem;
-  padding-left: 0.75rem;
+  padding-right: 1rem;
+  padding-left: 1rem;
 }
 
-.rtl-form [dir="rtl"] button {
+.rtl-form[dir="ltr"] input {
+  text-align: left;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.rtl-form button {
   text-align: center;
+  width: 100%;
+}
+
+.rtl-form label {
+  display: block;
+  width: 100%;
+}
+
+.rtl-form[dir="rtl"] label {
+  text-align: right;
+}
+
+.rtl-form[dir="ltr"] label {
+  text-align: left;
+}
+
+/* Prevent layout jumps on language switch */
+.rtl-form * {
+  box-sizing: border-box;
+}
+
+.rtl-form .grid-cols-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.rtl-form .grid-cols-2 > * {
+  min-width: 0;
+  width: 100%;
 }
 
 @keyframes tilt {

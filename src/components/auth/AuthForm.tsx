@@ -19,12 +19,12 @@ export const AuthForm = ({
   isUserLogin, 
   onToggleUserLogin 
 }: AuthFormProps) => {
-  const { t } = useLanguage();
+  const { t, isRTL } = useLanguage();
   
   return (
-    <div className="auth-glass rounded-2xl overflow-hidden">
+    <div className={`auth-glass rounded-2xl overflow-hidden rtl-form ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
       <Tabs defaultValue="user" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 auth-glass-strong rounded-2xl m-2">
+        <TabsList className="grid w-full grid-cols-2 auth-glass-strong rounded-2xl m-2 rtl-tabs">
           <TabsTrigger value="user" className="text-black data-[state=active]:text-purple-600 data-[state=active]:bg-white/20 rounded-xl font-semibold">
             {t('user')}
           </TabsTrigger>
