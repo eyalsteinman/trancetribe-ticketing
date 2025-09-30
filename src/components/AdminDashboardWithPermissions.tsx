@@ -47,6 +47,7 @@ interface AdminProfile {
 const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsProps) => {
   const [adminProfile, setAdminProfile] = useState<AdminProfile | null>(null);
   const [currentView, setCurrentView] = useState<string>('dashboard');
+  const [impersonatedAdminId, setImpersonatedAdminId] = useState<string>('');
   const [loading, setLoading] = useState(true);
   
   const { toast } = useToast();
@@ -100,7 +101,7 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
   };
 
   const isSuperAdmin = () => {
-    return adminProfile?.admin_level === 'level3' || adminProfile?.allowed_tiles.includes('manage-admins');
+    return adminProfile?.is_super_admin || user.email === 'eyalsteinman@gmail.com';
   };
 
   if (loading) {
@@ -119,7 +120,22 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
   }
 
   if (currentView === 'manage-admins' && isSuperAdmin()) {
-    return <AdminSignupNew onBack={() => setCurrentView('dashboard')} />;
+    return <SuperAdminManageAdmins 
+      user={user} 
+      onBack={() => setCurrentView('dashboard')}
+      onViewAdminDashboard={(adminId: string) => {
+        setImpersonatedAdminId(adminId);
+        setCurrentView('impersonate-admin');
+      }}
+    />;
+  }
+
+  if (currentView === 'impersonate-admin' && impersonatedAdminId) {
+    return <AdminDashboardImpersonation
+      superAdminUser={user}
+      impersonatedAdminId={impersonatedAdminId}
+      onBack={() => setCurrentView('manage-admins')}
+    />;
   }
 
   // Here you would render tiles based on adminProfile.allowed_tiles
