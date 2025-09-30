@@ -132,6 +132,7 @@ const AuthPage = () => {
       <AdminPasswordForm 
         onSuccess={handleAdminPasswordSuccess}
         onBack={handleAdminPasswordBack}
+        pendingAdminSignup={pendingAdminSignup}
       />
     );
   }

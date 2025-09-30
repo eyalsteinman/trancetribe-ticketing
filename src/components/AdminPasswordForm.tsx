@@ -8,56 +8,105 @@ import { supabase } from '@/integrations/supabase/client';
 interface AdminPasswordFormProps {
   onSuccess: () => void;
   onBack: () => void;
+  pendingAdminSignup: {email: string, password: string} | null;
 }
 
-const AdminPasswordForm = ({ onSuccess, onBack }: AdminPasswordFormProps) => {
+const AdminPasswordForm = ({ onSuccess, onBack, pendingAdminSignup }: AdminPasswordFormProps) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = async () => {
+    if (!pendingAdminSignup) {
+      toast({
+        title: "Error",
+        description: "No pending admin signup",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
     
     try {
-      // Sign in with the provided credentials
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: 'admin@trancetribe.com', // Use a fixed admin email
-        password: password,
+      // Check if the password is valid and not used
+      const { data: passwordData, error: passwordError } = await supabase
+        .from('admin_passwords')
+        .select('*')
+        .eq('admin_email', pendingAdminSignup.email)
+        .eq('unique_password', password)
+        .eq('is_used', false)
+        .gt('expires_at', new Date().toISOString())
+        .single();
+
+      if (passwordError || !passwordData) {
+        toast({
+          title: "Access Denied",
+          description: "Invalid or expired admin password",
+          variant: "destructive"
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Create the admin account
+      const { data, error } = await supabase.auth.signUp({
+        email: pendingAdminSignup.email,
+        password: pendingAdminSignup.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            first_name: '',
+            last_name: '',
+            display_name: pendingAdminSignup.email.split('@')[0]
+          }
+        }
       });
 
       if (error) {
         toast({
-          title: "Access Denied",
-          description: "Invalid admin credentials",
+          title: "Error",
+          description: error.message,
           variant: "destructive"
         });
         setLoading(false);
         return;
       }
 
-      // Check if user has admin role
-      const { data: userRoles, error: roleError } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', data.user.id)
-        .eq('role', 'admin');
+      if (data.user) {
+        // Mark password as used
+        await supabase
+          .from('admin_passwords')
+          .update({ is_used: true })
+          .eq('id', passwordData.id);
 
-      if (roleError || !userRoles || userRoles.length === 0) {
-        await supabase.auth.signOut(); // Sign out if not admin
+        // Add admin role and profile
+        await supabase
+          .from('user_roles')
+          .insert({
+            user_id: data.user.id,
+            role: 'admin'
+          });
+
+        await supabase
+          .from('admin_profiles')
+          .insert({
+            user_id: data.user.id,
+            admin_level: 'level1',
+            allowed_tiles: ['manage-parties', 'manage-productions', 'manage-bar-tabs', 'manage-qr', 'manage-messages']
+          });
+
         toast({
-          title: "Access Denied",
-          description: "Admin privileges required",
-          variant: "destructive"
+          title: "Success",
+          description: "Admin account created successfully! Please check your email to confirm your account.",
         });
-        setLoading(false);
-        return;
-      }
 
-      onSuccess();
+        onSuccess();
+      }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Authentication failed",
+        description: "Failed to create admin account",
         variant: "destructive"
       });
     } finally {
@@ -71,12 +120,12 @@ const AdminPasswordForm = ({ onSuccess, onBack }: AdminPasswordFormProps) => {
         <Card>
           <CardHeader>
             <CardTitle>Admin Verification</CardTitle>
-            <CardDescription>Please enter the admin password</CardDescription>
+            <CardDescription>Contact Trance Tribes Ticketing Management for your unique entry password</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <Input
               type="password"
-              placeholder="Admin password"
+              placeholder="Enter your unique admin password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
@@ -87,7 +136,7 @@ const AdminPasswordForm = ({ onSuccess, onBack }: AdminPasswordFormProps) => {
                 disabled={loading || !password}
                 className="w-full"
               >
-                {loading ? "Verifying..." : "Verify"}
+                {loading ? "Creating Account..." : "Create Admin Account"}
               </Button>
               <Button 
                 onClick={onBack}

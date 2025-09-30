@@ -436,6 +436,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   }
 
   if (currentView === 'manage-admins') {
+    // This should now be handled by AdminDashboardWithPermissions
     return <ManageAdmins onBack={() => setCurrentView('dashboard')} />;
   }
 

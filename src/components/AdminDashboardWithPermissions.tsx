@@ -30,6 +30,8 @@ import BarTabScanner from './BarTabScanner';
 import FAQContact from './FAQContact';
 import AdminMessageSender from './AdminMessageSender';
 import AdminSignupNew from './AdminSignupNew';
+import SuperAdminManageAdmins from './SuperAdminManageAdmins';
+import AdminDashboardImpersonation from './AdminDashboardImpersonation';
 import { useTheme } from '@/hooks/useDarkMode';
 
 interface AdminDashboardWithPermissionsProps {
@@ -39,6 +41,7 @@ interface AdminDashboardWithPermissionsProps {
 interface AdminProfile {
   admin_level: 'level1' | 'level2' | 'level3';
   allowed_tiles: string[];
+  is_super_admin: boolean;
 }
 
 const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsProps) => {
@@ -57,7 +60,7 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
     try {
       const { data, error } = await supabase
         .from('admin_profiles')
-        .select('admin_level, allowed_tiles')
+        .select('admin_level, allowed_tiles, is_super_admin')
         .eq('user_id', user.id)
         .single();
 
@@ -69,7 +72,8 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
           allowed_tiles: [
             'registered-users', 'guest-list', 'productions', 'parties', 
             'manage-admins', 'messages', 'games', 'bar-tabs', 'analytics'
-          ]
+          ],
+          is_super_admin: user.email === 'eyalsteinman@gmail.com'
         });
       } else {
         setAdminProfile(data);
@@ -82,7 +86,8 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
         allowed_tiles: [
           'registered-users', 'guest-list', 'productions', 'parties', 
           'manage-admins', 'messages', 'games', 'bar-tabs', 'analytics'
-        ]
+        ],
+        is_super_admin: user.email === 'eyalsteinman@gmail.com'
       });
     } finally {
       setLoading(false);

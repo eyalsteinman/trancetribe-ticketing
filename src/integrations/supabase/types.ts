@@ -83,6 +83,36 @@ export type Database = {
           },
         ]
       }
+      admin_passwords: {
+        Row: {
+          admin_email: string
+          created_at: string | null
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          is_used: boolean | null
+          unique_password: string
+        }
+        Insert: {
+          admin_email: string
+          created_at?: string | null
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          is_used?: boolean | null
+          unique_password: string
+        }
+        Update: {
+          admin_email?: string
+          created_at?: string | null
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          is_used?: boolean | null
+          unique_password?: string
+        }
+        Relationships: []
+      }
       admin_profiles: {
         Row: {
           admin_level: Database["public"]["Enums"]["admin_level"]
@@ -90,6 +120,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           id: string
+          is_super_admin: boolean | null
           updated_at: string
           user_id: string
         }
@@ -99,6 +130,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           id?: string
+          is_super_admin?: boolean | null
           updated_at?: string
           user_id: string
         }
@@ -108,6 +140,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           id?: string
+          is_super_admin?: boolean | null
           updated_at?: string
           user_id?: string
         }
