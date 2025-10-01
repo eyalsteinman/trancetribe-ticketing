@@ -5,7 +5,7 @@ import { useBackground } from '@/contexts/BackgroundContext';
 import SplashScreen from '@/components/SplashScreen';
 import AuthPage from './Auth';
 import UserDashboard from '@/components/UserDashboard';
-import AdminDashboard from '@/components/AdminDashboard';
+import AdminDashboardWithPermissions from '@/components/AdminDashboardWithPermissions';
 import ProfileCompletion from '@/components/ProfileCompletion';
 import { useProfileCompletion } from '@/hooks/useProfileCompletion';
 
@@ -107,7 +107,7 @@ const Index = () => {
 
   if (isAdmin) {
     console.log('User is admin, showing admin dashboard');
-    return <AdminDashboard user={user} />;
+    return <AdminDashboardWithPermissions user={user} />;
   }
 
   console.log('User is regular user, showing user dashboard');
