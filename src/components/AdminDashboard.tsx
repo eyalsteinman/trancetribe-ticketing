@@ -8,7 +8,7 @@ import { useBackground } from '@/contexts/BackgroundContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { User } from '@supabase/supabase-js';
 import { Badge } from '@/components/ui/badge';
-import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ScanBarcode, Wine, Cog, ArrowLeft, LogOut, MessageCircle, Calendar, Clock } from 'lucide-react';
+import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ScanBarcode, Wine, Cog, ArrowLeft, LogOut, MessageCircle, Calendar, Clock, UserPlus } from 'lucide-react';
 import Footer from '@/components/ui/footer';
 import PageHeader from '@/components/ui/page-header';
 import LanguageSelector from './LanguageSelector';
@@ -36,6 +36,7 @@ import { useTheme } from '@/hooks/useDarkMode';
 
 interface AdminDashboardProps {
   user: User;
+  onManageSubAdmins?: () => void;
 }
 
 interface ScannedUser {
@@ -50,7 +51,7 @@ interface ScannedUser {
   } | null;
 }
 
-const AdminDashboard = ({ user }: AdminDashboardProps) => {
+const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
   const [qrInput, setQrInput] = useState('');
   const [scannedUsers, setScannedUsers] = useState<ScannedUser[]>([]);
   const [parties, setParties] = useState<any[]>([]);
@@ -707,6 +708,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             { id: 'faq', title: 'FAQ & Contact', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('faq' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'theme-changer', title: `Change Theme\n(${getThemeDisplayName(currentTheme)})`, icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: cycleTheme },
             { id: 'message', title: 'Message Users', icon: <MessageCircle className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('message' as const); setTimeout(() => loadParties(), 100); } },
+            ...(onManageSubAdmins ? [{ id: 'manage-sub-admins', title: 'Manage Sub-Admins', icon: <UserPlus className="h-8 w-8 mb-2" />, onClick: onManageSubAdmins }] : []),
           ];
           return (
             <ReorderableTilesLogic 

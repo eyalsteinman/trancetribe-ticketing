@@ -33,6 +33,7 @@ import AdminSignupNew from './AdminSignupNew';
 import SuperAdminManageAdmins from './SuperAdminManageAdmins';
 import AdminDashboardImpersonation from './AdminDashboardImpersonation';
 import AdminDashboard from './AdminDashboard';
+import RegularAdminManageSubAdmins from './RegularAdminManageSubAdmins';
 
 interface AdminDashboardWithPermissionsProps {
   user: User;
@@ -49,6 +50,7 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
   const [currentView, setCurrentView] = useState<string>('dashboard');
   const [impersonatedAdminId, setImpersonatedAdminId] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [showSubAdminManager, setShowSubAdminManager] = useState(false);
   
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
@@ -169,8 +171,16 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
     );
   }
 
-  // For regular admins, just show the normal dashboard
-  return <AdminDashboard user={user} />;
+  // For regular admins, show sub-admin manager if requested
+  if (showSubAdminManager) {
+    return <RegularAdminManageSubAdmins
+      user={user}
+      onBack={() => setShowSubAdminManager(false)}
+    />;
+  }
+
+  // For regular admins, pass the sub-admin manager callback to AdminDashboard
+  return <AdminDashboard user={user} onManageSubAdmins={() => setShowSubAdminManager(true)} />;
 };
 
 export default AdminDashboardWithPermissions;

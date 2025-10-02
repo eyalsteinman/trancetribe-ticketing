@@ -96,12 +96,12 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
 
   if (selectedParty) {
     return (
-      <div className="min-h-screen w-full p-4">
-        <div className="max-w-md mx-auto">
-          <div className="flex justify-center mb-4">
+      <div className="min-h-screen w-full flex items-center justify-center p-4">
+        <div className="max-w-md w-full mx-auto">
+          <div className="flex justify-end mb-4">
             <button
               onClick={() => setSelectedParty(null)}
-              className="px-4 py-2 bg-primary text-white rounded-lg"
+              className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700"
             >
               ✕ Close
             </button>
@@ -117,19 +117,19 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
             )}
             
             <div className="text-center">
-              <h2 className="text-xl font-bold mb-2" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{selectedParty.name}</h2>
-              <p className="text-sm mb-4" style={{ color: isBackgroundDark ? '#888888' : '#666666' }}>
+              <h2 className="text-2xl font-bold mb-2 text-white">{selectedParty.name}</h2>
+              <p className="text-sm mb-4 text-white/80">
                 {new Date(selectedParty.date).toLocaleDateString()}
               </p>
               {selectedParty.description && (
-                <p className="text-sm mb-4" style={{ color: isBackgroundDark ? '#cccccc' : '#333333' }}>
+                <p className="text-sm mb-4 text-white whitespace-pre-wrap">
                   {selectedParty.description}
                 </p>
               )}
               
               <button
                 onClick={onLoginPrompt}
-                className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold"
+                className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700"
               >
                 Login to Purchase
               </button>
@@ -143,33 +143,26 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
   if (selectedProduction) {
     const productionParties = parties.filter(p => p.production_id === selectedProduction.id);
     return (
-      <div className="min-h-screen w-full p-4">
-        <div className="max-w-md mx-auto">
-          <div className="flex justify-center mb-4">
+      <div className="min-h-screen w-full flex items-center justify-center p-4">
+        <div className="max-w-md w-full mx-auto">
+          <div className="flex justify-end mb-4">
             <button
               onClick={() => setSelectedProduction(null)}
-              className="px-4 py-2 bg-primary text-white rounded-lg"
+              className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700"
             >
               ✕ Close
             </button>
           </div>
           
           <div className="mb-6 text-center px-4">
-            {selectedProduction.logo_url ? (
+            {selectedProduction.logo_url && (
               <img
                 src={selectedProduction.logo_url}
                 alt={selectedProduction.name}
                 className="w-full max-w-xs h-auto object-contain mx-auto mb-4"
               />
-            ) : (
-              <div className="w-full max-w-xs h-32 bg-muted flex items-center justify-center mx-auto mb-4 rounded-lg">
-                <span className="font-semibold text-center" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{selectedProduction.name}</span>
-              </div>
             )}
-            <h2 className="text-xl font-bold mb-2" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{selectedProduction.name}</h2>
-            <p className="text-sm" style={{ color: isBackgroundDark ? '#cccccc' : '#333333' }}>
-              Production description would go here if available in the database.
-            </p>
+            <h2 className="text-2xl font-bold mb-4 text-white">{selectedProduction.name}</h2>
           </div>
         </div>
       </div>

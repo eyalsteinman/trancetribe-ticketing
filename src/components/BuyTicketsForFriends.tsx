@@ -150,7 +150,8 @@ const BuyTicketsForFriends = ({ user, party, onBack }: BuyTicketsForFriendsProps
         code: `${profile.personal_code}-${party.id}-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
         is_approved: true, // Auto-approve free tickets
         is_scanned: false,
-        auto_approved: true
+        auto_approved: true,
+        ticket_type_id: null // No ticket type for free tickets
       }));
 
       const { error: insertError } = await supabase
