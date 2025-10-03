@@ -93,7 +93,8 @@ const AdminPasswordForm = ({ onSuccess, onBack, pendingAdminSignup }: AdminPassw
           .insert({
             user_id: data.user.id,
             admin_level: 'level1',
-            allowed_tiles: ['manage-parties', 'manage-productions', 'manage-bar-tabs', 'manage-qr', 'manage-messages']
+            created_by: passwordData.created_by,
+            allowed_tiles: passwordData.allowed_tiles || []
           });
 
         toast({

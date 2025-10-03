@@ -116,16 +116,15 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
           admin_email: newAdminEmail,
           unique_password: uniquePassword,
           created_by: user.id,
-          is_used: false
+          is_used: false,
+          allowed_tiles: selectedTiles
         });
 
       if (error) throw error;
 
-      // Note: Sub-admin permissions will be set when they register using AdminPasswordForm
-
       toast({
         title: "Success",
-        description: `Sub-admin password created for ${newAdminEmail}`,
+        description: `Sub-admin password created for ${newAdminEmail}. Password: ${uniquePassword}`,
       });
 
       setNewAdminEmail('');

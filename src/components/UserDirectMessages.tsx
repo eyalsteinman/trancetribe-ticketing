@@ -53,20 +53,31 @@ const UserDirectMessages: React.FC<UserDirectMessagesProps> = ({ onBack, userId 
           content,
           is_read,
           created_at,
-          sender_id,
-          profiles:sender_id (display_name, first_name, last_name)
+          sender_id
         `)
         .eq('recipient_id', userId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      const formattedMessages = data.map(msg => ({
-        ...msg,
-        sender_name: (msg as any).profiles?.display_name || 
-                    `${(msg as any).profiles?.first_name || ''} ${(msg as any).profiles?.last_name || ''}`.trim() || 
-                    'Unknown'
-      }));
+      // Get sender profiles separately
+      const senderIds = [...new Set(data?.map(msg => msg.sender_id) || [])];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('user_id, display_name, first_name, last_name')
+        .in('user_id', senderIds);
+
+      const profileMap = new Map(profiles?.map(p => [p.user_id, p]) || []);
+
+      const formattedMessages = (data || []).map(msg => {
+        const profile = profileMap.get(msg.sender_id);
+        return {
+          ...msg,
+          sender_name: profile?.display_name || 
+                      `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() || 
+                      'Unknown'
+        };
+      });
 
       setMessages(formattedMessages);
     } catch (error: any) {

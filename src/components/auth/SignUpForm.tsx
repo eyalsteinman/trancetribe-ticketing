@@ -203,11 +203,11 @@ export const SignUpForm = () => {
         <div className="flex-1 h-px bg-white/20"></div>
       </div>
 
-      <div className="flex gap-3 rtl-flex">
+      <div className="grid grid-cols-2 gap-3 rtl-grid">
         <Button 
           type="button"
           variant="outline"
-          className="flex-1 bg-transparent border-white/30 text-white rounded-xl h-12 font-semibold text-base hover:bg-white/10"
+          className="bg-transparent border-white/30 text-white rounded-xl h-12 font-semibold text-base hover:bg-white/10"
           onClick={() => {
             toast({
               title: t('info'),
@@ -221,7 +221,7 @@ export const SignUpForm = () => {
         <Button 
           type="button"
           variant="outline"
-          className="flex-1 bg-transparent border-white/30 text-white rounded-xl h-12 font-semibold text-base hover:bg-white/10"
+          className="bg-transparent border-white/30 text-white rounded-xl h-12 font-semibold text-base hover:bg-white/10"
           onClick={() => {
             toast({
               title: t('info'),
@@ -231,6 +231,32 @@ export const SignUpForm = () => {
           }}
         >
           {t('facebook')}
+        </Button>
+        <Button 
+          type="button"
+          variant="outline"
+          className="bg-transparent border-white/30 text-white rounded-xl h-12 font-semibold text-base hover:bg-white/10"
+          onClick={() => {
+            toast({
+              title: "Instagram",
+              description: "Instagram login will be available soon",
+            });
+          }}
+        >
+          Instagram
+        </Button>
+        <Button 
+          type="button"
+          variant="outline"
+          className="bg-transparent border-white/30 text-white rounded-xl h-12 font-semibold text-base hover:bg-white/10"
+          onClick={() => {
+            toast({
+              title: "TikTok",
+              description: "TikTok login will be available soon",
+            });
+          }}
+        >
+          TikTok
         </Button>
       </div>
     </div>
