@@ -149,7 +149,7 @@ const AuthPage = () => {
       >
         <div className="w-full space-y-8 auth-parallax">
           <div className="auth-glass p-6 rounded-2xl max-w-4xl mx-auto">
-            <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} carouselOnly />
+            <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} />
           </div>
 
           <div className="w-full flex flex-col items-center space-y-6">
