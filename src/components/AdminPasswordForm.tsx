@@ -37,7 +37,7 @@ const AdminPasswordForm = ({ onSuccess, onBack, pendingAdminSignup }: AdminPassw
         .eq('unique_password', password)
         .eq('is_used', false)
         .gt('expires_at', new Date().toISOString())
-        .single();
+        .maybeSingle();
 
       if (passwordError || !passwordData) {
         toast({
@@ -48,6 +48,8 @@ const AdminPasswordForm = ({ onSuccess, onBack, pendingAdminSignup }: AdminPassw
         setLoading(false);
         return;
       }
+
+      const allowedTiles = (passwordData as any).allowed_tiles || [];
 
       // Create the admin account
       const { data, error } = await supabase.auth.signUp({
@@ -94,7 +96,7 @@ const AdminPasswordForm = ({ onSuccess, onBack, pendingAdminSignup }: AdminPassw
             user_id: data.user.id,
             admin_level: 'level1',
             created_by: passwordData.created_by,
-            allowed_tiles: passwordData.allowed_tiles || []
+            allowed_tiles: allowedTiles
           });
 
         toast({

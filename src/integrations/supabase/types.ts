@@ -86,6 +86,7 @@ export type Database = {
       admin_passwords: {
         Row: {
           admin_email: string
+          allowed_tiles: string[] | null
           created_at: string | null
           created_by: string | null
           expires_at: string | null
@@ -95,6 +96,7 @@ export type Database = {
         }
         Insert: {
           admin_email: string
+          allowed_tiles?: string[] | null
           created_at?: string | null
           created_by?: string | null
           expires_at?: string | null
@@ -104,6 +106,7 @@ export type Database = {
         }
         Update: {
           admin_email?: string
+          allowed_tiles?: string[] | null
           created_at?: string | null
           created_by?: string | null
           expires_at?: string | null
