@@ -34,7 +34,9 @@ const availableTiles = [
 const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdminsProps) => {
   const [subAdmins, setSubAdmins] = useState<SubAdmin[]>([]);
   const [newAdminEmail, setNewAdminEmail] = useState('');
+  const [newAdminNickname, setNewAdminNickname] = useState('');
   const [selectedTiles, setSelectedTiles] = useState<string[]>([]);
+  const [selectAllTiles, setSelectAllTiles] = useState(false);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
@@ -177,6 +179,20 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
     );
   };
 
+  const toggleSelectAll = () => {
+    if (selectAllTiles) {
+      setSelectedTiles([]);
+      setSelectAllTiles(false);
+    } else {
+      setSelectedTiles(availableTiles.map(t => t.id));
+      setSelectAllTiles(true);
+    }
+  };
+
+  useEffect(() => {
+    setSelectAllTiles(selectedTiles.length === availableTiles.length);
+  }, [selectedTiles]);
+
   return (
     <div
       className="min-h-screen p-4 transition-colors duration-500"
@@ -206,8 +222,30 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
                 onChange={(e) => setNewAdminEmail(e.target.value)}
               />
 
+              <Input
+                type="text"
+                placeholder="Nickname (optional)"
+                value={newAdminNickname}
+                onChange={(e) => setNewAdminNickname(e.target.value)}
+              />
+
               <div className="space-y-2">
-                <p className="text-sm font-medium">Select Permissions:</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium">Select Permissions:</p>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="select-all"
+                      checked={selectAllTiles}
+                      onCheckedChange={toggleSelectAll}
+                    />
+                    <label
+                      htmlFor="select-all"
+                      className="text-sm font-medium leading-none cursor-pointer"
+                    >
+                      Select All
+                    </label>
+                  </div>
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                   {availableTiles.map((tile) => (
                     <div key={tile.id} className="flex items-center space-x-2">

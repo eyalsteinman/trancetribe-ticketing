@@ -47,33 +47,65 @@ const SuperAdminManageAdmins = ({ user, onBack, onViewAdminDashboard }: SuperAdm
 
   const loadAdmins = async () => {
     try {
-      const { data, error } = await supabase
+      // Get all users with admin role
+      const { data: adminRoles, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('user_id')
+        .eq('role', 'admin');
+
+      if (rolesError) {
+        console.error('Error loading admin roles:', rolesError);
+        setLoading(false);
+        return;
+      }
+
+      if (!adminRoles || adminRoles.length === 0) {
+        setAdmins([]);
+        setLoading(false);
+        return;
+      }
+
+      const adminUserIds = adminRoles.map(r => r.user_id);
+
+      // Get profiles for these admin users
+      const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select(`
           user_id,
           email,
           display_name,
-          created_at,
-          admin_profiles (
-            admin_level,
-            is_super_admin
-          )
+          created_at
         `)
-        .not('admin_profiles', 'is', null);
+        .in('user_id', adminUserIds);
 
-      if (error) {
-        console.error('Error loading admins:', error);
+      if (profilesError) {
+        console.error('Error loading profiles:', profilesError);
+        setLoading(false);
         return;
       }
 
-      const formattedAdmins = data?.map((admin: any) => ({
-        id: admin.user_id,
-        email: admin.email,
-        display_name: admin.display_name || admin.email,
-        created_at: admin.created_at,
-        admin_level: admin.admin_profiles?.admin_level || 'level1',
-        is_super_admin: admin.admin_profiles?.is_super_admin || false
-      })) || [];
+      // Get admin profiles
+      const { data: adminProfiles, error: adminProfilesError } = await supabase
+        .from('admin_profiles')
+        .select('user_id, admin_level, is_super_admin')
+        .in('user_id', adminUserIds);
+
+      if (adminProfilesError) {
+        console.error('Error loading admin profiles:', adminProfilesError);
+      }
+
+      // Merge the data
+      const formattedAdmins = profiles?.map((profile: any) => {
+        const adminProfile = adminProfiles?.find(ap => ap.user_id === profile.user_id);
+        return {
+          id: profile.user_id,
+          email: profile.email,
+          display_name: profile.display_name || profile.email,
+          created_at: profile.created_at,
+          admin_level: adminProfile?.admin_level || 'level1',
+          is_super_admin: adminProfile?.is_super_admin || false
+        };
+      }) || [];
 
       setAdmins(formattedAdmins);
     } catch (error) {
