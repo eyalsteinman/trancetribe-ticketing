@@ -14,6 +14,21 @@ export const useProfileCompletion = () => {
         return;
       }
 
+      // Check if user is admin - admins can skip profile completion
+      const { data: adminRole } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('role', 'admin')
+        .maybeSingle();
+
+      // Admins don't need complete profiles
+      if (adminRole) {
+        setIsProfileComplete(true);
+        setLoading(false);
+        return;
+      }
+
       const { data: profile } = await supabase
         .from('profiles')
         .select('first_name, last_name, phone_number, email')
