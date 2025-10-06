@@ -128,9 +128,42 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Verify authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Authentication required" }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    
+    const supabaseClient = createClient(
+      supabaseUrl,
+      supabaseAnonKey,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    
+    if (userError || !user) {
+      return new Response(
+        JSON.stringify({ error: "Invalid authentication token" }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
     const { amount, currency = 'ILS', adminId, partyId, ticketTypeId }: PayPalOrderRequest = await req.json();
     
-    console.log('Request data:', { amount, currency, adminId, partyId, ticketTypeId });
+    console.log('Request data:', { amount, currency, adminId, partyId, ticketTypeId, userId: user.id });
 
     // Validate required fields
     if (!amount || !adminId) {
@@ -166,16 +199,15 @@ const handler = async (req: Request): Promise<Response> => {
     
     console.log('PayPal order created successfully:', order.id);
 
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    // Initialize Supabase admin client for database operations
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Create payment record in database
+    // Create payment record in database with authenticated user
     const { error: dbError } = await supabase
       .from('payments')
       .insert({
-        user_id: null, // Will be updated when payment is completed
+        user_id: user.id, // Use authenticated user ID
         party_id: partyId,
         amount: amount,
         currency: currency.toLowerCase(),

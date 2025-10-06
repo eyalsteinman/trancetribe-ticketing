@@ -13,10 +13,58 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Verify authentication - only admins should be able to trigger cleanup
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Authentication required" }),
+        {
+          status: 401,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     
     const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+
+    // Verify the user is authenticated and is an admin
+    const supabaseClient = createClient(
+      supabaseUrl,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    
+    if (userError || !user) {
+      return new Response(
+        JSON.stringify({ error: "Invalid authentication token" }),
+        {
+          status: 401,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
+
+    // Check if user is super admin
+    const { data: adminProfile, error: adminError } = await supabase
+      .from('admin_profiles')
+      .select('is_super_admin')
+      .eq('user_id', user.id)
+      .single();
+
+    if (adminError || !adminProfile?.is_super_admin) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized - super admin access required" }),
+        {
+          status: 403,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
 
     // Determine parties that ended more than 12 hours ago
     const now = new Date();
