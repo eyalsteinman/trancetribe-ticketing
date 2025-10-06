@@ -37,6 +37,8 @@ const availableTiles = [
   { id: 'send-email', label: 'Send Email' },
   { id: 'impersonation', label: 'Impersonation' },
   { id: 'vip-hub', label: 'VIP Hub' },
+  { id: 'qr-scanner', label: 'QR Scanner' },
+  { id: 'bartab-scanner', label: 'Bar Tab Scanner' },
 ];
 
 const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdminsProps) => {
