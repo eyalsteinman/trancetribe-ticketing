@@ -4,6 +4,16 @@ import RtlInput from '@/components/RtlInput';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface SignUpFormProps {}
 
@@ -16,6 +26,7 @@ export const SignUpForm = () => {
   const [facebookProfile, setFacebookProfile] = useState('');
   const [instagramProfile, setInstagramProfile] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showSocialWarning, setShowSocialWarning] = useState(false);
   const { toast } = useToast();
   const { t } = useLanguage();
 
@@ -40,12 +51,10 @@ export const SignUpForm = () => {
       return;
     }
 
-    // Check if social networks are filled - show popup if not
+    // Check if social networks are filled - show warning dialog if not
     if (!facebookProfile && !instagramProfile) {
-      toast({
-        title: "Social Networks",
-        description: "You didn't fill in social networks profiles, you can't buy tickets for events if you don't. You can do this now or later in the social networks tab"
-      });
+      setShowSocialWarning(true);
+      return;
     }
 
     // Validate social network URLs if provided
@@ -67,6 +76,10 @@ export const SignUpForm = () => {
       return;
     }
 
+    await proceedWithSignUp();
+  };
+
+  const proceedWithSignUp = async () => {
     setLoading(true);
     try {
       const { error } = await supabase.auth.signUp({
@@ -103,7 +116,27 @@ export const SignUpForm = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <>
+      <AlertDialog open={showSocialWarning} onOpenChange={setShowSocialWarning}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('social_media_required')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('cant_buy_tickets_without_socials')}
+              <br /><br />
+              {t('can_do_later_question')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('go_back')}</AlertDialogCancel>
+            <AlertDialogAction onClick={proceedWithSignUp}>
+              {t('continue_anyway')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3 rtl-grid">
         <div>
           <label className="text-sm font-medium text-white block mb-2">{t('first_name')} *</label>
@@ -260,5 +293,6 @@ export const SignUpForm = () => {
         </Button>
       </div>
     </div>
+    </>
   );
 };
