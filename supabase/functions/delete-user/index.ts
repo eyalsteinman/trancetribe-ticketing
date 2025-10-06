@@ -12,17 +12,32 @@ Deno.serve(async (req) => {
   try {
     console.log("Processing delete user request")
     
-    // Create Supabase client with service role key
-    const supabaseAdmin = createClient(
+    // Verify authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      console.log('No authorization header')
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Create client for authentication check
+    const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      }
-    )
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    // Verify user is authenticated
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    if (userError || !user) {
+      console.log('Invalid or missing user token')
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
 
     // Get the user ID from request body
     const { userId } = await req.json()
@@ -41,6 +56,38 @@ Deno.serve(async (req) => {
       )
     }
 
+    // Verify user is deleting their own account OR is a super admin
+    const { data: adminData } = await supabaseClient
+      .from('admin_profiles')
+      .select('is_super_admin')
+      .eq('user_id', user.id)
+      .single();
+
+    const isSuperAdmin = adminData?.is_super_admin === true;
+    const isDeletingOwnAccount = user.id === userId;
+
+    if (!isSuperAdmin && !isDeletingOwnAccount) {
+      console.log('User not authorized to delete this account')
+      return new Response(JSON.stringify({ error: 'Forbidden: Can only delete own account' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    console.log(`Authorization verified, deleting user: ${userId}`)
+    
+    // Create Supabase admin client
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
+    
     console.log(`Attempting to delete user: ${userId}`)
 
     // First, delete user roles

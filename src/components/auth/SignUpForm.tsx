@@ -4,6 +4,7 @@ import RtlInput from '@/components/RtlInput';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { z } from 'zod';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,6 +15,30 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+
+// Validation schema
+const signUpSchema = z.object({
+  email: z.string().email('Invalid email format').max(255, 'Email too long'),
+  password: z.string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number'),
+  firstName: z.string()
+    .trim()
+    .min(1, 'First name is required')
+    .max(50, 'First name too long')
+    .regex(/^[a-zA-Z\s'-]+$/, 'Invalid characters in first name'),
+  lastName: z.string()
+    .trim()
+    .min(1, 'Last name is required')
+    .max(50, 'Last name too long')
+    .regex(/^[a-zA-Z\s'-]+$/, 'Invalid characters in last name'),
+  phoneNumber: z.string()
+    .regex(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number format (use international format)'),
+  facebookProfile: z.string().url('Invalid Facebook URL').optional().or(z.literal('')),
+  instagramProfile: z.string().url('Invalid Instagram URL').optional().or(z.literal(''))
+});
 
 interface SignUpFormProps {}
 
@@ -42,37 +67,32 @@ export const SignUpForm = () => {
   };
 
   const handleSignUp = async () => {
-    if (!email || !password || !firstName || !lastName || !phoneNumber) {
-      toast({
-        title: t('error'),
-        description: t('phone_required'),
-        variant: "destructive"
+    // Validate all inputs using Zod
+    try {
+      signUpSchema.parse({
+        email: email.trim(),
+        password,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        phoneNumber: phoneNumber.trim(),
+        facebookProfile: facebookProfile.trim(),
+        instagramProfile: instagramProfile.trim()
       });
-      return;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const firstError = error.issues[0];
+        toast({
+          title: t('error'),
+          description: firstError.message,
+          variant: "destructive"
+        });
+        return;
+      }
     }
 
     // Check if social networks are filled - show warning dialog if not
     if (!facebookProfile && !instagramProfile) {
       setShowSocialWarning(true);
-      return;
-    }
-
-    // Validate social network URLs if provided
-    if (facebookProfile && !validateSocialUrl(facebookProfile, 'facebook')) {
-      toast({
-        title: t('error'),
-        description: t('invalid_facebook_url'),
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (instagramProfile && !validateSocialUrl(instagramProfile, 'instagram')) {
-      toast({
-        title: t('error'),
-        description: t('invalid_instagram_url'),
-        variant: "destructive"
-      });
       return;
     }
 

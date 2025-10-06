@@ -1061,6 +1061,12 @@ export type Database = {
           user_id: string
         }[]
       }
+      user_tribe_ids: {
+        Args: { _user_id: string }
+        Returns: {
+          tribe_id: string
+        }[]
+      }
     }
     Enums: {
       admin_level: "level1" | "level2" | "level3"

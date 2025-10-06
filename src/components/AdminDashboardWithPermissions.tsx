@@ -68,30 +68,16 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
         .single();
 
       if (error) {
-        // If no admin profile found, assume super admin (existing admins)
-        console.log('No admin profile found, assuming super admin');
-        setAdminProfile({
-          admin_level: 'level3',
-          allowed_tiles: [
-            'registered-users', 'guest-list', 'productions', 'parties', 
-            'manage-admins', 'messages', 'games', 'bar-tabs', 'analytics'
-          ],
-          is_super_admin: user.email === 'eyalsteinman@gmail.com'
-        });
+        // If no admin profile found, deny access (security best practice)
+        console.log('No admin profile found, denying access');
+        setAdminProfile(null);
       } else {
         setAdminProfile(data);
       }
     } catch (error) {
       console.error('Error loading admin profile:', error);
-      // Fallback to super admin
-      setAdminProfile({
-        admin_level: 'level3',
-        allowed_tiles: [
-          'registered-users', 'guest-list', 'productions', 'parties', 
-          'manage-admins', 'messages', 'games', 'bar-tabs', 'analytics'
-        ],
-        is_super_admin: user.email === 'eyalsteinman@gmail.com'
-      });
+      // Security: Do not fallback to admin on error
+      setAdminProfile(null);
     } finally {
       setLoading(false);
     }
@@ -103,7 +89,8 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
   };
 
   const isSuperAdmin = () => {
-    return adminProfile?.is_super_admin || user.email === 'eyalsteinman@gmail.com';
+    // Only trust database value - never hardcoded checks
+    return adminProfile?.is_super_admin === true;
   };
 
   if (loading) {

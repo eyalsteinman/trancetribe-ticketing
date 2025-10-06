@@ -7,32 +7,5 @@ site_url = "https://user-scan-hub.lovable.app"
 [db]
 schema = "public"
 
-[functions.cleanup-ended-parties]
-verify_jwt = false
-
-[functions.create-admin]
-verify_jwt = false
-
-[functions.delete-user]
-verify_jwt = false
-
-[functions.send-guest-message]
-verify_jwt = false
-
-[functions.send-qr-code-email]
-verify_jwt = false
-
-[functions.create-whatsapp-group]
-verify_jwt = false
-
-[functions.send-qr-code]
-verify_jwt = false
-
-[functions.send-qr-email-with-admin]
-verify_jwt = false
-
-[functions.send-admin-email]
-verify_jwt = false
-
-[functions.paypal-checkout]
-verify_jwt = false
+# All functions now require authentication by default
+# Only webhook endpoints or public APIs should disable JWT

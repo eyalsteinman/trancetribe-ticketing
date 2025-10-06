@@ -18,6 +18,49 @@ serve(async (req) => {
   }
 
   try {
+    // Verify authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      console.log('No authorization header')
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Create client for authentication check
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    // Verify user is authenticated
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    if (userError || !user) {
+      console.log('Invalid or missing user token')
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Verify user is super admin
+    const { data: adminData, error: adminError } = await supabaseClient
+      .from('admin_profiles')
+      .select('is_super_admin')
+      .eq('user_id', user.id)
+      .single();
+
+    if (adminError || !adminData?.is_super_admin) {
+      console.log('User is not super admin')
+      return new Response(JSON.stringify({ error: 'Forbidden: Super admin access required' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    console.log('Super admin verified:', user.email)
     console.log('Creating Supabase admin client...')
     
     // Create a Supabase admin client
@@ -35,7 +78,7 @@ serve(async (req) => {
     console.log('Supabase URL:', Deno.env.get('SUPABASE_URL'))
     console.log('Service role key exists:', !!Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'))
 
-    // Parse request body first
+    // Parse request body
     console.log('Parsing request body...')
     const requestBody = await req.json()
     console.log('Request body:', requestBody)
