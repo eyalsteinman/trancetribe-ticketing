@@ -23,12 +23,20 @@ interface SubAdmin {
 }
 
 const availableTiles = [
+  { id: 'manage-users', label: 'Manage Users' },
+  { id: 'manage-parties', label: 'Manage Parties' },
+  { id: 'manage-productions', label: 'Manage Productions' },
+  { id: 'manage-bar-tabs', label: 'Manage Bar Tabs' },
+  { id: 'manage-qr', label: 'Manage QR Codes' },
+  { id: 'manage-messages', label: 'Manage Messages' },
+  { id: 'manage-games', label: 'Manage Games' },
+  { id: 'manage-faq', label: 'Manage FAQ' },
   { id: 'registered-users', label: 'Registered Users' },
   { id: 'guest-list', label: 'Guest List' },
-  { id: 'parties', label: 'Parties' },
-  { id: 'messages', label: 'Messages' },
-  { id: 'games', label: 'Games' },
-  { id: 'bar-tabs', label: 'Bar Tabs' },
+  { id: 'social-networks', label: 'Social Networks' },
+  { id: 'send-email', label: 'Send Email' },
+  { id: 'impersonation', label: 'Impersonation' },
+  { id: 'vip-hub', label: 'VIP Hub' },
 ];
 
 const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdminsProps) => {
