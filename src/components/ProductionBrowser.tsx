@@ -97,9 +97,9 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
 
   if (selectedParty) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center p-6">
-        <div className="max-w-md mx-auto">
-          <div className="flex justify-center mb-4">
+      <div className="min-h-screen w-full grid place-items-center p-6">
+        <div className="w-full max-w-md space-y-4">
+          <div className="flex justify-center">
             <button
               onClick={() => setSelectedParty(null)}
               className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700"
@@ -108,33 +108,31 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
             </button>
           </div>
           
-          <div className="space-y-4">
-            {selectedParty.photo_url && (
-              <img
-                src={selectedParty.photo_url}
-                alt={selectedParty.name}
-                className="w-full h-auto object-contain rounded-lg"
-              />
+          {selectedParty.photo_url && (
+            <img
+              src={selectedParty.photo_url}
+              alt={selectedParty.name}
+              className="w-full h-auto object-contain rounded-lg"
+            />
+          )}
+          
+          <div className="text-center space-y-4">
+            <h2 className="text-2xl font-bold text-white">{selectedParty.name}</h2>
+            <p className="text-sm text-white/80">
+              {new Date(selectedParty.date).toLocaleDateString()}
+            </p>
+            {selectedParty.description && (
+              <p className="text-sm text-white whitespace-pre-wrap">
+                {selectedParty.description}
+              </p>
             )}
             
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-2 text-white">{selectedParty.name}</h2>
-              <p className="text-sm mb-4 text-white/80">
-                {new Date(selectedParty.date).toLocaleDateString()}
-              </p>
-              {selectedParty.description && (
-                <p className="text-sm mb-4 text-white whitespace-pre-wrap">
-                  {selectedParty.description}
-                </p>
-              )}
-              
-              <button
-                onClick={onLoginPrompt}
-                className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700"
-              >
-                Login to Purchase
-              </button>
-            </div>
+            <button
+              onClick={onLoginPrompt}
+              className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700"
+            >
+              Login to Purchase
+            </button>
           </div>
         </div>
       </div>
@@ -144,8 +142,8 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
   if (selectedProduction) {
     const productionParties = parties.filter(p => p.production_id === selectedProduction.id);
     return (
-      <div className="min-h-screen w-full flex items-center justify-center p-6">
-        <div className="max-w-md mx-auto space-y-4">
+      <div className="min-h-screen w-full grid place-items-center p-6">
+        <div className="w-full max-w-md space-y-4">
           <div className="flex justify-center">
             <button
               onClick={() => setSelectedProduction(null)}
