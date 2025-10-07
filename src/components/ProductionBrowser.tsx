@@ -97,40 +97,44 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
 
   if (selectedParty) {
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center p-6 overflow-y-auto">
-        <div className="w-full max-w-md flex flex-col items-center gap-4">
-          <button
-            onClick={() => setSelectedParty(null)}
-            className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700"
-          >
-            ✕ Close
-          </button>
+      <div className="min-h-screen w-full flex items-center justify-center p-6">
+        <div className="w-full max-w-md">
+          <div className="flex justify-center mb-4">
+            <button
+              onClick={() => setSelectedParty(null)}
+              className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700"
+            >
+              ✕ Close
+            </button>
+          </div>
           
-          {selectedParty.photo_url && (
-            <img
-              src={selectedParty.photo_url}
-              alt={selectedParty.name}
-              className="w-full h-auto object-contain rounded-lg"
-            />
-          )}
-          
-          <div className="w-full flex flex-col items-center gap-4 text-center">
-            <h2 className="text-2xl font-bold text-white">{selectedParty.name}</h2>
-            <p className="text-sm text-white/80">
-              {new Date(selectedParty.date).toLocaleDateString()}
-            </p>
-            {selectedParty.description && (
-              <p className="text-sm text-white whitespace-pre-wrap">
-                {selectedParty.description}
-              </p>
+          <div className="space-y-4">
+            {selectedParty.photo_url && (
+              <img
+                src={selectedParty.photo_url}
+                alt={selectedParty.name}
+                className="w-full h-auto object-contain rounded-lg"
+              />
             )}
             
-            <button
-              onClick={onLoginPrompt}
-              className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700"
-            >
-              Login to Purchase
-            </button>
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-2 text-white">{selectedParty.name}</h2>
+              <p className="text-sm mb-4 text-white/80">
+                {new Date(selectedParty.date).toLocaleDateString()}
+              </p>
+              {selectedParty.description && (
+                <p className="text-sm mb-4 text-white whitespace-pre-wrap">
+                  {selectedParty.description}
+                </p>
+              )}
+              
+              <button
+                onClick={onLoginPrompt}
+                className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700"
+              >
+                Login to Purchase
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -140,21 +144,23 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
   if (selectedProduction) {
     const productionParties = parties.filter(p => p.production_id === selectedProduction.id);
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center p-6 overflow-y-auto">
-        <div className="w-full max-w-md flex flex-col items-center gap-4">
-          <button
-            onClick={() => setSelectedProduction(null)}
-            className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700"
-          >
-            ✕ Close
-          </button>
+      <div className="min-h-screen w-full flex items-center justify-center p-6">
+        <div className="w-full max-w-md space-y-4">
+          <div className="flex justify-center">
+            <button
+              onClick={() => setSelectedProduction(null)}
+              className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700"
+            >
+              ✕ Close
+            </button>
+          </div>
           
-          <div className="w-full flex flex-col items-center gap-4 text-center">
+          <div className="text-center space-y-4">
             {selectedProduction.logo_url && (
               <img
                 src={selectedProduction.logo_url}
                 alt={selectedProduction.name}
-                className="w-full max-w-xs h-auto object-contain"
+                className="w-full max-w-xs h-auto object-contain mx-auto"
               />
             )}
             <h2 className="text-2xl font-bold text-white">{selectedProduction.name}</h2>
