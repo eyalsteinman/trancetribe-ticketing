@@ -193,29 +193,33 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
   const displayItems = getDisplayItems();
 
   return (
-    <div className="w-full p-4">
-      <BrowseMenu value={browseMode} onValueChange={setBrowseMode} />
+    <div className="w-full max-w-4xl mx-auto">
+      <div className="flex justify-center mb-4">
+        <div className="w-full max-w-xs">
+          <BrowseMenu value={browseMode} onValueChange={setBrowseMode} />
+        </div>
+      </div>
       
-      <div className="flex overflow-x-auto gap-4 pb-4 mb-6">
+      <div className="flex overflow-x-auto gap-4 pb-4 mb-6 justify-center px-4">
         {browseMode === "production" ? (
           productions.map((production) => (
             <div
               key={production.id}
               onClick={() => handleProductionClick(production)}
-              className="flex-shrink-0 cursor-pointer w-24"
+              className="flex-shrink-0 cursor-pointer flex flex-col items-center"
             >
               {production.logo_url ? (
                 <img
                   src={production.logo_url}
                   alt={production.name}
-                  className="w-24 h-24 object-cover"
+                  className="w-24 h-24 object-contain rounded-lg"
                 />
               ) : (
-                <div className="w-24 h-24 bg-muted flex items-center justify-center">
-                  <span className="text-xs text-center font-semibold text-white">{production.name}</span>
+                <div className="w-24 h-24 bg-muted flex items-center justify-center rounded-lg">
+                  <span className="text-xs text-center font-semibold text-white p-2">{production.name}</span>
                 </div>
               )}
-              <p className="text-xs text-center mt-2 truncate text-white">{production.name}</p>
+              <p className="text-xs text-center mt-2 max-w-[96px] text-white">{production.name}</p>
             </div>
           ))
         ) : (
@@ -223,27 +227,27 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
             <div
               key={party.id}
               onClick={() => handlePartyClick(party)}
-              className="flex-shrink-0 cursor-pointer w-32"
+              className="flex-shrink-0 cursor-pointer flex flex-col items-center"
             >
               {party.photo_url ? (
                 <img
                   src={party.photo_url}
                   alt={party.name}
-                  className="w-32 h-24 object-cover"
+                  className="w-32 h-24 object-cover rounded-lg"
                 />
               ) : (
-                <div className="w-32 h-24 bg-muted flex items-center justify-center">
+                <div className="w-32 h-24 bg-muted flex items-center justify-center rounded-lg">
                   <span className="text-xs text-center p-2" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{party.name}</span>
                 </div>
               )}
-              <p className="text-xs text-center mt-2 truncate" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{party.name}</p>
+              <p className="text-xs text-center mt-2 max-w-[128px]" style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}>{party.name}</p>
             </div>
           ))
         )}
       </div>
 
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black h-5 w-5" style={{ color: '#000000' }} />
+      <div className="relative mb-6 max-w-md mx-auto px-4">
+        <Search className="absolute left-7 top-1/2 transform -translate-y-1/2 text-black h-5 w-5" style={{ color: '#000000' }} />
         <Input
           type="text"
           placeholder={browseMode === 'production' ? t('browse_by_production') : browseMode === 'party' ? t('browse_by_party') : t('browse_by_date')}
@@ -253,7 +257,7 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
         />
       </div>
 
-      {browseMode === "party" && !carouselOnly && (
+      {browseMode === "party" && !carouselOnly && searchQuery && (
         <div className="space-y-4">
           {(displayItems as Party[]).map((party) => (
             <div

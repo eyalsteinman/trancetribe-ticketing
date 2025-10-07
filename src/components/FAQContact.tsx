@@ -32,11 +32,6 @@ interface FAQContactProps {
 
 const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
   const [faqs, setFaqs] = useState<FAQItem[]>([]);
-  
-  useBackNavigation({
-    onBackNavigation: onBack,
-    isActive: true
-  });
   const [contactInfo, setContactInfo] = useState<ContactInfo>({
     email: '',
     phone: '',
@@ -52,6 +47,11 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
   const [editAnswer, setEditAnswer] = useState('');
   
   const { toast } = useToast();
+
+  useBackNavigation({
+    onBackNavigation: onBack,
+    isActive: true
+  });
 
   useEffect(() => {
     fetchFAQs();
