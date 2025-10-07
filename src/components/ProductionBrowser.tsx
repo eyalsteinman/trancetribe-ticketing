@@ -97,8 +97,8 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
 
   if (selectedParty) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center px-6 py-4">
-        <div className="w-full max-w-full sm:max-w-md">
+      <div className="min-h-screen w-full flex items-center justify-center p-6">
+        <div className="max-w-md">
           <div className="flex justify-end mb-4">
             <button
               onClick={() => setSelectedParty(null)}
@@ -144,8 +144,8 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
   if (selectedProduction) {
     const productionParties = parties.filter(p => p.production_id === selectedProduction.id);
     return (
-      <div className="min-h-screen w-full flex items-center justify-center px-6 py-4">
-        <div className="w-full max-w-full sm:max-w-md space-y-4">
+      <div className="min-h-screen w-full flex items-center justify-center p-6">
+        <div className="max-w-md space-y-4">
           <div className="flex justify-end">
             <button
               onClick={() => setSelectedProduction(null)}
