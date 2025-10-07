@@ -97,8 +97,8 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
 
   if (selectedParty) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center p-4">
-        <div className="max-w-md w-full mx-auto">
+      <div className="min-h-screen w-full flex items-center justify-center px-4">
+        <div className="max-w-md w-full">
           <div className="flex justify-end mb-4">
             <button
               onClick={() => setSelectedParty(null)}
@@ -108,7 +108,7 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
             </button>
           </div>
           
-          <div className="px-4 space-y-4">
+          <div className="space-y-4">
             {selectedParty.photo_url && (
               <img
                 src={selectedParty.photo_url}
@@ -144,8 +144,8 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
   if (selectedProduction) {
     const productionParties = parties.filter(p => p.production_id === selectedProduction.id);
     return (
-      <div className="min-h-screen w-full flex items-center justify-center p-4">
-        <div className="max-w-md w-full mx-auto space-y-4">
+      <div className="min-h-screen w-full flex items-center justify-center px-4">
+        <div className="max-w-md w-full space-y-4">
           <div className="flex justify-end">
             <button
               onClick={() => setSelectedProduction(null)}
@@ -155,7 +155,7 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
             </button>
           </div>
           
-          <div className="text-center px-4 space-y-4">
+          <div className="text-center space-y-4">
             {selectedProduction.logo_url && (
               <img
                 src={selectedProduction.logo_url}
