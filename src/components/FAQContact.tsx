@@ -6,7 +6,6 @@ import { Textarea } from '@/components/ui/textarea';
 import PageHeader from './ui/page-header';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { useBackNavigation } from '@/hooks/useBackNavigation';
 import RtlInput from './RtlInput';
 import RtlTextArea from './RtlTextArea';
 import RtlText from './RtlText';
@@ -49,14 +48,13 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    fetchFAQs();
-    fetchContactInfo();
+    const loadData = async () => {
+      await fetchFAQs();
+      await fetchContactInfo();
+      setLoading(false);
+    };
+    loadData();
   }, []);
-
-  useBackNavigation({
-    onBackNavigation: onBack,
-    isActive: !loading
-  });
 
   const fetchFAQs = async () => {
     try {
@@ -78,9 +76,11 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
         .from('contact_info')
         .select('*')
         .limit(1)
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error) {
+        console.error('Error fetching contact info:', error);
+      }
       
       if (data) {
         setContactInfo({
@@ -94,10 +94,8 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
           address: data.address || ''
         });
       }
-      setLoading(false);
     } catch (error) {
       console.error('Error fetching contact info:', error);
-      setLoading(false);
     }
   };
 
