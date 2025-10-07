@@ -509,52 +509,134 @@ const UserMessaging: React.FC<UserMessagingProps> = ({ onBack, userId }) => {
               </Button>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            {conversations.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>No conversations yet</p>
-                <p className="text-sm">Send your first direct message!</p>
+          <CardContent className="space-y-6">
+            {/* Friends List Section */}
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-medium">Your Friends</h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowAddFriend(!showAddFriend)}
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Friend
+                </Button>
               </div>
-            ) : (
-              <div className="space-y-3">
-                {conversations.map((conversation) => (
-                  <Card
-                    key={conversation.friend_id}
-                    className="cursor-pointer hover:bg-accent/50 transition-colors"
-                    onClick={() => {
-                      setSelectedConversation(conversation.friend_id);
-                      setCurrentView('chat');
-                    }}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-semibold">{conversation.friend_name}</h3>
-                            {conversation.unread_count > 0 && (
-                              <Badge variant="destructive" className="text-xs">
-                                {conversation.unread_count}
-                              </Badge>
+
+              {showAddFriend && (
+                <div className="p-3 border rounded-lg bg-muted/50 mb-3">
+                  <div className="flex gap-2">
+                    <Input
+                      value={newFriendCode}
+                      onChange={(e) => setNewFriendCode(e.target.value)}
+                      placeholder="Enter friend's personal code"
+                    />
+                    <Button onClick={addFriend} size="sm">
+                      Add
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setShowAddFriend(false)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {friends.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  No friends added yet. Add friends to start messaging!
+                </p>
+              ) : (
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {friends.map((friend) => (
+                    <Card 
+                      key={friend.id}
+                      className="cursor-pointer hover:bg-accent/50 transition-colors"
+                      onClick={() => {
+                        const friendId = friend.friend_personal_code;
+                        setSelectedConversation(friendId);
+                        setCurrentView('chat');
+                      }}
+                    >
+                      <CardContent className="p-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium">{friend.friend_display_name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              Code: {friend.friend_personal_code}
+                            </p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedFriends(new Set([friend.friend_personal_code]));
+                              setCurrentView('new-message');
+                            }}
+                          >
+                            <Send className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Conversations Section */}
+            <div>
+              <h3 className="font-medium mb-3">Recent Conversations</h3>
+              {conversations.length === 0 ? (
+                <div className="text-center py-6 text-muted-foreground">
+                  <Users className="h-10 w-10 mx-auto mb-3 opacity-50" />
+                  <p className="text-sm">No conversations yet</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {conversations.map((conversation) => (
+                    <Card
+                      key={conversation.friend_id}
+                      className="cursor-pointer hover:bg-accent/50 transition-colors"
+                      onClick={() => {
+                        setSelectedConversation(conversation.friend_id);
+                        setCurrentView('chat');
+                      }}
+                    >
+                      <CardContent className="p-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-medium">{conversation.friend_name}</h4>
+                              {conversation.unread_count > 0 && (
+                                <Badge variant="destructive" className="text-xs">
+                                  {conversation.unread_count}
+                                </Badge>
+                              )}
+                            </div>
+                            {conversation.last_message && (
+                              <p className="text-sm text-muted-foreground truncate">
+                                {conversation.last_message}
+                              </p>
+                            )}
+                            {conversation.last_message_time && (
+                              <p className="text-xs text-muted-foreground">
+                                {new Date(conversation.last_message_time).toLocaleString()}
+                              </p>
                             )}
                           </div>
-                          {conversation.last_message && (
-                            <p className="text-sm text-muted-foreground truncate">
-                              {conversation.last_message}
-                            </p>
-                          )}
-                          {conversation.last_message_time && (
-                            <p className="text-xs text-muted-foreground">
-                              {new Date(conversation.last_message_time).toLocaleString()}
-                            </p>
-                          )}
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 
