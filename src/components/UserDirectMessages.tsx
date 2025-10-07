@@ -2,12 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, MessageCircle, Trash2, X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { ArrowLeft, MessageCircle, Trash2, X, Plus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import PageHeader from '@/components/ui/page-header';
 import Footer from '@/components/ui/footer';
 import { usePhoneBackNavigation } from '@/hooks/usePhoneBackNavigation';
+
+interface Friend {
+  id: string;
+  friend_personal_code: string;
+  friend_display_name: string;
+  friend_first_name?: string;
+  friend_last_name?: string;
+}
 
 interface DirectMessage {
   id: string;
@@ -25,7 +34,10 @@ interface UserDirectMessagesProps {
 
 const UserDirectMessages: React.FC<UserDirectMessagesProps> = ({ onBack, userId }) => {
   const [messages, setMessages] = useState<DirectMessage[]>([]);
+  const [friends, setFriends] = useState<Friend[]>([]);
   const [selectedMessage, setSelectedMessage] = useState<DirectMessage | null>(null);
+  const [newFriendCode, setNewFriendCode] = useState('');
+  const [showAddFriend, setShowAddFriend] = useState(false);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -42,7 +54,82 @@ const UserDirectMessages: React.FC<UserDirectMessagesProps> = ({ onBack, userId 
 
   useEffect(() => {
     loadMessages();
+    loadFriends();
   }, [userId]);
+
+  const loadFriends = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('friends')
+        .select('*')
+        .eq('user_id', userId);
+
+      if (error) throw error;
+      setFriends(data || []);
+    } catch (error: any) {
+      console.error('Error loading friends:', error);
+    }
+  };
+
+  const addFriend = async () => {
+    if (!newFriendCode.trim()) return;
+
+    try {
+      // Use secure lookup function
+      const { data: profile, error } = await supabase
+        .rpc('lookup_friend_by_personal_code', { _personal_code: newFriendCode.trim() })
+        .single();
+
+      if (error || !profile) {
+        toast({
+          title: "Error",
+          description: "User not found with this personal code",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Check if already a friend
+      const existingFriend = friends.find(f => f.friend_personal_code === profile.personal_code);
+      if (existingFriend) {
+        toast({
+          title: "Already Added",
+          description: "This user is already in your friends list",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Add to friends
+      const { error: friendError } = await supabase
+        .from('friends')
+        .insert({
+          user_id: userId,
+          friend_personal_code: profile.personal_code,
+          friend_display_name: profile.display_name || `${profile.first_name} ${profile.last_name}`.trim(),
+          friend_first_name: profile.first_name,
+          friend_last_name: profile.last_name
+        });
+
+      if (friendError) throw friendError;
+
+      toast({
+        title: "Success",
+        description: "Friend added successfully!"
+      });
+
+      setNewFriendCode('');
+      setShowAddFriend(false);
+      loadFriends();
+    } catch (error: any) {
+      console.error('Error adding friend:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add friend",
+        variant: "destructive"
+      });
+    }
+  };
 
   const loadMessages = async () => {
     try {
@@ -202,9 +289,77 @@ const UserDirectMessages: React.FC<UserDirectMessagesProps> = ({ onBack, userId 
         />
 
         <div className="space-y-6 pt-6">
+          {/* Friends Section */}
           <Card>
             <CardHeader>
-              <CardTitle>Direct Messages</CardTitle>
+              <CardTitle className="flex items-center justify-between">
+                <span>Your Friends</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowAddFriend(!showAddFriend)}
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add Friend
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {showAddFriend && (
+                <div className="p-4 border rounded-lg bg-muted/50 mb-4">
+                  <div className="flex gap-2">
+                    <Input
+                      value={newFriendCode}
+                      onChange={(e) => setNewFriendCode(e.target.value)}
+                      placeholder="Enter friend's personal code"
+                      onKeyPress={(e) => e.key === 'Enter' && addFriend()}
+                    />
+                    <Button onClick={addFriend} size="sm">
+                      Add
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setShowAddFriend(false)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {friends.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  No friends added yet. Add friends to start messaging!
+                </p>
+              ) : (
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {friends.map((friend) => (
+                    <Card 
+                      key={friend.id}
+                      className="hover:bg-accent/50 transition-colors"
+                    >
+                      <CardContent className="p-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium">{friend.friend_display_name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              Code: {friend.friend_personal_code}
+                            </p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Messages Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Messages</CardTitle>
             </CardHeader>
             <CardContent>
               {loading ? (
