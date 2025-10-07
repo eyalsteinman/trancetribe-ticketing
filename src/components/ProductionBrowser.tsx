@@ -99,7 +99,7 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
     return (
       <div className="min-h-screen w-full flex items-center justify-center p-6">
         <div className="max-w-md">
-          <div className="flex justify-end mb-4">
+          <div className="flex justify-start mb-4">
             <button
               onClick={() => setSelectedParty(null)}
               className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700"
@@ -146,7 +146,7 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
     return (
       <div className="min-h-screen w-full flex items-center justify-center p-6">
         <div className="max-w-md space-y-4">
-          <div className="flex justify-end">
+          <div className="flex justify-start">
             <button
               onClick={() => setSelectedProduction(null)}
               className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700"
