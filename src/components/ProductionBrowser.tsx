@@ -201,7 +201,7 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
         </div>
       </div>
       
-      <div className="flex overflow-x-auto gap-4 pb-4 mb-6 justify-start">
+      <div className="flex overflow-x-auto gap-4 pb-4 mb-6 px-4 justify-start">
         {browseMode === "production" ? (
           productions.map((production) => (
             <div
