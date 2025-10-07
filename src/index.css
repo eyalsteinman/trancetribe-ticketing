@@ -487,12 +487,20 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    background: #4C1D95;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
   body {
     @apply bg-background text-foreground;
     overflow-x: hidden;
     width: 100vw;
     max-width: 100vw;
     scroll-behavior: smooth;
+    min-height: 100vh;
+    background: #4C1D95;
   }
 
   .container,
