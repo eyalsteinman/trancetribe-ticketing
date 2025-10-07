@@ -525,12 +525,13 @@ const UserMessaging: React.FC<UserMessagingProps> = ({ onBack, userId }) => {
               </div>
 
               {showAddFriend && (
-                <div className="p-3 border rounded-lg bg-muted/50 mb-3">
+                <div className="p-4 border rounded-lg bg-muted/50 mb-3">
                   <div className="flex gap-2">
                     <Input
                       value={newFriendCode}
                       onChange={(e) => setNewFriendCode(e.target.value)}
                       placeholder="Enter friend's personal code"
+                      onKeyPress={(e) => e.key === 'Enter' && addFriend()}
                     />
                     <Button onClick={addFriend} size="sm">
                       Add
