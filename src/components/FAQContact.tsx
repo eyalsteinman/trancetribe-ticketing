@@ -48,15 +48,15 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
   
   const { toast } = useToast();
 
-  useBackNavigation({
-    onBackNavigation: onBack,
-    isActive: true
-  });
-
   useEffect(() => {
     fetchFAQs();
     fetchContactInfo();
   }, []);
+
+  useBackNavigation({
+    onBackNavigation: onBack,
+    isActive: !loading
+  });
 
   const fetchFAQs = async () => {
     try {
