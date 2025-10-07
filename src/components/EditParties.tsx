@@ -57,6 +57,26 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
   useEffect(() => {
     loadParties();
     loadProductions();
+
+    // Set up real-time subscription for party updates
+    const channel = supabase
+      .channel('party-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'parties'
+        },
+        () => {
+          loadParties();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   useEffect(() => {

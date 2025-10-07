@@ -74,6 +74,26 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
     loadParties();
     loadAdminProfile();
     loadNotificationCounts();
+
+    // Set up real-time subscription for party updates
+    const channel = supabase
+      .channel('party-dashboard-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'parties'
+        },
+        () => {
+          loadParties();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   useEffect(() => {

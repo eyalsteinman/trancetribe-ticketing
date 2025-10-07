@@ -263,11 +263,6 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
     return (
       <div className="min-h-screen p-4">
         <div className="max-w-md mx-auto space-y-6">
-          <PageHeader
-            title="FAQ & Contact"
-            onBack={onBack}
-            showBackButton={true}
-          />
           <div className="text-center py-8">Loading...</div>
         </div>
       </div>

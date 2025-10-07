@@ -12,6 +12,7 @@ interface Production {
   id: string;
   name: string;
   logo_url: string | null;
+  description?: string | null;
 }
 
 interface Party {
@@ -59,7 +60,7 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
   const loadProductions = async () => {
     const { data, error } = await supabase
       .from("productions")
-      .select("id, name, logo_url")
+      .select("id, name, logo_url, description")
       .order('name');
     
     if (!error && data) {
@@ -163,9 +164,9 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
               />
             )}
             <h2 className="text-2xl font-bold text-white">{selectedProduction.name}</h2>
-            {(selectedProduction as any).description && (
+            {selectedProduction.description && (
               <p className="text-white text-base whitespace-pre-wrap leading-relaxed">
-                {(selectedProduction as any).description}
+                {selectedProduction.description}
               </p>
             )}
           </div>
@@ -193,14 +194,14 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
   const displayItems = getDisplayItems();
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <div className="flex justify-center mb-4">
-        <div className="w-full max-w-xs">
+    <div className="w-full max-w-4xl mx-auto px-4">
+      <div className="flex justify-center mb-6">
+        <div className="w-full max-w-sm">
           <BrowseMenu value={browseMode} onValueChange={setBrowseMode} />
         </div>
       </div>
       
-      <div className="flex overflow-x-auto gap-4 pb-4 mb-6 justify-center px-4">
+      <div className="flex overflow-x-auto gap-4 pb-4 mb-6 justify-start">
         {browseMode === "production" ? (
           productions.map((production) => (
             <div
