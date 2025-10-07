@@ -36,8 +36,12 @@ const UserDirectMessages: React.FC<UserDirectMessagesProps> = ({ onBack, userId 
   const [messages, setMessages] = useState<DirectMessage[]>([]);
   const [friends, setFriends] = useState<Friend[]>([]);
   const [selectedMessage, setSelectedMessage] = useState<DirectMessage | null>(null);
+  const [selectedFriend, setSelectedFriend] = useState<string | null>(null);
+  const [chatMessages, setChatMessages] = useState<DirectMessage[]>([]);
+  const [newMessage, setNewMessage] = useState('');
   const [newFriendCode, setNewFriendCode] = useState('');
   const [showAddFriend, setShowAddFriend] = useState(false);
+  const [currentView, setCurrentView] = useState<'main' | 'chat'>('main');
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -126,6 +130,140 @@ const UserDirectMessages: React.FC<UserDirectMessagesProps> = ({ onBack, userId 
       toast({
         title: "Error",
         description: "Failed to add friend",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const removeFriend = async (friendId: string) => {
+    try {
+      const { error } = await supabase
+        .from('friends')
+        .delete()
+        .eq('id', friendId)
+        .eq('user_id', userId);
+
+      if (error) throw error;
+
+      setFriends(prev => prev.filter(f => f.id !== friendId));
+      toast({
+        title: "Success",
+        description: "Friend removed successfully"
+      });
+    } catch (error: any) {
+      console.error('Error removing friend:', error);
+      toast({
+        title: "Error",
+        description: "Failed to remove friend",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const startChat = async (friendCode: string) => {
+    setSelectedFriend(friendCode);
+    setCurrentView('chat');
+    await loadChatMessages(friendCode);
+  };
+
+  const loadChatMessages = async (friendCode: string) => {
+    try {
+      // Get friend's user_id from their personal code
+      const { data: friendProfile } = await supabase
+        .rpc('lookup_friend_by_personal_code', { _personal_code: friendCode })
+        .single();
+
+      if (!friendProfile) return;
+
+      const { data, error } = await supabase
+        .from('direct_messages')
+        .select('*')
+        .or(`and(sender_id.eq.${userId},recipient_id.eq.${friendProfile.user_id}),and(sender_id.eq.${friendProfile.user_id},recipient_id.eq.${userId})`)
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+      setChatMessages(data || []);
+
+      // Mark incoming messages as read
+      const unreadMessages = data?.filter(msg => 
+        msg.recipient_id === userId && !msg.is_read
+      );
+
+      if (unreadMessages && unreadMessages.length > 0) {
+        await supabase
+          .from('direct_messages')
+          .update({ is_read: true })
+          .in('id', unreadMessages.map(msg => msg.id));
+      }
+    } catch (error: any) {
+      console.error('Error loading chat messages:', error);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!newMessage.trim() || !selectedFriend) return;
+
+    try {
+      const { data: friendProfile } = await supabase
+        .rpc('lookup_friend_by_personal_code', { _personal_code: selectedFriend })
+        .single();
+
+      if (!friendProfile) {
+        toast({
+          title: "Error",
+          description: "Friend not found",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const { error } = await supabase
+        .from('direct_messages')
+        .insert({
+          sender_id: userId,
+          recipient_id: friendProfile.user_id,
+          content: newMessage.trim()
+        });
+
+      if (error) throw error;
+
+      setNewMessage('');
+      await loadChatMessages(selectedFriend);
+
+      toast({
+        title: "Success",
+        description: "Message sent!"
+      });
+    } catch (error: any) {
+      console.error('Error sending message:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send message",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const deleteChatMessage = async (messageId: string) => {
+    try {
+      const { error } = await supabase
+        .from('direct_messages')
+        .delete()
+        .eq('id', messageId);
+
+      if (error) throw error;
+
+      setChatMessages(prev => prev.filter(msg => msg.id !== messageId));
+      
+      toast({
+        title: "Message deleted",
+        description: "The message has been deleted successfully."
+      });
+    } catch (error: any) {
+      console.error('Error deleting message:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete message",
         variant: "destructive"
       });
     }
@@ -231,6 +369,83 @@ const UserDirectMessages: React.FC<UserDirectMessagesProps> = ({ onBack, userId 
     }
   };
 
+  // Chat View
+  if (currentView === 'chat' && selectedFriend) {
+    const friend = friends.find(f => f.friend_personal_code === selectedFriend);
+    
+    return (
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-4xl mx-auto">
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setCurrentView('main');
+              setSelectedFriend(null);
+            }}
+            className="mb-4"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back
+          </Button>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                {friend?.friend_display_name || 'Chat'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="h-96 overflow-y-auto space-y-2 border rounded p-4">
+                {chatMessages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${message.sender_id === userId ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div className="group relative max-w-[70%]">
+                      <div
+                        className={`p-3 rounded-lg ${
+                          message.sender_id === userId
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted'
+                        }`}
+                      >
+                        <p className="text-sm break-words">{message.content}</p>
+                        <p className="text-xs opacity-70 mt-1">
+                          {new Date(message.created_at).toLocaleTimeString()}
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="absolute -top-2 -right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 bg-red-500 hover:bg-red-600"
+                        onClick={() => deleteChatMessage(message.id)}
+                      >
+                        <Trash2 className="h-3 w-3 text-white" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex gap-2">
+                <Input
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  placeholder="Type a message..."
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                />
+                <Button onClick={sendMessage} size="sm">
+                  <MessageCircle className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Message Detail View
   if (selectedMessage) {
     return (
       <div className="min-h-screen bg-background p-4">
@@ -341,11 +556,28 @@ const UserDirectMessages: React.FC<UserDirectMessagesProps> = ({ onBack, userId 
                     >
                       <CardContent className="p-3">
                         <div className="flex items-center justify-between">
-                          <div>
+                          <div className="flex-1">
                             <p className="font-medium">{friend.friend_display_name}</p>
                             <p className="text-xs text-muted-foreground">
                               Code: {friend.friend_personal_code}
                             </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={() => startChat(friend.friend_personal_code)}
+                            >
+                              <MessageCircle className="h-4 w-4 mr-1" />
+                              Chat
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => removeFriend(friend.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </div>
                         </div>
                       </CardContent>
