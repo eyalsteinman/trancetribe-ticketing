@@ -138,12 +138,12 @@ const AuthPage = () => {
   }
 
   return (
-    <>
+    <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]">
       {/* Animated background */}
       <div className="auth-animated-bg" />
       
       <div 
-        className={`min-h-screen w-full relative z-10 flex items-center justify-center p-4 ${isRTL ? 'rtl' : 'ltr'}`}
+        className={`min-h-screen w-full relative z-10 flex items-center justify-center p-4 pb-20 ${isRTL ? 'rtl' : 'ltr'}`}
         dir={isRTL ? 'rtl' : 'ltr'}
         style={{ '--scroll-y': `${scrollY * 0.1}px` } as React.CSSProperties}
       >
@@ -187,7 +187,7 @@ const AuthPage = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
