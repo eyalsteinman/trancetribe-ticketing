@@ -80,6 +80,20 @@ const ProductionCarouselAuth = () => {
   const items = browseMode === 'production' ? productions : parties;
   const buttonText = browseMode === 'production' ? t('login_to_join_tribe') : 'Login to Purchase Tickets';
 
+  const handleScrollToAuth = () => {
+    const authForm = document.querySelector('[data-auth-form]');
+    if (authForm) {
+      const rect = authForm.getBoundingClientRect();
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const targetPosition = rect.top + scrollTop;
+      
+      window.scrollTo({ 
+        top: targetPosition, 
+        behavior: 'smooth' 
+      });
+    }
+  };
+
   return (
     <div className="w-full mb-6">
       <BrowseMenu value={browseMode} onValueChange={setBrowseMode} />
@@ -100,7 +114,7 @@ const ProductionCarouselAuth = () => {
                       <img 
                         src={('logo_url' in item ? item.logo_url : item.photo_url) || ''} 
                         alt={item.name}
-                        className="w-full h-full object-contain"
+                        className="w-full h-full object-cover"
                       />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
@@ -115,10 +129,7 @@ const ProductionCarouselAuth = () => {
                     <Button
                       className="w-full bg-purple-600 hover:bg-purple-700 text-white"
                       size="sm"
-                      onClick={() => {
-                        // Scroll to auth form
-                        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-                      }}
+                      onClick={handleScrollToAuth}
                     >
                       {buttonText}
                     </Button>

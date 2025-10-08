@@ -156,7 +156,7 @@ const AuthPage = () => {
             <ProductionCarouselAuth />
           </div>
 
-          <div className="w-full flex flex-col items-center space-y-6">
+          <div className="w-full flex flex-col items-center space-y-6" data-auth-form>
             {/* Language selector at top for both RTL and LTR */}
             <div className="text-center space-y-4">
               <LanguageSelector />
