@@ -8,12 +8,15 @@ import LanguageSelector from '@/components/LanguageSelector';
 import RtlText from '@/components/RtlText';
 import AdminPasswordForm from '@/components/AdminPasswordForm';
 import { supabase } from '@/integrations/supabase/client';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 const AuthPage = () => {
   const [showAdminPassword, setShowAdminPassword] = useState(false);
   const [isUserLogin, setIsUserLogin] = useState(false);
   const [pendingAdminSignup, setPendingAdminSignup] = useState<{email: string, password: string} | null>(null);
   const [scrollY, setScrollY] = useState(0);
+  const [showSocialsDialog, setShowSocialsDialog] = useState(false);
   const { backgroundColor, isBackgroundDark } = useBackground();
   const { t, isRTL } = useLanguage();
 

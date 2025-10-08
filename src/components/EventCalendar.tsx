@@ -22,8 +22,10 @@ interface EventDay {
     name: string;
     photo_url?: string;
     date: string;
+    production_id?: string;
   };
   qrStatus: 'approved' | 'pending';
+  isNew?: boolean;
   friends: {
     friend_display_name: string;
     friend_first_name?: string;
@@ -37,6 +39,7 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId }) => {
   const [eventDays, setEventDays] = useState<EventDay[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<EventDay | null>(null);
   const [loading, setLoading] = useState(true);
+  const [newParties, setNewParties] = useState<any[]>([]);
 
   useEffect(() => {
     loadUserEvents();
@@ -45,6 +48,30 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId }) => {
   const loadUserEvents = async () => {
     try {
       setLoading(true);
+      
+      // Get productions user follows
+      const { data: followedProductions } = await supabase
+        .from('production_followers')
+        .select('production_id')
+        .eq('user_id', userId);
+
+      const productionIds = followedProductions?.map(f => f.production_id) || [];
+
+      // Get new parties from followed productions (last 7 days)
+      if (productionIds.length > 0) {
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+        const { data: newPartiesData } = await supabase
+          .from('parties')
+          .select('*')
+          .in('production_id', productionIds)
+          .gte('created_at', sevenDaysAgo.toISOString())
+          .eq('is_active', true)
+          .order('created_at', { ascending: false });
+
+        setNewParties(newPartiesData || []);
+      }
       
       // Get user's QR codes with party details
       const { data: qrCodes, error: qrError } = await supabase
@@ -55,7 +82,8 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId }) => {
             id,
             name,
             photo_url,
-            date
+            date,
+            production_id
           )
         `)
         .eq('user_id', userId);
@@ -78,6 +106,7 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId }) => {
         const dateKey = party.date;
         
         if (!eventsMap.has(dateKey)) {
+          const isNew = newParties.some(np => np.id === party.id);
           eventsMap.set(dateKey, {
             date: parseISO(party.date),
             party: {
@@ -85,8 +114,10 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId }) => {
               name: party.name,
               photo_url: party.photo_url,
               date: party.date,
+              production_id: party.production_id,
             },
             qrStatus: qr.is_approved ? 'approved' : 'pending',
+            isNew,
             friends: []
           });
         } else {
@@ -250,6 +281,52 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId }) => {
               </div>
             </CardContent>
           </Card>
+
+          {/* New Parties from Followed Productions */}
+          {newParties.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">New Events from Your Tribes</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {newParties.map((party) => (
+                    <div
+                      key={party.id}
+                      className="cursor-pointer group overflow-hidden border border-border rounded-lg hover:shadow-lg transition-shadow"
+                      onClick={() => {
+                        localStorage.setItem('selectedPartyId', party.id);
+                        window.location.href = '/';
+                      }}
+                    >
+                      {party.photo_url ? (
+                        <div className="h-32 w-full overflow-hidden">
+                          <img 
+                            src={party.photo_url} 
+                            alt={party.name}
+                            className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                      ) : (
+                        <div className="h-32 w-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                          <CalendarIcon className="h-12 w-12 text-primary/40" />
+                        </div>
+                      )}
+                      <div className="p-3">
+                        <h4 className="font-semibold text-sm mb-1">{party.name}</h4>
+                        <p className="text-xs text-muted-foreground">
+                          {format(parseISO(party.date), 'MMM d, yyyy')}
+                        </p>
+                        <Badge className="mt-2" variant="secondary">
+                          New
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Calendar and Event Details */}
           <div className="grid gap-6 lg:grid-cols-2">

@@ -33,6 +33,7 @@ import UserDirectMessages from './UserDirectMessages';
 import EventCalendar from './EventCalendar';
 import { useTheme } from '@/hooks/useDarkMode';
 import PageHeader from './ui/page-header';
+import ProductionCarousel from './ProductionCarousel';
 
 interface UserDashboardProps {
   user: User;
@@ -47,6 +48,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   const [selectedQRCode, setSelectedQRCode] = useState<any>(null);
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [unreadDirectMessageCount, setUnreadDirectMessageCount] = useState(0);
+  const [newEventsCount, setNewEventsCount] = useState(0);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
   const { currentTheme, cycleTheme, getThemeDisplayName } = useTheme();
@@ -57,12 +59,14 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     loadUserProfile();
     loadUnreadMessageCount();
     loadUnreadDirectMessageCount();
+    loadNewEventsCount();
     
     // Set up polling to refresh QR codes and messages every 30 seconds
     const interval = setInterval(() => {
       loadUserQRCodes();
       loadUnreadMessageCount();
       loadUnreadDirectMessageCount();
+      loadNewEventsCount();
     }, 30000);
 
     return () => clearInterval(interval);
@@ -154,6 +158,41 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
       }
     } catch (error) {
       console.error('Error loading unread direct message count:', error);
+    }
+  };
+
+  const loadNewEventsCount = async () => {
+    try {
+      // Get productions user follows
+      const { data: followedProductions, error: followError } = await supabase
+        .from('production_followers')
+        .select('production_id')
+        .eq('user_id', user.id);
+
+      if (followError) throw followError;
+
+      if (!followedProductions || followedProductions.length === 0) {
+        setNewEventsCount(0);
+        return;
+      }
+
+      const productionIds = followedProductions.map(f => f.production_id);
+
+      // Get parties from followed productions created in last 7 days
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const { count, error: partyError } = await supabase
+        .from('parties')
+        .select('*', { count: 'exact', head: true })
+        .in('production_id', productionIds)
+        .gte('created_at', sevenDaysAgo.toISOString())
+        .eq('is_active', true);
+
+      if (partyError) throw partyError;
+      setNewEventsCount(count || 0);
+    } catch (error) {
+      console.error('Error loading new events count:', error);
     }
   };
 
@@ -317,6 +356,9 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         </Button>
       </div>
 
+      {/* Production Carousel */}
+      <ProductionCarousel userId={user.id} />
+
       <div className="w-full">
           {(() => {
             const items = [
@@ -329,7 +371,16 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
               {
                 id: 'event-calendar',
                 title: t('event_calendar'),
-                icon: <CalendarDays className="h-12 w-12" />,
+                icon: (
+                  <div className="relative">
+                    <CalendarDays className="h-12 w-12" />
+                    {newEventsCount > 0 && (
+                      <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                        {newEventsCount > 9 ? '9+' : newEventsCount}
+                      </div>
+                    )}
+                  </div>
+                ),
                 onClick: () => setCurrentView('event-calendar' as const),
               },
               {

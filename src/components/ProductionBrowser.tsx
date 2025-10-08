@@ -39,6 +39,7 @@ interface ProductionBrowserProps {
 }
 
 const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBrowserProps) => {
+  const { t } = useLanguage();
   const [productions, setProductions] = useState<Production[]>([]);
   const [parties, setParties] = useState<Party[]>([]);
   const [selectedParty, setSelectedParty] = useState<Party | null>(null);
@@ -46,7 +47,6 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
   const [searchQuery, setSearchQuery] = useState("");
   const [browseMode, setBrowseMode] = useState("production");
   const { isBackgroundDark } = useBackground();
-  const { t } = useLanguage();
 
   const filteredProductions = productions.filter(production =>
     production.name.toLowerCase().includes(searchQuery.toLowerCase())

@@ -8,6 +8,7 @@ import UserDashboard from '@/components/UserDashboard';
 import AdminDashboardWithPermissions from '@/components/AdminDashboardWithPermissions';
 import ProfileCompletion from '@/components/ProfileCompletion';
 import { useProfileCompletion } from '@/hooks/useProfileCompletion';
+import SocialNetworksPrompt from '@/components/SocialNetworksPrompt';
 
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -111,7 +112,12 @@ const Index = () => {
   }
 
   console.log('User is regular user, showing user dashboard');
-  return <UserDashboard user={user} />;
+  return (
+    <>
+      <SocialNetworksPrompt userId={user.id} onClose={() => {}} />
+      <UserDashboard user={user} />
+    </>
+  );
 };
 
 export default Index;

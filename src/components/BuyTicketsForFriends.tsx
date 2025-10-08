@@ -143,35 +143,34 @@ const BuyTicketsForFriends = ({ user, party, onBack }: BuyTicketsForFriendsProps
 
   const generateFreeTickets = async (profiles: any[]) => {
     try {
-      // Generate QR codes for friends
-      const qrCodes = profiles.map(profile => ({
-        user_id: profile.user_id,
-        party_id: party.id,
-        code: `${profile.personal_code}-${party.id}-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
-        is_approved: true, // Auto-approve free tickets
-        is_scanned: false,
-        auto_approved: true,
-        ticket_type_id: null // No ticket type for free tickets
-      }));
-
-      const { error: insertError } = await supabase
-        .from('qr_codes')
-        .insert(qrCodes);
-
-      if (insertError) {
-        toast({
-          title: "Error",
-          description: "Failed to generate tickets for friends",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Send QR codes to friends via email
+      // Generate QR codes for friends individually to avoid batching issues
       for (let i = 0; i < profiles.length; i++) {
         const profile = profiles[i];
-        const qrCode = qrCodes[i];
-        
+        const qrCode = {
+          user_id: profile.user_id,
+          party_id: party.id,
+          code: `${profile.personal_code}-${party.id}-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+          is_approved: true, // Auto-approve free tickets
+          is_scanned: false,
+          auto_approved: true,
+          ticket_type_id: null // No ticket type for free tickets
+        };
+
+        const { error: insertError } = await supabase
+          .from('qr_codes')
+          .insert(qrCode);
+
+        if (insertError) {
+          console.error(`Failed to generate ticket for ${profile.display_name}:`, insertError);
+          toast({
+            title: "Error",
+            description: `Failed to generate ticket for ${profile.display_name || profile.email}`,
+            variant: "destructive"
+          });
+          continue;
+        }
+
+        // Send QR code via email
         try {
           await supabase.functions.invoke('send-qr-code-email', {
             body: {
@@ -194,6 +193,7 @@ const BuyTicketsForFriends = ({ user, party, onBack }: BuyTicketsForFriendsProps
       });
       onBack();
     } catch (error) {
+      console.error('Error generating free tickets:', error);
       toast({
         title: "Error",
         description: "Failed to generate free tickets",

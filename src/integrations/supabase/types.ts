@@ -629,6 +629,27 @@ export type Database = {
           },
         ]
       }
+      production_followers: {
+        Row: {
+          created_at: string
+          id: string
+          production_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          production_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          production_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       productions: {
         Row: {
           created_at: string
