@@ -331,7 +331,11 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
 
   return (
-    <div className="min-h-screen w-full transition-colors duration-500 p-4">
+    <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]">
+      {/* Animated background */}
+      <div className="auth-animated-bg" />
+      
+      <div className="min-h-screen w-full relative z-10 transition-colors duration-500 p-4">
       {/* Header */}
       <div className="relative pt-2 pb-6">
         <h1 className="text-2xl font-bold text-foreground mb-1">
@@ -586,6 +590,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         
       {/* Footer */}
       <Footer />
+      </div>
     </div>
   );
 };
