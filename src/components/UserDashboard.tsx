@@ -597,17 +597,14 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
       {/* Join Tribe Success Dialog */}
       <Dialog open={showJoinTribeDialog} onOpenChange={setShowJoinTribeDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-center text-xl">🎉</DialogTitle>
-          </DialogHeader>
-          <div className="text-center py-4">
-            <p className="text-lg mb-6">
+        <DialogContent className="sm:max-w-sm bg-purple-600/90 backdrop-blur-md border-purple-400/30 rounded-2xl p-8 animate-scale-in">
+          <div className="text-center space-y-6">
+            <p className="text-white font-bold text-lg leading-relaxed">
               You are now registered to our production and can buy tickets to our events
             </p>
             <Button 
               onClick={() => setShowJoinTribeDialog(false)}
-              className="w-full"
+              className="w-full bg-white hover:bg-white/90 text-purple-700 font-bold text-base py-6 rounded-xl"
             >
               Sababa
             </Button>
