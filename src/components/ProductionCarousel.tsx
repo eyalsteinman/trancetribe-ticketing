@@ -16,9 +16,10 @@ interface Production {
 interface ProductionCarouselProps {
   userId: string | null;
   onLoginRequired?: () => void;
+  onJoinSuccess?: () => void;
 }
 
-const ProductionCarousel = ({ userId, onLoginRequired }: ProductionCarouselProps) => {
+const ProductionCarousel = ({ userId, onLoginRequired, onJoinSuccess }: ProductionCarouselProps) => {
   const [productions, setProductions] = useState<Production[]>([]);
   const [followedProductions, setFollowedProductions] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
@@ -80,10 +81,10 @@ const ProductionCarousel = ({ userId, onLoginRequired }: ProductionCarouselProps
       if (error) throw error;
 
       setFollowedProductions(prev => new Set([...prev, productionId]));
-      toast({
-        title: t('success'),
-        description: 'Successfully joined tribe!',
-      });
+      
+      if (onJoinSuccess) {
+        onJoinSuccess();
+      }
     } catch (error: any) {
       console.error('Error joining tribe:', error);
       toast({

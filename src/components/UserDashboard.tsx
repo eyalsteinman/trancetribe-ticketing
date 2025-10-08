@@ -49,6 +49,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [unreadDirectMessageCount, setUnreadDirectMessageCount] = useState(0);
   const [newEventsCount, setNewEventsCount] = useState(0);
+  const [showJoinTribeDialog, setShowJoinTribeDialog] = useState(false);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
   const { currentTheme, cycleTheme, getThemeDisplayName } = useTheme();
@@ -361,7 +362,10 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
       </div>
 
       {/* Production Carousel */}
-      <ProductionCarousel userId={user.id} />
+      <ProductionCarousel 
+        userId={user.id} 
+        onJoinSuccess={() => setShowJoinTribeDialog(true)}
+      />
 
       <div className="w-full">
           {(() => {
@@ -590,6 +594,26 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         
       {/* Footer */}
       <Footer />
+
+      {/* Join Tribe Success Dialog */}
+      <Dialog open={showJoinTribeDialog} onOpenChange={setShowJoinTribeDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl">🎉</DialogTitle>
+          </DialogHeader>
+          <div className="text-center py-4">
+            <p className="text-lg mb-6">
+              You are now registered to our production and can buy tickets to our events
+            </p>
+            <Button 
+              onClick={() => setShowJoinTribeDialog(false)}
+              className="w-full"
+            >
+              Sababa
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
       </div>
     </div>
   );
