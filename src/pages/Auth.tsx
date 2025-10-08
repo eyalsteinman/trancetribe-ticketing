@@ -4,6 +4,7 @@ import Footer from '@/components/ui/footer';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import ProductionBrowser from '@/components/ProductionBrowser';
+import ProductionCarouselAuth from '@/components/ProductionCarouselAuth';
 import LanguageSelector from '@/components/LanguageSelector';
 import RtlText from '@/components/RtlText';
 import AdminPasswordForm from '@/components/AdminPasswordForm';
@@ -150,9 +151,9 @@ const AuthPage = () => {
         dir={isRTL ? 'rtl' : 'ltr'}
         style={{ '--scroll-y': `${scrollY * 0.1}px` } as React.CSSProperties}
       >
-        <div className="w-full space-y-8 auth-parallax">
+          <div className="w-full space-y-8 auth-parallax">
           <div className="auth-glass p-6 rounded-2xl max-w-4xl mx-auto">
-            <ProductionBrowser onLoginPrompt={() => setIsUserLogin(true)} />
+            <ProductionCarouselAuth />
           </div>
 
           <div className="w-full flex flex-col items-center space-y-6">

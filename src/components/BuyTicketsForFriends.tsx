@@ -143,17 +143,19 @@ const BuyTicketsForFriends = ({ user, party, onBack }: BuyTicketsForFriendsProps
 
   const generateFreeTickets = async (profiles: any[]) => {
     try {
-      // Generate QR codes for friends individually to avoid batching issues
+      // Generate QR codes for friends individually
       for (let i = 0; i < profiles.length; i++) {
         const profile = profiles[i];
+        const qrCodeText = `${profile.personal_code}-${party.id}-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+        
         const qrCode = {
           user_id: profile.user_id,
           party_id: party.id,
-          code: `${profile.personal_code}-${party.id}-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
-          is_approved: true, // Auto-approve free tickets
+          code: qrCodeText,
+          is_approved: true,
           is_scanned: false,
           auto_approved: true,
-          ticket_type_id: null // No ticket type for free tickets
+          ticket_type_id: null
         };
 
         const { error: insertError } = await supabase
@@ -170,12 +172,23 @@ const BuyTicketsForFriends = ({ user, party, onBack }: BuyTicketsForFriendsProps
           continue;
         }
 
+        // Send QR code as direct message
+        const qrMessage = `You received a ticket for ${party.name}! Your QR code: ${qrCodeText}`;
+        
+        await supabase
+          .from('direct_messages')
+          .insert({
+            sender_id: user.id,
+            recipient_id: profile.user_id,
+            content: qrMessage
+          });
+
         // Send QR code via email
         try {
           await supabase.functions.invoke('send-qr-code-email', {
             body: {
               to: profile.email,
-              qrCode: qrCode.code,
+              qrCode: qrCodeText,
               partyName: party.name,
               userName: profile.display_name || profile.email,
               partyDate: new Date(party.date).toLocaleDateString('en-GB'),
@@ -189,7 +202,7 @@ const BuyTicketsForFriends = ({ user, party, onBack }: BuyTicketsForFriendsProps
 
       toast({
         title: "Success",
-        description: `Generated ${profiles.length} free tickets for friends! QR codes sent to their emails.`,
+        description: `Generated ${profiles.length} free tickets for friends! QR codes sent to their emails and messages.`,
       });
       onBack();
     } catch (error) {
@@ -205,38 +218,49 @@ const BuyTicketsForFriends = ({ user, party, onBack }: BuyTicketsForFriendsProps
   const generatePaidTickets = async () => {
     try {
       // Generate QR codes for friends after payment
-      const qrCodes = validatedFriends.map(profile => ({
-        user_id: profile.user_id,
-        party_id: party.id,
-        code: `${profile.personal_code}-${party.id}-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
-        is_approved: false,
-        is_scanned: false,
-        auto_approved: false
-      }));
-
-      const { error: insertError } = await supabase
-        .from('qr_codes')
-        .insert(qrCodes);
-
-      if (insertError) {
-        toast({
-          title: "Error",
-          description: "Failed to generate tickets for friends",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Send QR codes to friends via email
       for (let i = 0; i < validatedFriends.length; i++) {
         const profile = validatedFriends[i];
-        const qrCode = qrCodes[i];
+        const qrCodeText = `${profile.personal_code}-${party.id}-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
         
+        const qrCode = {
+          user_id: profile.user_id,
+          party_id: party.id,
+          code: qrCodeText,
+          is_approved: false,
+          is_scanned: false,
+          auto_approved: false
+        };
+
+        const { error: insertError } = await supabase
+          .from('qr_codes')
+          .insert(qrCode);
+
+        if (insertError) {
+          toast({
+            title: "Error",
+            description: `Failed to generate ticket for ${profile.display_name || profile.email}`,
+            variant: "destructive"
+          });
+          continue;
+        }
+
+        // Send QR code as direct message (blurred until approved)
+        const qrMessage = `You received a ticket for ${party.name}! Your QR code will be visible once approved by the admin. Code: ${qrCodeText}`;
+        
+        await supabase
+          .from('direct_messages')
+          .insert({
+            sender_id: user.id,
+            recipient_id: profile.user_id,
+            content: qrMessage
+          });
+
+        // Send QR code via email
         try {
           await supabase.functions.invoke('send-qr-code-email', {
             body: {
               to: profile.email,
-              qrCode: qrCode.code,
+              qrCode: qrCodeText,
               partyName: party.name,
               userName: profile.display_name || profile.email,
               partyDate: new Date(party.date).toLocaleDateString('en-GB'),
@@ -250,7 +274,7 @@ const BuyTicketsForFriends = ({ user, party, onBack }: BuyTicketsForFriendsProps
 
       toast({
         title: "Success",
-        description: `Generated ${validatedFriends.length} tickets for friends! QR codes sent to their emails.`,
+        description: `Generated ${validatedFriends.length} tickets for friends! QR codes sent to their emails and messages.`,
       });
       onBack();
     } catch (error) {
