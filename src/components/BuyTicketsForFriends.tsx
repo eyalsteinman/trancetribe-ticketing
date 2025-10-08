@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Plus, X } from 'lucide-react';
 import BuyTicket from './BuyTicket';
+import QRCode from 'qrcode';
 
 interface BuyTicketsForFriendsProps {
   user: any;
@@ -172,8 +173,14 @@ const BuyTicketsForFriends = ({ user, party, onBack }: BuyTicketsForFriendsProps
           continue;
         }
 
-        // Send QR code as direct message
-        const qrMessage = `You received a ticket for ${party.name}! Your QR code: ${qrCodeText}`;
+        // Generate QR code image as data URL
+        const qrDataUrl = await QRCode.toDataURL(qrCodeText, {
+          width: 300,
+          margin: 2,
+        });
+
+        // Send QR code as direct message with image
+        const qrMessage = `You received a FREE ticket for ${party.name}!\n\nYour QR Code:\n${qrDataUrl}\n\nShow this QR code at the entrance.`;
         
         await supabase
           .from('direct_messages')
@@ -244,8 +251,14 @@ const BuyTicketsForFriends = ({ user, party, onBack }: BuyTicketsForFriendsProps
           continue;
         }
 
-        // Send QR code as direct message (blurred until approved)
-        const qrMessage = `You received a ticket for ${party.name}! Your QR code will be visible once approved by the admin. Code: ${qrCodeText}`;
+        // Generate QR code image (will be blurred until approved)
+        const qrDataUrl = await QRCode.toDataURL(qrCodeText, {
+          width: 300,
+          margin: 2,
+        });
+
+        // Send QR code as direct message with blurred image
+        const qrMessage = `You received a ticket for ${party.name}!\n\n⚠️ Your QR code is pending approval by the admin.\n\nQR Code (will be visible once approved):\n${qrDataUrl}\n\nYou'll be notified when approved.`;
         
         await supabase
           .from('direct_messages')
