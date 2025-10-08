@@ -132,7 +132,6 @@ const ProductionCarousel = ({ userId, onLoginRequired }: ProductionCarouselProps
 
   return (
     <div className="w-full mb-6">
-      <h2 className="text-xl font-bold mb-4 text-foreground">{t('join_tribes')}</h2>
       <Carousel
         opts={{
           align: "start",
@@ -162,14 +161,11 @@ const ProductionCarousel = ({ userId, onLoginRequired }: ProductionCarouselProps
                       </div>
                     )}
                   </div>
-                  <div className="p-4 space-y-2">
-                    <h3 className="font-semibold text-sm line-clamp-1">{production.name}</h3>
-                    {production.description && (
-                      <p className="text-xs text-muted-foreground line-clamp-2">{production.description}</p>
-                    )}
+                  <div className="p-4 flex flex-col items-center space-y-2">
+                    <h3 className="font-semibold text-center">{production.name}</h3>
                     <Button
                       onClick={() => isFollowing ? handleLeaveTribe(production.id) : handleJoinTribe(production.id)}
-                      className="w-full"
+                      className="w-full bg-purple-600 hover:bg-purple-700 text-white"
                       variant={isFollowing ? "outline" : "default"}
                       size="sm"
                     >
@@ -181,8 +177,6 @@ const ProductionCarousel = ({ userId, onLoginRequired }: ProductionCarouselProps
             );
           })}
         </CarouselContent>
-        <CarouselPrevious className="left-0" />
-        <CarouselNext className="right-0" />
       </Carousel>
     </div>
   );
