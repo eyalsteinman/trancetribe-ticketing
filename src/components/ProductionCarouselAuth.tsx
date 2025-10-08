@@ -81,15 +81,11 @@ const ProductionCarouselAuth = () => {
   const buttonText = browseMode === 'production' ? t('login_to_join_tribe') : 'Login to Purchase Tickets';
 
   const handleScrollToAuth = () => {
-    const authForm = document.querySelector('[data-auth-form]');
-    if (authForm) {
-      const rect = authForm.getBoundingClientRect();
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const targetPosition = rect.top + scrollTop;
-      
-      window.scrollTo({ 
-        top: targetPosition, 
-        behavior: 'smooth' 
+    const authSection = document.querySelector('[data-auth-form]');
+    if (authSection) {
+      authSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
       });
     }
   };
