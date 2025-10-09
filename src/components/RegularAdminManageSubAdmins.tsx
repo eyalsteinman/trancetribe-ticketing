@@ -161,6 +161,14 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
 
     setLoading(true);
     try {
+      // Delete any existing unused passwords for this email
+      await supabase
+        .from('admin_passwords')
+        .delete()
+        .eq('admin_email', newAdminEmail)
+        .eq('created_by', user.id)
+        .eq('is_used', false);
+
       const uniquePassword = generateUniquePassword();
 
       const { error } = await supabase
