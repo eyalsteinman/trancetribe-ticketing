@@ -164,6 +164,13 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
   const loadNewEventsCount = async () => {
     try {
+      // Check if badge was dismissed
+      const badgeDismissed = localStorage.getItem(`calendar-badge-dismissed-${user.id}`);
+      if (badgeDismissed === 'true') {
+        setNewEventsCount(0);
+        return;
+      }
+
       // Get productions user follows
       const { data: followedProductions, error: followError } = await supabase
         .from('production_followers')
@@ -179,19 +186,35 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
       const productionIds = followedProductions.map(f => f.production_id);
 
-      // Get parties from followed productions created in last 7 days
+      // Get user's purchased tickets
+      const { data: userTickets } = await supabase
+        .from('qr_codes')
+        .select('party_id')
+        .eq('user_id', user.id);
+
+      const purchasedPartyIds = userTickets?.map(t => t.party_id) || [];
+
+      // Get parties from followed productions created in last 7 days that are still future events
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const today = new Date().toISOString().split('T')[0];
 
-      const { count, error: partyError } = await supabase
+      const { data: newParties, error: partyError } = await supabase
         .from('parties')
-        .select('*', { count: 'exact', head: true })
+        .select('id, date')
         .in('production_id', productionIds)
         .gte('created_at', sevenDaysAgo.toISOString())
+        .gte('date', today)
         .eq('is_active', true);
 
       if (partyError) throw partyError;
-      setNewEventsCount(count || 0);
+
+      // Filter out purchased tickets and past events
+      const unpurchasedEvents = newParties?.filter(party => 
+        !purchasedPartyIds.includes(party.id)
+      ) || [];
+
+      setNewEventsCount(unpurchasedEvents.length);
     } catch (error) {
       console.error('Error loading new events count:', error);
     }
@@ -229,7 +252,19 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   }
 
   if (currentView === 'event-calendar') {
-    return <EventCalendar onBack={() => setCurrentView('dashboard')} userId={user.id} />;
+    return <EventCalendar 
+      onBack={() => {
+        // Mark badge as dismissed when exiting calendar
+        localStorage.setItem(`calendar-badge-dismissed-${user.id}`, 'true');
+        setNewEventsCount(0);
+        setCurrentView('dashboard');
+      }} 
+      userId={user.id}
+      onTicketPurchase={() => {
+        loadNewEventsCount();
+        loadUserQRCodes();
+      }}
+    />;
   }
 
   if (currentView === 'nickname') {

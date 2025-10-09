@@ -13,6 +13,7 @@ import { toast } from '@/hooks/use-toast';
 interface EventCalendarProps {
   onBack: () => void;
   userId: string;
+  onTicketPurchase?: () => void;
 }
 
 interface EventDay {
@@ -33,13 +34,14 @@ interface EventDay {
   }[];
 }
 
-const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId }) => {
+const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId, onTicketPurchase }) => {
   const { t } = useLanguage();
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [eventDays, setEventDays] = useState<EventDay[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<EventDay | null>(null);
   const [loading, setLoading] = useState(true);
   const [newParties, setNewParties] = useState<any[]>([]);
+  const [selectedCarouselParty, setSelectedCarouselParty] = useState<any | null>(null);
 
   useEffect(() => {
     loadUserEvents();
@@ -57,20 +59,35 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId }) => {
 
       const productionIds = followedProductions?.map(f => f.production_id) || [];
 
-      // Get new parties from followed productions (last 7 days)
+      // Get user's purchased tickets
+      const { data: userTickets } = await supabase
+        .from('qr_codes')
+        .select('party_id')
+        .eq('user_id', userId);
+
+      const purchasedPartyIds = userTickets?.map(t => t.party_id) || [];
+
+      // Get new parties from followed productions (last 7 days) that are still future events
       if (productionIds.length > 0) {
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        const today = new Date().toISOString().split('T')[0];
 
         const { data: newPartiesData } = await supabase
           .from('parties')
           .select('*')
           .in('production_id', productionIds)
           .gte('created_at', sevenDaysAgo.toISOString())
+          .gte('date', today)
           .eq('is_active', true)
           .order('created_at', { ascending: false });
 
-        setNewParties(newPartiesData || []);
+        // Filter out purchased tickets and past events
+        const unpurchasedParties = newPartiesData?.filter(party => 
+          !purchasedPartyIds.includes(party.id)
+        ) || [];
+
+        setNewParties(unpurchasedParties);
       }
       
       // Get user's QR codes with party details
@@ -282,47 +299,57 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId }) => {
             </CardContent>
           </Card>
 
-          {/* New Parties from Followed Productions */}
+          {/* New Parties Carousel */}
           {newParties.length > 0 && (
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">New Events from Your Tribes</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {newParties.map((party) => (
-                    <div
-                      key={party.id}
-                      className="cursor-pointer group overflow-hidden border border-border rounded-lg hover:shadow-lg transition-shadow"
-                      onClick={() => {
-                        localStorage.setItem('selectedPartyId', party.id);
-                        window.location.href = '/';
-                      }}
-                    >
-                      {party.photo_url ? (
-                        <div className="h-32 w-full overflow-hidden">
-                          <img 
-                            src={party.photo_url} 
-                            alt={party.name}
-                            className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
+              <CardContent className="relative">
+                <div className="overflow-x-auto scrollbar-hide">
+                  <div className="flex gap-4 pb-4" style={{ scrollSnapType: 'x mandatory' }}>
+                    {newParties.map((party) => (
+                      <div
+                        key={party.id}
+                        className="flex-shrink-0 w-72 overflow-hidden border border-border rounded-lg shadow-sm"
+                        style={{ scrollSnapAlign: 'start' }}
+                      >
+                        {party.photo_url ? (
+                          <div className="h-40 w-full overflow-hidden">
+                            <img 
+                              src={party.photo_url} 
+                              alt={party.name}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="h-40 w-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                            <CalendarIcon className="h-12 w-12 text-primary/40" />
+                          </div>
+                        )}
+                        <div className="p-4 space-y-3">
+                          <div>
+                            <h4 className="font-semibold text-base mb-1">{party.name}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {format(parseISO(party.date), 'EEEE, MMMM d, yyyy')}
+                            </p>
+                            <Badge className="mt-2" variant="secondary">
+                              New
+                            </Badge>
+                          </div>
+                          <Button 
+                            className="w-full"
+                            onClick={() => {
+                              localStorage.setItem('selectedPartyId', party.id);
+                              onBack();
+                            }}
+                          >
+                            Purchase Ticket Now
+                          </Button>
                         </div>
-                      ) : (
-                        <div className="h-32 w-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                          <CalendarIcon className="h-12 w-12 text-primary/40" />
-                        </div>
-                      )}
-                      <div className="p-3">
-                        <h4 className="font-semibold text-sm mb-1">{party.name}</h4>
-                        <p className="text-xs text-muted-foreground">
-                          {format(parseISO(party.date), 'MMM d, yyyy')}
-                        </p>
-                        <Badge className="mt-2" variant="secondary">
-                          New
-                        </Badge>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </CardContent>
             </Card>
