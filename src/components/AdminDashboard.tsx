@@ -811,20 +811,22 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
   }
 
   return (
-    <div className={`min-h-screen transition-colors duration-500`}>
-      <div className="w-full">
+    <div className="min-h-screen transition-colors duration-500 fixed inset-0 overflow-y-auto bg-[#4C1D95]">
+      {/* Animated background */}
+      <div className="auth-animated-bg" />
+      
+      <div className="w-full relative z-10">
         {/* Modern Hero Header with Gradient */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-primary/20 via-primary/10 to-background border-b border-border/20">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent" />
+        <div className="relative overflow-hidden">
           <div className="container-section relative py-8">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary-hover bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold text-white">
                   Admin Dashboard
                 </h1>
                 {adminNickname && (
-                  <p className="text-lg text-muted-foreground font-medium">
-                    Welcome back, <span className="text-foreground font-semibold">{adminNickname}</span>
+                  <p className="text-base text-white/90 font-medium">
+                    Welcome back, <span className="text-white font-semibold">{adminNickname}</span>
                   </p>
                 )}
               </div>
@@ -832,7 +834,7 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
                 variant="outline" 
                 size="icon"
                 onClick={handleSignOut} 
-                className="border-primary/30 bg-background/80 backdrop-blur-sm text-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-lg hover:shadow-primary/25"
+                className="border-white/30 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all duration-300"
                 aria-label="Sign Out"
               >
                 <LogOut className="h-4 w-4" />
@@ -872,12 +874,10 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
               notificationCount: newRegisteredUsers,
               displayCount: totalRegisteredUsers
             },
-            { id: 'admin-games', title: 'Admin Games', icon: <Gamepad2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('admin-games' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'nickname', title: 'My Info', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('nickname' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'bar-tab', title: 'Bar Tab', icon: <Wine className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'bar-tab-scanner', title: 'Bartab Scanner', icon: <ScanBarcode className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab-scanner' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'faq', title: 'FAQ & Contact', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('faq' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'theme-changer', title: `Change Theme\n(${getThemeDisplayName(currentTheme)})`, icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: cycleTheme },
             { id: 'message', title: 'Message Users', icon: <MessageCircle className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('message' as const); setTimeout(() => loadParties(), 100); } },
             ...(onManageSubAdmins ? [{ id: 'manage-sub-admins', title: 'Manage Sub-Admins', icon: <UserPlus className="h-8 w-8 mb-2" />, onClick: onManageSubAdmins }] : []),
           ];
