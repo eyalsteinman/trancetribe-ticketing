@@ -40,6 +40,11 @@ import { useScrollMemory } from '@/hooks/useScrollMemory';
 interface AdminDashboardProps {
   user: User;
   onManageSubAdmins?: () => void;
+  adminProfile?: {
+    admin_level: 'level1' | 'level2' | 'level3';
+    allowed_tiles: string[];
+    is_super_admin: boolean;
+  } | null;
 }
 
 interface ScannedUser {
@@ -54,7 +59,7 @@ interface ScannedUser {
   } | null;
 }
 
-const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
+const AdminDashboard = ({ user, onManageSubAdmins, adminProfile }: AdminDashboardProps) => {
   const [qrInput, setQrInput] = useState('');
   const [scannedUsers, setScannedUsers] = useState<ScannedUser[]>([]);
   const [parties, setParties] = useState<any[]>([]);
@@ -822,7 +827,9 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <h1 className="text-2xl font-bold text-white">
-                  Admin Dashboard
+                  {adminProfile && !adminProfile.is_super_admin && adminProfile.allowed_tiles.length > 0 
+                    ? 'Sub-Admin Dashboard' 
+                    : 'Admin Dashboard'}
                 </h1>
                 {adminNickname && (
                   <p className="text-base text-white/90 font-medium">
@@ -844,10 +851,10 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
         </div>
 
         {(() => {
-          const tiles = [
-            { id: 'scanner', title: 'Camera Scan', icon: <Camera className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('scanner' as const); setTimeout(() => loadParties(), 100); } },
+          const allTiles = [
+            { id: 'manage-users', title: 'Camera Scan', icon: <Camera className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('scanner' as const); setTimeout(() => loadParties(), 100); } },
             { 
-              id: 'guests', 
+              id: 'guest-list', 
               title: 'Guest List', 
               icon: <List className="h-8 w-8 mb-2" />, 
               onClick: () => { 
@@ -858,9 +865,9 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
               notificationCount: newArrivingGuests,
               displayCount: totalArrivingGuests
             },
-            { id: 'create-party', title: 'Create Party', icon: <Plus className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('create-party' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'edit-parties', title: 'Edit Parties', icon: <Edit className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('edit-parties' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'my-productions', title: 'My Productions', icon: <Building2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('my-productions' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'manage-parties', title: 'Create Party', icon: <Plus className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('create-party' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'manage-parties', title: 'Edit Parties', icon: <Edit className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('edit-parties' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'manage-productions', title: 'My Productions', icon: <Building2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('my-productions' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'manage-productions', title: 'Manage Productions', icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('manage-productions' as const); setTimeout(() => loadParties(), 100); } },
             { 
               id: 'registered-users', 
@@ -874,13 +881,19 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
               notificationCount: newRegisteredUsers,
               displayCount: totalRegisteredUsers
             },
-            { id: 'nickname', title: 'My Info', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('nickname' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'bar-tab', title: 'Bar Tab', icon: <Wine className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'bar-tab-scanner', title: 'Bartab Scanner', icon: <ScanBarcode className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab-scanner' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'faq', title: 'FAQ & Contact', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('faq' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'message', title: 'Message Users', icon: <MessageCircle className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('message' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'manage-qr', title: 'My Info', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('nickname' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'manage-bar-tabs', title: 'Bar Tab', icon: <Wine className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'bartab-scanner', title: 'Bartab Scanner', icon: <ScanBarcode className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab-scanner' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'manage-faq', title: 'FAQ & Contact', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('faq' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'manage-messages', title: 'Message Users', icon: <MessageCircle className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('message' as const); setTimeout(() => loadParties(), 100); } },
             ...(onManageSubAdmins ? [{ id: 'manage-sub-admins', title: 'Manage Sub-Admins', icon: <UserPlus className="h-8 w-8 mb-2" />, onClick: onManageSubAdmins }] : []),
           ];
+          
+          // Filter tiles based on admin permissions
+          const tiles = adminProfile && adminProfile.allowed_tiles.length > 0
+            ? allTiles.filter(tile => adminProfile.allowed_tiles.includes(tile.id))
+            : allTiles; // If no profile or empty allowed_tiles, show all (for full admins)
+            
           return (
             <ReorderableTilesLogic 
               items={tiles} 

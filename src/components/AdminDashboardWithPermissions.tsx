@@ -152,7 +152,7 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
         
         {/* Admin Dashboard with padding for banner */}
         <div className="pt-12">
-          <AdminDashboard user={user} />
+          <AdminDashboard user={user} adminProfile={adminProfile} />
         </div>
       </div>
     );
@@ -166,8 +166,12 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
     />;
   }
 
-  // For regular admins, pass the sub-admin manager callback to AdminDashboard
-  return <AdminDashboard user={user} onManageSubAdmins={() => setShowSubAdminManager(true)} />;
+  // For regular admins and sub-admins, pass the admin profile and sub-admin manager callback to AdminDashboard
+  return <AdminDashboard 
+    user={user} 
+    onManageSubAdmins={!adminProfile?.is_super_admin ? () => setShowSubAdminManager(true) : undefined}
+    adminProfile={adminProfile}
+  />;
 };
 
 export default AdminDashboardWithPermissions;
