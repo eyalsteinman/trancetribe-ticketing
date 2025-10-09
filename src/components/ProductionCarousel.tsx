@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { Carousel, CarouselContent, CarouselItem, CarouselApi } from '@/components/ui/carousel';
 import { Card } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -23,6 +23,7 @@ const ProductionCarousel = ({ userId, onLoginRequired, onJoinSuccess }: Producti
   const [productions, setProductions] = useState<Production[]>([]);
   const [followedProductions, setFollowedProductions] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
+  const [api, setApi] = useState<CarouselApi>();
   const { toast } = useToast();
   const { t } = useLanguage();
 
@@ -33,15 +34,30 @@ const ProductionCarousel = ({ userId, onLoginRequired, onJoinSuccess }: Producti
     }
   }, [userId]);
 
+  // Reset carousel to first slide when returning to dashboard
+  useEffect(() => {
+    if (api) {
+      api.scrollTo(0, true);
+    }
+  }, [api]);
+
   const loadProductions = async () => {
     try {
       const { data, error } = await supabase
         .from('productions')
         .select('id, name, logo_url, description')
-        .order('created_at', { ascending: false });
+        .order('name', { ascending: true }); // Order by name to get Trance Tribes first
 
       if (error) throw error;
-      setProductions(data || []);
+      
+      // Sort to ensure Trance Tribes is first
+      const sortedData = (data || []).sort((a, b) => {
+        if (a.name.toLowerCase().includes('trance tribe')) return -1;
+        if (b.name.toLowerCase().includes('trance tribe')) return 1;
+        return 0;
+      });
+      
+      setProductions(sortedData);
     } catch (error) {
       console.error('Error loading productions:', error);
     } finally {
@@ -134,9 +150,11 @@ const ProductionCarousel = ({ userId, onLoginRequired, onJoinSuccess }: Producti
   return (
     <div className="w-full mb-6">
       <Carousel
+        setApi={setApi}
         opts={{
           align: "start",
           loop: true,
+          startIndex: 0,
         }}
         className="w-full"
       >

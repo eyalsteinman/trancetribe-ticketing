@@ -37,11 +37,20 @@ const ScrollToTop = () => {
   return (
     <Button
       onClick={scrollToTop}
-      className={cn(
-        "fixed right-4 bottom-20 z-[9999] rounded-full w-14 h-14 p-0 shadow-xl",
-        "bg-purple-600 hover:bg-purple-700 text-white",
-        "transition-all duration-300 hover:scale-110"
-      )}
+      style={{
+        position: 'fixed',
+        right: '1rem',
+        bottom: '5rem',
+        zIndex: 99999,
+        width: '3.5rem',
+        height: '3.5rem',
+        borderRadius: '9999px',
+        padding: 0,
+        backgroundColor: '#9333ea',
+        color: 'white',
+        boxShadow: '0 10px 25px -5px rgba(147, 51, 234, 0.5)',
+      }}
+      className="hover:bg-purple-700 transition-all duration-300 hover:scale-110"
       aria-label="Scroll to top"
     >
       <ArrowUp className="h-6 w-6" strokeWidth={3} />

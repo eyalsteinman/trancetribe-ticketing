@@ -377,11 +377,11 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
 
   return (
-    <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]">
+    <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]" style={{ position: 'relative' }}>
       {/* Animated background */}
       <div className="auth-animated-bg" />
       
-      <div className="min-h-screen w-full relative z-10 transition-colors duration-500 p-4">
+      <div className="min-h-screen w-full relative z-10 transition-colors duration-500 p-4" style={{ position: 'relative' }}>
       {/* Header */}
       <div className="relative pt-2 pb-6">
         <h1 className="text-2xl font-bold text-white mb-1">
