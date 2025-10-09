@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 
 interface ViewTransitionProps {
@@ -8,36 +8,27 @@ interface ViewTransitionProps {
 }
 
 const ViewTransition = ({ children, viewKey, className }: ViewTransitionProps) => {
-  const [isExiting, setIsExiting] = useState(false);
-  const [currentKey, setCurrentKey] = useState(viewKey);
-  const [displayChildren, setDisplayChildren] = useState(children);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    if (viewKey !== currentKey) {
-      setIsExiting(true);
-      
-      const exitTimeout = setTimeout(() => {
-        setCurrentKey(viewKey);
-        setDisplayChildren(children);
-        setIsExiting(false);
-      }, 200); // Match exit animation duration
+    // Trigger fade in after mount
+    setIsVisible(false);
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 10);
 
-      return () => clearTimeout(exitTimeout);
-    } else {
-      setDisplayChildren(children);
-    }
-  }, [viewKey, children, currentKey]);
+    return () => clearTimeout(timer);
+  }, [viewKey]);
 
   return (
     <div
-      key={currentKey}
       className={cn(
         "transition-all duration-200",
-        isExiting ? "animate-fade-out opacity-0" : "animate-fade-in opacity-100",
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2",
         className
       )}
     >
-      {displayChildren}
+      {children}
     </div>
   );
 };

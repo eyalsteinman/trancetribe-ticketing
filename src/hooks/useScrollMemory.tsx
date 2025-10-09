@@ -8,37 +8,36 @@ interface UseScrollMemoryProps {
 const scrollPositions = new Map<string, number>();
 
 export const useScrollMemory = ({ viewKey, enabled }: UseScrollMemoryProps) => {
-  const hasRestoredRef = useRef(false);
+  const previousViewRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!enabled) return;
 
-    // Save scroll position when view changes
-    return () => {
-      scrollPositions.set(viewKey, window.pageYOffset);
-    };
-  }, [viewKey, enabled]);
+    // Save scroll position when leaving a view
+    if (previousViewRef.current && previousViewRef.current !== viewKey) {
+      scrollPositions.set(previousViewRef.current, window.pageYOffset);
+    }
 
-  useEffect(() => {
-    if (!enabled || hasRestoredRef.current) return;
-
-    // Restore scroll position when returning to this view
+    // Restore scroll position when entering a view
     const savedPosition = scrollPositions.get(viewKey);
     if (savedPosition !== undefined) {
-      // Use requestAnimationFrame to ensure DOM is ready
-      requestAnimationFrame(() => {
+      // Use setTimeout to ensure DOM is fully rendered
+      setTimeout(() => {
         window.scrollTo({
           top: savedPosition,
-          behavior: 'instant' as ScrollBehavior
+          behavior: 'auto'
         });
-      });
+      }, 50);
+    } else {
+      // Scroll to top for new views
+      setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'auto'
+        });
+      }, 50);
     }
-    
-    hasRestoredRef.current = true;
-  }, [viewKey, enabled]);
 
-  // Reset the restored flag when view changes
-  useEffect(() => {
-    hasRestoredRef.current = false;
-  }, [viewKey]);
+    previousViewRef.current = viewKey;
+  }, [viewKey, enabled]);
 };

@@ -7,6 +7,7 @@ import AuthPage from './Auth';
 import UserDashboard from '@/components/UserDashboard';
 import AdminDashboardWithPermissions from '@/components/AdminDashboardWithPermissions';
 import SocialNetworksPrompt from '@/components/SocialNetworksPrompt';
+import ScrollToTop from '@/components/ui/scroll-to-top';
 
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -99,7 +100,12 @@ const Index = () => {
 
   if (isAdmin) {
     console.log('User is admin, showing admin dashboard');
-    return <AdminDashboardWithPermissions user={user} />;
+    return (
+      <>
+        <AdminDashboardWithPermissions user={user} />
+        <ScrollToTop />
+      </>
+    );
   }
 
   console.log('User is regular user, showing user dashboard');
@@ -107,6 +113,7 @@ const Index = () => {
     <>
       <SocialNetworksPrompt userId={user.id} onClose={() => {}} />
       <UserDashboard user={user} />
+      <ScrollToTop />
     </>
   );
 };

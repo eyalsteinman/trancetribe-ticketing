@@ -652,7 +652,6 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         </DialogContent>
       </Dialog>
       </div>
-      <ScrollToTop />
     </div>
   );
 };

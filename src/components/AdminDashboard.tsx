@@ -997,7 +997,6 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
         
         <Footer />
       </div>
-      <ScrollToTop />
     </div>
   );
 };
