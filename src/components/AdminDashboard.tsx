@@ -106,7 +106,7 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
       )
       .subscribe();
 
-    // Set up real-time subscription for party updates
+    // Set up real-time subscription for party updates and QR code changes
     const partyChannel = supabase
       .channel('party-dashboard-changes')
       .on(
@@ -115,6 +115,17 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
           event: '*',
           schema: 'public',
           table: 'parties'
+        },
+        () => {
+          loadParties();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'qr_codes'
         },
         () => {
           loadParties();
@@ -144,7 +155,8 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
         .from('parties')
         .select(`
           *,
-          qr_codes(is_approved)
+          qr_codes(is_approved),
+          productions(name)
         `)
         .order('date', { ascending: sortAscending });
 
@@ -927,6 +939,12 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
                             <div className="font-bold text-lg text-foreground group-hover:text-primary transition-colors duration-300">
                               {party.name}
                             </div>
+                            {party.productions?.name && (
+                              <div className="text-xs text-muted-foreground/80 flex items-center gap-1">
+                                <Building2 className="h-3 w-3" />
+                                <span>{party.productions.name}</span>
+                              </div>
+                            )}
                             <div className="text-sm text-muted-foreground space-y-1">
                               <div className="flex items-center gap-2">
                                 <Calendar className="h-4 w-4 text-primary" />
