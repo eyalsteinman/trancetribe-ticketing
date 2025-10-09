@@ -6,8 +6,17 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { User } from '@supabase/supabase-js';
-import { ArrowLeft, UserPlus, Trash2 } from 'lucide-react';
+import { ArrowLeft, UserPlus, Trash2, Copy, Check } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface RegularAdminManageSubAdminsProps {
   user: User;
@@ -48,6 +57,10 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
   const [selectedTiles, setSelectedTiles] = useState<string[]>([]);
   const [selectAllTiles, setSelectAllTiles] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [generatedPassword, setGeneratedPassword] = useState('');
+  const [generatedEmail, setGeneratedEmail] = useState('');
+  const [copied, setCopied] = useState(false);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
@@ -134,13 +147,15 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: `Sub-admin password created for ${newAdminEmail}. Password: ${uniquePassword}`,
-      });
+      setGeneratedPassword(uniquePassword);
+      setGeneratedEmail(newAdminEmail);
+      setShowPasswordDialog(true);
+      setCopied(false);
 
       setNewAdminEmail('');
+      setNewAdminNickname('');
       setSelectedTiles([]);
+      setSelectAllTiles(false);
       loadSubAdmins();
     } catch (error: any) {
       toast({
@@ -202,6 +217,24 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
   useEffect(() => {
     setSelectAllTiles(selectedTiles.length === availableTiles.length);
   }, [selectedTiles]);
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(generatedPassword);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      toast({
+        title: "Copied!",
+        description: "Password copied to clipboard",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to copy password",
+        variant: "destructive"
+      });
+    }
+  };
 
   return (
     <div
@@ -317,6 +350,41 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
             )}
           </CardContent>
         </Card>
+
+        <AlertDialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Sub-Admin Password Created</AlertDialogTitle>
+              <AlertDialogDescription className="space-y-4">
+                <p>Password created successfully for <strong>{generatedEmail}</strong></p>
+                <div className="bg-muted p-4 rounded-md space-y-3">
+                  <p className="text-sm text-muted-foreground">Password:</p>
+                  <div className="flex items-center gap-2">
+                    <code className="flex-1 bg-background p-2 rounded text-sm font-mono break-all">
+                      {generatedPassword}
+                    </code>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={copyToClipboard}
+                      title="Copy to clipboard"
+                    >
+                      {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+                <p className="text-sm text-destructive">
+                  ⚠️ Make sure to copy this password now. You won't be able to see it again!
+                </p>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction onClick={() => setShowPasswordDialog(false)}>
+                Done
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
