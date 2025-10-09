@@ -57,7 +57,7 @@ interface ScannedGuest {
 const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
   const [parties, setParties] = useState<any[]>([]);
   const [selectedParty, setSelectedParty] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'scanned' | 'arriving'>('scanned');
+  const [activeTab, setActiveTab] = useState<'scanned' | 'arriving'>('arriving');
   const [arrivingGuests, setArrivingGuests] = useState<ArrivingGuest[]>([]);
   const [scannedGuests, setScannedGuests] = useState<ScannedGuest[]>([]);
   const [loading, setLoading] = useState(false);
