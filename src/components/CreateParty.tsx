@@ -220,10 +220,10 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
         onBack={onBack}
       />
       
-      <div className="w-full max-w-none flex-1 flex items-center justify-center pt-20 pb-4 px-4 space-y-6 text-left overflow-y-auto">
-        <div className="w-full space-y-6">
+      <div className="w-full max-w-4xl mx-auto pt-20 pb-4 px-4">
+        <div className="space-y-6">
 
-        <Card className="w-full max-w-none mx-4">
+        <Card className="w-full">
           <CardHeader>
             <CardTitle>Party Details</CardTitle>
           </CardHeader>

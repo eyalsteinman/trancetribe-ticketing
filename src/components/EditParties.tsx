@@ -423,10 +423,10 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
             onBack={cancelEdit}
           />
           
-          <div className="w-full max-w-none flex-1 flex items-center justify-center pt-20 pb-4 px-4 overflow-y-auto">
-            <div className="w-full space-y-6">
+          <div className="w-full max-w-4xl mx-auto pt-20 pb-4 px-4">
+            <div className="space-y-6">
 
-          <Card className="w-full max-w-none mx-4">
+          <Card className="w-full">
             <CardHeader>
               <CardTitle>Party Details</CardTitle>
             </CardHeader>
@@ -692,9 +692,9 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
           onBack={onBack}
         />
         
-        <div className="w-full max-w-none flex-1 flex items-center justify-center pt-20 pb-4 px-4 overflow-y-auto">
-          <div className="w-full space-y-6">
-          <Card className="w-full max-w-none mx-4">
+        <div className="w-full max-w-4xl mx-auto pt-20 pb-4 px-4">
+          <div className="space-y-6">
+          <Card className="w-full">
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle>All Parties</CardTitle>
