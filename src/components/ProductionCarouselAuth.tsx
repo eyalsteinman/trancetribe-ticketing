@@ -23,7 +23,7 @@ const ProductionCarouselAuth = () => {
   const [productions, setProductions] = useState<Production[]>([]);
   const [parties, setParties] = useState<Party[]>([]);
   const [loading, setLoading] = useState(true);
-  const [browseMode, setBrowseMode] = useState<string>('production');
+  const [browseMode, setBrowseMode] = useState<string>('party');
   const { t } = useLanguage();
 
   useEffect(() => {

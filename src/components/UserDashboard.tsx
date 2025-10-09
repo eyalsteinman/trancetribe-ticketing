@@ -240,7 +240,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
       } else {
         toast({
           title: t('success'),
-          description: t('signed_out_successfully'),
+          description: 'Signed out successfully',
         });
       }
     } catch (error) {
@@ -481,7 +481,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 },
                 {
                   id: 'messages',
-                  title: t('messages'),
+                  title: 'Tribes Messages',
                   icon: (
                     <div className="relative">
                       <MessageCircle className="h-12 w-12" />
@@ -496,7 +496,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 },
                 {
                   id: 'direct-messages',
-                  title: t('direct_messages'),
+                  title: 'Friends Messages',
                   icon: (
                     <div className="relative">
                       <Mail className="h-12 w-12" />

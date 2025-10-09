@@ -71,14 +71,14 @@ export const AuthForm = ({
         </TabsContent>
         
         <TabsContent value="admin" className="p-6 space-y-4">
-          <div className="space-y-2">
-            <h3 className="text-xl font-semibold text-white text-center">{t('admin_access')}</h3>
-            <p className="text-white/80 text-center text-sm">{t('admin_credentials_description')}</p>
-          </div>
           <AdminForm 
             onShowAdminPassword={onShowAdminPassword}
             pendingAdminSignup={pendingAdminSignup}
           />
+          <div className="space-y-2 mt-2">
+            <h3 className="text-xl font-semibold text-white text-center">{t('admin_access')}</h3>
+            <p className="text-white/80 text-center text-sm">{t('admin_credentials_description')}</p>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
