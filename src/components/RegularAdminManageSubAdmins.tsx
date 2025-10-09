@@ -72,6 +72,8 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
   const [generatedPassword, setGeneratedPassword] = useState('');
   const [generatedEmail, setGeneratedEmail] = useState('');
   const [copied, setCopied] = useState(false);
+  const [editingSubAdmin, setEditingSubAdmin] = useState<string | null>(null);
+  const [editingTiles, setEditingTiles] = useState<string[]>([]);
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
@@ -161,27 +163,43 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
 
     setLoading(true);
     try {
-      // Delete any existing unused passwords for this email
-      await supabase
+      // Check if there's an existing unused password for this email
+      const { data: existingPassword } = await supabase
         .from('admin_passwords')
-        .delete()
+        .select('id')
         .eq('admin_email', newAdminEmail)
         .eq('created_by', user.id)
-        .eq('is_used', false);
+        .eq('is_used', false)
+        .maybeSingle();
 
       const uniquePassword = generateUniquePassword();
 
-      const { error } = await supabase
-        .from('admin_passwords')
-        .insert({
-          admin_email: newAdminEmail,
-          unique_password: uniquePassword,
-          created_by: user.id,
-          is_used: false,
-          allowed_tiles: selectedTiles
-        });
+      if (existingPassword) {
+        // Update existing password
+        const { error } = await supabase
+          .from('admin_passwords')
+          .update({
+            unique_password: uniquePassword,
+            allowed_tiles: selectedTiles,
+            expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // Reset expiry to 7 days from now
+          })
+          .eq('id', existingPassword.id);
 
-      if (error) throw error;
+        if (error) throw error;
+      } else {
+        // Create new password
+        const { error } = await supabase
+          .from('admin_passwords')
+          .insert({
+            admin_email: newAdminEmail,
+            unique_password: uniquePassword,
+            created_by: user.id,
+            is_used: false,
+            allowed_tiles: selectedTiles
+          });
+
+        if (error) throw error;
+      }
 
       setGeneratedPassword(uniquePassword);
       setGeneratedEmail(newAdminEmail);
@@ -325,6 +343,50 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
         variant: "destructive"
       });
     }
+  };
+
+  const startEditingSubAdmin = (admin: SubAdmin) => {
+    setEditingSubAdmin(admin.id);
+    setEditingTiles(admin.allowed_tiles);
+  };
+
+  const cancelEditingSubAdmin = () => {
+    setEditingSubAdmin(null);
+    setEditingTiles([]);
+  };
+
+  const saveSubAdminPermissions = async (adminId: string) => {
+    try {
+      const { error } = await supabase
+        .from('admin_profiles')
+        .update({ allowed_tiles: editingTiles })
+        .eq('id', adminId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Permissions updated successfully",
+      });
+
+      setEditingSubAdmin(null);
+      setEditingTiles([]);
+      loadSubAdmins();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  };
+
+  const toggleEditingTile = (tileId: string) => {
+    setEditingTiles(prev =>
+      prev.includes(tileId)
+        ? prev.filter(id => id !== tileId)
+        : [...prev, tileId]
+    );
   };
 
   const deletePendingPassword = async (pendingId: string) => {
@@ -522,20 +584,73 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
               <div className="space-y-4">
                 {subAdmins.map((admin) => (
                   <Card key={admin.id}>
-                    <CardContent className="p-4 flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">{admin.email}</p>
-                        <p className="text-sm text-muted-foreground">
-                          Permissions: {admin.allowed_tiles.join(', ')}
-                        </p>
-                      </div>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => deleteSubAdmin(admin.id, admin.email || '')}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                    <CardContent className="p-4">
+                      {editingSubAdmin === admin.id ? (
+                        <div className="space-y-4">
+                          <div>
+                            <p className="font-medium mb-2">{admin.email}</p>
+                            <p className="text-sm font-medium mb-2">Edit Permissions:</p>
+                            <div className="grid grid-cols-2 gap-2">
+                              {availableTiles.map((tile) => (
+                                <div key={tile.id} className="flex items-center space-x-2">
+                                  <Checkbox
+                                    id={`edit-${tile.id}-${admin.id}`}
+                                    checked={editingTiles.includes(tile.id)}
+                                    onCheckedChange={() => toggleEditingTile(tile.id)}
+                                  />
+                                  <label
+                                    htmlFor={`edit-${tile.id}-${admin.id}`}
+                                    className="text-sm leading-none cursor-pointer"
+                                  >
+                                    {tile.label}
+                                  </label>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={() => saveSubAdminPermissions(admin.id)}
+                            >
+                              Save
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={cancelEditingSubAdmin}
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium">{admin.email}</p>
+                            <p className="text-sm text-muted-foreground">
+                              Permissions: {admin.allowed_tiles.join(', ')}
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => startEditingSubAdmin(admin)}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => deleteSubAdmin(admin.id, admin.email || '')}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 ))}
