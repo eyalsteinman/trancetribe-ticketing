@@ -79,7 +79,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}>
         <div className="text-center space-y-2">
-          <p className="text-xs text-white/60 font-medium">beta v1.8</p>
+          <p className="text-xs text-white/60 font-medium">beta v2.1</p>
           <Loader2 className="w-8 h-8 text-white/70 animate-spin mx-auto" />
         </div>
       </div>
