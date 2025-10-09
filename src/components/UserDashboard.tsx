@@ -384,11 +384,11 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
       <div className="min-h-screen w-full relative z-10 transition-colors duration-500 p-4">
       {/* Header */}
       <div className="relative pt-2 pb-6">
-        <h1 className="text-2xl font-bold text-foreground mb-1">
+        <h1 className="text-2xl font-bold text-white mb-1">
           {nickname ? t('welcome_back') : t('user_dashboard')}
         </h1>
         {nickname && (
-          <p className="text-lg text-primary font-semibold">{nickname}!</p>
+          <p className="text-lg text-white font-semibold">{nickname}!</p>
         )}
         <Button 
           variant="outline" 
@@ -526,7 +526,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
       {/* QR Codes Section */}
       {userQRCodes.length > 0 && (
         <div className="mt-6">
-          <h2 className="text-lg font-bold text-foreground mb-4">{t('your_tickets')}</h2>
+          <h2 className="text-lg font-bold text-white mb-4">{t('your_tickets')}</h2>
             <div className="space-y-4">
               {userQRCodes.map((qrCode) => (
                 <div 

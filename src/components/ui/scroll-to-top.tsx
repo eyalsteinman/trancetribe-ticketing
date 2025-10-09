@@ -9,7 +9,7 @@ const ScrollToTop = () => {
   useEffect(() => {
     const toggleVisibility = () => {
       // Show button when page is scrolled down 300px
-      if (window.pageYOffset > 300) {
+      if (window.scrollY > 300) {
         setIsVisible(true);
       } else {
         setIsVisible(false);
@@ -17,7 +17,7 @@ const ScrollToTop = () => {
     };
 
     // Add scroll event listener
-    window.addEventListener('scroll', toggleVisibility);
+    window.addEventListener('scroll', toggleVisibility, { passive: true });
 
     // Check initial scroll position
     toggleVisibility();
@@ -38,13 +38,13 @@ const ScrollToTop = () => {
     <Button
       onClick={scrollToTop}
       className={cn(
-        "fixed right-4 bottom-20 z-50 rounded-full w-12 h-12 p-0 shadow-lg",
-        "bg-primary hover:bg-primary/90 text-primary-foreground",
-        "transition-all duration-300"
+        "fixed right-4 bottom-20 z-[9999] rounded-full w-14 h-14 p-0 shadow-xl",
+        "bg-purple-600 hover:bg-purple-700 text-white",
+        "transition-all duration-300 hover:scale-110"
       )}
       aria-label="Scroll to top"
     >
-      <ArrowUp className="h-5 w-5" />
+      <ArrowUp className="h-6 w-6" strokeWidth={3} />
     </Button>
   );
 };

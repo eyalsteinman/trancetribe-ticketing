@@ -8,14 +8,14 @@ interface ViewTransitionProps {
 }
 
 const ViewTransition = ({ children, viewKey, className }: ViewTransitionProps) => {
-  const [isVisible, setIsVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Trigger fade in after mount
-    setIsVisible(false);
+    // Reset animation on view change
+    setMounted(false);
     const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 10);
+      setMounted(true);
+    }, 50);
 
     return () => clearTimeout(timer);
   }, [viewKey]);
@@ -23,8 +23,8 @@ const ViewTransition = ({ children, viewKey, className }: ViewTransitionProps) =
   return (
     <div
       className={cn(
-        "transition-all duration-200",
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2",
+        "w-full transition-all duration-300 ease-out",
+        mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3",
         className
       )}
     >
