@@ -827,7 +827,7 @@ const AdminDashboard = ({ user, onManageSubAdmins, adminProfile }: AdminDashboar
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <h1 className="text-2xl font-bold text-white">
-                  {adminProfile && !adminProfile.is_super_admin && adminProfile.allowed_tiles.length > 0 
+                  {adminProfile && !adminProfile.is_super_admin && adminProfile.allowed_tiles && adminProfile.allowed_tiles.length > 0
                     ? 'Sub-Admin Dashboard' 
                     : 'Admin Dashboard'}
                 </h1>
@@ -852,7 +852,7 @@ const AdminDashboard = ({ user, onManageSubAdmins, adminProfile }: AdminDashboar
 
         {(() => {
           const allTiles = [
-            { id: 'manage-users', title: 'Camera Scan', icon: <Camera className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('scanner' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'qr-scanner', title: 'Camera Scan', icon: <Camera className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('scanner' as const); setTimeout(() => loadParties(), 100); } },
             { 
               id: 'guest-list', 
               title: 'Guest List', 
@@ -881,18 +881,27 @@ const AdminDashboard = ({ user, onManageSubAdmins, adminProfile }: AdminDashboar
               notificationCount: newRegisteredUsers,
               displayCount: totalRegisteredUsers
             },
-            { id: 'manage-qr', title: 'My Info', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('nickname' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'manage-users', title: 'My Info', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('nickname' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'manage-bar-tabs', title: 'Bar Tab', icon: <Wine className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'bartab-scanner', title: 'Bartab Scanner', icon: <ScanBarcode className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab-scanner' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'manage-faq', title: 'FAQ & Contact', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('faq' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'manage-messages', title: 'Message Users', icon: <MessageCircle className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('message' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'manage-games', title: 'Games', icon: <Gamepad2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('admin-games' as const); setTimeout(() => loadParties(), 100); } },
             ...(onManageSubAdmins ? [{ id: 'manage-sub-admins', title: 'Manage Sub-Admins', icon: <UserPlus className="h-8 w-8 mb-2" />, onClick: onManageSubAdmins }] : []),
           ];
           
+          // Check if this is a sub-admin (has restricted permissions)
+          const isSubAdmin = adminProfile && 
+                             !adminProfile.is_super_admin && 
+                             adminProfile.allowed_tiles && 
+                             adminProfile.allowed_tiles.length > 0;
+          
           // Filter tiles based on admin permissions
-          const tiles = adminProfile && adminProfile.allowed_tiles.length > 0
+          // Sub-admins only see their assigned tiles
+          // Regular admins and super admins see everything
+          const tiles = isSubAdmin
             ? allTiles.filter(tile => adminProfile.allowed_tiles.includes(tile.id))
-            : allTiles; // If no profile or empty allowed_tiles, show all (for full admins)
+            : allTiles;
             
           return (
             <ReorderableTilesLogic 
