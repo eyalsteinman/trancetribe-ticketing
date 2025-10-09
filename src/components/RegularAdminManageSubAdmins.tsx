@@ -29,6 +29,7 @@ interface SubAdmin {
   admin_level: string;
   allowed_tiles: string[];
   email?: string;
+  role?: string;
 }
 
 interface PendingPassword {
@@ -42,6 +43,7 @@ interface PendingPassword {
 }
 
 const availableTiles = [
+  { id: 'my-info', label: 'My Info' },
   { id: 'manage-users', label: 'Manage Users' },
   { id: 'manage-parties', label: 'Manage Parties' },
   { id: 'manage-productions', label: 'Manage Productions' },
@@ -64,7 +66,7 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
   const [subAdmins, setSubAdmins] = useState<SubAdmin[]>([]);
   const [pendingPasswords, setPendingPasswords] = useState<PendingPassword[]>([]);
   const [newAdminEmail, setNewAdminEmail] = useState('');
-  const [newAdminNickname, setNewAdminNickname] = useState('');
+  const [newAdminRole, setNewAdminRole] = useState('');
   const [selectedTiles, setSelectedTiles] = useState<string[]>([]);
   const [selectAllTiles, setSelectAllTiles] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -74,6 +76,7 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
   const [copied, setCopied] = useState(false);
   const [editingSubAdmin, setEditingSubAdmin] = useState<string | null>(null);
   const [editingTiles, setEditingTiles] = useState<string[]>([]);
+  const [editingRole, setEditingRole] = useState<string>('');
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
 
@@ -91,7 +94,8 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
           user_id,
           admin_level,
           allowed_tiles,
-          created_by
+          created_by,
+          role
         `)
         .eq('created_by', user.id);
 
@@ -208,7 +212,7 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
       setCopied(false);
 
       setNewAdminEmail('');
-      setNewAdminNickname('');
+      setNewAdminRole('');
       setSelectedTiles([]);
       setSelectAllTiles(false);
       loadSubAdmins();
@@ -349,18 +353,23 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
   const startEditingSubAdmin = (admin: SubAdmin) => {
     setEditingSubAdmin(admin.id);
     setEditingTiles(admin.allowed_tiles);
+    setEditingRole(admin.role || '');
   };
 
   const cancelEditingSubAdmin = () => {
     setEditingSubAdmin(null);
     setEditingTiles([]);
+    setEditingRole('');
   };
 
   const saveSubAdminPermissions = async (adminId: string) => {
     try {
       const { error } = await supabase
         .from('admin_profiles')
-        .update({ allowed_tiles: editingTiles })
+        .update({ 
+          allowed_tiles: editingTiles,
+          role: editingRole || null
+        })
         .eq('id', adminId);
 
       if (error) throw error;
@@ -372,6 +381,7 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
 
       setEditingSubAdmin(null);
       setEditingTiles([]);
+      setEditingRole('');
       loadSubAdmins();
     } catch (error: any) {
       toast({
@@ -445,9 +455,9 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
 
               <Input
                 type="text"
-                placeholder="Nickname (optional)"
-                value={newAdminNickname}
-                onChange={(e) => setNewAdminNickname(e.target.value)}
+                placeholder="Role (e.g., Event Manager, Scanner Operator)"
+                value={newAdminRole}
+                onChange={(e) => setNewAdminRole(e.target.value)}
               />
 
               <div className="space-y-2">
@@ -590,6 +600,13 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
                         <div className="space-y-4">
                           <div>
                             <p className="font-medium mb-2">{admin.email}</p>
+                            <Input
+                              type="text"
+                              placeholder="Role (e.g., Event Manager)"
+                              value={editingRole}
+                              onChange={(e) => setEditingRole(e.target.value)}
+                              className="mb-3"
+                            />
                             <p className="text-sm font-medium mb-2">Edit Permissions:</p>
                             <div className="grid grid-cols-2 gap-2">
                               {availableTiles.map((tile) => (
@@ -630,6 +647,9 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="font-medium">{admin.email}</p>
+                            {admin.role && (
+                              <p className="text-sm text-muted-foreground font-semibold">Role: {admin.role}</p>
+                            )}
                             <p className="text-sm text-muted-foreground">
                               Permissions: {admin.allowed_tiles.join(', ')}
                             </p>

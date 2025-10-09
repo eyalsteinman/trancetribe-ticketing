@@ -124,6 +124,7 @@ export type Database = {
           created_by: string | null
           id: string
           is_super_admin: boolean | null
+          role: string | null
           updated_at: string
           user_id: string
         }
@@ -134,6 +135,7 @@ export type Database = {
           created_by?: string | null
           id?: string
           is_super_admin?: boolean | null
+          role?: string | null
           updated_at?: string
           user_id: string
         }
@@ -144,6 +146,7 @@ export type Database = {
           created_by?: string | null
           id?: string
           is_super_admin?: boolean | null
+          role?: string | null
           updated_at?: string
           user_id?: string
         }
