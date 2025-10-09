@@ -70,7 +70,7 @@ export const AuthForm = ({
           </div>
         </TabsContent>
         
-        <TabsContent value="admin" className="p-6 space-y-4">
+        <TabsContent value="admin" className="px-6 pt-2 pb-6 space-y-4">
           <div className="space-y-2">
             <h3 className="text-xl font-semibold text-white text-center">{t('admin_access')}</h3>
             <p className="text-white/80 text-center text-sm">{t('admin_credentials_description')}</p>
