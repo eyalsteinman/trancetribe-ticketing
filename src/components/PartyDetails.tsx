@@ -10,6 +10,7 @@ import SocialNetworksDialog from './SocialNetworksDialog';
 import SocialNetworks from './SocialNetworks';
 import RtlText from './RtlText';
 import BuyTicket from './BuyTicket';
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 interface Party {
   id: string;
@@ -67,6 +68,8 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
   const [missingSocials, setMissingSocials] = useState<string[]>([]);
   const [showSocialNetworks, setShowSocialNetworks] = useState(false);
   const [pendingTicketAction, setPendingTicketAction] = useState<{ type: 'payment' | 'generate'; ticketType?: TicketType } | null>(null);
+  const [isFollower, setIsFollower] = useState(false);
+  const [showJoinTribeDialog, setShowJoinTribeDialog] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -74,7 +77,52 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
     loadTicketTypes();
     checkExistingQRs();
     checkPaymentStatus();
+    checkFollowerStatus();
   }, [party.id]);
+
+  const checkFollowerStatus = async () => {
+    if (!party.production_id) {
+      setIsFollower(true); // If no production, allow purchase
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('production_followers')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('production_id', party.production_id)
+      .maybeSingle();
+
+    setIsFollower(!!data && !error);
+  };
+
+  const handleJoinTribe = async () => {
+    if (!party.production_id) return;
+
+    try {
+      const { error } = await supabase
+        .from('production_followers')
+        .insert({
+          user_id: user.id,
+          production_id: party.production_id
+        });
+
+      if (error) throw error;
+
+      setIsFollower(true);
+      setShowJoinTribeDialog(false);
+      toast({
+        title: "Success",
+        description: "You have joined the tribe! You can now purchase tickets."
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  };
 
   const loadProduction = async () => {
     if (!party.production_id) return;
@@ -235,6 +283,11 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
   };
 
   const handlePayment = async (ticketType?: TicketType) => {
+    if (!isFollower) {
+      setShowJoinTribeDialog(true);
+      return;
+    }
+
     const canPurchase = await checkRequiredSocials({ type: 'payment', ticketType });
     if (!canPurchase) return;
 
@@ -271,6 +324,11 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
   };
 
   const generateQR = async (ticketType?: TicketType) => {
+    if (!isFollower) {
+      setShowJoinTribeDialog(true);
+      return;
+    }
+
     const canGenerate = await checkRequiredSocials({ type: 'generate', ticketType });
     if (!canGenerate) return;
 
@@ -707,6 +765,23 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
           missingSocials={missingSocials}
           onFillNow={handleSocialDialogFillNow}
         />
+
+        {/* Join Tribe Dialog */}
+        <AlertDialog open={showJoinTribeDialog} onOpenChange={setShowJoinTribeDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Join Tribe to Purchase Tickets</AlertDialogTitle>
+              <AlertDialogDescription>
+                You need to join this tribe in order to purchase tickets for this event.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction onClick={handleJoinTribe}>
+                Join Tribe Now
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );

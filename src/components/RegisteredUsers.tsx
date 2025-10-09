@@ -97,10 +97,43 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
   const loadUsers = async () => {
     setLoading(true);
     try {
-      // First get all profiles
+      // Get current admin's user ID
+      const { data: currentUser } = await supabase.auth.getUser();
+      if (!currentUser.user) return;
+
+      // Get admin's productions
+      const { data: adminProductions } = await supabase
+        .from('productions')
+        .select('id')
+        .eq('created_by', currentUser.user.id);
+
+      const productionIds = adminProductions?.map(p => p.id) || [];
+
+      if (productionIds.length === 0) {
+        setUsers([]);
+        setLoading(false);
+        return;
+      }
+
+      // Get followers of admin's productions
+      const { data: followers } = await supabase
+        .from('production_followers')
+        .select('user_id')
+        .in('production_id', productionIds);
+
+      const followerUserIds = [...new Set(followers?.map(f => f.user_id) || [])];
+
+      if (followerUserIds.length === 0) {
+        setUsers([]);
+        setLoading(false);
+        return;
+      }
+
+      // Get profiles for followers
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
+        .in('user_id', followerUserIds)
         .order('created_at', { ascending: false });
 
       if (profilesError) {
@@ -113,10 +146,11 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
         return;
       }
 
-      // Then get all user roles
+      // Get user roles
       const { data: userRoles, error: rolesError } = await supabase
         .from('user_roles')
-        .select('user_id, role');
+        .select('user_id, role')
+        .in('user_id', followerUserIds);
 
       if (rolesError) {
         console.error('Error loading user roles:', rolesError);
