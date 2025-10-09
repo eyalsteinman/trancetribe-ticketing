@@ -300,13 +300,13 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId, onTicketP
           </Card>
 
           {/* New Parties Carousel */}
-          {newParties.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">New Events from Your Tribes</CardTitle>
-              </CardHeader>
-              <CardContent className="relative">
-                <div className="overflow-x-auto scrollbar-hide">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">New Events from Your Tribes</CardTitle>
+            </CardHeader>
+            <CardContent className="relative">
+              {newParties.length > 0 ? (
+                <div className="overflow-x-auto scrollbar-hide -mx-2 px-2">
                   <div className="flex gap-4 pb-4" style={{ scrollSnapType: 'x mandatory' }}>
                     {newParties.map((party) => (
                       <div
@@ -351,9 +351,15 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId, onTicketP
                     ))}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          )}
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <CalendarIcon className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p>No new events from your tribes</p>
+                  <p className="text-sm mt-1">Check back later for new parties!</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Calendar and Event Details */}
           <div className="grid gap-6 lg:grid-cols-2">
