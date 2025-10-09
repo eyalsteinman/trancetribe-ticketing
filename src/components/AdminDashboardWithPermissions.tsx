@@ -63,7 +63,7 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
     try {
       const { data, error } = await supabase
         .from('admin_profiles')
-        .select('admin_level, allowed_tiles, is_super_admin')
+        .select('admin_level, allowed_tiles, is_super_admin, role')
         .eq('user_id', user.id)
         .single();
 
