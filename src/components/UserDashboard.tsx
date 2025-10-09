@@ -248,11 +248,11 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
   // Handle different views
   if (currentView === 'parties') {
-    return <UserParties user={user} onBack={() => setCurrentView('dashboard')} />;
+    return <div className="animate-enter"><UserParties user={user} onBack={() => setCurrentView('dashboard')} /></div>;
   }
 
   if (currentView === 'event-calendar') {
-    return <EventCalendar 
+    return <div className="animate-enter"><EventCalendar 
       onBack={() => {
         // Mark badge as dismissed when exiting calendar
         localStorage.setItem(`calendar-badge-dismissed-${user.id}`, 'true');
@@ -264,103 +264,107 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         loadNewEventsCount();
         loadUserQRCodes();
       }}
-    />;
+    /></div>;
   }
 
   if (currentView === 'nickname') {
-    return <PersonalizeEdit user={user} onBack={() => {
+    return <div className="animate-enter"><PersonalizeEdit user={user} onBack={() => {
       setCurrentView('dashboard');
       loadUserProfile(); // Refresh nickname after returning
-    }} />;
+    }} /></div>;
   }
 
   if (currentView === 'games') {
-    return <UserGames onBack={() => setCurrentView('dashboard')} onGameSelect={(game) => setCurrentView(game as any)} />;
+    return <div className="animate-enter"><UserGames onBack={() => setCurrentView('dashboard')} onGameSelect={(game) => setCurrentView(game as any)} /></div>;
   }
 
   if (currentView === 'color-changer') {
-    return <BoredScreen onBack={() => setCurrentView('games')} />;
+    return <div className="animate-enter"><BoredScreen onBack={() => setCurrentView('games')} /></div>;
   }
 
   if (currentView === 'dot-circle') {
-    return <DotCircleGame onBack={() => setCurrentView('games')} adminId={user.id} adminNickname={nickname} />;
+    return <div className="animate-enter"><DotCircleGame onBack={() => setCurrentView('games')} adminId={user.id} adminNickname={nickname} /></div>;
   }
 
   if (currentView === 'exploder') {
-    return <ExploderGame onBack={() => setCurrentView('games')} scope="user" playerNickname={nickname} />;
+    return <div className="animate-enter"><ExploderGame onBack={() => setCurrentView('games')} scope="user" playerNickname={nickname} /></div>;
   }
 
   if (currentView === 'haya-ninja') {
-    return <HayaNinja onBack={() => setCurrentView('games')} scope="user" playerNickname={nickname} />;
+    return <div className="animate-enter"><HayaNinja onBack={() => setCurrentView('games')} scope="user" playerNickname={nickname} /></div>;
   }
 
   if (currentView === 'social') {
-    return <SocialNetworks userId={user.id} onBack={() => setCurrentView('dashboard')} />;
+    return <div className="animate-enter"><SocialNetworks userId={user.id} onBack={() => setCurrentView('dashboard')} /></div>;
   }
 
   if (currentView === 'insurance') {
-    return <Insurance onBack={() => setCurrentView('dashboard')} />;
+    return <div className="animate-enter"><Insurance onBack={() => setCurrentView('dashboard')} /></div>;
   }
 
   if (currentView === 'vip') {
     return (
-      <VIPHub
-        user={user}
-        nickname={nickname}
-        onBack={() => setCurrentView('dashboard')}
-        onSelectProduction={(production) => {
-          setSelectedProduction(production);
-          setCurrentView('vip-detail');
-        }}
-      />
+      <div className="animate-enter">
+        <VIPHub
+          user={user}
+          nickname={nickname}
+          onBack={() => setCurrentView('dashboard')}
+          onSelectProduction={(production) => {
+            setSelectedProduction(production);
+            setCurrentView('vip-detail');
+          }}
+        />
+      </div>
     );
   }
 
   if (currentView === 'vip-detail' && selectedProduction !== null) {
     return (
-      <VIPProduction
-        user={user}
-        production={selectedProduction}
-        onBack={() => setCurrentView('vip')}
-      />
+      <div className="animate-enter">
+        <VIPProduction
+          user={user}
+          production={selectedProduction}
+          onBack={() => setCurrentView('vip')}
+        />
+      </div>
     );
   }
 
   if (currentView === 'personal-code') {
-    return <PersonalCode user={user} onBack={() => setCurrentView('dashboard')} />;
+    return <div className="animate-enter"><PersonalCode user={user} onBack={() => setCurrentView('dashboard')} /></div>;
   }
 
   if (currentView === 'friends-codes') {
-    return <FriendsCodes user={user} onBack={() => setCurrentView('dashboard')} />;
+    return <div className="animate-enter"><FriendsCodes user={user} onBack={() => setCurrentView('dashboard')} /></div>;
   }
 
   if (currentView === 'bar-tab') {
-    return <UserBarTab userId={user.id} onBack={() => setCurrentView('dashboard')} />;
+    return <div className="animate-enter"><UserBarTab userId={user.id} onBack={() => setCurrentView('dashboard')} /></div>;
   }
 
   if (currentView === 'faq') {
-    return <FAQContact user={user} onBack={() => setCurrentView('dashboard')} isAdmin={false} />;
+    return <div className="animate-enter"><FAQContact user={user} onBack={() => setCurrentView('dashboard')} isAdmin={false} /></div>;
   }
 
   if (currentView === 'messages') {
-    return <UserMessages onBack={() => {
+    return <div className="animate-enter"><UserMessages onBack={() => {
       setCurrentView('dashboard');
       loadUnreadMessageCount(); // Refresh unread count when returning
-    }} userId={user.id} onOpenTribes={() => setCurrentView('tribes')} />;
+    }} userId={user.id} onOpenTribes={() => setCurrentView('tribes')} /></div>;
   }
 
   if (currentView === 'direct-messages') {
-    return <UserDirectMessages onBack={() => {
+    return <div className="animate-enter"><UserDirectMessages onBack={() => {
       setCurrentView('dashboard');
       loadUnreadDirectMessageCount(); // Refresh unread count when returning
-    }} userId={user.id} />;
+    }} userId={user.id} /></div>;
   }
 
   if (currentView === 'tribes') {
     const UserTribes = React.lazy(() => import('./UserTribes'));
     return (
       <React.Suspense fallback={<div className="min-h-screen bg-background p-4"><div className="text-center">Loading...</div></div>}>
-        <UserTribes onBack={() => setCurrentView('dashboard')} userId={user.id} />
+        <div className="animate-enter"><UserTribes onBack={() => setCurrentView('dashboard')} userId={user.id} /></div>
       </React.Suspense>
     );
   }

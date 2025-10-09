@@ -582,44 +582,44 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
   };
 
   if (currentView === 'nickname') {
-    return <PersonalizeEdit user={user} onBack={() => setCurrentView('dashboard')} />;
+    return <div className="animate-enter"><PersonalizeEdit user={user} onBack={() => setCurrentView('dashboard')} /></div>;
   }
 
   if (currentView === 'create-party') {
-    return <CreateParty onBack={() => setCurrentView('dashboard')} />;
+    return <div className="animate-enter"><CreateParty onBack={() => setCurrentView('dashboard')} /></div>;
   }
 
   if (currentView === 'edit-parties') {
-    return <EditParties onBack={() => setCurrentView('dashboard')} />;
+    return <div className="animate-enter"><EditParties onBack={() => setCurrentView('dashboard')} /></div>;
   }
 
 
   if (currentView === 'registered-users') {
-    return <RegisteredUsers onBack={() => setCurrentView('dashboard')} />;
+    return <div className="animate-enter"><RegisteredUsers onBack={() => setCurrentView('dashboard')} /></div>;
   }
 
   if (currentView === 'admin-games') {
-    return <AdminGames onBack={() => setCurrentView('dashboard')} onGameSelect={(game) => setCurrentView(game as any)} />;
+    return <div className="animate-enter"><AdminGames onBack={() => setCurrentView('dashboard')} onGameSelect={(game) => setCurrentView(game as any)} /></div>;
   }
 
   if (currentView === 'color-changer') {
-    return <BoredScreen onBack={() => setCurrentView('admin-games')} />;
+    return <div className="animate-enter"><BoredScreen onBack={() => setCurrentView('admin-games')} /></div>;
   }
 
   if (currentView === 'dot-circle') {
-    return <DotCircleGame onBack={() => setCurrentView('admin-games')} adminId={user.id} adminNickname={adminNickname} />;
+    return <div className="animate-enter"><DotCircleGame onBack={() => setCurrentView('admin-games')} adminId={user.id} adminNickname={adminNickname} /></div>;
   }
 
   if (currentView === 'exploder') {
-    return <ExploderGame onBack={() => setCurrentView('admin-games')} scope="admin" playerNickname={adminNickname} />;
+    return <div className="animate-enter"><ExploderGame onBack={() => setCurrentView('admin-games')} scope="admin" playerNickname={adminNickname} /></div>;
   }
 
   if (currentView === 'haya-ninja') {
-    return <HayaNinja onBack={() => setCurrentView('admin-games')} scope="admin" playerNickname={adminNickname} />;
+    return <div className="animate-enter"><HayaNinja onBack={() => setCurrentView('admin-games')} scope="admin" playerNickname={adminNickname} /></div>;
   }
 
   if (currentView === 'my-productions') {
-    return <AdminProductions 
+    return <div className="animate-enter"><AdminProductions 
       onBack={() => setCurrentView('dashboard')} 
       onEdit={(productionId: string) => {
         setCurrentView('manage-productions');
@@ -628,43 +628,45 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
           if (editButton) editButton.click();
         }, 100);
       }}
-    />;
+    /></div>;
   }
 
   if (currentView === 'manage-productions') {
-    return <ManageProductions onBack={() => setCurrentView('dashboard')} />;
+    return <div className="animate-enter"><ManageProductions onBack={() => setCurrentView('dashboard')} /></div>;
   }
 
   if (currentView === 'guest-list') {
-    return <AdminGuestList user={user} onBack={() => setCurrentView('dashboard')} />;
+    return <div className="animate-enter"><AdminGuestList user={user} onBack={() => setCurrentView('dashboard')} /></div>;
   }
 
   if (currentView === 'bar-tab') {
-    return <BarTabManager user={user} onBack={() => setCurrentView('dashboard')} />;
+    return <div className="animate-enter"><BarTabManager user={user} onBack={() => setCurrentView('dashboard')} /></div>;
   }
 
   if (currentView === 'bar-tab-scanner') {
-    return <BarTabScanner user={user} onBack={() => setCurrentView('dashboard')} />;
+    return <div className="animate-enter"><BarTabScanner user={user} onBack={() => setCurrentView('dashboard')} /></div>;
   }
 
   if (currentView === 'faq') {
-    return <FAQContact user={user} onBack={() => setCurrentView('dashboard')} isAdmin={true} />;
+    return <div className="animate-enter"><FAQContact user={user} onBack={() => setCurrentView('dashboard')} isAdmin={true} /></div>;
   }
 
   if (currentView === 'message') {
     return (
-      <AdminMessageSender 
-        onBack={() => setCurrentView('dashboard')} 
-        adminId={user.id}
-        adminName={user?.user_metadata?.display_name || user?.user_metadata?.full_name}
-      />
+      <div className="animate-enter">
+        <AdminMessageSender 
+          onBack={() => setCurrentView('dashboard')} 
+          adminId={user.id}
+          adminName={user?.user_metadata?.display_name || user?.user_metadata?.full_name}
+        />
+      </div>
     );
   }
 
   if (currentView === 'scanner') {
     return (
       <div 
-        className="min-h-screen transition-colors duration-500"
+        className="min-h-screen transition-colors duration-500 animate-enter"
         style={{ 
           backgroundColor
         }}
@@ -722,7 +724,7 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
   if (currentView === 'guests') {
     return (
       <div 
-        className="min-h-screen transition-colors duration-500"
+        className="min-h-screen transition-colors duration-500 animate-enter"
         style={{ 
           backgroundColor
         }}
