@@ -210,7 +210,7 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
 
   return (
   <div 
-      className="min-h-screen p-4 transition-colors duration-500"
+      className="min-h-screen flex flex-col transition-colors duration-500"
       style={{ 
         backgroundColor
       }}
@@ -220,7 +220,8 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
         onBack={onBack}
       />
       
-      <div className="w-full max-w-none pt-20 space-y-6 text-left">
+      <div className="w-full max-w-none flex-1 flex items-center justify-center pt-20 pb-4 px-4 space-y-6 text-left overflow-y-auto">
+        <div className="w-full space-y-6">
 
         <Card className="w-full max-w-none mx-4">
           <CardHeader>
@@ -400,6 +401,7 @@ const CreateParty = ({ onBack }: CreatePartyProps) => {
         </Card>
         
         <Footer />
+        </div>
       </div>
     </div>
   );
