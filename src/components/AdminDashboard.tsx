@@ -376,14 +376,15 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
     try {
       console.log('Loading notification counts for admin:', user.id);
       
-      // Get admin's productions
-      const { data: adminProductions, error: prodError } = await supabase
-        .from('productions')
-        .select('id')
-        .eq('created_by', user.id);
+      // Check if user is super admin
+      const { data: adminProfile } = await supabase
+        .from('admin_profiles')
+        .select('is_super_admin')
+        .eq('user_id', user.id)
+        .single();
 
-      console.log('Admin productions:', adminProductions, 'Error:', prodError);
-      const productionIds = adminProductions?.map(p => p.id) || [];
+      const isSuperAdmin = adminProfile?.is_super_admin || false;
+      console.log('Is super admin:', isSuperAdmin);
 
       // Get last opened timestamps for dashboard tiles
       const { data: tileStates } = await supabase
@@ -395,75 +396,120 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
       const registeredUsersLastOpened = tileStates?.find(t => t.tile === 'registered-users')?.last_opened_at;
       const guestListLastOpened = tileStates?.find(t => t.tile === 'guest-list')?.last_opened_at;
 
-      // Count registered users (followers of admin's productions)
-      if (productionIds.length > 0) {
-        const { data: followers, error: followersError } = await supabase
-          .from('production_followers')
-          .select('user_id')
-          .in('production_id', productionIds);
-
-        console.log('Production followers:', followers, 'Error:', followersError);
-        const followerUserIds = [...new Set(followers?.map(f => f.user_id) || [])];
+      // Count registered users
+      if (isSuperAdmin) {
+        // Super admin sees ALL users in the system
+        const { count: totalUsersCount } = await supabase
+          .from('profiles')
+          .select('*', { count: 'exact', head: true });
         
-        // Set TOTAL count (always shown under tile name)
-        console.log('Setting total registered users count to:', followerUserIds.length);
-        setTotalRegisteredUsers(followerUserIds.length);
+        console.log('Super admin - Total users in system:', totalUsersCount);
+        setTotalRegisteredUsers(totalUsersCount || 0);
 
-        // Set NEW count (for badge notification)
-        if (registeredUsersLastOpened && followerUserIds.length > 0) {
+        // Count NEW users for badge
+        if (registeredUsersLastOpened) {
           const { count: newUsersCount } = await supabase
             .from('profiles')
             .select('*', { count: 'exact', head: true })
-            .in('user_id', followerUserIds)
             .gt('created_at', registeredUsersLastOpened);
-          console.log('New registered users since last opened:', newUsersCount);
           setNewRegisteredUsers(newUsersCount || 0);
         } else {
-          setNewRegisteredUsers(followerUserIds.length);
+          setNewRegisteredUsers(totalUsersCount || 0);
         }
       } else {
-        console.log('No productions found, setting registered users to 0');
-        setTotalRegisteredUsers(0);
-        setNewRegisteredUsers(0);
+        // Regular admin sees only followers of their productions
+        const { data: adminProductions } = await supabase
+          .from('productions')
+          .select('id')
+          .eq('created_by', user.id);
+
+        const productionIds = adminProductions?.map(p => p.id) || [];
+
+        if (productionIds.length > 0) {
+          const { data: followers } = await supabase
+            .from('production_followers')
+            .select('user_id')
+            .in('production_id', productionIds);
+
+          const followerUserIds = [...new Set(followers?.map(f => f.user_id) || [])];
+          
+          console.log('Regular admin - Followers count:', followerUserIds.length);
+          setTotalRegisteredUsers(followerUserIds.length);
+
+          // Count NEW followers for badge
+          if (registeredUsersLastOpened && followerUserIds.length > 0) {
+            const { count: newUsersCount } = await supabase
+              .from('profiles')
+              .select('*', { count: 'exact', head: true })
+              .in('user_id', followerUserIds)
+              .gt('created_at', registeredUsersLastOpened);
+            setNewRegisteredUsers(newUsersCount || 0);
+          } else {
+            setNewRegisteredUsers(followerUserIds.length);
+          }
+        } else {
+          setTotalRegisteredUsers(0);
+          setNewRegisteredUsers(0);
+        }
       }
 
-      // Count guests in admin's parties
-      const { data: adminParties, error: partiesError } = await supabase
-        .from('parties')
-        .select('id')
-        .eq('created_by', user.id);
-
-      console.log('Admin parties:', adminParties, 'Error:', partiesError);
-      const partyIds = adminParties?.map(p => p.id) || [];
-
-      if (partyIds.length > 0) {
-        const { count: totalGuestsCount, error: guestsError } = await supabase
+      // Count guests
+      if (isSuperAdmin) {
+        // Super admin sees ALL arriving guests in the system
+        const { count: totalGuestsCount } = await supabase
           .from('qr_codes')
           .select('*', { count: 'exact', head: true })
-          .in('party_id', partyIds)
           .eq('is_scanned', false);
         
-        // Set TOTAL count (always shown under tile name)
-        console.log('Total arriving guests count:', totalGuestsCount);
+        console.log('Super admin - Total arriving guests:', totalGuestsCount);
         setTotalArrivingGuests(totalGuestsCount || 0);
 
-        // Set NEW count (for badge notification)
+        // Count NEW guests for badge
         if (guestListLastOpened) {
           const { count: newGuestsCount } = await supabase
             .from('qr_codes')
             .select('*', { count: 'exact', head: true })
-            .in('party_id', partyIds)
             .eq('is_scanned', false)
             .gt('created_at', guestListLastOpened);
-          console.log('New arriving guests since last opened:', newGuestsCount);
           setNewArrivingGuests(newGuestsCount || 0);
         } else {
           setNewArrivingGuests(totalGuestsCount || 0);
         }
       } else {
-        console.log('No parties found, setting arriving guests to 0');
-        setTotalArrivingGuests(0);
-        setNewArrivingGuests(0);
+        // Regular admin sees only guests from their parties
+        const { data: adminParties } = await supabase
+          .from('parties')
+          .select('id')
+          .eq('created_by', user.id);
+
+        const partyIds = adminParties?.map(p => p.id) || [];
+
+        if (partyIds.length > 0) {
+          const { count: totalGuestsCount } = await supabase
+            .from('qr_codes')
+            .select('*', { count: 'exact', head: true })
+            .in('party_id', partyIds)
+            .eq('is_scanned', false);
+          
+          console.log('Regular admin - Arriving guests count:', totalGuestsCount);
+          setTotalArrivingGuests(totalGuestsCount || 0);
+
+          // Count NEW guests for badge
+          if (guestListLastOpened) {
+            const { count: newGuestsCount } = await supabase
+              .from('qr_codes')
+              .select('*', { count: 'exact', head: true })
+              .in('party_id', partyIds)
+              .eq('is_scanned', false)
+              .gt('created_at', guestListLastOpened);
+            setNewArrivingGuests(newGuestsCount || 0);
+          } else {
+            setNewArrivingGuests(totalGuestsCount || 0);
+          }
+        } else {
+          setTotalArrivingGuests(0);
+          setNewArrivingGuests(0);
+        }
       }
       
       console.log('Final counts - Total Registered:', totalRegisteredUsers, 'New Registered:', newRegisteredUsers);
