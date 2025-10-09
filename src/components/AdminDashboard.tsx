@@ -33,6 +33,9 @@ import BarTabScanner from './BarTabScanner';
 import FAQContact from './FAQContact';
 import AdminMessageSender from './AdminMessageSender';
 import { useTheme } from '@/hooks/useDarkMode';
+import ViewTransition from './ui/view-transition';
+import ScrollToTop from './ui/scroll-to-top';
+import { useScrollMemory } from '@/hooks/useScrollMemory';
 
 interface AdminDashboardProps {
   user: User;
@@ -71,6 +74,9 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
   const { backgroundColor, isBackgroundDark } = useBackground();
   const { currentTheme, cycleTheme, getThemeDisplayName } = useTheme();
   const { t } = useLanguage();
+
+  // Add scroll memory
+  useScrollMemory({ viewKey: currentView, enabled: true });
 
   useEffect(() => {
     loadParties();
@@ -665,138 +671,142 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
 
   if (currentView === 'scanner') {
     return (
-      <div 
-        className="min-h-screen transition-colors duration-500 animate-enter"
-        style={{ 
-          backgroundColor
-        }}
-      >
-        <PageHeader
-          title="QR Scanner"
-          onBack={() => setCurrentView('dashboard')}
-        />
-        
-        <div className="w-full pt-20">
-          {parties.length > 0 && (
-            <div className="container-section">
-              <div className="bg-card border border-border">
-                <div className="p-4 border-b border-border">
-                  <h3 className="text-lg font-bold">Select Party to Scan For</h3>
-                </div>
-                <div className="p-4">
-                  <select 
-                    className="w-full p-2 border border-border bg-background text-foreground"
-                    value={selectedParty || ''}
-                    onChange={(e) => setSelectedParty(e.target.value)}
-                  >
-                    {parties.map((party) => (
-                      <option key={party.id} value={party.id}>
-                        {party.name} - {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                      </option>
-                    ))}
-                  </select>
+      <ViewTransition viewKey={currentView}>
+        <div 
+          className="min-h-screen transition-colors duration-500"
+          style={{ 
+            backgroundColor
+          }}
+        >
+          <PageHeader
+            title="QR Scanner"
+            onBack={() => setCurrentView('dashboard')}
+          />
+          
+          <div className="w-full pt-20">
+            {parties.length > 0 && (
+              <div className="container-section">
+                <div className="bg-card border border-border">
+                  <div className="p-4 border-b border-border">
+                    <h3 className="text-lg font-bold">Select Party to Scan For</h3>
+                  </div>
+                  <div className="p-4">
+                    <select 
+                      className="w-full p-2 border border-border bg-background text-foreground"
+                      value={selectedParty || ''}
+                      onChange={(e) => setSelectedParty(e.target.value)}
+                    >
+                      {parties.map((party) => (
+                        <option key={party.id} value={party.id}>
+                          {party.name} - {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {selectedParty && (
-            <div className="container-section">
-              <QRScanner 
-                onScan={(result) => scanQRCode(result)}
-                onClose={() => setCurrentView('dashboard')}
-              />
-            </div>
-          )}
-
-          {!selectedParty && (
-            <div className="container-section">
-              <div className="bg-card border border-border p-6 text-center">
-                <p className="text-muted-foreground">Please select a party to start scanning</p>
+            {selectedParty && (
+              <div className="container-section">
+                <QRScanner 
+                  onScan={(result) => scanQRCode(result)}
+                  onClose={() => setCurrentView('dashboard')}
+                />
               </div>
-            </div>
-          )}
+            )}
+
+            {!selectedParty && (
+              <div className="container-section">
+                <div className="bg-card border border-border p-6 text-center">
+                  <p className="text-muted-foreground">Please select a party to start scanning</p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      </ViewTransition>
     );
   }
 
   if (currentView === 'guests') {
     return (
-      <div 
-        className="min-h-screen transition-colors duration-500 animate-enter"
-        style={{ 
-          backgroundColor
-        }}
-      >
-        <PageHeader
-          title="Guest Management"
-          onBack={() => setCurrentView('dashboard')}
-        />
-        
-        <div className="w-full pt-20">
-          {parties.length > 0 && (
-            <div className="container-section">
-              <div className="bg-card border border-border">
-                <div className="p-4 border-b border-border">
-                  <h3 className="text-lg font-bold">Select Party</h3>
-                </div>
-                <div className="p-4">
-                  <select 
-                    className="w-full p-2 border border-border bg-background text-foreground"
-                    value={selectedParty || ''}
-                    onChange={(e) => setSelectedParty(e.target.value)}
-                  >
-                    {parties.map((party) => (
-                      <option key={party.id} value={party.id}>
-                        {party.name} - {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {selectedParty && scannedUsers.length > 0 && (
-            <div className="container-section">
-              <div className="bg-card border border-border">
-                <div className="p-4 border-b border-border">
-                  <h3 className="text-lg font-bold">Scanned Guests ({scannedUsers.length})</h3>
-                </div>
-                <div className="p-4">
-                  <div className="space-y-3 max-h-80 overflow-y-auto">
-                    {scannedUsers.map((scannedUser, index) => (
-                      <div key={scannedUser.id} className="flex items-center justify-between p-3 bg-muted">
-                        <div>
-                          <div className="font-medium">
-                            {scannedUser.profiles?.display_name || 
-                             `${scannedUser.profiles?.first_name || ''} ${scannedUser.profiles?.last_name || ''}`.trim() ||
-                             scannedUser.profiles?.email ||
-                             'Unknown User'}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            Scanned: {new Date(scannedUser.scanned_at).toLocaleString('en-GB')}
-                          </div>
-                        </div>
-                        <Badge variant="outline">#{index + 1}</Badge>
-                      </div>
-                    ))}
+      <ViewTransition viewKey={currentView}>
+        <div 
+          className="min-h-screen transition-colors duration-500"
+          style={{ 
+            backgroundColor
+          }}
+        >
+          <PageHeader
+            title="Guest Management"
+            onBack={() => setCurrentView('dashboard')}
+          />
+          
+          <div className="w-full pt-20">
+            {parties.length > 0 && (
+              <div className="container-section">
+                <div className="bg-card border border-border">
+                  <div className="p-4 border-b border-border">
+                    <h3 className="text-lg font-bold">Select Party</h3>
+                  </div>
+                  <div className="p-4">
+                    <select 
+                      className="w-full p-2 border border-border bg-background text-foreground"
+                      value={selectedParty || ''}
+                      onChange={(e) => setSelectedParty(e.target.value)}
+                    >
+                      {parties.map((party) => (
+                        <option key={party.id} value={party.id}>
+                          {party.name} - {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {selectedParty && scannedUsers.length === 0 && (
-            <div className="container-section">
-              <div className="bg-card border border-border p-6 text-center">
-                <p className="text-muted-foreground">No guests scanned yet for this party</p>
+            {selectedParty && scannedUsers.length > 0 && (
+              <div className="container-section">
+                <div className="bg-card border border-border">
+                  <div className="p-4 border-b border-border">
+                    <h3 className="text-lg font-bold">Scanned Guests ({scannedUsers.length})</h3>
+                  </div>
+                  <div className="p-4">
+                    <div className="space-y-3 max-h-80 overflow-y-auto">
+                      {scannedUsers.map((scannedUser, index) => (
+                        <div key={scannedUser.id} className="flex items-center justify-between p-3 bg-muted">
+                          <div>
+                            <div className="font-medium">
+                              {scannedUser.profiles?.display_name || 
+                               `${scannedUser.profiles?.first_name || ''} ${scannedUser.profiles?.last_name || ''}`.trim() ||
+                               scannedUser.profiles?.email ||
+                               'Unknown User'}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              Scanned: {new Date(scannedUser.scanned_at).toLocaleString('en-GB')}
+                            </div>
+                          </div>
+                          <Badge variant="outline">#{index + 1}</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+
+            {selectedParty && scannedUsers.length === 0 && (
+              <div className="container-section">
+                <div className="bg-card border border-border p-6 text-center">
+                  <p className="text-muted-foreground">No guests scanned yet for this party</p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      </ViewTransition>
     );
   }
 
@@ -987,6 +997,7 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
         
         <Footer />
       </div>
+      <ScrollToTop />
     </div>
   );
 };
