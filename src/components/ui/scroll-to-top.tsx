@@ -37,14 +37,29 @@ const ScrollToTop = () => {
   return (
     <button
       onClick={scrollToTop}
-      className="fixed bottom-20 right-4 z-[99999] w-12 h-12 rounded-full p-0 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg"
       style={{
+        position: 'fixed',
+        bottom: '1.5rem',
+        right: '1.5rem',
+        width: '44px',
+        height: '44px',
+        borderRadius: '50%',
         backgroundColor: '#9333ea',
+        color: 'white',
         border: 'none',
+        cursor: 'pointer',
+        zIndex: 99999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        boxShadow: '0 4px 12px rgba(147, 51, 234, 0.4)',
+        transition: 'transform 0.3s ease',
       }}
+      onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+      onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
       aria-label="Scroll to top"
     >
-      <ArrowUp className="h-5 w-5 text-white" strokeWidth={3} />
+      <ArrowUp style={{ width: '20px', height: '20px', strokeWidth: 3 }} />
     </button>
   );
 };
