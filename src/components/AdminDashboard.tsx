@@ -890,11 +890,12 @@ const AdminDashboard = ({ user, onManageSubAdmins, adminProfile }: AdminDashboar
           ];
           
           // Check if this is a sub-admin (has restricted permissions)
-          const isSubAdmin = adminProfile?.allowed_tiles && adminProfile.allowed_tiles.length > 0;
+          // Super admins should always see all tiles regardless of allowed_tiles
+          const isSubAdmin = adminProfile && !adminProfile.is_super_admin && adminProfile.allowed_tiles && adminProfile.allowed_tiles.length > 0;
           
           // Filter tiles based on admin permissions
           // Sub-admins only see their assigned tiles
-          // Regular admins and super admins see everything
+          // Super admins and regular admins see everything
           const tiles = isSubAdmin
             ? allTiles.filter(tile => adminProfile.allowed_tiles.includes(tile.id))
             : allTiles;
