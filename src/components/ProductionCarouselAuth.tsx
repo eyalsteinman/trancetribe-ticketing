@@ -105,21 +105,41 @@ const ProductionCarouselAuth = () => {
             {items.map((item) => (
               <CarouselItem key={item.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                 <Card className="overflow-hidden border-border bg-card">
-                  <div className="aspect-[2/3] relative bg-muted">
-                    {('logo_url' in item ? item.logo_url : item.photo_url) ? (
-                      <img 
-                        src={('logo_url' in item ? item.logo_url : item.photo_url) || ''} 
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                        <span className="text-4xl font-bold text-primary/40">
-                          {item.name.charAt(0)}
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                  {'logo_url' in item ? (
+                    // Production: Keep container with aspect ratio, limit logo to half size
+                    <div className="aspect-[2/3] relative bg-muted flex items-center justify-center">
+                      {item.logo_url ? (
+                        <img 
+                          src={item.logo_url} 
+                          alt={item.name}
+                          className="w-full h-1/2 object-contain"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                          <span className="text-4xl font-bold text-primary/40">
+                            {item.name.charAt(0)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    // Party: No aspect ratio, show full photo height
+                    <div className="relative bg-muted">
+                      {item.photo_url ? (
+                        <img 
+                          src={item.photo_url} 
+                          alt={item.name}
+                          className="w-full h-auto object-cover"
+                        />
+                      ) : (
+                        <div className="aspect-[2/3] bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                          <span className="text-4xl font-bold text-primary/40">
+                            {item.name.charAt(0)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <div className="p-4 flex flex-col items-center space-y-2">
                     <h3 className="font-semibold text-center">{item.name}</h3>
                     <Button
