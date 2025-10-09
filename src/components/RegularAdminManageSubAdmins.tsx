@@ -31,6 +31,16 @@ interface SubAdmin {
   email?: string;
 }
 
+interface PendingPassword {
+  id: string;
+  admin_email: string;
+  unique_password: string;
+  is_used: boolean;
+  created_at: string;
+  expires_at: string;
+  allowed_tiles: string[];
+}
+
 const availableTiles = [
   { id: 'manage-users', label: 'Manage Users' },
   { id: 'manage-parties', label: 'Manage Parties' },
@@ -52,6 +62,7 @@ const availableTiles = [
 
 const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdminsProps) => {
   const [subAdmins, setSubAdmins] = useState<SubAdmin[]>([]);
+  const [pendingPasswords, setPendingPasswords] = useState<PendingPassword[]>([]);
   const [newAdminEmail, setNewAdminEmail] = useState('');
   const [newAdminNickname, setNewAdminNickname] = useState('');
   const [selectedTiles, setSelectedTiles] = useState<string[]>([]);
@@ -66,6 +77,7 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
 
   useEffect(() => {
     loadSubAdmins();
+    loadPendingPasswords();
   }, [user.id]);
 
   const loadSubAdmins = async () => {
@@ -100,6 +112,22 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
       console.error('Error loading sub-admins:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadPendingPasswords = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('admin_passwords')
+        .select('*')
+        .eq('created_by', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      setPendingPasswords(data || []);
+    } catch (error) {
+      console.error('Error loading pending passwords:', error);
     }
   };
 
@@ -157,6 +185,7 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
       setSelectedTiles([]);
       setSelectAllTiles(false);
       loadSubAdmins();
+      loadPendingPasswords();
     } catch (error: any) {
       toast({
         title: "Error",
@@ -231,6 +260,84 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
       toast({
         title: "Error",
         description: "Failed to copy password",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const copyPasswordToClipboard = async (password: string) => {
+    try {
+      await navigator.clipboard.writeText(password);
+      toast({
+        title: "Copied!",
+        description: "Password copied to clipboard",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to copy password",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const regeneratePassword = async (pendingId: string, email: string, allowedTiles: string[]) => {
+    try {
+      // Delete old password
+      await supabase
+        .from('admin_passwords')
+        .delete()
+        .eq('id', pendingId);
+
+      // Generate new password
+      const uniquePassword = generateUniquePassword();
+
+      const { error } = await supabase
+        .from('admin_passwords')
+        .insert({
+          admin_email: email,
+          unique_password: uniquePassword,
+          created_by: user.id,
+          is_used: false,
+          allowed_tiles: allowedTiles
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "New password generated successfully",
+      });
+
+      loadPendingPasswords();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  };
+
+  const deletePendingPassword = async (pendingId: string) => {
+    try {
+      const { error } = await supabase
+        .from('admin_passwords')
+        .delete()
+        .eq('id', pendingId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Pending password deleted",
+      });
+
+      loadPendingPasswords();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
         variant: "destructive"
       });
     }
@@ -313,6 +420,84 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
                 Create Sub-Admin Password
               </Button>
             </div>
+          </CardContent>
+        </Card>
+
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Pending Sub-Admins</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <p>Loading...</p>
+            ) : pendingPasswords.length === 0 ? (
+              <p className="text-muted-foreground">No pending passwords</p>
+            ) : (
+              <div className="space-y-4">
+                {pendingPasswords.map((pending) => {
+                  const isExpired = new Date(pending.expires_at) < new Date();
+                  const isUsed = pending.is_used;
+                  
+                  return (
+                    <Card key={pending.id} className={isExpired || isUsed ? 'opacity-60' : ''}>
+                      <CardContent className="p-4 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <p className="font-medium">{pending.admin_email}</p>
+                            <p className="text-sm text-muted-foreground">
+                              Created: {new Date(pending.created_at).toLocaleDateString()}
+                            </p>
+                            {isExpired && (
+                              <p className="text-sm text-destructive">⚠️ Expired</p>
+                            )}
+                            {isUsed && (
+                              <p className="text-sm text-muted-foreground">✓ Used</p>
+                            )}
+                          </div>
+                          <div className="flex gap-2">
+                            {!isUsed && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => regeneratePassword(pending.id, pending.admin_email, pending.allowed_tiles)}
+                              >
+                                Regenerate
+                              </Button>
+                            )}
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => deletePendingPassword(pending.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                        <div className="bg-muted p-3 rounded-md">
+                          <p className="text-xs text-muted-foreground mb-2">Password:</p>
+                          <div className="flex items-center gap-2">
+                            <code className="flex-1 bg-background p-2 rounded text-sm font-mono break-all">
+                              {pending.unique_password}
+                            </code>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => copyPasswordToClipboard(pending.unique_password)}
+                              title="Copy to clipboard"
+                            >
+                              <Copy className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Permissions: {pending.allowed_tiles.join(', ')}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
           </CardContent>
         </Card>
 
