@@ -101,27 +101,47 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
       const { data: currentUser } = await supabase.auth.getUser();
       if (!currentUser.user) return;
 
-      // Get admin's productions
-      const { data: adminProductions } = await supabase
-        .from('productions')
-        .select('id')
-        .eq('created_by', currentUser.user.id);
+      // Check if user is super admin
+      const { data: adminProfile } = await supabase
+        .from('admin_profiles')
+        .select('is_super_admin')
+        .eq('user_id', currentUser.user.id)
+        .single();
 
-      const productionIds = adminProductions?.map(p => p.id) || [];
+      const isSuperAdmin = adminProfile?.is_super_admin || false;
 
-      if (productionIds.length === 0) {
-        setUsers([]);
-        setLoading(false);
-        return;
+      let followerUserIds: string[] = [];
+
+      if (isSuperAdmin) {
+        // Super admin sees ALL users in the system
+        const { data: allProfiles } = await supabase
+          .from('profiles')
+          .select('user_id');
+        
+        followerUserIds = allProfiles?.map(p => p.user_id) || [];
+      } else {
+        // Regular admin sees only followers of their productions
+        const { data: adminProductions } = await supabase
+          .from('productions')
+          .select('id')
+          .eq('created_by', currentUser.user.id);
+
+        const productionIds = adminProductions?.map(p => p.id) || [];
+
+        if (productionIds.length === 0) {
+          setUsers([]);
+          setLoading(false);
+          return;
+        }
+
+        // Get followers of admin's productions
+        const { data: followers } = await supabase
+          .from('production_followers')
+          .select('user_id')
+          .in('production_id', productionIds);
+
+        followerUserIds = [...new Set(followers?.map(f => f.user_id) || [])];
       }
-
-      // Get followers of admin's productions
-      const { data: followers } = await supabase
-        .from('production_followers')
-        .select('user_id')
-        .in('production_id', productionIds);
-
-      const followerUserIds = [...new Set(followers?.map(f => f.user_id) || [])];
 
       if (followerUserIds.length === 0) {
         setUsers([]);
@@ -129,7 +149,7 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
         return;
       }
 
-      // Get profiles for followers
+      // Get profiles for users
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
