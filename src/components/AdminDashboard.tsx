@@ -342,77 +342,58 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
 
   const loadNotificationCounts = async () => {
     try {
+      console.log('Loading notification counts for admin:', user.id);
+      
       // Get admin's productions
-      const { data: adminProductions } = await supabase
+      const { data: adminProductions, error: prodError } = await supabase
         .from('productions')
         .select('id')
         .eq('created_by', user.id);
 
+      console.log('Admin productions:', adminProductions, 'Error:', prodError);
       const productionIds = adminProductions?.map(p => p.id) || [];
-
-      // Get last opened timestamps for dashboard tiles
-      const { data: tileStates } = await supabase
-        .from('admin_tile_state')
-        .select('tile, last_opened_at')
-        .eq('admin_id', user.id)
-        .in('tile', ['registered-users', 'guest-list']);
-
-      const registeredUsersLastOpened = tileStates?.find(t => t.tile === 'registered-users')?.last_opened_at;
-      const guestListLastOpened = tileStates?.find(t => t.tile === 'guest-list')?.last_opened_at;
 
       // Count registered users (followers of admin's productions)
       if (productionIds.length > 0) {
-        const { data: followers } = await supabase
+        const { data: followers, error: followersError } = await supabase
           .from('production_followers')
           .select('user_id')
           .in('production_id', productionIds);
 
+        console.log('Production followers:', followers, 'Error:', followersError);
         const followerUserIds = [...new Set(followers?.map(f => f.user_id) || [])];
         
-        if (registeredUsersLastOpened && followerUserIds.length > 0) {
-          const { count: newUsersCount } = await supabase
-            .from('profiles')
-            .select('*', { count: 'exact', head: true })
-            .in('user_id', followerUserIds)
-            .gt('created_at', registeredUsersLastOpened);
-          setNewRegisteredUsers(newUsersCount || 0);
-        } else {
-          // Show total count of registered users
-          setNewRegisteredUsers(followerUserIds.length);
-        }
+        console.log('Setting registered users count to:', followerUserIds.length);
+        setNewRegisteredUsers(followerUserIds.length);
       } else {
+        console.log('No productions found, setting registered users to 0');
         setNewRegisteredUsers(0);
       }
 
       // Count guests in admin's parties
-      const { data: adminParties } = await supabase
+      const { data: adminParties, error: partiesError } = await supabase
         .from('parties')
         .select('id')
         .eq('created_by', user.id);
 
+      console.log('Admin parties:', adminParties, 'Error:', partiesError);
       const partyIds = adminParties?.map(p => p.id) || [];
 
       if (partyIds.length > 0) {
-        if (guestListLastOpened) {
-          const { count: newGuestsCount } = await supabase
-            .from('qr_codes')
-            .select('*', { count: 'exact', head: true })
-            .in('party_id', partyIds)
-            .eq('is_scanned', false)
-            .gt('created_at', guestListLastOpened);
-          setNewArrivingGuests(newGuestsCount || 0);
-        } else {
-          // Show total count of arriving guests
-          const { count: totalGuestsCount } = await supabase
-            .from('qr_codes')
-            .select('*', { count: 'exact', head: true })
-            .in('party_id', partyIds)
-            .eq('is_scanned', false);
-          setNewArrivingGuests(totalGuestsCount || 0);
-        }
+        const { count: totalGuestsCount, error: guestsError } = await supabase
+          .from('qr_codes')
+          .select('*', { count: 'exact', head: true })
+          .in('party_id', partyIds)
+          .eq('is_scanned', false);
+        
+        console.log('Total arriving guests count:', totalGuestsCount, 'Error:', guestsError);
+        setNewArrivingGuests(totalGuestsCount || 0);
       } else {
+        console.log('No parties found, setting arriving guests to 0');
         setNewArrivingGuests(0);
       }
+      
+      console.log('Final counts - Registered Users:', newRegisteredUsers, 'Arriving Guests:', newArrivingGuests);
     } catch (error) {
       console.error('Error loading notification counts:', error);
     }
