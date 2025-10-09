@@ -64,6 +64,8 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
   const [nicknameInput, setNicknameInput] = useState('');
   const [newRegisteredUsers, setNewRegisteredUsers] = useState(0);
   const [newArrivingGuests, setNewArrivingGuests] = useState(0);
+  const [totalRegisteredUsers, setTotalRegisteredUsers] = useState(0);
+  const [totalArrivingGuests, setTotalArrivingGuests] = useState(0);
   
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
@@ -383,6 +385,16 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
       console.log('Admin productions:', adminProductions, 'Error:', prodError);
       const productionIds = adminProductions?.map(p => p.id) || [];
 
+      // Get last opened timestamps for dashboard tiles
+      const { data: tileStates } = await supabase
+        .from('admin_tile_state')
+        .select('tile, last_opened_at')
+        .eq('admin_id', user.id)
+        .in('tile', ['registered-users', 'guest-list']);
+
+      const registeredUsersLastOpened = tileStates?.find(t => t.tile === 'registered-users')?.last_opened_at;
+      const guestListLastOpened = tileStates?.find(t => t.tile === 'guest-list')?.last_opened_at;
+
       // Count registered users (followers of admin's productions)
       if (productionIds.length > 0) {
         const { data: followers, error: followersError } = await supabase
@@ -393,10 +405,25 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
         console.log('Production followers:', followers, 'Error:', followersError);
         const followerUserIds = [...new Set(followers?.map(f => f.user_id) || [])];
         
-        console.log('Setting registered users count to:', followerUserIds.length);
-        setNewRegisteredUsers(followerUserIds.length);
+        // Set TOTAL count (always shown under tile name)
+        console.log('Setting total registered users count to:', followerUserIds.length);
+        setTotalRegisteredUsers(followerUserIds.length);
+
+        // Set NEW count (for badge notification)
+        if (registeredUsersLastOpened && followerUserIds.length > 0) {
+          const { count: newUsersCount } = await supabase
+            .from('profiles')
+            .select('*', { count: 'exact', head: true })
+            .in('user_id', followerUserIds)
+            .gt('created_at', registeredUsersLastOpened);
+          console.log('New registered users since last opened:', newUsersCount);
+          setNewRegisteredUsers(newUsersCount || 0);
+        } else {
+          setNewRegisteredUsers(followerUserIds.length);
+        }
       } else {
         console.log('No productions found, setting registered users to 0');
+        setTotalRegisteredUsers(0);
         setNewRegisteredUsers(0);
       }
 
@@ -416,14 +443,31 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
           .in('party_id', partyIds)
           .eq('is_scanned', false);
         
-        console.log('Total arriving guests count:', totalGuestsCount, 'Error:', guestsError);
-        setNewArrivingGuests(totalGuestsCount || 0);
+        // Set TOTAL count (always shown under tile name)
+        console.log('Total arriving guests count:', totalGuestsCount);
+        setTotalArrivingGuests(totalGuestsCount || 0);
+
+        // Set NEW count (for badge notification)
+        if (guestListLastOpened) {
+          const { count: newGuestsCount } = await supabase
+            .from('qr_codes')
+            .select('*', { count: 'exact', head: true })
+            .in('party_id', partyIds)
+            .eq('is_scanned', false)
+            .gt('created_at', guestListLastOpened);
+          console.log('New arriving guests since last opened:', newGuestsCount);
+          setNewArrivingGuests(newGuestsCount || 0);
+        } else {
+          setNewArrivingGuests(totalGuestsCount || 0);
+        }
       } else {
         console.log('No parties found, setting arriving guests to 0');
+        setTotalArrivingGuests(0);
         setNewArrivingGuests(0);
       }
       
-      console.log('Final counts - Registered Users:', newRegisteredUsers, 'Arriving Guests:', newArrivingGuests);
+      console.log('Final counts - Total Registered:', totalRegisteredUsers, 'New Registered:', newRegisteredUsers);
+      console.log('Final counts - Total Guests:', totalArrivingGuests, 'New Guests:', newArrivingGuests);
     } catch (error) {
       console.error('Error loading notification counts:', error);
     }
@@ -741,7 +785,8 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
                 setCurrentView('guest-list' as const); 
                 setTimeout(() => loadParties(), 100); 
               },
-              notificationCount: newArrivingGuests
+              notificationCount: newArrivingGuests,
+              displayCount: totalArrivingGuests
             },
             { id: 'create-party', title: 'Create Party', icon: <Plus className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('create-party' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'edit-parties', title: 'Edit Parties', icon: <Edit className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('edit-parties' as const); setTimeout(() => loadParties(), 100); } },
@@ -756,7 +801,8 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
                 setCurrentView('registered-users' as const); 
                 setTimeout(() => loadParties(), 100); 
               },
-              notificationCount: newRegisteredUsers
+              notificationCount: newRegisteredUsers,
+              displayCount: totalRegisteredUsers
             },
             { id: 'admin-games', title: 'Admin Games', icon: <Gamepad2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('admin-games' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'nickname', title: 'My Info', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('nickname' as const); setTimeout(() => loadParties(), 100); } },
