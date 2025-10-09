@@ -827,7 +827,7 @@ const AdminDashboard = ({ user, onManageSubAdmins, adminProfile }: AdminDashboar
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <h1 className="text-2xl font-bold text-white">
-                  {adminProfile && !adminProfile.is_super_admin && adminProfile.allowed_tiles && adminProfile.allowed_tiles.length > 0
+                  {adminProfile?.allowed_tiles && adminProfile.allowed_tiles.length > 0
                     ? 'Sub-Admin Dashboard' 
                     : 'Admin Dashboard'}
                 </h1>
@@ -866,8 +866,8 @@ const AdminDashboard = ({ user, onManageSubAdmins, adminProfile }: AdminDashboar
               displayCount: totalArrivingGuests
             },
             { id: 'manage-parties', title: 'Create Party', icon: <Plus className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('create-party' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'manage-parties', title: 'Edit Parties', icon: <Edit className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('edit-parties' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'manage-productions', title: 'My Productions', icon: <Building2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('my-productions' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'edit-parties', title: 'Edit Parties', icon: <Edit className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('edit-parties' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'my-productions', title: 'My Productions', icon: <Building2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('my-productions' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'manage-productions', title: 'Manage Productions', icon: <Settings2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('manage-productions' as const); setTimeout(() => loadParties(), 100); } },
             { 
               id: 'registered-users', 
@@ -881,20 +881,16 @@ const AdminDashboard = ({ user, onManageSubAdmins, adminProfile }: AdminDashboar
               notificationCount: newRegisteredUsers,
               displayCount: totalRegisteredUsers
             },
-            { id: 'manage-users', title: 'My Info', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('nickname' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'manage-bar-tabs', title: 'Bar Tab', icon: <Wine className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'my-info', title: 'My Info', icon: <UserIcon className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('nickname' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'bar-tab', title: 'Bar Tab', icon: <Wine className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'bartab-scanner', title: 'Bartab Scanner', icon: <ScanBarcode className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab-scanner' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'manage-faq', title: 'FAQ & Contact', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('faq' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'manage-messages', title: 'Message Users', icon: <MessageCircle className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('message' as const); setTimeout(() => loadParties(), 100); } },
-            { id: 'manage-games', title: 'Games', icon: <Gamepad2 className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('admin-games' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'faq-contact', title: 'FAQ & Contact', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('faq' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'message-users', title: 'Message Users', icon: <MessageCircle className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('message' as const); setTimeout(() => loadParties(), 100); } },
             ...(onManageSubAdmins ? [{ id: 'manage-sub-admins', title: 'Manage Sub-Admins', icon: <UserPlus className="h-8 w-8 mb-2" />, onClick: onManageSubAdmins }] : []),
           ];
           
           // Check if this is a sub-admin (has restricted permissions)
-          const isSubAdmin = adminProfile && 
-                             !adminProfile.is_super_admin && 
-                             adminProfile.allowed_tiles && 
-                             adminProfile.allowed_tiles.length > 0;
+          const isSubAdmin = adminProfile?.allowed_tiles && adminProfile.allowed_tiles.length > 0;
           
           // Filter tiles based on admin permissions
           // Sub-admins only see their assigned tiles
