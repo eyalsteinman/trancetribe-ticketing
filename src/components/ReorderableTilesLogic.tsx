@@ -59,7 +59,7 @@ const SortableTile: React.FC<{
       style={style}
       className={`
         relative p-4 bg-card select-none h-32 min-h-32
-        border border-border flex flex-col items-center justify-center text-center space-y-2
+        border border-border flex flex-col items-center justify-center text-center space-y-1
         transition-transform duration-200 ease-out
         ${!isReordering ? 'hover:scale-102' : ''}
         ${tiltedTileId === item.id ? 'animate-[tilt_0.3s_ease-in-out] rotate-12' : ''}
@@ -76,8 +76,8 @@ const SortableTile: React.FC<{
       <span className="text-sm font-medium text-foreground whitespace-pre-line">
         {item.title}
       </span>
-      {item.notificationCount && item.notificationCount > 0 && (
-        <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full min-w-6 h-6 flex items-center justify-center font-bold">
+      {item.notificationCount !== undefined && (
+        <div className="text-lg font-bold text-primary">
           {item.notificationCount}
         </div>
       )}

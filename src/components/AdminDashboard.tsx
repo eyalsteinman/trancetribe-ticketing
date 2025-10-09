@@ -75,8 +75,37 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
     loadAdminProfile();
     loadNotificationCounts();
 
-    // Set up real-time subscription for party updates
+    // Set up real-time updates for counts
     const channel = supabase
+      .channel('admin-counts-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'production_followers'
+        },
+        () => {
+          console.log('Production followers changed, reloading counts');
+          loadNotificationCounts();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'qr_codes'
+        },
+        () => {
+          console.log('QR codes changed, reloading counts');
+          loadNotificationCounts();
+        }
+      )
+      .subscribe();
+
+    // Set up real-time subscription for party updates
+    const partyChannel = supabase
       .channel('party-dashboard-changes')
       .on(
         'postgres_changes',
@@ -93,6 +122,7 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
 
     return () => {
       supabase.removeChannel(channel);
+      supabase.removeChannel(partyChannel);
     };
   }, []);
 
