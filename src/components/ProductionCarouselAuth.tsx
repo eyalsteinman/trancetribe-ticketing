@@ -106,8 +106,8 @@ const ProductionCarouselAuth = () => {
               <CarouselItem key={item.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                 <Card className="overflow-hidden border-border bg-card">
                   {'logo_url' in item ? (
-                    // Production: Keep container with aspect ratio, limit logo to half size
-                    <div className="aspect-[2/3] relative bg-muted flex items-center justify-center">
+                    // Production: Half height container with logo at half size
+                    <div className="aspect-[4/3] relative bg-muted flex items-center justify-center">
                       {item.logo_url ? (
                         <img 
                           src={item.logo_url} 
@@ -123,7 +123,7 @@ const ProductionCarouselAuth = () => {
                       )}
                     </div>
                   ) : (
-                    // Party: No aspect ratio, show full photo height
+                    // Party: Full height container, show full photo
                     <div className="relative bg-muted">
                       {item.photo_url ? (
                         <img 
