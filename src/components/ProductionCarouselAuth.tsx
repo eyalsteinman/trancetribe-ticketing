@@ -105,7 +105,7 @@ const ProductionCarouselAuth = () => {
             {items.map((item) => (
               <CarouselItem key={item.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
                 <Card className="overflow-hidden border-border bg-card">
-                  <div className="aspect-square relative bg-muted">
+                  <div className="aspect-[3/4] relative bg-muted">
                     {('logo_url' in item ? item.logo_url : item.photo_url) ? (
                       <img 
                         src={('logo_url' in item ? item.logo_url : item.photo_url) || ''} 
