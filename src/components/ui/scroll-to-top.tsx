@@ -35,26 +35,17 @@ const ScrollToTop = () => {
   if (!isVisible) return null;
 
   return (
-    <Button
+    <button
       onClick={scrollToTop}
+      className="fixed bottom-20 right-4 z-[99999] w-12 h-12 rounded-full p-0 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg"
       style={{
-        position: 'fixed',
-        right: '1rem',
-        bottom: '5rem',
-        zIndex: 99999,
-        width: '3.5rem',
-        height: '3.5rem',
-        borderRadius: '9999px',
-        padding: 0,
         backgroundColor: '#9333ea',
-        color: 'white',
-        boxShadow: '0 10px 25px -5px rgba(147, 51, 234, 0.5)',
+        border: 'none',
       }}
-      className="hover:bg-purple-700 transition-all duration-300 hover:scale-110"
       aria-label="Scroll to top"
     >
-      <ArrowUp className="h-6 w-6" strokeWidth={3} />
-    </Button>
+      <ArrowUp className="h-5 w-5 text-white" strokeWidth={3} />
+    </button>
   );
 };
 
