@@ -112,7 +112,7 @@ const ProductionCarouselAuth = () => {
                         <img 
                           src={item.logo_url} 
                           alt={item.name}
-                          className="w-full h-1/2 object-contain"
+                          className="w-full h-full object-cover"
                         />
                       ) : (
                         <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
