@@ -559,6 +559,7 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
           description: "Signed out successfully!",
         });
       }
+      // Auth state change will handle navigation automatically
     } catch (error) {
       console.error('Sign out catch error:', error);
       toast({
@@ -566,9 +567,6 @@ const AdminDashboard = ({ user, onManageSubAdmins }: AdminDashboardProps) => {
         description: "Logged out locally.",
       });
     }
-    setTimeout(() => {
-      window.location.reload();
-    }, 2000);
   };
 
   if (currentView === 'nickname') {

@@ -348,12 +348,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         <Button 
           variant="outline" 
           size="icon"
-          onClick={async () => {
-            await handleSignOut();
-            setTimeout(() => {
-              window.location.reload();
-            }, 2000);
-          }} 
+          onClick={handleSignOut}
           className="absolute top-2 right-4 z-50 border-foreground/20 bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200"
           aria-label="Sign Out"
         >
