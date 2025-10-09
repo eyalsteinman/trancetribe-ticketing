@@ -87,7 +87,7 @@ const SuperAdminManageAdmins = ({ user, onBack, onViewAdminDashboard }: SuperAdm
       // Get admin profiles
       const { data: adminProfiles, error: adminProfilesError } = await supabase
         .from('admin_profiles')
-        .select('user_id, admin_level, is_super_admin')
+        .select('user_id, admin_level, is_super_admin, role')
         .in('user_id', adminUserIds);
 
       if (adminProfilesError) {
