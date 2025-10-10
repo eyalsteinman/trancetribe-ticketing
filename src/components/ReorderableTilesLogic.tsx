@@ -123,47 +123,13 @@ const SortableTile: React.FC<{
           : 'bg-card border-[hsl(280_80%_60%/0.3)]'
         }
       `}
-      {...attributes}
-      {...listeners}
-      onMouseDown={(e) => {
-        if (isReordering) {
-          listeners?.onMouseDown?.(e);
-        } else {
-          handlePress();
-        }
-      }}
-      onMouseUp={(e) => {
-        if (!isReordering) {
-          handleRelease();
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!isReordering) {
-          setIsPressed(false);
-        }
-      }}
-      onTouchStart={(e) => {
-        if (isReordering) {
-          listeners?.onTouchStart?.(e);
-        } else {
-          handlePress();
-        }
-      }}
-      onTouchEnd={(e) => {
-        if (!isReordering) {
-          handleRelease();
-        }
-      }}
-      onTouchCancel={(e) => {
-        if (!isReordering) {
-          setIsPressed(false);
-        }
-      }}
-      onClick={(e) => {
-        if (!isReordering && !isPressed) {
-          onTileClick();
-        }
-      }}
+      {...(isReordering ? { ...attributes, ...listeners } : {})}
+      onMouseDown={!isReordering ? handlePress : undefined}
+      onMouseUp={!isReordering ? handleRelease : undefined}
+      onMouseLeave={!isReordering ? () => setIsPressed(false) : undefined}
+      onTouchStart={!isReordering ? handlePress : undefined}
+      onTouchEnd={!isReordering ? handleRelease : undefined}
+      onTouchCancel={!isReordering ? () => setIsPressed(false) : undefined}
     >
       <div className={`transition-colors duration-200 ${isPressed ? 'text-primary-foreground' : 'text-primary'}`}>
         {item.icon}
@@ -227,7 +193,7 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
       // Disable page scroll during reordering
       document.body.classList.add('no-refresh', 'hide-scrollbar');
       document.body.style.overflow = 'hidden';
-    }, 500); // Half second long press
+    }, 3000); // 3 second long press
     setLongPressTimer(timer as unknown as NodeJS.Timeout);
   };
 
