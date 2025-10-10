@@ -125,32 +125,14 @@ const SortableTile: React.FC<{
           : 'bg-card border-[hsl(280_80%_60%/0.3)]'
         }
       `}
-      {...(isReordering ? { ...attributes, ...listeners } : {
-        onMouseDown: (e: React.MouseEvent) => {
-          handlePress();
-          onStartLongPress();
-        },
-        onMouseUp: (e: React.MouseEvent) => {
-          handleRelease();
-          onCancelLongPress();
-        },
-        onMouseLeave: (e: React.MouseEvent) => {
-          setIsPressed(false);
-          onCancelLongPress();
-        },
-        onTouchStart: (e: React.TouchEvent) => {
-          handlePress();
-          onStartLongPress();
-        },
-        onTouchEnd: (e: React.TouchEvent) => {
-          handleRelease();
-          onCancelLongPress();
-        },
-        onTouchCancel: (e: React.TouchEvent) => {
-          setIsPressed(false);
-          onCancelLongPress();
+      {...attributes}
+      {...listeners}
+      onClick={(e) => {
+        if (!isReordering && !isDragging) {
+          e.stopPropagation();
+          onTileClick();
         }
-      })}
+      }}
     >
       <div className={`transition-colors duration-200 ${isPressed ? 'text-primary-foreground' : 'text-primary'}`}>
         {item.icon}
@@ -236,18 +218,26 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 5,
+        delay: 3000,
+        tolerance: 10,
       },
     })
   );
 
   const itemIds = useMemo(() => orderedItems.map(it => it.id), [orderedItems]);
 
+  const handleDragStart = () => {
+    setIsReordering(true);
+    document.body.classList.add('no-refresh', 'hide-scrollbar');
+    document.body.style.overflow = 'hidden';
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     
+    exitReorderMode();
+
     if (!active?.id || !over?.id || active.id === over.id) {
-      exitReorderMode();
       return;
     }
 
@@ -259,14 +249,11 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
       setOrderedItems(newItems);
       saveOrder(newItems);
     }
-
-    // Exit reordering mode after drop
-    exitReorderMode();
   };
 
   return (
     <div className="container-section">
-      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+      <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="grid grid-cols-2 gap-4">
           <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
             {orderedItems.map((item, index) => (
