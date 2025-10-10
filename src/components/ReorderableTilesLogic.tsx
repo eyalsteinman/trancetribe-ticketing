@@ -53,7 +53,6 @@ const SortableTile: React.FC<{
     transition: isDragging ? transition : `${transition}, transform 0.3s ease-out`,
     cursor: isDragging ? 'grabbing' : 'pointer',
     borderRadius: '0.5rem',
-    touchAction: 'none',
     ...(!isDragging && !isReordering ? {
       backgroundImage: `linear-gradient(
         90deg,
@@ -86,8 +85,7 @@ const SortableTile: React.FC<{
         border-2 flex flex-col items-center justify-center text-center space-y-1
         transition-all duration-300 ease-out
         ${!isReordering && !isDragging ? 'hover:scale-102' : ''}
-        ${isReordering && tiltedTileId === item.id ? 'scale-110 rotate-12' : ''}
-        ${isDragging ? 'z-50 scale-105 rotate-6' : ''}
+        ${isDragging ? 'z-50 scale-110 rotate-12' : ''}
         ${isDragging 
           ? 'bg-[hsl(280_80%_60%)] border-[hsl(280_80%_60%)] shadow-[0_0_40px_hsl(280_80%_60%/0.6)]' 
           : 'bg-card border-[hsl(280_80%_60%/0.3)]'
