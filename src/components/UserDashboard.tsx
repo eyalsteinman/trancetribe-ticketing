@@ -394,7 +394,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           variant="outline" 
           size="icon"
           onClick={handleSignOut}
-          className="absolute top-2 right-4 z-50 border-[hsl(142_76%_50%/0.3)] bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200 animate-[neon-glow_4s_ease-in-out_infinite]"
+          className="absolute top-2 right-4 z-50 border-[hsl(280_80%_60%/0.3)] bg-background/50 backdrop-blur-sm text-foreground hover:bg-foreground/10 transition-all duration-200 animate-[neon-glow_4s_ease-in-out_infinite]"
           aria-label="Sign Out"
         >
           <LogOut className="h-4 w-4" />

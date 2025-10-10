@@ -48,6 +48,8 @@ const SortableTile: React.FC<{
   const [isScrolling, setIsScrolling] = React.useState(false);
   const scrollTimeoutRef = React.useRef<NodeJS.Timeout>();
 
+  const randomDelay = React.useMemo(() => Math.random() * 4, []);
+  
   const tileStyle: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -56,11 +58,12 @@ const SortableTile: React.FC<{
       backgroundImage: `linear-gradient(
         90deg,
         transparent,
-        hsl(var(--primary) / 0.3) 50%,
+        hsl(280 80% 60% / 0.3) 50%,
         transparent
       )`,
       backgroundSize: '200% 100%',
-      animation: 'border-trace 3s linear infinite, neon-glow 4s ease-in-out infinite',
+      animation: `border-trace 3s linear infinite, neon-glow 4s ease-in-out infinite`,
+      animationDelay: `${randomDelay}s, ${randomDelay}s`,
     } : {}),
   };
 
@@ -120,8 +123,8 @@ const SortableTile: React.FC<{
         ${tiltedTileId === item.id ? 'animate-[tilt_0.3s_ease-in-out] rotate-12' : ''}
         ${isDragging ? 'z-10' : ''}
         ${isPressed 
-          ? 'bg-[hsl(142_76%_50%)] border-[hsl(142_76%_50%)] shadow-[0_0_30px_hsl(142_76%_50%)]' 
-          : 'bg-card border-[hsl(142_76%_50%/0.3)] animate-[neon-glow_4s_ease-in-out_infinite]'
+          ? 'bg-[hsl(280_80%_60%)] border-[hsl(280_80%_60%)] shadow-[0_0_30px_hsl(280_80%_60%)]' 
+          : 'bg-card border-[hsl(280_80%_60%/0.3)]'
         }
       `}
       {...(isReordering ? { ...attributes, ...listeners } : {})}
