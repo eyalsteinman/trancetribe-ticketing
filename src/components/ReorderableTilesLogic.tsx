@@ -42,7 +42,9 @@ const SortableTile: React.FC<{
   isReordering: boolean;
   tiltedTileId: string | null;
   onTileClick: () => void;
-}> = ({ item, index, isReordering, tiltedTileId, onTileClick }) => {
+  onStartLongPress: () => void;
+  onCancelLongPress: () => void;
+}> = ({ item, index, isReordering, tiltedTileId, onTileClick, onStartLongPress, onCancelLongPress }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
   const [isPressed, setIsPressed] = React.useState(false);
   const [isScrolling, setIsScrolling] = React.useState(false);
@@ -115,21 +117,52 @@ const SortableTile: React.FC<{
         relative p-4 select-none h-32 min-h-32
         border-2 flex flex-col items-center justify-center text-center space-y-1
         transition-all duration-200 ease-out
-        ${!isReordering ? 'hover:scale-102' : ''}
+        ${!isReordering ? 'hover:scale-102' : 'cursor-grabbing'}
         ${tiltedTileId === item.id ? 'animate-[tilt_0.3s_ease-in-out] rotate-12' : ''}
-        ${isDragging ? 'z-10' : ''}
+        ${isDragging ? 'z-10 opacity-80' : ''}
         ${isPressed 
           ? 'bg-[hsl(280_80%_60%)] border-[hsl(280_80%_60%)] shadow-[0_0_30px_hsl(280_80%_60%)]' 
           : 'bg-card border-[hsl(280_80%_60%/0.3)]'
         }
       `}
-      {...(isReordering ? { ...attributes, ...listeners } : {})}
-      onMouseDown={!isReordering ? handlePress : undefined}
-      onMouseUp={!isReordering ? handleRelease : undefined}
-      onMouseLeave={!isReordering ? () => setIsPressed(false) : undefined}
-      onTouchStart={!isReordering ? handlePress : undefined}
-      onTouchEnd={!isReordering ? handleRelease : undefined}
-      onTouchCancel={!isReordering ? () => setIsPressed(false) : undefined}
+      {...(isReordering ? attributes : {})}
+      {...(isReordering ? listeners : {})}
+      onMouseDown={(e) => {
+        if (!isReordering) {
+          handlePress();
+          onStartLongPress();
+        }
+      }}
+      onMouseUp={(e) => {
+        if (!isReordering) {
+          handleRelease();
+          onCancelLongPress();
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isReordering) {
+          setIsPressed(false);
+          onCancelLongPress();
+        }
+      }}
+      onTouchStart={(e) => {
+        if (!isReordering) {
+          handlePress();
+          onStartLongPress();
+        }
+      }}
+      onTouchEnd={(e) => {
+        if (!isReordering) {
+          handleRelease();
+          onCancelLongPress();
+        }
+      }}
+      onTouchCancel={(e) => {
+        if (!isReordering) {
+          setIsPressed(false);
+          onCancelLongPress();
+        }
+      }}
     >
       <div className={`transition-colors duration-200 ${isPressed ? 'text-primary-foreground' : 'text-primary'}`}>
         {item.icon}
@@ -249,23 +282,16 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
         <div className="grid grid-cols-2 gap-4">
           <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
             {orderedItems.map((item, index) => (
-              <div
+              <SortableTile
                 key={item.id}
-                onMouseDown={() => !isReordering && handleLongPress(item.id)}
-                onMouseUp={handleEnd}
-                onMouseLeave={handleEnd}
-                onTouchStart={() => !isReordering && handleLongPress(item.id)}
-                onTouchEnd={handleEnd}
-                onTouchCancel={handleEnd}
-              >
-                <SortableTile
-                  item={item}
-                  index={index}
-                  isReordering={isReordering}
-                  tiltedTileId={tiltedTileId}
-                  onTileClick={() => !isReordering && item.onClick()}
-                />
-              </div>
+                item={item}
+                index={index}
+                isReordering={isReordering}
+                tiltedTileId={tiltedTileId}
+                onTileClick={() => !isReordering && item.onClick()}
+                onStartLongPress={() => handleLongPress(item.id)}
+                onCancelLongPress={handleEnd}
+              />
             ))}
           </SortableContext>
         </div>
