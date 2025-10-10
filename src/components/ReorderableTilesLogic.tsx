@@ -127,10 +127,40 @@ const SortableTile: React.FC<{
       `}
       {...attributes}
       {...listeners}
-      onClick={(e) => {
-        if (!isReordering && !isDragging) {
-          e.stopPropagation();
-          onTileClick();
+      onMouseDown={(e) => {
+        if (!isReordering) {
+          handlePress();
+          onStartLongPress();
+        }
+      }}
+      onMouseUp={(e) => {
+        if (!isReordering) {
+          handleRelease();
+          onCancelLongPress();
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isReordering) {
+          setIsPressed(false);
+          onCancelLongPress();
+        }
+      }}
+      onTouchStart={(e) => {
+        if (!isReordering) {
+          handlePress();
+          onStartLongPress();
+        }
+      }}
+      onTouchEnd={(e) => {
+        if (!isReordering) {
+          handleRelease();
+          onCancelLongPress();
+        }
+      }}
+      onTouchCancel={(e) => {
+        if (!isReordering) {
+          setIsPressed(false);
+          onCancelLongPress();
         }
       }}
     >
@@ -226,8 +256,10 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
 
   const itemIds = useMemo(() => orderedItems.map(it => it.id), [orderedItems]);
 
-  const handleDragStart = () => {
+  const handleDragStart = (event: any) => {
     setIsReordering(true);
+    setTiltedTileId(event.active.id);
+    onLongPress?.(event.active.id);
     document.body.classList.add('no-refresh', 'hide-scrollbar');
     document.body.style.overflow = 'hidden';
   };
