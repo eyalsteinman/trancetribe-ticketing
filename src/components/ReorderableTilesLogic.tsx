@@ -125,9 +125,7 @@ const SortableTile: React.FC<{
           : 'bg-card border-[hsl(280_80%_60%/0.3)]'
         }
       `}
-      {...attributes}
-      {...listeners}
-      {...(!isReordering ? {
+      {...(isReordering ? { ...attributes, ...listeners } : {
         onMouseDown: (e: React.MouseEvent) => {
           handlePress();
           onStartLongPress();
@@ -152,7 +150,7 @@ const SortableTile: React.FC<{
           setIsPressed(false);
           onCancelLongPress();
         }
-      } : {})}
+      })}
     >
       <div className={`transition-colors duration-200 ${isPressed ? 'text-primary-foreground' : 'text-primary'}`}>
         {item.icon}
