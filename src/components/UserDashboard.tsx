@@ -394,7 +394,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           variant="ghost" 
           size="icon"
           onClick={handleSignOut}
-          className="absolute top-2 right-4 z-50 text-white hover:bg-white/10 transition-all duration-200 animate-[neon-glow_16s_ease-in-out_infinite]"
+          className="absolute top-2 right-4 z-50 text-white hover:bg-white/10 transition-all duration-200"
           aria-label="Sign Out"
         >
           <LogOut className="h-6 w-6 stroke-[3]" />
@@ -551,22 +551,22 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                          </div>
                        )}
                       
-                      {/* Status Badge */}
-                      <div className="absolute top-4 right-4">
-                        {qrCode.is_scanned ? (
-                          <div className="bg-green-500 text-white px-3 py-1 text-xs font-semibold">
-                            ✓ Used
-                          </div>
-                        ) : qrCode.is_approved ? (
-                          <div className="bg-primary text-primary-foreground px-3 py-1 text-xs font-semibold">
-                            ✓ Ready
-                          </div>
-                        ) : (
-                          <div className="bg-orange-500 text-white px-3 py-1 text-xs font-semibold">
-                            Pending
-                          </div>
-                        )}
-                      </div>
+                       {/* Status Badge */}
+                       <div className="absolute top-4 right-4">
+                         {qrCode.is_scanned ? (
+                           <div className="bg-green-500 text-white px-3 py-1 text-xs font-semibold">
+                             ✓ Used
+                           </div>
+                         ) : qrCode.is_approved ? (
+                           <div className="bg-green-500 text-white px-3 py-1 text-xs font-semibold">
+                             ✓ Ready
+                           </div>
+                         ) : (
+                           <div className="bg-orange-500 text-white px-3 py-1 text-xs font-semibold">
+                             Pending
+                           </div>
+                         )}
+                       </div>
                     </div>
                     
                     {/* Event Info */}
@@ -585,11 +585,11 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                         </p>
                       </div>
                       
-                      {/* QR Code Ready Action */}
-                        {qrCode.is_approved && !qrCode.is_scanned && (
+                       {/* QR Code Ready Action */}
+                         {qrCode.is_approved && !qrCode.is_scanned && (
                         <Button 
                           size="sm"
-                          className="w-full bg-primary text-white hover:bg-primary/90"
+                          className="w-full bg-green-500 text-white hover:bg-green-600"
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedQRCode(qrCode);
