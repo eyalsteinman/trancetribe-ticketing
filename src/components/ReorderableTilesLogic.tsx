@@ -42,22 +42,19 @@ const SortableTile: React.FC<{
   isReordering: boolean;
   tiltedTileId: string | null;
   onTileClick: () => void;
-  onStartLongPress: () => void;
-  onCancelLongPress: () => void;
-}> = ({ item, index, isReordering, tiltedTileId, onTileClick, onStartLongPress, onCancelLongPress }) => {
+}> = ({ item, index, isReordering, tiltedTileId, onTileClick }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
-  const [isPressed, setIsPressed] = React.useState(false);
-  const [isScrolling, setIsScrolling] = React.useState(false);
-  const scrollTimeoutRef = React.useRef<NodeJS.Timeout>();
+  const [clickStartTime, setClickStartTime] = React.useState<number | null>(null);
 
   const randomDelay = React.useMemo(() => Math.random() * 4, []);
   
   const tileStyle: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
-    cursor: isReordering ? 'grab' : 'pointer',
+    cursor: isDragging ? 'grabbing' : 'pointer',
     borderRadius: '0.5rem',
-    ...((!isPressed && !isReordering) ? {
+    touchAction: 'none',
+    ...(!isDragging && !isReordering ? {
       backgroundImage: `linear-gradient(
         90deg,
         transparent,
@@ -70,41 +67,15 @@ const SortableTile: React.FC<{
     } : {}),
   };
 
-  React.useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolling(true);
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
+  const handleClick = (e: React.MouseEvent) => {
+    // Only trigger click if it was a quick tap (not a long press that became a drag)
+    if (!isDragging && !isReordering && clickStartTime) {
+      const timeDiff = Date.now() - clickStartTime;
+      if (timeDiff < 500) {
+        onTileClick();
       }
-      scrollTimeoutRef.current = setTimeout(() => {
-        setIsScrolling(false);
-      }, 150);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  const handlePress = () => {
-    if (!isReordering && !isScrolling) {
-      setIsPressed(true);
     }
   };
-
-  const handleRelease = () => {
-    if (isPressed && !isReordering && !isScrolling) {
-      setIsPressed(false);
-      setTimeout(() => onTileClick(), 100);
-    } else {
-      setIsPressed(false);
-    }
-  };
-
 
   return (
     <div
@@ -117,61 +88,23 @@ const SortableTile: React.FC<{
         relative p-4 select-none h-32 min-h-32
         border-2 flex flex-col items-center justify-center text-center space-y-1
         transition-all duration-200 ease-out
-        ${!isReordering ? 'hover:scale-102' : 'cursor-grabbing'}
+        ${!isReordering && !isDragging ? 'hover:scale-102' : ''}
         ${tiltedTileId === item.id ? 'animate-[tilt_0.3s_ease-in-out] rotate-12' : ''}
-        ${isDragging ? 'z-10 opacity-80' : ''}
-        ${isPressed 
-          ? 'bg-[hsl(280_80%_60%)] border-[hsl(280_80%_60%)] shadow-[0_0_30px_hsl(280_80%_60%)]' 
-          : 'bg-card border-[hsl(280_80%_60%/0.3)]'
-        }
+        ${isDragging ? 'z-10 opacity-80 bg-[hsl(280_80%_60%)] border-[hsl(280_80%_60%)] shadow-[0_0_30px_hsl(280_80%_60%)]' : 'bg-card border-[hsl(280_80%_60%/0.3)]'}
       `}
       {...attributes}
       {...listeners}
-      onMouseDown={(e) => {
-        if (!isReordering) {
-          handlePress();
-          onStartLongPress();
-        }
-      }}
-      onMouseUp={(e) => {
-        if (!isReordering) {
-          handleRelease();
-          onCancelLongPress();
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!isReordering) {
-          setIsPressed(false);
-          onCancelLongPress();
-        }
-      }}
-      onTouchStart={(e) => {
-        if (!isReordering) {
-          handlePress();
-          onStartLongPress();
-        }
-      }}
-      onTouchEnd={(e) => {
-        if (!isReordering) {
-          handleRelease();
-          onCancelLongPress();
-        }
-      }}
-      onTouchCancel={(e) => {
-        if (!isReordering) {
-          setIsPressed(false);
-          onCancelLongPress();
-        }
-      }}
+      onPointerDown={() => setClickStartTime(Date.now())}
+      onClick={handleClick}
     >
-      <div className={`transition-colors duration-200 ${isPressed ? 'text-primary-foreground' : 'text-primary'}`}>
+      <div className={`transition-colors duration-200 ${isDragging ? 'text-primary-foreground' : 'text-primary'}`}>
         {item.icon}
       </div>
-      <span className={`text-sm font-medium whitespace-pre-line transition-colors duration-200 ${isPressed ? 'text-primary-foreground' : 'text-foreground'}`}>
+      <span className={`text-sm font-medium whitespace-pre-line transition-colors duration-200 ${isDragging ? 'text-primary-foreground' : 'text-foreground'}`}>
         {item.title}
       </span>
       {item.displayCount !== undefined && (
-        <div className={`text-lg font-bold transition-colors duration-200 ${isPressed ? 'text-primary-foreground' : 'text-primary'}`}>
+        <div className={`text-lg font-bold transition-colors duration-200 ${isDragging ? 'text-primary-foreground' : 'text-primary'}`}>
           {item.displayCount}
         </div>
       )}
@@ -187,7 +120,6 @@ const SortableTile: React.FC<{
 const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTilesLogicProps) => {
   const [orderedItems, setOrderedItems] = useState<TileItem[]>(items);
   const [isReordering, setIsReordering] = useState(false);
-  const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
   const [tiltedTileId, setTiltedTileId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -214,27 +146,6 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
   const saveOrder = (newOrder: TileItem[]) => {
     const orderIds = newOrder.map(item => item.id);
     localStorage.setItem(orderKey, JSON.stringify(orderIds));
-  };
-
-  const handleLongPress = (id: string) => {
-    if (isReordering) return;
-
-    const timer = setTimeout(() => {
-      setIsReordering(true);
-      setTiltedTileId(id);
-      onLongPress?.(id);
-      // Disable page scroll during reordering
-      document.body.classList.add('no-refresh', 'hide-scrollbar');
-      document.body.style.overflow = 'hidden';
-    }, 3000); // 3 second long press
-    setLongPressTimer(timer as unknown as NodeJS.Timeout);
-  };
-
-  const handleEnd = () => {
-    if (longPressTimer) {
-      clearTimeout(longPressTimer);
-      setLongPressTimer(null);
-    }
   };
 
   const exitReorderMode = () => {
@@ -296,8 +207,6 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
                 isReordering={isReordering}
                 tiltedTileId={tiltedTileId}
                 onTileClick={() => !isReordering && item.onClick()}
-                onStartLongPress={() => handleLongPress(item.id)}
-                onCancelLongPress={handleEnd}
               />
             ))}
           </SortableContext>
