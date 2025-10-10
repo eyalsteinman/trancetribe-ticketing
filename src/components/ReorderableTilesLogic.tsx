@@ -102,6 +102,11 @@ const SortableTile: React.FC<{
     }
   };
 
+  const handleMouseDown = isReordering ? undefined : handlePress;
+  const handleMouseUp = isReordering ? undefined : handleRelease;
+  const handleTouchStart = isReordering ? undefined : handlePress;
+  const handleTouchEnd = isReordering ? undefined : handleRelease;
+
   return (
     <div
       ref={setNodeRef}
@@ -109,14 +114,14 @@ const SortableTile: React.FC<{
       data-index={index}
       data-id={item.id}
       style={tileStyle}
-      onMouseDown={handlePress}
-      onMouseUp={handleRelease}
-      onMouseLeave={() => setIsPressed(false)}
-      onTouchStart={handlePress}
-      onTouchEnd={handleRelease}
-      onTouchCancel={() => setIsPressed(false)}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={() => !isReordering && setIsPressed(false)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={() => !isReordering && setIsPressed(false)}
       className={`
-        relative p-4 select-none h-32 min-h-32
+        relative p-4 select-none h-32 min-h-32 rounded-lg
         border-2 flex flex-col items-center justify-center text-center space-y-1
         transition-all duration-200 ease-out overflow-hidden
         ${!isReordering ? 'hover:scale-102' : ''}
