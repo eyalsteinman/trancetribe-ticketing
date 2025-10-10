@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   DndContext,
   DragEndEvent,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
@@ -44,7 +45,8 @@ const SortableTile: React.FC<{
   onTileClick: () => void;
 }> = ({ item, index, isReordering, tiltedTileId, onTileClick }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
-  const [clickStartTime, setClickStartTime] = React.useState<number | null>(null);
+  const [isPressed, setIsPressed] = React.useState(false);
+  const pressTimerRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const randomDelay = React.useMemo(() => Math.random() * 4, []);
   
@@ -53,8 +55,7 @@ const SortableTile: React.FC<{
     transition,
     cursor: isDragging ? 'grabbing' : 'pointer',
     borderRadius: '0.5rem',
-    touchAction: 'none',
-    ...(!isDragging && !isReordering ? {
+    ...(!isPressed && !isDragging && !isReordering ? {
       backgroundImage: `linear-gradient(
         90deg,
         transparent,
@@ -67,15 +68,47 @@ const SortableTile: React.FC<{
     } : {}),
   };
 
-  const handleClick = (e: React.MouseEvent) => {
-    // Only trigger click if it was a quick tap (not a long press that became a drag)
-    if (!isDragging && !isReordering && clickStartTime) {
-      const timeDiff = Date.now() - clickStartTime;
-      if (timeDiff < 500) {
-        onTileClick();
-      }
+  const handlePointerDown = (e: React.PointerEvent) => {
+    // Only handle visual feedback for quick taps, not during drag
+    if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+      setIsPressed(true);
+      pressTimerRef.current = setTimeout(() => {
+        setIsPressed(false);
+      }, 3000); // Match TouchSensor delay
+    } else {
+      // For mouse, show immediate feedback
+      setIsPressed(true);
     }
   };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (pressTimerRef.current) {
+      clearTimeout(pressTimerRef.current);
+      pressTimerRef.current = null;
+    }
+    setIsPressed(false);
+    
+    // Only trigger click if not dragging
+    if (!isDragging && !isReordering) {
+      onTileClick();
+    }
+  };
+
+  const handlePointerCancel = () => {
+    if (pressTimerRef.current) {
+      clearTimeout(pressTimerRef.current);
+      pressTimerRef.current = null;
+    }
+    setIsPressed(false);
+  };
+
+  React.useEffect(() => {
+    return () => {
+      if (pressTimerRef.current) {
+        clearTimeout(pressTimerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div
@@ -90,21 +123,26 @@ const SortableTile: React.FC<{
         transition-all duration-200 ease-out
         ${!isReordering && !isDragging ? 'hover:scale-102' : ''}
         ${tiltedTileId === item.id ? 'animate-[tilt_0.3s_ease-in-out] rotate-12' : ''}
-        ${isDragging ? 'z-10 opacity-80 bg-[hsl(280_80%_60%)] border-[hsl(280_80%_60%)] shadow-[0_0_30px_hsl(280_80%_60%)]' : 'bg-card border-[hsl(280_80%_60%/0.3)]'}
+        ${isDragging ? 'z-10 opacity-80' : ''}
+        ${isPressed 
+          ? 'bg-[hsl(280_80%_60%)] border-[hsl(280_80%_60%)] shadow-[0_0_30px_hsl(280_80%_60%)]' 
+          : 'bg-card border-[hsl(280_80%_60%/0.3)]'
+        }
       `}
       {...attributes}
       {...listeners}
-      onPointerDown={() => setClickStartTime(Date.now())}
-      onClick={handleClick}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
     >
-      <div className={`transition-colors duration-200 ${isDragging ? 'text-primary-foreground' : 'text-primary'}`}>
+      <div className={`transition-colors duration-200 ${isPressed || isDragging ? 'text-primary-foreground' : 'text-primary'}`}>
         {item.icon}
       </div>
-      <span className={`text-sm font-medium whitespace-pre-line transition-colors duration-200 ${isDragging ? 'text-primary-foreground' : 'text-foreground'}`}>
+      <span className={`text-sm font-medium whitespace-pre-line transition-colors duration-200 ${isPressed || isDragging ? 'text-primary-foreground' : 'text-foreground'}`}>
         {item.title}
       </span>
       {item.displayCount !== undefined && (
-        <div className={`text-lg font-bold transition-colors duration-200 ${isDragging ? 'text-primary-foreground' : 'text-primary'}`}>
+        <div className={`text-lg font-bold transition-colors duration-200 ${isPressed || isDragging ? 'text-primary-foreground' : 'text-primary'}`}>
           {item.displayCount}
         </div>
       )}
@@ -157,7 +195,12 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
   };
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+    useSensor(TouchSensor, {
       activationConstraint: {
         delay: 3000,
         tolerance: 10,
