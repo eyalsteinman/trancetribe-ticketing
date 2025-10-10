@@ -125,44 +125,34 @@ const SortableTile: React.FC<{
           : 'bg-card border-[hsl(280_80%_60%/0.3)]'
         }
       `}
-      {...(isReordering ? attributes : {})}
-      {...(isReordering ? listeners : {})}
-      onMouseDown={(e) => {
-        if (!isReordering) {
+      {...attributes}
+      {...listeners}
+      {...(!isReordering ? {
+        onMouseDown: (e: React.MouseEvent) => {
           handlePress();
           onStartLongPress();
-        }
-      }}
-      onMouseUp={(e) => {
-        if (!isReordering) {
+        },
+        onMouseUp: (e: React.MouseEvent) => {
           handleRelease();
           onCancelLongPress();
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!isReordering) {
+        },
+        onMouseLeave: (e: React.MouseEvent) => {
+          setIsPressed(false);
+          onCancelLongPress();
+        },
+        onTouchStart: (e: React.TouchEvent) => {
+          handlePress();
+          onStartLongPress();
+        },
+        onTouchEnd: (e: React.TouchEvent) => {
+          handleRelease();
+          onCancelLongPress();
+        },
+        onTouchCancel: (e: React.TouchEvent) => {
           setIsPressed(false);
           onCancelLongPress();
         }
-      }}
-      onTouchStart={(e) => {
-        if (!isReordering) {
-          handlePress();
-          onStartLongPress();
-        }
-      }}
-      onTouchEnd={(e) => {
-        if (!isReordering) {
-          handleRelease();
-          onCancelLongPress();
-        }
-      }}
-      onTouchCancel={(e) => {
-        if (!isReordering) {
-          setIsPressed(false);
-          onCancelLongPress();
-        }
-      }}
+      } : {})}
     >
       <div className={`transition-colors duration-200 ${isPressed ? 'text-primary-foreground' : 'text-primary'}`}>
         {item.icon}
