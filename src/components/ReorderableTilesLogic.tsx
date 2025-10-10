@@ -45,6 +45,8 @@ const SortableTile: React.FC<{
 }> = ({ item, index, isReordering, tiltedTileId, onTileClick }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
   const [isPressed, setIsPressed] = React.useState(false);
+  const [isScrolling, setIsScrolling] = React.useState(false);
+  const scrollTimeoutRef = React.useRef<NodeJS.Timeout>();
 
   const tileStyle: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -58,18 +60,38 @@ const SortableTile: React.FC<{
         transparent
       )`,
       backgroundSize: '200% 100%',
-      animation: 'border-trace 3s linear infinite, neon-glow 2s ease-in-out infinite',
+      animation: 'border-trace 3s linear infinite, neon-glow 4s ease-in-out infinite',
     } : {}),
   };
 
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolling(true);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+      scrollTimeoutRef.current = setTimeout(() => {
+        setIsScrolling(false);
+      }, 150);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const handlePress = () => {
-    if (!isReordering) {
+    if (!isReordering && !isScrolling) {
       setIsPressed(true);
     }
   };
 
   const handleRelease = () => {
-    if (isPressed && !isReordering) {
+    if (isPressed && !isReordering && !isScrolling) {
       setIsPressed(false);
       setTimeout(() => onTileClick(), 100);
     } else {
@@ -98,8 +120,8 @@ const SortableTile: React.FC<{
         ${tiltedTileId === item.id ? 'animate-[tilt_0.3s_ease-in-out] rotate-12' : ''}
         ${isDragging ? 'z-10' : ''}
         ${isPressed 
-          ? 'bg-primary border-primary shadow-[0_0_30px_hsl(var(--primary))]' 
-          : 'bg-card border-primary/30 animate-[neon-glow_2s_ease-in-out_infinite]'
+          ? 'bg-[hsl(142_76%_50%)] border-[hsl(142_76%_50%)] shadow-[0_0_30px_hsl(142_76%_50%)]' 
+          : 'bg-card border-[hsl(142_76%_50%/0.3)] animate-[neon-glow_4s_ease-in-out_infinite]'
         }
       `}
       {...(isReordering ? { ...attributes, ...listeners } : {})}
