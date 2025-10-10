@@ -111,12 +111,6 @@ const SortableTile: React.FC<{
       data-index={index}
       data-id={item.id}
       style={tileStyle}
-      onMouseDown={handlePress}
-      onMouseUp={handleRelease}
-      onMouseLeave={() => setIsPressed(false)}
-      onTouchStart={handlePress}
-      onTouchEnd={handleRelease}
-      onTouchCancel={() => setIsPressed(false)}
       className={`
         relative p-4 select-none h-32 min-h-32
         border-2 flex flex-col items-center justify-center text-center space-y-1
@@ -129,7 +123,47 @@ const SortableTile: React.FC<{
           : 'bg-card border-[hsl(280_80%_60%/0.3)]'
         }
       `}
-      {...(isReordering ? { ...attributes, ...listeners } : {})}
+      {...attributes}
+      {...listeners}
+      onMouseDown={(e) => {
+        if (isReordering) {
+          listeners?.onMouseDown?.(e);
+        } else {
+          handlePress();
+        }
+      }}
+      onMouseUp={(e) => {
+        if (!isReordering) {
+          handleRelease();
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isReordering) {
+          setIsPressed(false);
+        }
+      }}
+      onTouchStart={(e) => {
+        if (isReordering) {
+          listeners?.onTouchStart?.(e);
+        } else {
+          handlePress();
+        }
+      }}
+      onTouchEnd={(e) => {
+        if (!isReordering) {
+          handleRelease();
+        }
+      }}
+      onTouchCancel={(e) => {
+        if (!isReordering) {
+          setIsPressed(false);
+        }
+      }}
+      onClick={(e) => {
+        if (!isReordering && !isPressed) {
+          onTileClick();
+        }
+      }}
     >
       <div className={`transition-colors duration-200 ${isPressed ? 'text-primary-foreground' : 'text-primary'}`}>
         {item.icon}
@@ -183,7 +217,7 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
     localStorage.setItem(orderKey, JSON.stringify(orderIds));
   };
 
-  const handleLongPress = (id: string, e: React.TouchEvent | React.MouseEvent) => {
+  const handleLongPress = (id: string) => {
     if (isReordering) return;
 
     const timer = setTimeout(() => {
@@ -193,7 +227,7 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
       // Disable page scroll during reordering
       document.body.classList.add('no-refresh', 'hide-scrollbar');
       document.body.style.overflow = 'hidden';
-    }, 3000); // 3 second long press
+    }, 500); // Half second long press
     setLongPressTimer(timer as unknown as NodeJS.Timeout);
   };
 
@@ -251,26 +285,11 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
             {orderedItems.map((item, index) => (
               <div
                 key={item.id}
-                onMouseDown={(e) => {
-                  if (!isReordering) {
-                    handleLongPress(item.id, e);
-                  }
-                }}
+                onMouseDown={() => !isReordering && handleLongPress(item.id)}
                 onMouseUp={handleEnd}
                 onMouseLeave={handleEnd}
-                onTouchStart={(e) => {
-                  if (!isReordering) {
-                    handleLongPress(item.id, e);
-                  }
-                }}
-                onTouchEnd={(e) => {
-                  handleEnd();
-                  if (isReordering) {
-                    // Let onDragEnd handle exit when a drop occurs
-                    // If user taps without dragging, exit immediately
-                    exitReorderMode();
-                  }
-                }}
+                onTouchStart={() => !isReordering && handleLongPress(item.id)}
+                onTouchEnd={handleEnd}
                 onTouchCancel={handleEnd}
               >
                 <SortableTile
@@ -278,7 +297,7 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
                   index={index}
                   isReordering={isReordering}
                   tiltedTileId={tiltedTileId}
-                  onTileClick={() => item.onClick()}
+                  onTileClick={() => !isReordering && item.onClick()}
                 />
               </div>
             ))}
