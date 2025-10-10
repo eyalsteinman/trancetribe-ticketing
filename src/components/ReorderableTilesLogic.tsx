@@ -45,17 +45,15 @@ const SortableTile: React.FC<{
   onTileClick: () => void;
 }> = ({ item, index, isReordering, tiltedTileId, onTileClick }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
-  const [isPressed, setIsPressed] = React.useState(false);
-  const pressTimerRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const randomDelay = React.useMemo(() => Math.random() * 4, []);
   
   const tileStyle: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: isDragging ? transition : `${transition}, transform 0.3s ease-out`,
     cursor: isDragging ? 'grabbing' : 'pointer',
     borderRadius: '0.5rem',
-    ...(!isPressed && !isDragging && !isReordering ? {
+    ...(!isDragging && !isReordering ? {
       backgroundImage: `linear-gradient(
         90deg,
         transparent,
@@ -68,47 +66,11 @@ const SortableTile: React.FC<{
     } : {}),
   };
 
-  const handlePointerDown = (e: React.PointerEvent) => {
-    // Only handle visual feedback for quick taps, not during drag
-    if (e.pointerType === 'touch' || e.pointerType === 'pen') {
-      setIsPressed(true);
-      pressTimerRef.current = setTimeout(() => {
-        setIsPressed(false);
-      }, 3000); // Match TouchSensor delay
-    } else {
-      // For mouse, show immediate feedback
-      setIsPressed(true);
-    }
-  };
-
-  const handlePointerUp = (e: React.PointerEvent) => {
-    if (pressTimerRef.current) {
-      clearTimeout(pressTimerRef.current);
-      pressTimerRef.current = null;
-    }
-    setIsPressed(false);
-    
-    // Only trigger click if not dragging
+  const handleClick = () => {
     if (!isDragging && !isReordering) {
       onTileClick();
     }
   };
-
-  const handlePointerCancel = () => {
-    if (pressTimerRef.current) {
-      clearTimeout(pressTimerRef.current);
-      pressTimerRef.current = null;
-    }
-    setIsPressed(false);
-  };
-
-  React.useEffect(() => {
-    return () => {
-      if (pressTimerRef.current) {
-        clearTimeout(pressTimerRef.current);
-      }
-    };
-  }, []);
 
   return (
     <div
@@ -117,32 +79,30 @@ const SortableTile: React.FC<{
       data-index={index}
       data-id={item.id}
       style={tileStyle}
+      onClick={handleClick}
       className={`
         relative p-4 select-none h-32 min-h-32
         border-2 flex flex-col items-center justify-center text-center space-y-1
-        transition-all duration-200 ease-out
+        transition-all duration-300 ease-out
         ${!isReordering && !isDragging ? 'hover:scale-102' : ''}
-        ${tiltedTileId === item.id ? 'animate-[tilt_0.3s_ease-in-out] rotate-12' : ''}
-        ${isDragging ? 'z-10 opacity-80' : ''}
-        ${isPressed 
-          ? 'bg-[hsl(280_80%_60%)] border-[hsl(280_80%_60%)] shadow-[0_0_30px_hsl(280_80%_60%)]' 
+        ${tiltedTileId === item.id && !isDragging ? 'scale-110 rotate-12' : ''}
+        ${isDragging ? 'z-50 scale-105 rotate-6' : ''}
+        ${isDragging 
+          ? 'bg-[hsl(280_80%_60%)] border-[hsl(280_80%_60%)] shadow-[0_0_40px_hsl(280_80%_60%/0.6)]' 
           : 'bg-card border-[hsl(280_80%_60%/0.3)]'
         }
       `}
       {...attributes}
       {...listeners}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerCancel}
     >
-      <div className={`transition-colors duration-200 ${isPressed || isDragging ? 'text-primary-foreground' : 'text-primary'}`}>
+      <div className={`transition-colors duration-200 ${isDragging ? 'text-primary-foreground' : 'text-primary'}`}>
         {item.icon}
       </div>
-      <span className={`text-sm font-medium whitespace-pre-line transition-colors duration-200 ${isPressed || isDragging ? 'text-primary-foreground' : 'text-foreground'}`}>
+      <span className={`text-sm font-medium whitespace-pre-line transition-colors duration-200 ${isDragging ? 'text-primary-foreground' : 'text-foreground'}`}>
         {item.title}
       </span>
       {item.displayCount !== undefined && (
-        <div className={`text-lg font-bold transition-colors duration-200 ${isPressed || isDragging ? 'text-primary-foreground' : 'text-primary'}`}>
+        <div className={`text-lg font-bold transition-colors duration-200 ${isDragging ? 'text-primary-foreground' : 'text-primary'}`}>
           {item.displayCount}
         </div>
       )}
@@ -190,8 +150,8 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
     setIsReordering(false);
     setTiltedTileId(null);
     // Re-enable page refresh and scrolling
-    document.body.classList.remove('no-refresh', 'hide-scrollbar');
-    document.body.style.overflow = 'auto';
+    document.body.classList.remove('no-refresh');
+    document.body.style.overscrollBehavior = 'auto';
   };
 
   const sensors = useSensors(
@@ -214,8 +174,9 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
     setIsReordering(true);
     setTiltedTileId(event.active.id);
     onLongPress?.(event.active.id);
-    document.body.classList.add('no-refresh', 'hide-scrollbar');
-    document.body.style.overflow = 'hidden';
+    // Prevent page refresh but allow smooth dragging
+    document.body.classList.add('no-refresh');
+    document.body.style.overscrollBehavior = 'none';
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
