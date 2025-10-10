@@ -44,11 +44,37 @@ const SortableTile: React.FC<{
   onTileClick: () => void;
 }> = ({ item, index, isReordering, tiltedTileId, onTileClick }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
+  const [isPressed, setIsPressed] = React.useState(false);
 
-  const style: React.CSSProperties = {
+  const tileStyle: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
     cursor: isReordering ? 'grab' : 'pointer',
+    ...((!isPressed && !isReordering) ? {
+      backgroundImage: `linear-gradient(
+        90deg,
+        transparent,
+        hsl(var(--primary) / 0.3) 50%,
+        transparent
+      )`,
+      backgroundSize: '200% 100%',
+      animation: 'border-trace 3s linear infinite, neon-glow 2s ease-in-out infinite',
+    } : {}),
+  };
+
+  const handlePress = () => {
+    if (!isReordering) {
+      setIsPressed(true);
+    }
+  };
+
+  const handleRelease = () => {
+    if (isPressed && !isReordering) {
+      setIsPressed(false);
+      setTimeout(() => onTileClick(), 100);
+    } else {
+      setIsPressed(false);
+    }
   };
 
   return (
@@ -57,28 +83,35 @@ const SortableTile: React.FC<{
       data-tile="true"
       data-index={index}
       data-id={item.id}
-      style={style}
+      style={tileStyle}
+      onMouseDown={handlePress}
+      onMouseUp={handleRelease}
+      onMouseLeave={() => setIsPressed(false)}
+      onTouchStart={handlePress}
+      onTouchEnd={handleRelease}
+      onTouchCancel={() => setIsPressed(false)}
       className={`
-        relative p-4 bg-card select-none h-32 min-h-32
-        border border-border flex flex-col items-center justify-center text-center space-y-1
-        transition-transform duration-200 ease-out
+        relative p-4 select-none h-32 min-h-32
+        border-2 flex flex-col items-center justify-center text-center space-y-1
+        transition-all duration-200 ease-out overflow-hidden
         ${!isReordering ? 'hover:scale-102' : ''}
         ${tiltedTileId === item.id ? 'animate-[tilt_0.3s_ease-in-out] rotate-12' : ''}
         ${isDragging ? 'z-10' : ''}
+        ${isPressed 
+          ? 'bg-primary border-primary shadow-[0_0_30px_hsl(var(--primary))]' 
+          : 'bg-card border-primary/30 animate-[neon-glow_2s_ease-in-out_infinite]'
+        }
       `}
-      onClick={() => {
-        if (!isReordering) onTileClick();
-      }}
       {...(isReordering ? { ...attributes, ...listeners } : {})}
     >
-      <div className="text-primary">
+      <div className={`transition-colors duration-200 ${isPressed ? 'text-primary-foreground' : 'text-primary'}`}>
         {item.icon}
       </div>
-      <span className="text-sm font-medium text-foreground whitespace-pre-line">
+      <span className={`text-sm font-medium whitespace-pre-line transition-colors duration-200 ${isPressed ? 'text-primary-foreground' : 'text-foreground'}`}>
         {item.title}
       </span>
       {item.displayCount !== undefined && (
-        <div className="text-lg font-bold text-primary">
+        <div className={`text-lg font-bold transition-colors duration-200 ${isPressed ? 'text-primary-foreground' : 'text-primary'}`}>
           {item.displayCount}
         </div>
       )}
