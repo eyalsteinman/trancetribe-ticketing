@@ -199,7 +199,7 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
 
   return (
     <div className="container-section">
-      <p className="text-white text-xs mb-2 text-center opacity-70">
+      <p className="text-white text-sm font-bold mb-3 text-center opacity-70">
         Press tile for 3 sec. to reorder
       </p>
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
