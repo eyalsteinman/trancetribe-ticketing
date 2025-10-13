@@ -243,15 +243,16 @@ const PersonalizeEdit = ({ user, onBack }: PersonalizeEditProps) => {
   };
 
   return (
-    <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]">
-      {/* Animated background */}
-      <div className="auth-animated-bg" />
-      
-      <div className="min-h-screen w-full relative z-10 p-4">
-        <PageHeader
-          title="My Info"
-          onBack={onBack}
-        />
+    <div 
+      className="min-h-screen p-4 transition-colors duration-500"
+      style={{ 
+        backgroundColor
+      }}
+    >
+      <PageHeader
+        title="My Info"
+        onBack={onBack}
+      />
       
       <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
 
@@ -376,7 +377,6 @@ const PersonalizeEdit = ({ user, onBack }: PersonalizeEditProps) => {
 
         {/* Footer */}
         <Footer />
-      </div>
       </div>
     </div>
   );

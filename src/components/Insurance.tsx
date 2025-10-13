@@ -54,17 +54,18 @@ const Insurance = ({ onBack }: InsuranceProps) => {
   });
 
   return (
-    <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]">
-      {/* Animated background */}
-      <div className="auth-animated-bg" />
+    <div
+      className="min-h-screen p-4 transition-colors duration-500"
+      style={{
+        backgroundColor
+      }}
+    >
+      <PageHeader
+        title={t('insurance')}
+        onBack={onBack}
+      />
       
-      <div className="min-h-screen w-full relative z-10 p-4">
-        <PageHeader
-          title={t('insurance')}
-          onBack={onBack}
-        />
-        
-        <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
+      <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
         <Card>
           <CardHeader>
             <CardTitle>Select Production</CardTitle>
@@ -142,9 +143,8 @@ const Insurance = ({ onBack }: InsuranceProps) => {
           </Card>
         )}
 
-          {/* Footer */}
-          <Footer />
-        </div>
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );

@@ -175,24 +175,26 @@ const FriendsCodes = ({ user, onBack }: FriendsCodesProps) => {
   };
 
   return (
-    <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]">
-      {/* Animated background */}
-      <div className="auth-animated-bg" />
-      
-      <div className="min-h-screen w-full relative z-10 p-4">
-        <div className="max-w-md mx-auto space-y-6">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-white">
-              Friends Codes
-            </h1>
-            <Button 
-              variant="outline" 
-              onClick={onBack} 
-              className="border-white/20 bg-white/10 text-white hover:bg-white/20"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
-            </Button>
+    <div 
+      className="min-h-screen p-4 transition-colors duration-500"
+      style={{ backgroundColor }}
+    >
+      <div className="max-w-md mx-auto space-y-6">
+        <div className="flex items-center justify-between">
+          <h1 
+            className="text-xl font-bold"
+            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+          >
+            Friends Codes
+          </h1>
+          <Button 
+            variant="outline" 
+            onClick={onBack} 
+            className="whitespace-nowrap on-color"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back
+          </Button>
         </div>
 
         {/* Add Friend Section */}
@@ -270,7 +272,6 @@ const FriendsCodes = ({ user, onBack }: FriendsCodesProps) => {
 
         {/* Footer */}
         <Footer />
-      </div>
       </div>
     </div>
   );

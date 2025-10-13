@@ -55,30 +55,35 @@ const PersonalCode = ({ user, onBack }: PersonalCodeProps) => {
   };
 
   return (
-    <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]">
-      {/* Animated background */}
-      <div className="auth-animated-bg" />
-      
-      <div className="min-h-screen w-full relative z-10 p-4">
-        <div className="max-w-md mx-auto space-y-6">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-white">
-              Personal Code
-            </h1>
-            <Button 
-              variant="outline" 
-              onClick={onBack} 
-              className="border-white/20 bg-white/10 text-white hover:bg-white/20"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
-            </Button>
-          </div>
+    <div 
+      className="min-h-screen p-4 transition-colors duration-500"
+      style={{ backgroundColor }}
+    >
+      <div className="max-w-md mx-auto space-y-6">
+        <div className="flex items-center justify-between">
+          <h1 
+            className="text-xl font-bold"
+            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+          >
+            Personal Code
+          </h1>
+          <Button 
+            variant="outline" 
+            onClick={onBack} 
+            className="whitespace-nowrap on-color"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back
+          </Button>
+        </div>
 
-          <div className="text-center space-y-4">
-            <h2 className="text-lg text-white">
-              Your personal code
-            </h2>
+        <div className="text-center space-y-4">
+          <h2 
+            className="text-lg"
+            style={{ color: isBackgroundDark ? '#ffffff' : '#000000' }}
+          >
+            Your personal code
+          </h2>
 
           <Card className="cursor-pointer hover:bg-accent/10 transition-colors" onClick={copyToClipboard}>
             <CardContent className="p-6">
@@ -93,9 +98,8 @@ const PersonalCode = ({ user, onBack }: PersonalCodeProps) => {
           </Card>
         </div>
 
-          {/* Footer */}
-          <Footer />
-        </div>
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );

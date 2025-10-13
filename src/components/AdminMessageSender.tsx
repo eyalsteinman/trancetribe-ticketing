@@ -159,18 +159,14 @@ const AdminMessageSender: React.FC<AdminMessageSenderProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]">
-      {/* Animated background */}
-      <div className="auth-animated-bg" />
-      
-      <div className="min-h-screen w-full relative z-10 p-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between w-full py-4">
-            <h1 className="text-2xl font-bold text-white">
-              Message Users
-            </h1>
-            <BackButton onBack={onBack} />
-          </div>
+    <div className="min-h-screen bg-background p-4">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center justify-between w-full py-4">
+          <h1 className="text-2xl font-bold text-foreground">
+            Message Users
+          </h1>
+          <BackButton onBack={onBack} />
+        </div>
 
         <Card className="pt-4">
           <CardContent className="space-y-6">
@@ -270,7 +266,6 @@ const AdminMessageSender: React.FC<AdminMessageSenderProps> = ({
             </div>
           </CardContent>
         </Card>
-      </div>
       </div>
     </div>
   );
