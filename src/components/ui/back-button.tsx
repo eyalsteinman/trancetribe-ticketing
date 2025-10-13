@@ -18,8 +18,8 @@ const BackButton = ({ onBack, className }: BackButtonProps) => {
       onClick={onBack}
       className={cn(
         "flex items-center gap-2 px-3 py-2 h-auto text-sm font-medium",
-        "border-foreground/20 bg-background/50 backdrop-blur-sm",
-        "text-foreground hover:bg-foreground/10",
+        "border-white/20 bg-white/10 backdrop-blur-sm",
+        "text-white hover:bg-white/20",
         "transition-all duration-200",
         className
       )}

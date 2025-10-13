@@ -374,15 +374,17 @@ const UserDirectMessages: React.FC<UserDirectMessagesProps> = ({ onBack, userId 
     const friend = friends.find(f => f.friend_personal_code === selectedFriend);
     
     return (
-      <div className="min-h-screen bg-background p-4">
-        <div className="max-w-4xl mx-auto">
-          <Button
-            variant="ghost"
-            onClick={() => {
-              setCurrentView('main');
-              setSelectedFriend(null);
-            }}
-            className="mb-4"
+      <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]">
+        <div className="auth-animated-bg" />
+        <div className="min-h-screen w-full relative z-10 p-4">
+          <div className="max-w-4xl mx-auto">
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setCurrentView('main');
+                setSelectedFriend(null);
+              }}
+              className="mb-4 text-white hover:bg-white/10"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
@@ -442,15 +444,18 @@ const UserDirectMessages: React.FC<UserDirectMessagesProps> = ({ onBack, userId 
           </Card>
         </div>
       </div>
+    </div>
     );
   }
 
   // Message Detail View
   if (selectedMessage) {
     return (
-      <div className="min-h-screen bg-background p-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-4">
+      <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]">
+        <div className="auth-animated-bg" />
+        <div className="min-h-screen w-full relative z-10 p-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center justify-between mb-4">
             <Button
               variant="ghost"
               onClick={() => setSelectedMessage(null)}
@@ -490,13 +495,18 @@ const UserDirectMessages: React.FC<UserDirectMessagesProps> = ({ onBack, userId 
             </CardContent>
           </Card>
         </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-4">
-      <div className="max-w-md mx-auto space-y-6">
+    <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]">
+      {/* Animated background */}
+      <div className="auth-animated-bg" />
+      
+      <div className="min-h-screen w-full relative z-10 p-4">
+        <div className="max-w-md mx-auto space-y-6">
         <PageHeader
           title="Direct Messages"
           onBack={onBack}
@@ -652,6 +662,7 @@ const UserDirectMessages: React.FC<UserDirectMessagesProps> = ({ onBack, userId 
         </div>
 
         <Footer />
+      </div>
       </div>
     </div>
   );

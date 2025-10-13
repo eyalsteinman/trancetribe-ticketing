@@ -140,16 +140,18 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId, onOpenTribe
 
   if (selectedMessage) {
     return (
-      <div className="min-h-screen bg-background p-4">
-        <div className="max-w-4xl mx-auto">
-          <Button
-            variant="ghost"
-            onClick={() => setSelectedMessage(null)}
-            className="mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Messages
-          </Button>
+      <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]">
+        <div className="auth-animated-bg" />
+        <div className="min-h-screen w-full relative z-10 p-4">
+          <div className="max-w-4xl mx-auto">
+            <Button
+              variant="ghost"
+              onClick={() => setSelectedMessage(null)}
+              className="mb-4 text-white hover:bg-white/10"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Messages
+            </Button>
 
           <Card>
             <CardHeader>
@@ -169,13 +171,18 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId, onOpenTribe
           </Card>
         </div>
       </div>
+    </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-4">
-      <div className="max-w-md mx-auto space-y-6">
-        <PageHeader
+    <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]">
+      {/* Animated background */}
+      <div className="auth-animated-bg" />
+      
+      <div className="min-h-screen w-full relative z-10 p-4">
+        <div className="max-w-md mx-auto space-y-6">
+          <PageHeader
           title="Tribe Messages"
           onBack={onBack}
           showBackButton={true}
@@ -265,6 +272,7 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId, onOpenTribe
 
         {/* Footer */}
         <Footer />
+      </div>
       </div>
     </div>
   );

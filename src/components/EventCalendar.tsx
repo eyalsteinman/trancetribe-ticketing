@@ -255,29 +255,36 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId, onTicketP
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background p-4">
-        <div className="container mx-auto max-w-6xl">
-          <div className="flex items-center mb-6">
-            <Button variant="ghost" size="icon" onClick={onBack} className="mr-2">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <h1 className="text-2xl font-bold">{t('event_calendar')}</h1>
+      <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]">
+        <div className="auth-animated-bg" />
+        <div className="min-h-screen w-full relative z-10 p-4">
+          <div className="container mx-auto max-w-6xl">
+            <div className="flex items-center mb-6">
+              <Button variant="ghost" size="icon" onClick={onBack} className="mr-2 text-white hover:bg-white/10">
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <h1 className="text-2xl font-bold text-white">{t('event_calendar')}</h1>
+            </div>
+            <div className="text-center text-white">Loading...</div>
           </div>
-          <div className="text-center">Loading...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background p-4 scroll-smooth">
-      <div className="container mx-auto max-w-4xl px-4">
-        <div className="flex items-center mb-6">
-          <Button variant="ghost" size="icon" onClick={onBack} className="mr-2">
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-2xl font-bold">{t('event_calendar')}</h1>
-        </div>
+    <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]">
+      {/* Animated background */}
+      <div className="auth-animated-bg" />
+      
+      <div className="min-h-screen w-full relative z-10 p-4 scroll-smooth">
+        <div className="container mx-auto max-w-4xl px-4">
+          <div className="flex items-center mb-6">
+            <Button variant="ghost" size="icon" onClick={onBack} className="mr-2 text-white hover:bg-white/10">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <h1 className="text-2xl font-bold text-white">{t('event_calendar')}</h1>
+          </div>
 
         <div className="space-y-6">
           {/* Legend */}
@@ -463,6 +470,7 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId, onTicketP
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

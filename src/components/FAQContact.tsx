@@ -259,20 +259,27 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen p-4">
-        <div className="max-w-md mx-auto space-y-6">
-          <div className="text-center py-8">Loading...</div>
+      <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]">
+        <div className="auth-animated-bg" />
+        <div className="min-h-screen w-full relative z-10 p-4">
+          <div className="max-w-md mx-auto space-y-6">
+            <div className="text-center py-8 text-white">Loading...</div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-4">
-      <div className="max-w-md mx-auto space-y-6">
-        <PageHeader
-          title="FAQ & Contact"
-          onBack={onBack}
+    <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]">
+      {/* Animated background */}
+      <div className="auth-animated-bg" />
+      
+      <div className="min-h-screen w-full relative z-10 p-4">
+        <div className="max-w-md mx-auto space-y-6">
+          <PageHeader
+            title="FAQ & Contact"
+            onBack={onBack}
           showBackButton={true}
         />
 
@@ -436,11 +443,12 @@ const FAQContact = ({ user, onBack, isAdmin = false }: FAQContactProps) => {
 
         {/* Footer */}
         <div className="mt-12 pt-6 border-t border-border/50 text-center space-y-3">
-          <h3 className="font-bold text-xl text-primary">Trance Tribes Tickets</h3>
-          <p className="text-sm text-muted-foreground">
+          <h3 className="font-bold text-xl text-white">Trance Tribes Tickets</h3>
+          <p className="text-sm text-white/80">
             Created by Eyal Steinman, all rights reserved 2025
           </p>
         </div>
+      </div>
       </div>
     </div>
   );
