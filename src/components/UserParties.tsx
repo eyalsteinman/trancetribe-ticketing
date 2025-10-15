@@ -9,6 +9,13 @@ import PartyDetails from "./PartyDetails";
 import BrowseMenu from "./BrowseMenu";
 import PageHeader from "./ui/page-header";
 import Footer from '@/components/ui/footer';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 export default function UserParties({ user, onBack }) {
   const [parties, setParties] = useState([]);
@@ -19,6 +26,7 @@ export default function UserParties({ user, onBack }) {
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [browseMode, setBrowseMode] = useState("production");
+  const [selectedProduction, setSelectedProduction] = useState<string | null>(null);
 
   const loadParties = useCallback(async () => {
     const { data: partiesData, error: partiesError } = await supabase
@@ -108,17 +116,32 @@ export default function UserParties({ user, onBack }) {
   }, [loadParties]);
 
   useEffect(() => {
-    if (!searchQuery.trim()) {
-      setFilteredParties(parties);
-    } else {
-      const filtered = parties.filter(party => {
+    let filtered = parties;
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      filtered = filtered.filter(party => {
         const productionName = party.productions?.name || '';
         return productionName.toLowerCase().includes(searchQuery.toLowerCase()) ||
                party.name.toLowerCase().includes(searchQuery.toLowerCase());
       });
-      setFilteredParties(filtered);
     }
-  }, [searchQuery, parties]);
+
+    // Apply browse mode filters
+    if (browseMode === "production" && selectedProduction) {
+      filtered = filtered.filter(party => party.production_id === selectedProduction);
+    } else if (browseMode === "date") {
+      // Sort by date ascending
+      filtered = [...filtered].sort((a, b) => 
+        new Date(a.date).getTime() - new Date(b.date).getTime()
+      );
+    } else if (browseMode === "party") {
+      // Sort by party name
+      filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    setFilteredParties(filtered);
+  }, [searchQuery, parties, browseMode, selectedProduction]);
 
   const goBackToPartyList = () => {
     setSelectedParty(null);
@@ -132,11 +155,17 @@ export default function UserParties({ user, onBack }) {
       <div className="w-full relative z-10">
         {!selectedParty && (
           <>
-            <PageHeader
-              title="Events & Parties"
-              onBack={onBack}
-              showBackButton={true}
-            />
+            <div className="px-6 py-8">
+              <Button
+                variant="ghost"
+                onClick={onBack}
+                className="mb-4 text-white hover:bg-white/10"
+              >
+                <ArrowLeft className="mr-2 h-5 w-5" />
+                Back
+              </Button>
+              <h1 className="text-4xl font-bold text-white mb-6">Events & Parties</h1>
+            </div>
             
             <div className="container-section">
               <div className="relative">
@@ -153,54 +182,121 @@ export default function UserParties({ user, onBack }) {
             <div className="container-section">
               <BrowseMenu value={browseMode} onValueChange={setBrowseMode} />
             </div>
+
+            {browseMode === "production" && productions.length > 0 && (
+              <div className="container-section">
+                <Carousel className="w-full max-w-xl mx-auto">
+                  <CarouselContent>
+                    <CarouselItem 
+                      className="basis-1/3 cursor-pointer"
+                      onClick={() => setSelectedProduction(null)}
+                    >
+                      <div className={`p-4 rounded-lg text-center transition-all ${
+                        selectedProduction === null 
+                          ? 'bg-white/20 border-2 border-white' 
+                          : 'bg-white/10 border border-white/30'
+                      }`}>
+                        <p className="text-white font-semibold text-sm">All</p>
+                      </div>
+                    </CarouselItem>
+                    {productions.map((production) => (
+                      <CarouselItem 
+                        key={production.id}
+                        className="basis-1/3 cursor-pointer"
+                        onClick={() => setSelectedProduction(production.id)}
+                      >
+                        <div className={`p-4 rounded-lg text-center transition-all ${
+                          selectedProduction === production.id 
+                            ? 'bg-white/20 border-2 border-white' 
+                            : 'bg-white/10 border border-white/30'
+                        }`}>
+                          {production.logo_url ? (
+                            <img 
+                              src={production.logo_url} 
+                              alt={production.name}
+                              className="w-full h-16 object-contain mb-2"
+                            />
+                          ) : (
+                            <div className="w-full h-16 flex items-center justify-center mb-2">
+                              <span className="text-2xl text-white">🎵</span>
+                            </div>
+                          )}
+                          <p className="text-white font-semibold text-sm truncate">{production.name}</p>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="left-0" />
+                  <CarouselNext className="right-0" />
+                </Carousel>
+              </div>
+            )}
             
             <div className="container-section pb-24">
-              <div className="space-y-6">
-                {filteredParties.map((party) => (
-                  <div
-                    key={party.id}
-                    className="bg-white rounded-lg overflow-hidden shadow-lg"
-                  >
-                    {party.photo_url ? (
-                      <div className="w-full cursor-pointer" onClick={() => setSelectedParty(party)}>
-                        <img
-                          src={party.photo_url}
-                          alt={party.name}
-                          className="w-full h-auto object-contain"
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-full h-96 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center cursor-pointer" onClick={() => setSelectedParty(party)}>
-                        <div className="text-center p-6">
-                          <h2 className="text-xl font-bold text-foreground mb-2">{party.name}</h2>
-                          <p className="text-base text-muted-foreground mb-3">
-                            {new Date(party.date).toLocaleDateString('en-GB', { 
-                              day: 'numeric', 
-                              month: 'long', 
-                              year: 'numeric',
-                              weekday: 'long'
-                            })}
-                          </p>
-                          {party.description && (
-                            <p className="text-sm text-muted-foreground">{party.description}</p>
+              {filteredParties.length > 0 ? (
+                <Carousel className="w-full max-w-4xl mx-auto">
+                  <CarouselContent>
+                    {filteredParties.map((party) => (
+                      <CarouselItem key={party.id}>
+                        <div className="bg-white rounded-lg overflow-hidden shadow-lg">
+                          {party.photo_url ? (
+                            <div className="w-full cursor-pointer" onClick={() => setSelectedParty(party)}>
+                              <img
+                                src={party.photo_url}
+                                alt={party.name}
+                                className="w-full h-auto object-contain max-h-[500px]"
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-full h-96 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center cursor-pointer" onClick={() => setSelectedParty(party)}>
+                              <div className="text-center p-6">
+                                <h2 className="text-xl font-bold text-foreground mb-2">{party.name}</h2>
+                                <p className="text-base text-muted-foreground mb-3">
+                                  {new Date(party.date).toLocaleDateString('en-GB', { 
+                                    day: 'numeric', 
+                                    month: 'long', 
+                                    year: 'numeric',
+                                    weekday: 'long'
+                                  })}
+                                </p>
+                                {party.description && (
+                                  <p className="text-sm text-muted-foreground">{party.description}</p>
+                                )}
+                              </div>
+                            </div>
                           )}
+                          
+                          <div className="p-4">
+                            <h3 className="text-lg font-bold text-foreground mb-1">{party.name}</h3>
+                            <p className="text-sm text-muted-foreground mb-4">
+                              {new Date(party.date).toLocaleDateString('en-GB', { 
+                                day: 'numeric', 
+                                month: 'long', 
+                                year: 'numeric',
+                                weekday: 'long'
+                              })}
+                            </p>
+                            <Button 
+                              variant="default"
+                              size="lg" 
+                              className="w-full bg-[#4C1D95] hover:bg-[#5B21B6] text-white font-semibold"
+                              onClick={() => setSelectedParty(party)}
+                            >
+                              View event details
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                    
-                    <div className="p-4">
-                      <Button 
-                        variant="default"
-                        size="lg" 
-                        className="w-full bg-[#4C1D95] hover:bg-[#5B21B6] text-white font-semibold"
-                        onClick={() => setSelectedParty(party)}
-                      >
-                        View event details
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="-left-12" />
+                  <CarouselNext className="-right-12" />
+                </Carousel>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-white text-lg">No events found</p>
+                </div>
+              )}
             </div>
           </>
         )}
