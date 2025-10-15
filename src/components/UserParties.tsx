@@ -7,15 +7,8 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, Search } from "lucide-react";
 import PartyDetails from "./PartyDetails";
 import BrowseMenu from "./BrowseMenu";
-import PageHeader from "./ui/page-header";
+import BackButton from "./ui/back-button";
 import Footer from '@/components/ui/footer';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 
 export default function UserParties({ user, onBack }) {
   const [parties, setParties] = useState([]);
@@ -155,11 +148,12 @@ export default function UserParties({ user, onBack }) {
       <div className="w-full relative z-10">
         {!selectedParty && (
           <>
-            <PageHeader
-              title="Events & Parties"
-              onBack={onBack}
-              showBackButton={true}
-            />
+            <div className="container-section flex items-center justify-between">
+              <h1 className="text-2xl font-bold text-white">
+                Events & Parties
+              </h1>
+              <BackButton onBack={onBack} />
+            </div>
             
             <div className="container-section">
               <div className="relative">
@@ -180,87 +174,63 @@ export default function UserParties({ user, onBack }) {
             <div className="container-section pb-24">
               {browseMode === "production" ? (
                 productions.length > 0 ? (
-                  <Carousel className="w-full max-w-4xl mx-auto">
-                    <CarouselContent>
-                      {productions.map((production) => (
-                        <CarouselItem key={production.id}>
-                          <div 
-                            className="bg-white rounded-lg overflow-hidden shadow-lg cursor-pointer"
-                            onClick={() => setSelectedProduction(production.id)}
-                          >
-                            {production.logo_url ? (
-                              <div className="w-full">
-                                <img
-                                  src={production.logo_url}
-                                  alt={production.name}
-                                  className="w-full h-auto object-contain"
-                                />
-                              </div>
-                            ) : (
-                              <div className="w-full h-96 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
-                                <div className="text-center p-6">
-                                  <h2 className="text-xl font-bold text-foreground mb-2">{production.name}</h2>
-                                </div>
-                              </div>
-                            )}
-                            
-                            <div className="p-4">
-                              <Button 
-                                variant="default"
-                                size="lg" 
-                                className="w-full bg-[#4C1D95] hover:bg-[#5B21B6] text-white font-semibold"
-                              >
-                                View {production.name} events
-                              </Button>
+                  <div className="space-y-4">
+                    {productions.map((production) => (
+                      <div 
+                        key={production.id}
+                        className="bg-white rounded-lg overflow-hidden shadow-lg cursor-pointer"
+                        onClick={() => setSelectedProduction(production.id)}
+                      >
+                        {production.logo_url ? (
+                          <div className="w-full">
+                            <img
+                              src={production.logo_url}
+                              alt={production.name}
+                              className="w-full h-auto object-contain"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-full h-96 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
+                            <div className="text-center p-6">
+                              <h2 className="text-xl font-bold text-foreground mb-2">{production.name}</h2>
                             </div>
                           </div>
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                    <CarouselPrevious className="-left-12" />
-                    <CarouselNext className="-right-12" />
-                  </Carousel>
+                        )}
+                        
+                        <div className="p-4">
+                          <Button 
+                            variant="default"
+                            size="lg" 
+                            className="w-full bg-[#4C1D95] hover:bg-[#5B21B6] text-white font-semibold"
+                          >
+                            View {production.name} events
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
                   <div className="text-center py-12">
                     <p className="text-white text-lg">No productions found</p>
                   </div>
                 )
               ) : filteredParties.length > 0 ? (
-                <Carousel className="w-full max-w-4xl mx-auto">
-                  <CarouselContent>
-                    {filteredParties.map((party) => (
-                      <CarouselItem key={party.id}>
-                        <div className="bg-white rounded-lg overflow-hidden shadow-lg">
-                          {party.photo_url ? (
-                            <div className="w-full cursor-pointer" onClick={() => setSelectedParty(party)}>
-                              <img
-                                src={party.photo_url}
-                                alt={party.name}
-                                className="w-full h-auto object-contain max-h-[500px]"
-                              />
-                            </div>
-                          ) : (
-                            <div className="w-full h-96 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center cursor-pointer" onClick={() => setSelectedParty(party)}>
-                              <div className="text-center p-6">
-                                <h2 className="text-xl font-bold text-foreground mb-2">{party.name}</h2>
-                                <p className="text-base text-muted-foreground mb-3">
-                                  {new Date(party.date).toLocaleDateString('en-GB', { 
-                                    day: 'numeric', 
-                                    month: 'long', 
-                                    year: 'numeric',
-                                    weekday: 'long'
-                                  })}
-                                </p>
-                                {party.description && (
-                                  <p className="text-sm text-muted-foreground">{party.description}</p>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                          
-                          <div className="p-4">
-                            <h3 className="text-lg font-bold text-foreground mb-1">{party.name}</h3>
-                            <p className="text-sm text-muted-foreground mb-4">
+                <div className="space-y-4">
+                  {filteredParties.map((party) => (
+                    <div key={party.id} className="bg-white rounded-lg overflow-hidden shadow-lg">
+                      {party.photo_url ? (
+                        <div className="w-full cursor-pointer" onClick={() => setSelectedParty(party)}>
+                          <img
+                            src={party.photo_url}
+                            alt={party.name}
+                            className="w-full h-auto object-contain max-h-[500px]"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-full h-96 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center cursor-pointer" onClick={() => setSelectedParty(party)}>
+                          <div className="text-center p-6">
+                            <h2 className="text-xl font-bold text-foreground mb-2">{party.name}</h2>
+                            <p className="text-base text-muted-foreground mb-3">
                               {new Date(party.date).toLocaleDateString('en-GB', { 
                                 day: 'numeric', 
                                 month: 'long', 
@@ -268,22 +238,35 @@ export default function UserParties({ user, onBack }) {
                                 weekday: 'long'
                               })}
                             </p>
-                            <Button 
-                              variant="default"
-                              size="lg" 
-                              className="w-full bg-[#4C1D95] hover:bg-[#5B21B6] text-white font-semibold"
-                              onClick={() => setSelectedParty(party)}
-                            >
-                              View event details
-                            </Button>
+                            {party.description && (
+                              <p className="text-sm text-muted-foreground">{party.description}</p>
+                            )}
                           </div>
                         </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  <CarouselPrevious className="-left-12" />
-                  <CarouselNext className="-right-12" />
-                </Carousel>
+                      )}
+                      
+                      <div className="p-4">
+                        <h3 className="text-lg font-bold text-foreground mb-1">{party.name}</h3>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          {new Date(party.date).toLocaleDateString('en-GB', { 
+                            day: 'numeric', 
+                            month: 'long', 
+                            year: 'numeric',
+                            weekday: 'long'
+                          })}
+                        </p>
+                        <Button 
+                          variant="default"
+                          size="lg" 
+                          className="w-full bg-[#4C1D95] hover:bg-[#5B21B6] text-white font-semibold"
+                          onClick={() => setSelectedParty(party)}
+                        >
+                          View event details
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               ) : (
                 <div className="text-center py-12">
                   <p className="text-white text-lg">No events found</p>
