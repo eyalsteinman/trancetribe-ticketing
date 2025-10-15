@@ -155,17 +155,11 @@ export default function UserParties({ user, onBack }) {
       <div className="w-full relative z-10">
         {!selectedParty && (
           <>
-            <div className="px-6 py-8">
-              <Button
-                variant="ghost"
-                onClick={onBack}
-                className="mb-4 text-white hover:bg-white/10"
-              >
-                <ArrowLeft className="mr-2 h-5 w-5" />
-                Back
-              </Button>
-              <h1 className="text-4xl font-bold text-white mb-6">Events & Parties</h1>
-            </div>
+            <PageHeader
+              title="Events & Parties"
+              onBack={onBack}
+              showBackButton={true}
+            />
             
             <div className="container-section">
               <div className="relative">
@@ -182,58 +176,56 @@ export default function UserParties({ user, onBack }) {
             <div className="container-section">
               <BrowseMenu value={browseMode} onValueChange={setBrowseMode} />
             </div>
-
-            {browseMode === "production" && productions.length > 0 && (
-              <div className="container-section">
-                <Carousel className="w-full max-w-xl mx-auto">
-                  <CarouselContent>
-                    <CarouselItem 
-                      className="basis-1/3 cursor-pointer"
-                      onClick={() => setSelectedProduction(null)}
-                    >
-                      <div className={`p-4 rounded-lg text-center transition-all ${
-                        selectedProduction === null 
-                          ? 'bg-white/20 border-2 border-white' 
-                          : 'bg-white/10 border border-white/30'
-                      }`}>
-                        <p className="text-white font-semibold text-sm">All</p>
-                      </div>
-                    </CarouselItem>
-                    {productions.map((production) => (
-                      <CarouselItem 
-                        key={production.id}
-                        className="basis-1/3 cursor-pointer"
-                        onClick={() => setSelectedProduction(production.id)}
-                      >
-                        <div className={`p-4 rounded-lg text-center transition-all ${
-                          selectedProduction === production.id 
-                            ? 'bg-white/20 border-2 border-white' 
-                            : 'bg-white/10 border border-white/30'
-                        }`}>
-                          {production.logo_url ? (
-                            <img 
-                              src={production.logo_url} 
-                              alt={production.name}
-                              className="w-full h-16 object-contain mb-2"
-                            />
-                          ) : (
-                            <div className="w-full h-16 flex items-center justify-center mb-2">
-                              <span className="text-2xl text-white">🎵</span>
-                            </div>
-                          )}
-                          <p className="text-white font-semibold text-sm truncate">{production.name}</p>
-                        </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  <CarouselPrevious className="left-0" />
-                  <CarouselNext className="right-0" />
-                </Carousel>
-              </div>
-            )}
             
             <div className="container-section pb-24">
-              {filteredParties.length > 0 ? (
+              {browseMode === "production" ? (
+                productions.length > 0 ? (
+                  <Carousel className="w-full max-w-4xl mx-auto">
+                    <CarouselContent>
+                      {productions.map((production) => (
+                        <CarouselItem key={production.id}>
+                          <div 
+                            className="bg-white rounded-lg overflow-hidden shadow-lg cursor-pointer"
+                            onClick={() => setSelectedProduction(production.id)}
+                          >
+                            {production.logo_url ? (
+                              <div className="w-full">
+                                <img
+                                  src={production.logo_url}
+                                  alt={production.name}
+                                  className="w-full h-auto object-contain"
+                                />
+                              </div>
+                            ) : (
+                              <div className="w-full h-96 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
+                                <div className="text-center p-6">
+                                  <h2 className="text-xl font-bold text-foreground mb-2">{production.name}</h2>
+                                </div>
+                              </div>
+                            )}
+                            
+                            <div className="p-4">
+                              <Button 
+                                variant="default"
+                                size="lg" 
+                                className="w-full bg-[#4C1D95] hover:bg-[#5B21B6] text-white font-semibold"
+                              >
+                                View {production.name} events
+                              </Button>
+                            </div>
+                          </div>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    <CarouselPrevious className="-left-12" />
+                    <CarouselNext className="-right-12" />
+                  </Carousel>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-white text-lg">No productions found</p>
+                  </div>
+                )
+              ) : filteredParties.length > 0 ? (
                 <Carousel className="w-full max-w-4xl mx-auto">
                   <CarouselContent>
                     {filteredParties.map((party) => (
