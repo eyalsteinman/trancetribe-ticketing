@@ -125,8 +125,11 @@ export default function UserParties({ user, onBack }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <div className="w-full">
+    <div className="min-h-screen bg-[#4C1D95] relative overflow-hidden">
+      {/* Animated background */}
+      <div className="auth-animated-bg" />
+      
+      <div className="w-full relative z-10">
         {!selectedParty && (
           <>
             <PageHeader
@@ -136,131 +139,38 @@ export default function UserParties({ user, onBack }) {
             />
             
             <div className="container-section">
-              <BrowseMenu value={browseMode} onValueChange={setBrowseMode} />
-            </div>
-            
-            <div className="container-section">
-              <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory">
-                {browseMode === "production" ? (
-                  productions.map((production) => (
-                    <div
-                      key={production.id}
-                      onClick={() => {
-                        const productionParties = parties.filter(p => p.production_id === production.id);
-                        if (productionParties.length > 0) {
-                          setSelectedParty(productionParties[0]);
-                        }
-                      }}
-                      className="flex-shrink-0 cursor-pointer group snap-start"
-                    >
-                      <div className="w-24 h-24 overflow-hidden bg-card hover-lift">
-                        {production.logo_url ? (
-                          <img
-                            src={production.logo_url}
-                            alt={production.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-muted">
-                            <span className="text-xs text-center px-2 font-semibold">{production.name}</span>
-                          </div>
-                        )}
-                      </div>
-                      <p className="text-xs text-center mt-2 truncate w-24 font-medium text-muted-foreground">{production.name}</p>
-                    </div>
-                  ))
-                 ) : browseMode === "party" ? (
-                  [...parties].map((party) => (
-                    <div
-                      key={party.id}
-                      onClick={() => setSelectedParty(party)}
-                      className="flex-shrink-0 cursor-pointer group snap-start"
-                    >
-                      <div className="w-32 h-24 overflow-hidden bg-card hover-lift">
-                        {party.photo_url ? (
-                          <img
-                            src={party.photo_url}
-                            alt={party.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-muted">
-                            <span className="text-xs text-center px-2 font-semibold">{party.name}</span>
-                          </div>
-                        )}
-                      </div>
-                      <p className="text-xs text-center mt-2 truncate w-32 font-medium text-muted-foreground">{party.name}</p>
-                    </div>
-                  ))
-                ) : (
-                  [...parties].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).map((party) => (
-                    <div
-                      key={party.id}
-                      onClick={() => setSelectedParty(party)}
-                      className="flex-shrink-0 cursor-pointer group snap-start"
-                    >
-                      <div className="w-32 h-24 overflow-hidden bg-card hover-lift">
-                        {party.photo_url ? (
-                          <img
-                            src={party.photo_url}
-                            alt={party.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-muted">
-                            <span className="text-xs text-center px-2 font-semibold">{party.name}</span>
-                          </div>
-                        )}
-                      </div>
-                      <p className="text-xs text-center mt-2 truncate w-32 font-medium text-muted-foreground">{party.name}</p>
-                    </div>
-                  ))
-                )}
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                <Input
+                  placeholder="Search events by name or productions"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-12 h-14 text-base bg-white border-0 rounded-md"
+                />
               </div>
             </div>
 
             <div className="container-section">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                <Input
-                  placeholder="Search events by name or production..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 h-14 text-base border-2 focus:border-primary bg-card"
-                />
-              </div>
+              <BrowseMenu value={browseMode} onValueChange={setBrowseMode} />
             </div>
             
-            <div className="container-section">
+            <div className="container-section pb-24">
               <div className="space-y-6">
                 {filteredParties.map((party) => (
                   <div
                     key={party.id}
-                    onClick={() => setSelectedParty(party)}
-                    className="w-full cursor-pointer group"
+                    className="bg-white rounded-lg overflow-hidden shadow-lg"
                   >
                     {party.photo_url ? (
-                      <div className="relative w-full h-64 overflow-hidden">
+                      <div className="w-full cursor-pointer" onClick={() => setSelectedParty(party)}>
                         <img
                           src={party.photo_url}
                           alt={party.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          className="w-full h-auto object-contain"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                        <div className="absolute bottom-4 left-4 right-4">
-                          <h2 className="text-xl font-bold text-white mb-2">{party.name}</h2>
-                          <p className="text-sm text-white/90">
-                            {new Date(party.date).toLocaleDateString('en-GB', { 
-                              day: 'numeric', 
-                              month: 'long', 
-                              year: 'numeric',
-                              weekday: 'long'
-                            })}
-                          </p>
-                        </div>
                       </div>
                     ) : (
-                      <div className="w-full h-64 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
+                      <div className="w-full h-96 bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center cursor-pointer" onClick={() => setSelectedParty(party)}>
                         <div className="text-center p-6">
                           <h2 className="text-xl font-bold text-foreground mb-2">{party.name}</h2>
                           <p className="text-base text-muted-foreground mb-3">
@@ -278,17 +188,14 @@ export default function UserParties({ user, onBack }) {
                       </div>
                     )}
                     
-                    <div className="p-4 w-full">
+                    <div className="p-4">
                       <Button 
                         variant="default"
-                        size="sm" 
-                        className="w-full bg-primary text-white"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedParty(party);
-                        }}
+                        size="lg" 
+                        className="w-full bg-[#4C1D95] hover:bg-[#5B21B6] text-white font-semibold"
+                        onClick={() => setSelectedParty(party)}
                       >
-                        View Event Details
+                        View event details
                       </Button>
                     </div>
                   </div>
