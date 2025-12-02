@@ -81,7 +81,7 @@ const SortableTile: React.FC<{
       style={tileStyle}
       onClick={handleClick}
       className={`
-        relative p-4 select-none h-32 min-h-32
+        relative p-3 md:p-4 select-none h-28 min-h-28 md:h-32 md:min-h-32 lg:h-36 lg:min-h-36
         border-2 flex flex-col items-center justify-center text-center space-y-1
         transition-all duration-300 ease-out
         ${!isReordering && !isDragging ? 'hover:scale-102' : ''}
@@ -97,7 +97,7 @@ const SortableTile: React.FC<{
       <div className={`transition-colors duration-200 ${isDragging ? 'text-primary-foreground' : 'text-primary'}`}>
         {item.icon}
       </div>
-      <span className={`text-sm font-medium whitespace-pre-line transition-colors duration-200 ${isDragging ? 'text-primary-foreground' : 'text-foreground'}`}>
+      <span className={`text-xs md:text-sm font-medium whitespace-pre-line transition-colors duration-200 ${isDragging ? 'text-primary-foreground' : 'text-foreground'}`}>
         {item.title}
       </span>
       {item.displayCount !== undefined && (
@@ -199,11 +199,11 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
 
   return (
     <div className="container-section">
-      <p className="text-white text-base font-bold mb-4 text-center opacity-70">
+      <p className="text-white text-sm md:text-base font-bold mb-4 text-center opacity-70">
         Press tile for 3 sec. to reorder
       </p>
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4 lg:gap-5">
           <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
             {orderedItems.map((item, index) => (
               <SortableTile
