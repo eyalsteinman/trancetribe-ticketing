@@ -143,7 +143,7 @@ const ReorderableTiles: React.FC<ReorderableTilesProps> = ({ items, orderKey }) 
 
   return (
     <div
-      className={`grid grid-cols-2 gap-4 ${dragReadyId || draggingId ? 'touch-none select-none' : ''}`}
+      className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4 lg:gap-5 ${dragReadyId || draggingId ? 'touch-none select-none' : ''}`}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
     >
@@ -172,10 +172,10 @@ const ReorderableTiles: React.FC<ReorderableTilesProps> = ({ items, orderKey }) 
             className="cursor-pointer hover:bg-accent text-black [&_svg]:text-black" 
             onClick={dragReadyId !== item.id ? item.onClick : undefined}
           >
-            <CardContent className="flex flex-col items-center justify-center p-6 select-none h-32 min-h-32">
+            <CardContent className="flex flex-col items-center justify-center p-4 md:p-5 lg:p-6 select-none h-28 md:h-32 lg:h-36 min-h-28 md:min-h-32 lg:min-h-36">
               {item.icon}
               <div className="mt-2 text-center leading-tight select-none">
-                <div className="text-sm font-semibold whitespace-nowrap">{item.title}</div>
+                <div className="text-xs md:text-sm font-semibold whitespace-nowrap">{item.title}</div>
               </div>
             </CardContent>
           </Card>

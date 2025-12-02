@@ -381,14 +381,14 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
       {/* Animated background */}
       <div className="auth-animated-bg" />
       
-      <div className="min-h-screen w-full relative z-10 transition-colors duration-500 p-4" style={{ position: 'relative' }}>
-      {/* Header */}
-      <div className="relative pt-2 pb-6">
-        <h1 className="text-2xl font-bold text-white mb-1">
+      <div className="min-h-screen w-full relative z-10 transition-colors duration-500 p-4 md:p-6 lg:p-8" style={{ position: 'relative' }}>
+      {/* Header - Desktop Responsive */}
+      <div className="relative pt-2 pb-6 max-w-7xl mx-auto">
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-1">
           {nickname ? t('welcome_back') : t('user_dashboard')}
         </h1>
         {nickname && (
-          <p className="text-lg text-white font-semibold">{nickname}!</p>
+          <p className="text-lg md:text-xl lg:text-2xl text-white font-semibold">{nickname}!</p>
         )}
         <Button 
           variant="ghost" 
@@ -397,17 +397,20 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           className="absolute top-2 right-4 z-50 text-white hover:bg-white/10 transition-all duration-200"
           aria-label="Sign Out"
         >
-          <LogOut className="h-6 w-6 stroke-[3]" />
+          <LogOut className="h-6 w-6 md:h-7 md:w-7 stroke-[3]" />
         </Button>
       </div>
 
-      {/* Production Carousel */}
-      <ProductionCarousel 
-        userId={user.id} 
-        onJoinSuccess={() => setShowJoinTribeDialog(true)}
-      />
+      {/* Production Carousel - Desktop Centered */}
+      <div className="max-w-7xl mx-auto">
+        <ProductionCarousel 
+          userId={user.id} 
+          onJoinSuccess={() => setShowJoinTribeDialog(true)}
+        />
+      </div>
 
-      <div className="w-full">
+      {/* Dashboard Tiles - Responsive Grid */}
+      <div className="w-full max-w-7xl mx-auto">
           {(() => {
             const items = [
               {
@@ -511,14 +514,16 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                 },
             ];
             return (
-              <ReorderableTilesLogic 
-                items={items} 
-                orderKey={`dashboard-order-user-${user.id}`}
-                onLongPress={(id) => {
-                  // Handle long press for reordering
-                  console.log('Long press on:', id);
-                }} 
-              />
+              <div className="px-2 md:px-4 lg:px-6">
+                <ReorderableTilesLogic 
+                  items={items} 
+                  orderKey={`dashboard-order-user-${user.id}`}
+                  onLongPress={(id) => {
+                    // Handle long press for reordering
+                    console.log('Long press on:', id);
+                  }} 
+                />
+              </div>
             );
           })()}
         </div>
