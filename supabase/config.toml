@@ -9,3 +9,6 @@ schema = "public"
 
 # All functions now require authentication by default
 # Only webhook endpoints or public APIs should disable JWT
+
+[functions.cleanup-expired-offers]
+verify_jwt = false
