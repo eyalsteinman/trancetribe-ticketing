@@ -34,6 +34,7 @@ import SuperAdminManageAdmins from './SuperAdminManageAdmins';
 import AdminDashboardImpersonation from './AdminDashboardImpersonation';
 import AdminDashboard from './AdminDashboard';
 import RegularAdminManageSubAdmins from './RegularAdminManageSubAdmins';
+import { useToastClearOnViewChange } from '@/hooks/useToastClearOnViewChange';
 
 interface AdminDashboardWithPermissionsProps {
   user: User;
@@ -54,6 +55,9 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
   
   const { toast } = useToast();
   const { backgroundColor, isBackgroundDark } = useBackground();
+  
+  // Clear toasts when view changes to prevent toasts from bleeding between views
+  useToastClearOnViewChange(currentView);
 
   useEffect(() => {
     loadAdminProfile();

@@ -37,6 +37,7 @@ import ProductionCarousel from './ProductionCarousel';
 import ViewTransition from './ui/view-transition';
 import ScrollToTop from './ui/scroll-to-top';
 import { useScrollMemory } from '@/hooks/useScrollMemory';
+import { useToastClearOnViewChange } from '@/hooks/useToastClearOnViewChange';
 
 interface UserDashboardProps {
   user: User;
@@ -60,6 +61,9 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
   // Add scroll memory
   useScrollMemory({ viewKey: currentView, enabled: true });
+  
+  // Clear toasts when view changes to prevent toasts from bleeding between views
+  useToastClearOnViewChange(currentView);
 
   useEffect(() => {
     loadUserQRCodes();

@@ -36,6 +36,7 @@ import { useTheme } from '@/hooks/useDarkMode';
 import ViewTransition from './ui/view-transition';
 import ScrollToTop from './ui/scroll-to-top';
 import { useScrollMemory } from '@/hooks/useScrollMemory';
+import { useToastClearOnViewChange } from '@/hooks/useToastClearOnViewChange';
 
 interface AdminDashboardProps {
   user: User;
@@ -82,6 +83,9 @@ const AdminDashboard = ({ user, onManageSubAdmins, adminProfile }: AdminDashboar
 
   // Add scroll memory
   useScrollMemory({ viewKey: currentView, enabled: true });
+  
+  // Clear toasts when view changes to prevent toasts from bleeding between views
+  useToastClearOnViewChange(currentView);
 
   useEffect(() => {
     loadParties();

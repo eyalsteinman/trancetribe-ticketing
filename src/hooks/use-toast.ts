@@ -6,7 +6,8 @@ import type {
 } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 1000000
+const TOAST_REMOVE_DELAY = 300 // Quick removal after dismiss animation
+const TOAST_AUTO_DISMISS_DELAY = 3000 // 3 seconds auto-dismiss
 
 type ToasterToast = ToastProps & {
   id: string
@@ -139,6 +140,9 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, "id">
 
+// Track auto-dismiss timeouts
+const autoDismissTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
+
 function toast({ ...props }: Toast) {
   const id = genId()
 
@@ -147,7 +151,14 @@ function toast({ ...props }: Toast) {
       type: "UPDATE_TOAST",
       toast: { ...props, id },
     })
-  const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
+  const dismiss = () => {
+    // Clear auto-dismiss timeout when manually dismissed
+    if (autoDismissTimeouts.has(id)) {
+      clearTimeout(autoDismissTimeouts.get(id))
+      autoDismissTimeouts.delete(id)
+    }
+    dispatch({ type: "DISMISS_TOAST", toastId: id })
+  }
 
   dispatch({
     type: "ADD_TOAST",
@@ -161,11 +172,26 @@ function toast({ ...props }: Toast) {
     },
   })
 
+  // Auto-dismiss after 3 seconds
+  const timeout = setTimeout(() => {
+    autoDismissTimeouts.delete(id)
+    dispatch({ type: "DISMISS_TOAST", toastId: id })
+  }, TOAST_AUTO_DISMISS_DELAY)
+  autoDismissTimeouts.set(id, timeout)
+
   return {
     id: id,
     dismiss,
     update,
   }
+}
+
+// Function to dismiss all toasts (useful for route changes)
+function dismissAllToasts() {
+  // Clear all auto-dismiss timeouts
+  autoDismissTimeouts.forEach((timeout) => clearTimeout(timeout))
+  autoDismissTimeouts.clear()
+  dispatch({ type: "DISMISS_TOAST" })
 }
 
 function useToast() {
@@ -185,7 +211,8 @@ function useToast() {
     ...state,
     toast,
     dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
+    dismissAll: dismissAllToasts,
   }
 }
 
-export { useToast, toast }
+export { useToast, toast, dismissAllToasts }
