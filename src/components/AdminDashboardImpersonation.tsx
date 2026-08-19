@@ -110,13 +110,13 @@ const AdminDashboardImpersonation = ({
   return (
     <div className="relative">
       {/* Super Admin Header */}
-      <div className="fixed top-4 left-4 right-4 z-50 bg-red-600 text-white p-3 rounded-lg shadow-lg flex items-center justify-between">
+      <div className="fixed top-4 left-4 right-4 z-50 bg-destructive text-foreground p-3 rounded-lg shadow-lg flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
             size="sm"
             onClick={onBack}
-            className="text-white hover:bg-red-700"
+            className="text-foreground hover:bg-destructive"
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>

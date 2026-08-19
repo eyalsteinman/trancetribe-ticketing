@@ -20,14 +20,14 @@ const LanguageSelector = () => {
             onClick={() => setLanguage(lang.code)}
             className={`text-sm font-medium transition-colors px-3 py-2 rounded-full ${
               language === lang.code
-                ? 'text-purple-600 font-bold bg-white'
-                : 'text-white hover:text-white hover:bg-white/10'
+                ? 'text-primary font-bold bg-card'
+                : 'text-foreground hover:text-foreground hover:bg-surface-2/60'
             }`}
           >
             {lang.label}
           </button>
           {index < languages.length - 1 && (
-            <span className="text-white/60">/</span>
+            <span className="text-muted-foreground">/</span>
           )}
         </React.Fragment>
       ))}

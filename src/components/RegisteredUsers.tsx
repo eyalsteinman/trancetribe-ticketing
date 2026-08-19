@@ -932,7 +932,7 @@ const RegisteredUsers = ({ onBack }: RegisteredUsersProps) => {
                                     size="sm"
                                     variant="outline"
                                     onClick={() => deleteUser(user.user_id)}
-                                    className="p-2 bg-red-600 hover:bg-red-700 border-red-600 text-white hover:text-white"
+                                    className="p-2 bg-destructive hover:bg-destructive border-destructive text-foreground hover:text-foreground"
                                     aria-label="Delete user"
                                   >
                                     <Trash2 className="h-4 w-4" />

@@ -24,31 +24,31 @@ const UserGames = ({ onBack, onGameSelect }: UserGamesProps) => {
       <div className="max-w-md mx-auto pt-20 space-y-6 text-left">
 
         <div className="grid grid-cols-2 gap-4">
-          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-black [&_svg]:text-black aspect-square" onClick={() => onGameSelect('color-changer')}>
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-foreground [&_svg]:text-foreground aspect-square" onClick={() => onGameSelect('color-changer')}>
             <CardContent className="p-4 flex flex-col items-center justify-center h-full text-center">
-              <Circle className="h-8 w-8 mb-2 text-black" />
-              <div className="text-sm font-semibold text-black">Color Changer</div>
+              <Circle className="h-8 w-8 mb-2 text-foreground" />
+              <div className="text-sm font-semibold text-foreground">Color Changer</div>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-black [&_svg]:text-black aspect-square" onClick={() => onGameSelect('dot-circle')}>
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-foreground [&_svg]:text-foreground aspect-square" onClick={() => onGameSelect('dot-circle')}>
             <CardContent className="p-4 flex flex-col items-center justify-center h-full text-center">
-              <Target className="h-8 w-8 mb-2 text-black" />
-              <div className="text-sm font-semibold text-black">Dot Circle</div>
+              <Target className="h-8 w-8 mb-2 text-foreground" />
+              <div className="text-sm font-semibold text-foreground">Dot Circle</div>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-black [&_svg]:text-black aspect-square" onClick={() => onGameSelect('exploder')}>
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-foreground [&_svg]:text-foreground aspect-square" onClick={() => onGameSelect('exploder')}>
             <CardContent className="p-4 flex flex-col items-center justify-center h-full text-center">
-              <Bomb className="h-8 w-8 mb-2 text-black" />
-              <div className="text-sm font-semibold text-black">Exploder</div>
+              <Bomb className="h-8 w-8 mb-2 text-foreground" />
+              <div className="text-sm font-semibold text-foreground">Exploder</div>
             </CardContent>
           </Card>
 
-          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-black [&_svg]:text-black aspect-square" onClick={() => onGameSelect('haya-ninja')}>
+          <Card className="cursor-pointer hover:bg-accent/50 transition-colors text-foreground [&_svg]:text-foreground aspect-square" onClick={() => onGameSelect('haya-ninja')}>
             <CardContent className="p-4 flex flex-col items-center justify-center h-full text-center">
-              <PenTool className="h-8 w-8 mb-2 text-black" />
-              <div className="text-sm font-semibold text-black">
+              <PenTool className="h-8 w-8 mb-2 text-foreground" />
+              <div className="text-sm font-semibold text-foreground">
                 Haya
                 <br />
                 Ninja

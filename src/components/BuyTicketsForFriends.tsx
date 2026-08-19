@@ -409,7 +409,7 @@ const BuyTicketsForFriends = ({ user, party, onBack }: BuyTicketsForFriendsProps
             <Button
               onClick={validateFriendsAndProceed}
               disabled={loading}
-              className={`w-full ${party.is_free ? 'bg-purple-600 hover:bg-purple-700 text-white' : ''}`}
+              className={`w-full ${party.is_free ? 'bg-primary hover:bg-primary text-foreground' : ''}`}
             >
               {loading ? "Validating..." : party.is_free ? "Generate Free Tickets" : "Proceed to Payment"}
             </Button>

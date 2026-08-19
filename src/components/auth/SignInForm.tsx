@@ -118,43 +118,43 @@ export const SignInForm = () => {
   return (
     <div className="space-y-4">
       <div>
-        <label className="text-sm font-medium text-white block mb-2">{t('email')} *</label>
+        <label className="text-sm font-medium text-foreground block mb-2">{t('email')} *</label>
         <RtlInput
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder={t('enter_email')}
           required
-          className="auth-input rounded-lg h-12 px-4 text-black placeholder:text-white/60"
+          className="auth-input rounded-lg h-12 px-4 text-foreground placeholder:text-muted-foreground"
         />
       </div>
       
       <div>
-        <label className="text-sm font-medium text-white block mb-2">{t('password')} *</label>
+        <label className="text-sm font-medium text-foreground block mb-2">{t('password')} *</label>
         <RtlInput
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder={t('enter_password')}
           required
-          className="auth-input rounded-lg h-12 px-4 text-black placeholder:text-white/60"
+          className="auth-input rounded-lg h-12 px-4 text-foreground placeholder:text-muted-foreground"
         />
       </div>
 
       <Button 
         onClick={handleSignIn}
         disabled={loading}
-        className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg h-12 font-semibold text-base transition-all duration-300"
+        className="w-full bg-gradient-to-r from-primary to-primary-glow hover:from-primary hover:to-primary-glow text-foreground rounded-lg h-12 font-semibold text-base transition-all duration-300"
       >
         {loading ? t('processing') : t('sign_in')}
       </Button>
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-white/30" />
+          <span className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-transparent px-3 text-white/80">
+          <span className="bg-transparent px-3 text-muted-foreground">
             {t('or_continue_with')}
           </span>
         </div>
@@ -164,7 +164,7 @@ export const SignInForm = () => {
         <Button 
           type="button"
           variant="outline"
-          className="bg-transparent border-white/30 text-white rounded-lg h-12 font-semibold text-base hover:bg-white/10"
+          className="bg-transparent border-border text-foreground rounded-lg h-12 font-semibold text-base hover:bg-surface-2/60"
           onClick={handleGoogleLogin}
           disabled={loading}
         >
@@ -173,7 +173,7 @@ export const SignInForm = () => {
         <Button 
           type="button"
           variant="outline"
-          className="bg-transparent border-white/30 text-white rounded-lg h-12 font-semibold text-base hover:bg-white/10"
+          className="bg-transparent border-border text-foreground rounded-lg h-12 font-semibold text-base hover:bg-surface-2/60"
           onClick={handleFacebookLogin}
           disabled={loading}
         >
@@ -182,7 +182,7 @@ export const SignInForm = () => {
         <Button 
           type="button"
           variant="outline"
-          className="bg-transparent border-white/30 text-white rounded-lg h-12 font-semibold text-base hover:bg-white/10"
+          className="bg-transparent border-border text-foreground rounded-lg h-12 font-semibold text-base hover:bg-surface-2/60"
           onClick={handleInstagramLogin}
           disabled={loading}
         >
@@ -191,7 +191,7 @@ export const SignInForm = () => {
         <Button 
           type="button"
           variant="outline"
-          className="bg-transparent border-white/30 text-white rounded-lg h-12 font-semibold text-base hover:bg-white/10"
+          className="bg-transparent border-border text-foreground rounded-lg h-12 font-semibold text-base hover:bg-surface-2/60"
           onClick={handleTikTokLogin}
           disabled={loading}
         >

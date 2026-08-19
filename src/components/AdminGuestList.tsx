@@ -524,7 +524,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
             </CardHeader>
             <CardContent>
               <select 
-                className="w-full p-2 border rounded-md text-black bg-white"
+                className="w-full p-2 border rounded-md text-foreground bg-card"
                 value={selectedParty || ''}
                 onChange={(e) => setSelectedParty(e.target.value)}
               >
@@ -546,7 +546,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
             className={`flex-1 text-sm ${
               activeTab === 'scanned' 
                 ? 'bg-primary text-primary-foreground' 
-                : 'text-black border-black hover:bg-black/10'
+                : 'text-foreground border-black hover:bg-background/10'
             }`}
           >
             Scanned ({scannedGuests.length})
@@ -557,7 +557,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
             className={`flex-1 text-sm ${
               activeTab === 'arriving' 
                 ? 'bg-primary text-primary-foreground' 
-                : 'text-black border-black hover:bg-black/10'
+                : 'text-foreground border-black hover:bg-background/10'
             }`}
           >
             Arriving ({arrivingGuests.length})
@@ -590,32 +590,32 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="text-black">#</TableHead>
-                      <TableHead className="text-black">First Name</TableHead>
-                      <TableHead className="text-black">Last Name</TableHead>
-                      <TableHead className="text-black">Email</TableHead>
-                      <TableHead className="text-black">Phone</TableHead>
-                      <TableHead className="text-black">Scanned At</TableHead>
-                      <TableHead className="text-black">Social</TableHead>
+                      <TableHead className="text-foreground">#</TableHead>
+                      <TableHead className="text-foreground">First Name</TableHead>
+                      <TableHead className="text-foreground">Last Name</TableHead>
+                      <TableHead className="text-foreground">Email</TableHead>
+                      <TableHead className="text-foreground">Phone</TableHead>
+                      <TableHead className="text-foreground">Scanned At</TableHead>
+                      <TableHead className="text-foreground">Social</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {scannedGuests.map((guest, index) => (
                       <TableRow key={guest.id}>
-                        <TableCell className="text-black font-medium">{index + 1}</TableCell>
-                        <TableCell className="text-black">
+                        <TableCell className="text-foreground font-medium">{index + 1}</TableCell>
+                        <TableCell className="text-foreground">
                           {guest.profiles?.first_name || 'Unknown'}
                         </TableCell>
-                        <TableCell className="text-black">
+                        <TableCell className="text-foreground">
                           {guest.profiles?.last_name || 'Unknown'}
                         </TableCell>
-                        <TableCell className="text-black text-sm">
+                        <TableCell className="text-foreground text-sm">
                           {guest.profiles?.email || 'No email'}
                         </TableCell>
-                        <TableCell className="text-black text-sm">
+                        <TableCell className="text-foreground text-sm">
                           {guest.profiles?.phone_number || 'No phone'}
                         </TableCell>
-                        <TableCell className="text-black text-sm">
+                        <TableCell className="text-foreground text-sm">
                           {new Date(guest.scanned_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                         </TableCell>
                         <TableCell>
@@ -643,9 +643,9 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                 <>
                   {/* Sort dropdown */}
                   <div className="mb-4">
-                    <label className="text-sm font-medium text-black mr-2">Order by:</label>
+                    <label className="text-sm font-medium text-foreground mr-2">Order by:</label>
                     <select 
-                      className="p-2 border rounded-md text-black bg-white"
+                      className="p-2 border rounded-md text-foreground bg-card"
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value as 'name' | 'surname' | 'recent' | 'approved')}
                     >
@@ -658,7 +658,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                    <Table>
                    <TableHeader>
                      <TableRow>
-                       <TableHead className="text-black">
+                       <TableHead className="text-foreground">
                          <input
                            type="checkbox"
                            checked={selectedGuests.size === arrivingGuests.length && arrivingGuests.length > 0}
@@ -667,18 +667,18 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                          />
                          #
                        </TableHead>
-                       <TableHead className="text-black">First Name</TableHead>
-                       <TableHead className="text-black">Last Name</TableHead>
-                       <TableHead className="text-black">Email</TableHead>
-                       <TableHead className="text-black">Phone</TableHead>
-                       <TableHead className="text-black">Status</TableHead>
-                       <TableHead className="text-black">Actions</TableHead>
+                       <TableHead className="text-foreground">First Name</TableHead>
+                       <TableHead className="text-foreground">Last Name</TableHead>
+                       <TableHead className="text-foreground">Email</TableHead>
+                       <TableHead className="text-foreground">Phone</TableHead>
+                       <TableHead className="text-foreground">Status</TableHead>
+                       <TableHead className="text-foreground">Actions</TableHead>
                      </TableRow>
                    </TableHeader>
                    <TableBody>
                       {sortedArrivingGuests.map((guest, index) => (
                         <TableRow key={guest.id}>
-                          <TableCell className="text-black font-medium">
+                          <TableCell className="text-foreground font-medium">
                             <input
                               type="checkbox"
                               checked={selectedGuests.has(guest.id)}
@@ -687,21 +687,21 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                             />
                             {index + 1}
                           </TableCell>
-                         <TableCell className="text-black">
+                         <TableCell className="text-foreground">
                            {guest.profiles?.first_name || 'Unknown'}
                          </TableCell>
-                         <TableCell className="text-black">
+                         <TableCell className="text-foreground">
                            {guest.profiles?.last_name || 'Unknown'}
                          </TableCell>
-                          <TableCell className="text-black text-sm">
+                          <TableCell className="text-foreground text-sm">
                             {guest.profiles?.email || 'No email'}
                           </TableCell>
-                          <TableCell className="text-black text-sm">
+                          <TableCell className="text-foreground text-sm">
                             {guest.profiles?.phone_number || 'No phone'}
                           </TableCell>
                          <TableCell>
                           {guest.is_approved ? (
-                            <Badge variant="default" className="bg-green-600">Approved</Badge>
+                            <Badge variant="default" className="bg-success">Approved</Badge>
                           ) : (
                             <Badge variant="secondary">Pending</Badge>
                           )}
@@ -725,7 +725,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                                 size="sm"
                                 variant="outline"
                                 onClick={() => approveAlways(guest.user_id)}
-                                className="p-1 text-black border-black hover:bg-black/10"
+                                className="p-1 text-foreground border-black hover:bg-background/10"
                                 title="Approve always"
                               >
                                 <UserCheck className="h-4 w-4" />
@@ -739,7 +739,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                                 guestId: guest.id,
                                 email: guest.profiles?.email || ''
                               })}
-                              className="p-1 text-black border-black hover:bg-black/10"
+                              className="p-1 text-foreground border-black hover:bg-background/10"
                               title="Send message"
                             >
                               <MessageCircle className="h-4 w-4" />
@@ -748,7 +748,7 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
                               size="sm"
                               variant="outline"
                               onClick={() => viewSocialMedia(guest.user_id)}
-                              className="p-1 text-black border-black hover:bg-black/10"
+                              className="p-1 text-foreground border-black hover:bg-background/10"
                               title="View social media"
                             >
                               <Users className="h-4 w-4" />
@@ -810,23 +810,23 @@ const AdminGuestList = ({ user, onBack }: AdminGuestListProps) => {
         <Dialog open={emailDialog.open} onOpenChange={(open) => setEmailDialog(prev => ({ ...prev, open }))}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle className="text-black">Send Message</DialogTitle>
-              <DialogDescription className="text-gray-600">
+              <DialogTitle className="text-foreground">Send Message</DialogTitle>
+              <DialogDescription className="text-muted-foreground">
                 Send a custom message to the selected guest(s) about their party registration.
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-black">To: {
+                <label className="text-sm font-medium text-foreground">To: {
                   emailDialog.guestId === 'all' ? 'All arriving guests' : 
                   emailDialog.guestId === 'selected' ? `${selectedGuests.size} selected guests` : 
                   emailDialog.email
                 }</label>
               </div>
               <div>
-                <label className="text-sm font-medium text-black">Message</label>
+                <label className="text-sm font-medium text-foreground">Message</label>
                 <textarea
-                  className="w-full p-2 border rounded-md h-32 text-black"
+                  className="w-full p-2 border rounded-md h-32 text-foreground"
                   placeholder="Enter your message..."
                   value={emailMessage}
                   onChange={(e) => setEmailMessage(e.target.value)}

@@ -193,7 +193,7 @@ const handleBack = () => {
       </div>
 
       {/* Scoreboard */}
-      <div className="absolute top-4 right-4 z-[9999] text-right text-white">
+      <div className="absolute top-4 right-4 z-[9999] text-right text-foreground">
         <div className="text-sm opacity-90">Lines</div>
         <div className="text-5xl font-extrabold">{lines}</div>
         <div className="mt-1 text-xs opacity-80">High score ({scope})</div>
@@ -207,18 +207,18 @@ const handleBack = () => {
       {/* Start overlay */}
       {!gameStarted && !showEndPopup && (
         <div className="absolute inset-0 flex items-center justify-center z-[9000]">
-          <Button onClick={start} className="bg-white/20 hover:bg-white/30 text-white border border-white/20">Start Game</Button>
+          <Button onClick={start} className="bg-surface-2/60 hover:bg-surface-2/60 text-foreground border border-border">Start Game</Button>
         </div>
       )}
 
       {/* End popup */}
       {showEndPopup && (
         <div className="absolute inset-0 flex items-center justify-center z-[9500]">
-          <div className="bg-black/60 text-white rounded-xl p-6 border border-white/20 backdrop-blur-lg text-center space-y-3">
+          <div className="bg-background/60 text-foreground rounded-xl p-6 border border-border backdrop-blur-lg text-center space-y-3">
             <div className="text-2xl font-bold">Great job!</div>
             <div className="text-sm opacity-90">You made {lines} lines.</div>
             <div className="flex gap-3 justify-center pt-2">
-              <Button onClick={start} className="bg-white/20 hover:bg-white/30 text-white border border-white/20">Play Again</Button>
+              <Button onClick={start} className="bg-surface-2/60 hover:bg-surface-2/60 text-foreground border border-border">Play Again</Button>
               <Button variant="outline" onClick={handleBack}>Back to Menu</Button>
             </div>
           </div>
@@ -257,7 +257,7 @@ const handleBack = () => {
       )}
 
       {/* Game name footer */}
-      <div className="absolute bottom-8 left-0 right-0 text-center text-white/80 text-lg font-semibold z-[9000]">Haya Ninja</div>
+      <div className="absolute bottom-8 left-0 right-0 text-center text-muted-foreground text-lg font-semibold z-[9000]">Haya Ninja</div>
     </div>
   );
 };

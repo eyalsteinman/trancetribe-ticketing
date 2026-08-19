@@ -185,7 +185,7 @@ const BuyTicket: React.FC<BuyTicketProps> = ({
         disabled={isLoading || showPayPalButtons}
         variant="default"
         size="lg"
-        className="w-full text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+        className="w-full text-foreground bg-gradient-to-r from-primary to-primary-glow hover:from-primary hover:to-primary-glow transition-all duration-300 shadow-lg hover:shadow-xl"
       >
         {isLoading ? (
           <>

@@ -200,19 +200,19 @@ const FriendsCodes = ({ user, onBack }: FriendsCodesProps) => {
         {/* Add Friend Section */}
         <Card>
           <CardContent className="p-4 space-y-4">
-            <h3 className="font-semibold text-black">Add Friend</h3>
+            <h3 className="font-semibold text-foreground">Add Friend</h3>
             <div className="flex gap-2">
               <Input
                 placeholder="Enter 6-digit code"
                 value={newCode}
                 onChange={(e) => setNewCode(e.target.value)}
                 maxLength={6}
-                className="flex-1 text-black"
+                className="flex-1 text-foreground"
               />
               <Button 
                 onClick={addFriend} 
                 disabled={isAdding}
-                className="text-black"
+                className="text-foreground"
               >
                 <Plus className="h-4 w-4" />
               </Button>
@@ -225,7 +225,7 @@ const FriendsCodes = ({ user, onBack }: FriendsCodesProps) => {
           {friends.length === 0 ? (
             <Card>
               <CardContent className="p-4 text-center">
-                <p className="text-black">No friends added yet</p>
+                <p className="text-foreground">No friends added yet</p>
               </CardContent>
             </Card>
           ) : (
@@ -233,10 +233,10 @@ const FriendsCodes = ({ user, onBack }: FriendsCodesProps) => {
               <Card key={friend.id}>
                 <CardContent className="p-4 flex items-center justify-between">
                   <div>
-                    <div className="font-semibold text-black">
+                    <div className="font-semibold text-foreground">
                       {friend.friend_display_name}
                     </div>
-                    <div className="text-sm text-black opacity-75">
+                    <div className="text-sm text-foreground opacity-75">
                       Code: {friend.friend_personal_code}
                     </div>
                   </div>
@@ -251,7 +251,7 @@ const FriendsCodes = ({ user, onBack }: FriendsCodesProps) => {
                           description: "Friend code copied to clipboard"
                         });
                       }}
-                      className="bg-blue-600 hover:bg-blue-700 border-blue-600 text-white"
+                      className="bg-primary hover:bg-primary border-primary text-foreground"
                     >
                       📋
                     </Button>
@@ -259,9 +259,9 @@ const FriendsCodes = ({ user, onBack }: FriendsCodesProps) => {
                       variant="destructive"
                       size="sm"
                       onClick={() => removeFriend(friend.id)}
-                      className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
+                      className="bg-destructive hover:bg-destructive border-destructive text-foreground"
                     >
-                      <Trash2 className="h-4 w-4 text-white" />
+                      <Trash2 className="h-4 w-4 text-foreground" />
                     </Button>
                   </div>
                 </CardContent>

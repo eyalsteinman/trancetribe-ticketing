@@ -143,7 +143,7 @@ const AuthPage = () => {
   }
 
   return (
-    <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]">
+    <div className="fixed inset-0 overflow-y-auto bg-background">
       {/* Animated background */}
       <div className="auth-animated-bg" />
       
@@ -162,10 +162,10 @@ const AuthPage = () => {
             <div className="text-center space-y-4">
               <LanguageSelector />
               <div className="flex flex-col items-center justify-center space-y-2">
-                <h1 className="text-4xl font-bold text-white text-center w-full">
+                <h1 className="text-4xl font-bold text-foreground text-center w-full">
                   {t('trance_tribes')}
                 </h1>
-                <p className="text-white text-center w-full text-sm">
+                <p className="text-foreground text-center w-full text-sm">
                   {t('choose_access_type')}
                 </p>
               </div>
@@ -184,8 +184,8 @@ const AuthPage = () => {
           {/* Footer in white text */}
           <div className="mt-8">
             <div className="text-center space-y-3">
-              <h3 className="font-bold text-xl text-white">Trance Tribes Tickets</h3>
-              <p className="text-sm text-white/80">
+              <h3 className="font-bold text-xl text-foreground">Trance Tribes Tickets</h3>
+              <p className="text-sm text-muted-foreground">
                 Created by Eyal Steinman, all rights reserved 2025
               </p>
             </div>

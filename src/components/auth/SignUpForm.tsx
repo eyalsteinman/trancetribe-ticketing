@@ -159,108 +159,108 @@ export const SignUpForm = () => {
       <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3 rtl-grid">
         <div>
-          <label className="text-sm font-medium text-white block mb-2">{t('first_name')} *</label>
+          <label className="text-sm font-medium text-foreground block mb-2">{t('first_name')} *</label>
           <RtlInput
             type="text"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             placeholder={t('enter_first_name')}
             required
-            className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60 text-sm"
+            className="auth-input rounded-xl h-12 px-4 text-foreground placeholder:text-muted-foreground text-sm"
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-white block mb-2">{t('last_name')} *</label>
+          <label className="text-sm font-medium text-foreground block mb-2">{t('last_name')} *</label>
           <RtlInput
             type="text"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             placeholder={t('enter_last_name')}
             required
-            className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60 text-sm"
+            className="auth-input rounded-xl h-12 px-4 text-foreground placeholder:text-muted-foreground text-sm"
           />
         </div>
       </div>
       
       <div>
-        <label className="text-sm font-medium text-white block mb-2">{t('phone_number')} *</label>
+        <label className="text-sm font-medium text-foreground block mb-2">{t('phone_number')} *</label>
         <RtlInput
           type="tel"
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
           placeholder={t('enter_phone_number')}
           required
-          className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60"
+          className="auth-input rounded-xl h-12 px-4 text-foreground placeholder:text-muted-foreground"
         />
       </div>
       
       <div>
-        <label className="text-sm font-medium text-white block mb-2">{t('facebook_profile')}</label>
+        <label className="text-sm font-medium text-foreground block mb-2">{t('facebook_profile')}</label>
         <RtlInput
           type="url"
           value={facebookProfile}
           onChange={(e) => setFacebookProfile(e.target.value)}
           placeholder="facebook.com/profile"
-          className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60"
+          className="auth-input rounded-xl h-12 px-4 text-foreground placeholder:text-muted-foreground"
         />
-        <p className="text-xs text-white/60 mt-1">{t('can_do_later')}</p>
+        <p className="text-xs text-muted-foreground mt-1">{t('can_do_later')}</p>
       </div>
       
       <div>
-        <label className="text-sm font-medium text-white block mb-2">{t('instagram_profile')}</label>
+        <label className="text-sm font-medium text-foreground block mb-2">{t('instagram_profile')}</label>
         <RtlInput
           type="url"
           value={instagramProfile}
           onChange={(e) => setInstagramProfile(e.target.value)}
           placeholder="instagram.com/profile"
-          className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60"
+          className="auth-input rounded-xl h-12 px-4 text-foreground placeholder:text-muted-foreground"
         />
-        <p className="text-xs text-white/60 mt-1">{t('can_do_later')}</p>
+        <p className="text-xs text-muted-foreground mt-1">{t('can_do_later')}</p>
       </div>
       
       <div>
-        <label className="text-sm font-medium text-white block mb-2">{t('email')} *</label>
+        <label className="text-sm font-medium text-foreground block mb-2">{t('email')} *</label>
         <RtlInput
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder={t('enter_email')}
           required
-          className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60"
+          className="auth-input rounded-xl h-12 px-4 text-foreground placeholder:text-muted-foreground"
         />
       </div>
       
       <div>
-        <label className="text-sm font-medium text-white block mb-2">{t('password')} *</label>
+        <label className="text-sm font-medium text-foreground block mb-2">{t('password')} *</label>
         <RtlInput
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder={t('enter_password')}
           required
-          className="auth-input rounded-xl h-12 px-4 text-black placeholder:text-white/60"
+          className="auth-input rounded-xl h-12 px-4 text-foreground placeholder:text-muted-foreground"
         />
       </div>
 
       <Button 
         onClick={handleSignUp}
         disabled={loading}
-        className="w-full bg-purple-600 text-white rounded-xl h-12 font-semibold text-base hover:bg-purple-700 disabled:opacity-50"
+        className="w-full bg-primary text-foreground rounded-xl h-12 font-semibold text-base hover:bg-primary disabled:opacity-50"
       >
         {loading ? t('processing') : t('create_account')}
       </Button>
 
       <div className="flex items-center my-4">
-        <div className="flex-1 h-px bg-white/20"></div>
-        <span className="px-4 text-white/60 text-sm">{t('or_continue_with')}</span>
-        <div className="flex-1 h-px bg-white/20"></div>
+        <div className="flex-1 h-px bg-surface-2/60"></div>
+        <span className="px-4 text-muted-foreground text-sm">{t('or_continue_with')}</span>
+        <div className="flex-1 h-px bg-surface-2/60"></div>
       </div>
 
       <div className="grid grid-cols-2 gap-3 rtl-grid">
         <Button 
           type="button"
           variant="outline"
-          className="bg-transparent border-white/30 text-white rounded-xl h-12 font-semibold text-base hover:bg-white/10"
+          className="bg-transparent border-border text-foreground rounded-xl h-12 font-semibold text-base hover:bg-surface-2/60"
           onClick={() => {
             toast({
               title: t('info'),
@@ -274,7 +274,7 @@ export const SignUpForm = () => {
         <Button 
           type="button"
           variant="outline"
-          className="bg-transparent border-white/30 text-white rounded-xl h-12 font-semibold text-base hover:bg-white/10"
+          className="bg-transparent border-border text-foreground rounded-xl h-12 font-semibold text-base hover:bg-surface-2/60"
           onClick={() => {
             toast({
               title: t('info'),
@@ -288,7 +288,7 @@ export const SignUpForm = () => {
         <Button 
           type="button"
           variant="outline"
-          className="bg-transparent border-white/30 text-white rounded-xl h-12 font-semibold text-base hover:bg-white/10"
+          className="bg-transparent border-border text-foreground rounded-xl h-12 font-semibold text-base hover:bg-surface-2/60"
           onClick={() => {
             toast({
               title: "Instagram",
@@ -301,7 +301,7 @@ export const SignUpForm = () => {
         <Button 
           type="button"
           variant="outline"
-          className="bg-transparent border-white/30 text-white rounded-xl h-12 font-semibold text-base hover:bg-white/10"
+          className="bg-transparent border-border text-foreground rounded-xl h-12 font-semibold text-base hover:bg-surface-2/60"
           onClick={() => {
             toast({
               title: "TikTok",

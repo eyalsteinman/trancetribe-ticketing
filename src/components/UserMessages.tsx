@@ -241,8 +241,8 @@ const UserMessages: React.FC<UserMessagesProps> = ({ onBack, userId, onOpenTribe
                             }}
                             className="h-6 w-6 p-0 relative"
                           >
-                            <div className="absolute inset-0 bg-red-500 rounded-sm opacity-80"></div>
-                            <Trash2 className="h-3 w-3 text-white relative z-10" />
+                            <div className="absolute inset-0 bg-destructive rounded-sm opacity-80"></div>
+                            <Trash2 className="h-3 w-3 text-foreground relative z-10" />
                           </Button>
                         </div>
                       </div>

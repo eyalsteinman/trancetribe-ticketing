@@ -319,7 +319,7 @@ const AdminSignupNew = ({ onBack }: AdminSignupNewProps) => {
             <button 
               onClick={handleAdminSignup} 
               disabled={loading} 
-              className="w-full px-4 py-3 rounded font-medium border border-gray-300 hover:bg-gray-50"
+              className="w-full px-4 py-3 rounded font-medium border border-muted hover:bg-muted"
               style={{ color: '#000000', backgroundColor: '#ffffff' }}
             >
               {loading ? 'Creating Admin Account...' : 'Create Admin Account'}

@@ -820,7 +820,7 @@ const AdminDashboard = ({ user, onManageSubAdmins, adminProfile }: AdminDashboar
   }
 
   return (
-    <div className="min-h-screen transition-colors duration-500 fixed inset-0 overflow-y-auto bg-[#4C1D95]">
+    <div className="min-h-screen transition-colors duration-500 fixed inset-0 overflow-y-auto bg-background">
       {/* Animated background */}
       <div className="auth-animated-bg" />
       
@@ -830,14 +830,14 @@ const AdminDashboard = ({ user, onManageSubAdmins, adminProfile }: AdminDashboar
           <div className="container-section relative py-8">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <h1 className="text-2xl font-bold text-white">
+                <h1 className="text-2xl font-bold text-foreground">
                   {adminProfile?.allowed_tiles && adminProfile.allowed_tiles.length > 0
                     ? 'Sub-Admin Dashboard' 
                     : 'Admin Dashboard'}
                 </h1>
                 {adminNickname && (
-                  <p className="text-base text-white/90 font-medium">
-                    Welcome back, <span className="text-white font-semibold">{adminNickname}</span>
+                  <p className="text-base text-muted-foreground font-medium">
+                    Welcome back, <span className="text-foreground font-semibold">{adminNickname}</span>
                   </p>
                 )}
               </div>
@@ -845,7 +845,7 @@ const AdminDashboard = ({ user, onManageSubAdmins, adminProfile }: AdminDashboar
                 variant="outline" 
                 size="icon"
                 onClick={handleSignOut} 
-                className="border-white/30 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all duration-300"
+                className="border-border bg-surface-2/60 backdrop-blur-sm text-foreground hover:bg-surface-2/60 transition-all duration-300"
                 aria-label="Sign Out"
               >
                 <LogOut className="h-4 w-4" />
@@ -1002,7 +1002,7 @@ const AdminDashboard = ({ user, onManageSubAdmins, adminProfile }: AdminDashboar
                                 <span>{party.approved_count || 0} guests</span>
                               </div>
                               {index === 0 && sortAscending && (
-                                <div className="bg-green-500/10 text-green-600 px-3 py-1 rounded-full text-xs font-semibold">
+                                <div className="bg-success/10 text-success px-3 py-1 rounded-full text-xs font-semibold">
                                   Next Event
                                 </div>
                               )}

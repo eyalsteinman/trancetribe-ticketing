@@ -106,7 +106,7 @@ const SortableTile: React.FC<{
         </div>
       )}
       {item.notificationCount !== undefined && item.notificationCount > 0 && (
-        <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full min-w-6 h-6 flex items-center justify-center font-bold">
+        <div className="absolute -top-2 -right-2 bg-destructive text-foreground text-xs rounded-full min-w-6 h-6 flex items-center justify-center font-bold">
           {item.notificationCount}
         </div>
       )}
@@ -199,7 +199,7 @@ const ReorderableTilesLogic = ({ items, orderKey, onLongPress }: ReorderableTile
 
   return (
     <div className="container-section">
-      <p className="text-white text-sm md:text-base font-bold mb-4 text-center opacity-70">
+      <p className="text-foreground text-sm md:text-base font-bold mb-4 text-center opacity-70">
         Press tile for 3 sec. to reorder
       </p>
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>

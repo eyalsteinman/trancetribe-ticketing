@@ -417,10 +417,10 @@ const UserDirectMessages: React.FC<UserDirectMessagesProps> = ({ onBack, userId 
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="absolute -top-2 -right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 bg-red-500 hover:bg-red-600"
+                        className="absolute -top-2 -right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 bg-destructive hover:bg-destructive"
                         onClick={() => deleteChatMessage(message.id)}
                       >
-                        <Trash2 className="h-3 w-3 text-white" />
+                        <Trash2 className="h-3 w-3 text-foreground" />
                       </Button>
                     </div>
                   </div>
@@ -629,8 +629,8 @@ const UserDirectMessages: React.FC<UserDirectMessagesProps> = ({ onBack, userId 
                             }}
                             className="h-6 w-6 p-0 relative"
                           >
-                            <div className="absolute inset-0 bg-red-500 rounded-sm opacity-80"></div>
-                            <Trash2 className="h-3 w-3 text-white relative z-10" />
+                            <div className="absolute inset-0 bg-destructive rounded-sm opacity-80"></div>
+                            <Trash2 className="h-3 w-3 text-foreground relative z-10" />
                           </Button>
                         </div>
                         <p className="text-xs text-muted-foreground mb-2">

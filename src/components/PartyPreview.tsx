@@ -183,7 +183,7 @@ const PartyPreview = ({ party, onBack, onLoginRequired }: PartyPreviewProps) => 
                           <div className="text-sm text-muted-foreground">
                             {ticketType.price === 0 ? 'Free' : `${ticketType.price} ILS`}
                           </div>
-                          <div className="text-xs text-blue-600">
+                          <div className="text-xs text-primary">
                             {status === 'sold-out' ? 'Sold Out' : `${remaining} tickets remaining`}
                           </div>
                         </div>
@@ -191,7 +191,7 @@ const PartyPreview = ({ party, onBack, onLoginRequired }: PartyPreviewProps) => 
                       <Button
                         onClick={handleTicketClick}
                         disabled={status === 'sold-out'}
-                        className={`w-full ${ticketType.price === 0 ? 'bg-purple-600 hover:bg-purple-700 text-white' : ''}`}
+                        className={`w-full ${ticketType.price === 0 ? 'bg-primary hover:bg-primary text-foreground' : ''}`}
                       >
                         {status === 'sold-out' ? 'Sold Out' : (ticketType.price === 0 ? 'Get Free Ticket' : `Buy Ticket - ${ticketType.price} ILS`)}
                       </Button>
@@ -213,7 +213,7 @@ const PartyPreview = ({ party, onBack, onLoginRequired }: PartyPreviewProps) => 
                 </div>
                 <Button
                   onClick={handleTicketClick}
-                  className={`w-full ${party.is_free ? 'bg-purple-600 hover:bg-purple-700 text-white' : ''}`}
+                  className={`w-full ${party.is_free ? 'bg-primary hover:bg-primary text-foreground' : ''}`}
                 >
                   {party.is_free ? 'Get Free Ticket' : `Buy Ticket - ${party.price} ILS`}
                 </Button>

@@ -381,24 +381,24 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
 
   return (
-    <div className="fixed inset-0 overflow-y-auto bg-[#4C1D95]" style={{ position: 'relative' }}>
+    <div className="fixed inset-0 overflow-y-auto bg-background" style={{ position: 'relative' }}>
       {/* Animated background */}
       <div className="auth-animated-bg" />
       
       <div className="min-h-screen w-full relative z-10 transition-colors duration-500 p-4 md:p-6 lg:p-8" style={{ position: 'relative' }}>
       {/* Header - Desktop Responsive */}
       <div className="relative pt-2 pb-6 max-w-7xl mx-auto">
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-1">
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-1">
           {nickname ? t('welcome_back') : t('user_dashboard')}
         </h1>
         {nickname && (
-          <p className="text-lg md:text-xl lg:text-2xl text-white font-semibold">{nickname}!</p>
+          <p className="text-lg md:text-xl lg:text-2xl text-foreground font-semibold">{nickname}!</p>
         )}
         <Button 
           variant="ghost" 
           size="icon"
           onClick={handleSignOut}
-          className="absolute top-2 right-4 z-50 text-white hover:bg-white/10 transition-all duration-200"
+          className="absolute top-2 right-4 z-50 text-foreground hover:bg-surface-2/60 transition-all duration-200"
           aria-label="Sign Out"
         >
           <LogOut className="h-6 w-6 md:h-7 md:w-7 stroke-[3]" />
@@ -430,7 +430,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                   <div className="relative">
                     <CalendarDays className="h-12 w-12" />
                     {newEventsCount > 0 && (
-                      <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                      <div className="absolute -top-1 -right-1 bg-destructive text-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
                         {newEventsCount > 9 ? '9+' : newEventsCount}
                       </div>
                     )}
@@ -493,7 +493,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                     <div className="relative">
                       <MessageCircle className="h-12 w-12" />
                       {unreadMessageCount > 0 && (
-                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                        <div className="absolute -top-1 -right-1 bg-destructive text-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
                           {unreadMessageCount > 9 ? '9+' : unreadMessageCount}
                         </div>
                       )}
@@ -508,7 +508,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                     <div className="relative">
                       <Mail className="h-12 w-12" />
                       {unreadDirectMessageCount > 0 && (
-                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                        <div className="absolute -top-1 -right-1 bg-destructive text-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
                           {unreadDirectMessageCount > 9 ? '9+' : unreadDirectMessageCount}
                         </div>
                       )}
@@ -535,7 +535,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
       {/* QR Codes Section */}
       {userQRCodes.length > 0 && (
         <div className="mt-6">
-          <h2 className="text-lg font-bold text-white mb-4">{t('your_tickets')}</h2>
+          <h2 className="text-lg font-bold text-foreground mb-4">{t('your_tickets')}</h2>
             <div className="space-y-4">
               {userQRCodes.map((qrCode) => (
                 <div 
@@ -563,15 +563,15 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                        {/* Status Badge */}
                        <div className="absolute top-4 right-4">
                          {qrCode.is_scanned ? (
-                           <div className="bg-green-500 text-white px-3 py-1 text-xs font-semibold">
+                           <div className="bg-success text-foreground px-3 py-1 text-xs font-semibold">
                              ✓ Used
                            </div>
                          ) : qrCode.is_approved ? (
-                           <div className="bg-green-500 text-white px-3 py-1 text-xs font-semibold">
+                           <div className="bg-success text-foreground px-3 py-1 text-xs font-semibold">
                              ✓ Ready
                            </div>
                          ) : (
-                           <div className="bg-orange-500 text-white px-3 py-1 text-xs font-semibold">
+                           <div className="bg-warning text-foreground px-3 py-1 text-xs font-semibold">
                              Pending
                            </div>
                          )}
@@ -598,7 +598,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                          {qrCode.is_approved && !qrCode.is_scanned && (
                         <Button 
                           size="sm"
-                          className="w-full bg-green-500 text-white hover:bg-green-600"
+                          className="w-full bg-success text-foreground hover:bg-success"
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedQRCode(qrCode);
@@ -618,14 +618,14 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         
         {/* QR Code Dialog */}
         <Dialog open={showQRDialog} onOpenChange={setShowQRDialog}>
-          <DialogContent className="max-w-sm z-[9999] bg-black/95 backdrop-blur-sm">
+          <DialogContent className="max-w-sm z-[9999] bg-background/95 backdrop-blur-sm">
             <DialogHeader>
-              <DialogTitle className="text-white">Your QR Code</DialogTitle>
+              <DialogTitle className="text-foreground">Your QR Code</DialogTitle>
             </DialogHeader>
             <div className="text-center space-y-4">
               {selectedQRCode && (
                 <>
-                  <div className="bg-white p-4 rounded-lg inline-block">
+                  <div className="bg-card p-4 rounded-lg inline-block">
                     <QRCodeSVG value={selectedQRCode.code} size={200} />
                   </div>
                   <div className="space-y-2">
@@ -633,7 +633,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                     <p className="text-sm text-muted-foreground">
                       {new Date(selectedQRCode.parties?.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </p>
-                    <p className="text-xs text-green-600">✓ Approved - Show this QR code at the entrance</p>
+                    <p className="text-xs text-success">✓ Approved - Show this QR code at the entrance</p>
                   </div>
                 </>
               )}
@@ -646,14 +646,14 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
       {/* Join Tribe Success Dialog */}
       <Dialog open={showJoinTribeDialog} onOpenChange={setShowJoinTribeDialog}>
-        <DialogContent className="sm:max-w-sm bg-purple-600/90 backdrop-blur-md border-purple-400/30 rounded-2xl p-8 animate-scale-in">
+        <DialogContent className="sm:max-w-sm bg-primary/90 backdrop-blur-md border-primary/30 rounded-2xl p-8 animate-scale-in">
           <div className="text-center space-y-6">
-            <p className="text-white font-bold text-lg leading-relaxed">
+            <p className="text-foreground font-bold text-lg leading-relaxed">
               You are now registered to our production and can buy tickets to our events
             </p>
             <Button 
               onClick={() => setShowJoinTribeDialog(false)}
-              className="w-full bg-white hover:bg-white/90 text-purple-700 font-bold text-base py-6 rounded-xl"
+              className="w-full bg-card hover:bg-surface-2/60 text-primary font-bold text-base py-6 rounded-xl"
             >
               Sababa
             </Button>

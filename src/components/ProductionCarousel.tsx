@@ -184,7 +184,7 @@ const ProductionCarousel = ({ userId, onLoginRequired, onJoinSuccess }: Producti
                     <h3 className="font-semibold text-center">{production.name}</h3>
                     <Button
                       onClick={() => isFollowing ? handleLeaveTribe(production.id) : handleJoinTribe(production.id)}
-                      className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                      className="w-full bg-primary hover:bg-primary text-foreground"
                       variant={isFollowing ? "outline" : "default"}
                       size="sm"
                     >

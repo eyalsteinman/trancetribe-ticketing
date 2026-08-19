@@ -293,7 +293,7 @@ setFallingBall((prev) => {
       </div>
 
       {/* Scoreboard */}
-      <div className="absolute right-4 z-[9999] text-right text-white" style={{ top: 'calc(env(safe-area-inset-top) + 8px)' }}>
+      <div className="absolute right-4 z-[9999] text-right text-foreground" style={{ top: 'calc(env(safe-area-inset-top) + 8px)' }}>
         <div className="text-sm opacity-90">Total pixels destroyed</div>
         <div className="text-2xl font-bold">{destroyedTotal}</div>
         <div className="mt-1 text-xs opacity-80">High score ({scope})</div>
@@ -304,7 +304,7 @@ setFallingBall((prev) => {
       {/* Messages - centered on screen */}
       {centerMessage && (
         <div className="absolute inset-0 flex items-center justify-center z-[9500] pointer-events-none">
-          <div className="mx-auto w-fit px-3 py-1 bg-black/40 text-white rounded-md border border-white/20 backdrop-blur-sm text-2xl font-extrabold">
+          <div className="mx-auto w-fit px-3 py-1 bg-background/40 text-foreground rounded-md border border-border backdrop-blur-sm text-2xl font-extrabold">
             {centerMessage}
           </div>
         </div>
@@ -315,7 +315,7 @@ setFallingBall((prev) => {
       {ballAvailable && (
         <div className="absolute left-8 top-1/2 -translate-y-1/2">
           <div
-            className="bg-white rounded-full cursor-grab active:cursor-grabbing transition-transform duration-200 hover:scale-110 shadow-lg"
+            className="bg-card rounded-full cursor-grab active:cursor-grabbing transition-transform duration-200 hover:scale-110 shadow-lg"
             style={{ width: SMALL_RADIUS * 2, height: SMALL_RADIUS * 2 }}
             onMouseDown={handleMouseDown}
             onTouchStart={handleTouchStart}
@@ -329,7 +329,7 @@ setFallingBall((prev) => {
           {cubes.map((cube) => (
             <div
               key={cube.id}
-              className={`${cube.visible ? 'bg-white opacity-100' : 'opacity-0'} w-4 h-4 border border-white/30 transition-opacity duration-300`}
+              className={`${cube.visible ? 'bg-card opacity-100' : 'opacity-0'} w-4 h-4 border border-border transition-opacity duration-300`}
               style={{ gridColumn: cube.x + 1, gridRow: cube.y + 1 }}
             />
           ))}
@@ -339,7 +339,7 @@ setFallingBall((prev) => {
       {/* Drag ghost */}
       {isDragging && dragPos && (
         <div
-          className="absolute bg-white rounded-full pointer-events-none z-40 shadow"
+          className="absolute bg-card rounded-full pointer-events-none z-40 shadow"
           style={{
             width: SMALL_RADIUS * 2,
             height: SMALL_RADIUS * 2,
@@ -352,7 +352,7 @@ setFallingBall((prev) => {
       {/* Falling ball */}
       {fallingBall && fallingBall.active && (
         <div
-          className="absolute bg-white rounded-full pointer-events-none z-40 shadow"
+          className="absolute bg-card rounded-full pointer-events-none z-40 shadow"
           style={{
             width: fallingBall.radius * 2,
             height: fallingBall.radius * 2,
@@ -363,7 +363,7 @@ setFallingBall((prev) => {
       )}
 
       {/* Game name footer */}
-      <div className="absolute bottom-2 left-0 right-0 text-center text-white/80 text-xs z-[9000]">Exploder</div>
+      <div className="absolute bottom-2 left-0 right-0 text-center text-muted-foreground text-xs z-[9000]">Exploder</div>
     </div>
   );
 };

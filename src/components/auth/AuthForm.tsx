@@ -25,10 +25,10 @@ export const AuthForm = ({
     <div className={`auth-glass rounded-2xl overflow-hidden rtl-form ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
       <Tabs defaultValue="user" className="w-full">
         <TabsList className="grid w-full grid-cols-2 auth-glass-strong rounded-2xl m-2 rtl-tabs">
-          <TabsTrigger value="user" className="text-black data-[state=active]:text-purple-600 data-[state=active]:bg-white/20 rounded-xl font-semibold">
+          <TabsTrigger value="user" className="text-foreground data-[state=active]:text-primary data-[state=active]:bg-surface-2/60 rounded-xl font-semibold">
             {t('user')}
           </TabsTrigger>
-          <TabsTrigger value="admin" className="text-black data-[state=active]:text-purple-600 data-[state=active]:bg-white/20 rounded-xl font-semibold">
+          <TabsTrigger value="admin" className="text-foreground data-[state=active]:text-primary data-[state=active]:bg-surface-2/60 rounded-xl font-semibold">
             {t('admin')}
           </TabsTrigger>
         </TabsList>
@@ -36,12 +36,12 @@ export const AuthForm = ({
         <TabsContent value="user" className="p-6 space-y-4">
           <div className="space-y-4">
             <div className="flex flex-col space-y-4">
-              <h3 className="text-xl font-semibold text-white text-center">
+              <h3 className="text-xl font-semibold text-foreground text-center">
                 {t('user_login_registration')}
               </h3>
               <button
                 onClick={onToggleUserLogin}
-                className="bg-purple-600 text-white px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-300 self-center w-full max-w-[200px] text-center hover:bg-purple-700"
+                className="bg-primary text-foreground px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-300 self-center w-full max-w-[200px] text-center hover:bg-primary"
               >
                 {isUserLogin ? (
                   <div className="text-center">
@@ -56,7 +56,7 @@ export const AuthForm = ({
                 )}
               </button>
             </div>
-            <p className="text-white/80 text-center text-sm">
+            <p className="text-muted-foreground text-center text-sm">
               {isUserLogin ? t('sign_in_to_account') : t('create_account_description')}
             </p>
           </div>
@@ -72,8 +72,8 @@ export const AuthForm = ({
         
         <TabsContent value="admin" className="px-6 pt-2 pb-6 space-y-4">
           <div className="space-y-2">
-            <h3 className="text-xl font-semibold text-white text-center">{t('admin_access')}</h3>
-            <p className="text-white/80 text-center text-sm">{t('admin_credentials_description')}</p>
+            <h3 className="text-xl font-semibold text-foreground text-center">{t('admin_access')}</h3>
+            <p className="text-muted-foreground text-center text-sm">{t('admin_credentials_description')}</p>
           </div>
           <AdminForm 
             onShowAdminPassword={onShowAdminPassword}

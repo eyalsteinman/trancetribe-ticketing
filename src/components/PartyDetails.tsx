@@ -589,12 +589,12 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
                               </div>
                               <div className={`text-xs font-medium ${
                                 status === 'sold-out' ? 'text-destructive' : 
-                                status === 'almost-sold-out' ? 'text-orange-600' : 'text-green-600'
+                                status === 'almost-sold-out' ? 'text-warning' : 'text-success'
                               }`}>
                                 {status === 'sold-out' ? '🚫 SOLD OUT' : `✅ ${remaining} tickets remaining`}
                               </div>
                               {status === 'almost-sold-out' && (
-                                <div className="text-xs text-orange-600 font-medium">
+                                <div className="text-xs text-warning font-medium">
                                   ⚡ Limited availability
                                 </div>
                               )}
@@ -636,7 +636,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
                       <Button
                         onClick={() => generateQR()}
                         disabled={loading}
-                        className={`w-full ${party.is_free ? 'bg-purple-600 hover:bg-purple-700 text-white' : ''}`}
+                        className={`w-full ${party.is_free ? 'bg-primary hover:bg-primary text-foreground' : ''}`}
                       >
                         {loading ? "Generating..." : (party.is_free ? 'Get Free Ticket' : 'Get Ticket')}
                       </Button>
@@ -647,7 +647,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
             )}
             
             {userQR && (
-              <div className="text-center text-green-600 font-medium">
+              <div className="text-center text-success font-medium">
                 ✓ You already have a ticket for this party
               </div>
             )}
@@ -673,13 +673,13 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
               <CardTitle>Your QR Code</CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-4">
-              <div className="bg-white p-4 rounded-lg inline-block relative">
+              <div className="bg-card p-4 rounded-lg inline-block relative">
                 <QRCodeSVG value={userQR.code} size={200} />
                 {!userQR.is_approved && (
-                  <div className="absolute inset-0 backdrop-blur-sm bg-white/20 flex items-center justify-center rounded-lg">
+                  <div className="absolute inset-0 backdrop-blur-sm bg-surface-2/60 flex items-center justify-center rounded-lg">
                     <div className="text-center p-4">
-                      <p className="text-sm font-medium text-gray-800">⏳ Pending Approval</p>
-                      <p className="text-xs text-gray-600 mt-1">QR code will be clear once approved</p>
+                      <p className="text-sm font-medium text-muted-foreground">⏳ Pending Approval</p>
+                      <p className="text-xs text-muted-foreground mt-1">QR code will be clear once approved</p>
                     </div>
                   </div>
                 )}
@@ -689,7 +689,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
                   Status: {userQR.is_approved ? '✅ Approved' : '⏳ Pending Approval'}
                 </p>
                 {userQR.is_scanned && (
-                  <p className="text-xs text-green-600">✓ Scanned</p>
+                  <p className="text-xs text-success">✓ Scanned</p>
                 )}
                 <p className="text-xs text-muted-foreground">
                   Show this QR code to the admin for scanning
@@ -712,12 +712,12 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
                     <div className="font-medium">
                       {friendQR.friend_display_name || 'Friend'}
                     </div>
-                     <div className="bg-white p-3 rounded-lg inline-block relative">
+                     <div className="bg-card p-3 rounded-lg inline-block relative">
                        <QRCodeSVG value={friendQR.code} size={150} />
                        {!friendQR.is_approved && (
-                         <div className="absolute inset-0 backdrop-blur-sm bg-white/20 flex items-center justify-center rounded-lg">
+                         <div className="absolute inset-0 backdrop-blur-sm bg-surface-2/60 flex items-center justify-center rounded-lg">
                            <div className="text-center p-2">
-                             <p className="text-xs font-medium text-gray-800">⏳ Pending</p>
+                             <p className="text-xs font-medium text-muted-foreground">⏳ Pending</p>
                            </div>
                          </div>
                        )}
@@ -727,7 +727,7 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
                         Status: {friendQR.is_approved ? '✅ Approved' : '⏳ Pending Approval'}
                       </p>
                       {friendQR.is_scanned && (
-                        <p className="text-xs text-green-600">✓ Scanned</p>
+                        <p className="text-xs text-success">✓ Scanned</p>
                       )}
                     </div>
                     <div className="flex gap-2 justify-center">

@@ -102,7 +102,7 @@ return (
           variant="ghost"
           size="sm"
           onClick={() => removeTicket(ticket.id)}
-          className="text-red-600 hover:text-red-700"
+          className="text-destructive hover:text-destructive"
         >
           <Trash2 className="h-4 w-4" />
         </Button>

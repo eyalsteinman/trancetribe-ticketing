@@ -141,7 +141,7 @@ export default function UserParties({ user, onBack }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#4C1D95] relative overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Animated background */}
       <div className="auth-animated-bg" />
       
@@ -149,7 +149,7 @@ export default function UserParties({ user, onBack }) {
         {!selectedParty && (
           <>
             <div className="container-section flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-white">
+              <h1 className="text-2xl font-bold text-foreground">
                 Events & Parties
               </h1>
               <BackButton onBack={onBack} />
@@ -162,7 +162,7 @@ export default function UserParties({ user, onBack }) {
                   placeholder="Search events by name or productions"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 h-14 text-base bg-white border-0 rounded-md"
+                  className="pl-12 h-14 text-base bg-card border-0 rounded-md"
                 />
               </div>
             </div>
@@ -178,7 +178,7 @@ export default function UserParties({ user, onBack }) {
                     {productions.map((production) => (
                       <div 
                         key={production.id}
-                        className="bg-white rounded-lg overflow-hidden shadow-lg cursor-pointer"
+                        className="bg-card rounded-lg overflow-hidden shadow-lg cursor-pointer"
                         onClick={() => setSelectedProduction(production.id)}
                       >
                         {production.logo_url ? (
@@ -201,7 +201,7 @@ export default function UserParties({ user, onBack }) {
                           <Button 
                             variant="default"
                             size="lg" 
-                            className="w-full bg-[#4C1D95] hover:bg-[#5B21B6] text-white font-semibold"
+                            className="w-full bg-background hover:bg-primary text-foreground font-semibold"
                           >
                             View {production.name} events
                           </Button>
@@ -211,13 +211,13 @@ export default function UserParties({ user, onBack }) {
                   </div>
                 ) : (
                   <div className="text-center py-12">
-                    <p className="text-white text-lg">No productions found</p>
+                    <p className="text-foreground text-lg">No productions found</p>
                   </div>
                 )
               ) : filteredParties.length > 0 ? (
                 <div className="space-y-4">
                   {filteredParties.map((party) => (
-                    <div key={party.id} className="bg-white rounded-lg overflow-hidden shadow-lg">
+                    <div key={party.id} className="bg-card rounded-lg overflow-hidden shadow-lg">
                       {party.photo_url ? (
                         <div className="w-full cursor-pointer" onClick={() => setSelectedParty(party)}>
                           <img
@@ -258,7 +258,7 @@ export default function UserParties({ user, onBack }) {
                         <Button 
                           variant="default"
                           size="lg" 
-                          className="w-full bg-[#4C1D95] hover:bg-[#5B21B6] text-white font-semibold"
+                          className="w-full bg-background hover:bg-primary text-foreground font-semibold"
                           onClick={() => setSelectedParty(party)}
                         >
                           View event details
@@ -269,7 +269,7 @@ export default function UserParties({ user, onBack }) {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <p className="text-white text-lg">No events found</p>
+                  <p className="text-foreground text-lg">No events found</p>
                 </div>
               )}
             </div>
