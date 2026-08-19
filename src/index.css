@@ -303,7 +303,7 @@
   .rtl-form button { width: 100%; text-align: center; }
   .rtl-form label { display: block; width: 100%; }
   .rtl-form * { box-sizing: border-box; }
-  .rtl-form .grid-cols-2 { @apply grid grid-cols-2 gap-3 w-full; }
+  .rtl-form .grid-cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; width: 100%; }
   .rtl-form .grid-cols-2 > * { min-width: 0; width: 100%; }
 }
 
