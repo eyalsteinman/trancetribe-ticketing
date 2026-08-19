@@ -93,7 +93,7 @@ const QRScanner = ({ onScan, onClose }: QRScannerProps) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-background bg-opacity-75 flex items-center justify-center z-50">
       <Card className="w-full max-w-md mx-4">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -117,7 +117,7 @@ const QRScanner = ({ onScan, onClose }: QRScannerProps) => {
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="relative aspect-square bg-black rounded-lg overflow-hidden">
+              <div className="relative aspect-square bg-background rounded-lg overflow-hidden">
                 <video
                   ref={videoRef}
                   className="w-full h-full object-cover"
@@ -125,8 +125,8 @@ const QRScanner = ({ onScan, onClose }: QRScannerProps) => {
                   muted
                 />
                 {!isScanning && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                    <div className="text-white text-center">
+                  <div className="absolute inset-0 flex items-center justify-center bg-background/50">
+                    <div className="text-foreground text-center">
                       <Camera className="h-8 w-8 mx-auto mb-2" />
                       <p>Starting camera...</p>
                     </div>
@@ -139,8 +139,8 @@ const QRScanner = ({ onScan, onClose }: QRScannerProps) => {
                   Position the QR code within the camera view
                 </p>
                 {isScanning && (
-                  <div className="flex items-center justify-center gap-2 text-green-600">
-                    <div className="w-2 h-2 bg-green-600 rounded-full animate-pulse"></div>
+                  <div className="flex items-center justify-center gap-2 text-success">
+                    <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
                     <span className="text-sm">Scanning...</span>
                   </div>
                 )}

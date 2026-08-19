@@ -102,7 +102,7 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
           <div className="sticky top-0 py-3 z-10 mb-4">
             <button
               onClick={() => setSelectedParty(null)}
-              className="w-full max-w-md mx-auto block px-6 py-2 md:py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 text-sm md:text-base"
+              className="w-full max-w-md mx-auto block px-6 py-2 md:py-3 bg-gradient-to-r from-primary to-primary-glow text-foreground rounded-lg font-semibold hover:from-primary hover:to-primary-glow text-sm md:text-base"
             >
               ✕ Close
             </button>
@@ -118,19 +118,19 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
             )}
             
             <div className="text-center space-y-4 md:space-y-6 max-w-2xl mx-auto">
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">{selectedParty.name}</h2>
-              <p className="text-sm md:text-base lg:text-lg text-white/80">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">{selectedParty.name}</h2>
+              <p className="text-sm md:text-base lg:text-lg text-muted-foreground">
                 {new Date(selectedParty.date).toLocaleDateString()}
               </p>
               {selectedParty.description && (
-                <p className="text-sm md:text-base lg:text-lg text-white whitespace-pre-wrap">
+                <p className="text-sm md:text-base lg:text-lg text-foreground whitespace-pre-wrap">
                   {selectedParty.description}
                 </p>
               )}
               
               <button
                 onClick={onLoginPrompt}
-                className="w-full max-w-md mx-auto block px-4 py-3 md:py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 text-sm md:text-base lg:text-lg"
+                className="w-full max-w-md mx-auto block px-4 py-3 md:py-4 bg-gradient-to-r from-primary to-primary-glow text-foreground rounded-lg font-semibold hover:from-primary hover:to-primary-glow text-sm md:text-base lg:text-lg"
               >
                 Login to Purchase
               </button>
@@ -149,7 +149,7 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
           <div className="sticky top-0 py-3 z-10 mb-4">
             <button
               onClick={() => setSelectedProduction(null)}
-              className="w-full max-w-md mx-auto block px-6 py-2 md:py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 text-sm md:text-base"
+              className="w-full max-w-md mx-auto block px-6 py-2 md:py-3 bg-gradient-to-r from-primary to-primary-glow text-foreground rounded-lg font-semibold hover:from-primary hover:to-primary-glow text-sm md:text-base"
             >
               ✕ Close
             </button>
@@ -163,9 +163,9 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
                 className="w-full max-w-sm md:max-w-md h-auto object-contain mx-auto"
               />
             )}
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">{selectedProduction.name}</h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">{selectedProduction.name}</h2>
             {selectedProduction.description && (
-              <p className="text-white text-base md:text-lg whitespace-pre-wrap leading-relaxed">
+              <p className="text-foreground text-base md:text-lg whitespace-pre-wrap leading-relaxed">
                 {selectedProduction.description}
               </p>
             )}
@@ -217,10 +217,10 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
                 />
               ) : (
                 <div className="w-24 h-24 bg-muted flex items-center justify-center rounded-lg">
-                  <span className="text-xs text-center font-semibold text-white p-2">{production.name}</span>
+                  <span className="text-xs text-center font-semibold text-foreground p-2">{production.name}</span>
                 </div>
               )}
-              <p className="text-xs text-center mt-2 max-w-[96px] text-white">{production.name}</p>
+              <p className="text-xs text-center mt-2 max-w-[96px] text-foreground">{production.name}</p>
             </div>
           ))
         ) : (
@@ -248,13 +248,13 @@ const ProductionBrowser = ({ onLoginPrompt, carouselOnly = false }: ProductionBr
       </div>
 
       <div className="relative mb-6 max-w-md md:max-w-lg lg:max-w-xl mx-auto px-4">
-        <Search className="absolute left-7 top-1/2 transform -translate-y-1/2 text-black h-5 w-5 md:h-6 md:w-6" style={{ color: '#000000' }} />
+        <Search className="absolute left-7 top-1/2 transform -translate-y-1/2 text-foreground h-5 w-5 md:h-6 md:w-6" style={{ color: '#000000' }} />
         <Input
           type="text"
           placeholder={browseMode === 'production' ? t('browse_by_production') : browseMode === 'party' ? t('browse_by_party') : t('browse_by_date')}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="auth-input pl-10 md:pl-12 py-4 md:py-5 text-base md:text-lg rounded-2xl h-12 md:h-14 overflow-hidden text-ellipsis text-black placeholder:text-black/50"
+          className="auth-input pl-10 md:pl-12 py-4 md:py-5 text-base md:text-lg rounded-2xl h-12 md:h-14 overflow-hidden text-ellipsis text-foreground placeholder:text-muted-foreground"
         />
       </div>
 

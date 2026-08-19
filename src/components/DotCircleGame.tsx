@@ -229,7 +229,7 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
       </div>
 
       {/* Scores aligned to right, side-by-side */}
-      <div className="absolute top-4 right-4 flex flex-col items-end z-40 text-right text-white">
+      <div className="absolute top-4 right-4 flex flex-col items-end z-40 text-right text-foreground">
         <div className="flex items-baseline gap-4">
           <div>
             <div className="text-xs opacity-75">Your Score</div>
@@ -247,14 +247,14 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
 
       {/* Instructions popup */}
       {showInstructions && (
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="surface bg-white/10 backdrop-blur-sm border border-white/20 p-6 rounded-lg text-center max-w-sm mx-4">
+        <div className="absolute inset-0 bg-background/50 flex items-center justify-center z-50">
+          <div className="surface bg-surface-2/60 backdrop-blur-sm border border-border p-6 rounded-lg text-center max-w-sm mx-4">
             <div>
               <h3 className="text-lg font-bold mb-2">Dot Circle Game</h3>
               <p className="text-sm mb-4">Use one finger to circle the white dot and score points!</p>
               <Button 
                 onClick={startGame}
-                className="bg-white/20 hover:bg-white/30 border border-white/20"
+                className="bg-surface-2/60 hover:bg-surface-2/60 border border-border"
               >
                 Start Game
               </Button>
@@ -266,7 +266,7 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
       {/* Current dot - only show when game started */}
       {currentDot && gameStarted && !showInstructions && (
         <div
-          className="absolute w-3 h-3 bg-white rounded-full shadow-lg z-20"
+          className="absolute w-3 h-3 bg-card rounded-full shadow-lg z-20"
           style={{
             left: currentDot.x - 6,
             top: currentDot.y - 6,
@@ -290,7 +290,7 @@ const DotCircleGame = ({ onBack, adminId, adminNickname }: DotCircleGameProps) =
       {/* Center message overlay */}
       {centerMessage && (
         <div className="absolute inset-0 flex items-center justify-center z-[9000] pointer-events-none">
-          <div className="text-white font-extrabold text-3xl drop-shadow-lg">{centerMessage}</div>
+          <div className="text-foreground font-extrabold text-3xl drop-shadow-lg">{centerMessage}</div>
         </div>
       )}
     </div>

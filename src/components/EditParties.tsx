@@ -621,9 +621,9 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                       size="sm"
                       onClick={() => removePartyPhoto(editingParty)}
                       disabled={loading}
-                      className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
+                      className="bg-destructive hover:bg-destructive border-destructive text-foreground"
                     >
-                      <span className="text-white">Remove Current Photo</span>
+                      <span className="text-foreground">Remove Current Photo</span>
                     </Button>
                   </div>
                 ) : (
@@ -746,10 +746,10 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                           {new Date(party.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                         </div>
                         {showActive && (
-                          <div className="text-xs text-green-600 font-medium mt-1">Active</div>
+                          <div className="text-xs text-success font-medium mt-1">Active</div>
                         )}
                         {showEnded && (
-                          <div className="text-xs text-red-600 font-medium mt-1">Ended</div>
+                          <div className="text-xs text-destructive font-medium mt-1">Ended</div>
                         )}
                       </div>
                       <div className="flex gap-2">
@@ -757,7 +757,7 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                           variant="outline"
                           size="sm"
                           onClick={() => handleEditParty(party)}
-                          className="flex items-center gap-1 text-black border-black hover:bg-black/10"
+                          className="flex items-center gap-1 text-foreground border-black hover:bg-background/10"
                         >
                           <Edit className="h-3 w-3" />
                           Edit
@@ -767,27 +767,27 @@ const EditParties = ({ onBack }: EditPartiesProps) => {
                             <Button
                               variant="destructive"
                               size="sm"
-                              className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
+                              className="bg-destructive hover:bg-destructive border-destructive text-foreground"
                             >
-                              <Trash2 className="h-3 w-3 text-white" />
-                              <span className="text-white">Delete</span>
+                              <Trash2 className="h-3 w-3 text-foreground" />
+                              <span className="text-foreground">Delete</span>
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle className="text-white">Delete Party</AlertDialogTitle>
-                              <AlertDialogDescription className="text-white">
+                              <AlertDialogTitle className="text-foreground">Delete Party</AlertDialogTitle>
+                              <AlertDialogDescription className="text-foreground">
                                 Are you sure you want to delete {party.name}? This action cannot be undone.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel className="text-white">Cancel</AlertDialogCancel>
+                              <AlertDialogCancel className="text-foreground">Cancel</AlertDialogCancel>
                               <AlertDialogAction
                                 onClick={() => deleteParty(party.id)}
                                 disabled={loading}
-                                className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
+                                className="bg-destructive hover:bg-destructive border-destructive text-foreground"
                               >
-                                {loading ? "Deleting..." : <span className="text-white">Delete</span>}
+                                {loading ? "Deleting..." : <span className="text-foreground">Delete</span>}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>

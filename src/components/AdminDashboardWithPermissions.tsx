@@ -136,9 +136,9 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
     return (
       <div className="relative">
         {/* Super Admin Banner */}
-        <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-purple-600 to-purple-800 text-white p-2 flex items-center justify-between shadow-lg">
+        <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-primary to-primary-glow text-foreground p-2 flex items-center justify-between shadow-lg">
           <div className="flex items-center gap-3 ml-4">
-            <Badge variant="secondary" className="bg-white text-purple-900 font-semibold">
+            <Badge variant="secondary" className="bg-card text-primary font-semibold">
               Super Admin
             </Badge>
             <span className="text-sm">{user.email}</span>
@@ -147,7 +147,7 @@ const AdminDashboardWithPermissions = ({ user }: AdminDashboardWithPermissionsPr
             variant="ghost"
             size="sm"
             onClick={() => setCurrentView('manage-admins')}
-            className="text-white hover:bg-purple-700 mr-4"
+            className="text-foreground hover:bg-primary mr-4"
           >
             <UserCheck className="h-4 w-4 mr-2" />
             Manage Admins

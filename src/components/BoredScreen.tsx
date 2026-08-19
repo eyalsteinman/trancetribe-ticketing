@@ -127,7 +127,7 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
         <Button
           onClick={revert}
           size="sm"
-          className={`bg-white/20 backdrop-blur-md border border-white/30 hover:bg-white/30 transition-all duration-300 shadow-lg px-4 py-2 text-sm${notWhite ? ' on-color' : ''}`}
+          className={`bg-surface-2/60 backdrop-blur-md border border-border hover:bg-surface-2/60 transition-all duration-300 shadow-lg px-4 py-2 text-sm${notWhite ? ' on-color' : ''}`}
         >
           <RotateCcw className="h-4 w-4 mr-2" />
           Revert
@@ -139,7 +139,7 @@ const BoredScreen = ({ onBack }: BoredScreenProps) => {
         {/* Main round glass button with two-line label */}
         <Button
         onClick={cycleColor}
-          className={`rounded-full w-40 h-40 bg-white/10 border border-white/20 backdrop-blur-lg shadow-2xl hover:bg-white/20 active:scale-95 transition-all duration-300 flex flex-col items-center justify-center text-center${notWhite ? ' on-color' : ''}`}
+          className={`rounded-full w-40 h-40 bg-surface-2/60 border border-border backdrop-blur-lg shadow-2xl hover:bg-surface-2/60 active:scale-95 transition-all duration-300 flex flex-col items-center justify-center text-center${notWhite ? ' on-color' : ''}`}
         >
           <span className="leading-tight font-semibold">
             Change

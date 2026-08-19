@@ -143,7 +143,7 @@ const ProductionCarouselAuth = () => {
                   <div className="p-4 flex flex-col items-center space-y-2">
                     <h3 className="font-semibold text-center">{item.name}</h3>
                     <Button
-                      className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                      className="w-full bg-primary hover:bg-primary text-foreground"
                       size="sm"
                       onClick={handleScrollToAuth}
                     >

@@ -537,7 +537,7 @@ const UserTribes: React.FC<UserTribesProps> = ({ onBack, userId }) => {
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
               <span>Your Tribes</span>
-              <div className="text-white text-xs opacity-70">beta v1.8</div>
+              <div className="text-foreground text-xs opacity-70">beta v1.8</div>
               <Button
                 size="sm"
                 onClick={() => setCurrentView('create')}
@@ -606,13 +606,13 @@ const UserTribes: React.FC<UserTribesProps> = ({ onBack, userId }) => {
             )}
 
             {tribes.filter(t => t.is_owner).length >= 5 && (
-              <div className="mt-4 p-3 bg-orange-100 border border-orange-300 rounded text-sm text-orange-800">
+              <div className="mt-4 p-3 bg-warning border border-warning rounded text-sm text-warning">
                 You've reached the maximum of 5 tribes you can create.
               </div>
             )}
             
             <div className="text-center mt-4">
-              <p className="text-white text-xs">beta v1.8</p>
+              <p className="text-foreground text-xs">beta v1.8</p>
             </div>
           </CardContent>
         </Card>

@@ -288,11 +288,11 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ onBack, userId, onTicketP
             <CardContent>
               <div className="flex gap-6 text-sm">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 border-2 border-green-500 rounded-full bg-green-100" />
+                  <div className="w-6 h-6 border-2 border-success rounded-full bg-success" />
                   <span>Approved Events</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 border-2 border-orange-500 rounded-full bg-orange-100" />
+                  <div className="w-6 h-6 border-2 border-warning rounded-full bg-warning" />
                   <span>Pending Events</span>
                 </div>
               </div>

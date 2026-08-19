@@ -87,10 +87,10 @@ const PersonalCode = ({ user, onBack }: PersonalCodeProps) => {
 
           <Card className="cursor-pointer hover:bg-accent/10 transition-colors" onClick={copyToClipboard}>
             <CardContent className="p-6">
-              <div className="text-3xl font-bold text-black mb-2">
+              <div className="text-3xl font-bold text-foreground mb-2">
                 {personalCode}
               </div>
-              <div className="text-black text-sm flex items-center justify-center gap-2">
+              <div className="text-foreground text-sm flex items-center justify-center gap-2">
                 <Copy className="h-4 w-4" />
                 Press number to copy
               </div>
