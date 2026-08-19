@@ -2,12 +2,12 @@ import React from 'react';
 
 const Footer = () => {
   return (
-    <div className="mt-12 pt-6 border-t border-border/50 text-center space-y-3">
-      <h3 className="font-bold text-xl text-white">Trance Tribes Tickets</h3>
-      <p className="text-sm text-white/80">
+    <footer className="footer-spacing space-y-2">
+      <h3 className="font-display text-xl tracking-widest text-foreground">Trance Tribes Tickets</h3>
+      <p className="text-xs text-muted-foreground">
         Created by Eyal Steinman, all rights reserved 2025
       </p>
-    </div>
+    </footer>
   );
 };
 

@@ -11,18 +11,13 @@ interface BackButtonProps {
 
 const BackButton = ({ onBack, className }: BackButtonProps) => {
   const { t } = useLanguage();
-  
+
   return (
     <Button
       variant="outline"
+      size="sm"
       onClick={onBack}
-      className={cn(
-        "flex items-center gap-2 px-3 py-2 h-auto text-sm font-medium",
-        "border-foreground/20 bg-background/50 backdrop-blur-sm",
-        "text-foreground hover:bg-foreground/10",
-        "transition-all duration-200",
-        className
-      )}
+      className={cn('gap-1.5', className)}
     >
       <ArrowLeft className="h-4 w-4" />
       {t('back')}
