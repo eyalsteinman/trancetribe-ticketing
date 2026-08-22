@@ -341,11 +341,9 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
           );
         })}
       </div>
-
-      {/* Footer */}
-      <Footer />
-    </div>
+    </AppLayout>
   );
+
 };
 
 export default UserBarTab;
