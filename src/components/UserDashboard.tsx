@@ -534,16 +534,26 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
       {/* QR Codes Section */}
       {userQRCodes.length > 0 && (
-        <div className="mt-6">
+        <div className="mt-6 max-w-7xl mx-auto">
           <h2 className="text-lg font-bold text-foreground mb-4">{t('your_tickets')}</h2>
-            <div className="space-y-4">
+            <ul className="space-y-4 list-none p-0">
               {userQRCodes.map((qrCode) => (
-                <div 
-                  key={qrCode.id} 
-                  className="cursor-pointer group overflow-hidden border border-border bg-card"
+                <li
+                  key={qrCode.id}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Open event details for ${qrCode.parties?.name ?? 'your ticket'}`}
+                  className="cursor-pointer group overflow-hidden border border-border bg-card rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      localStorage.setItem('selectedPartyId', qrCode.party_id);
+                      setCurrentView('parties');
+                    }
+                  }}
                   onClick={() => {
                     localStorage.setItem('selectedPartyId', qrCode.party_id);
-                    setCurrentView('parties');
+
                   }}
                 >
                   <div className="p-0">
