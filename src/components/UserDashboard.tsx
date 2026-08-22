@@ -675,7 +675,8 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           </div>
         </DialogContent>
       </Dialog>
-      </div>
+      </main>
+
     </div>
   );
 };
