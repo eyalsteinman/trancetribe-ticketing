@@ -126,6 +126,26 @@
     @apply font-display tracking-wide;
   }
 
+  /* Consistent, always-visible keyboard focus across the whole app */
+  a:focus-visible,
+  button:focus-visible,
+  [role="button"]:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: 0.5rem;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    @apply text-muted-foreground;
+  }
+
+
+
   ::selection {
     background: hsl(var(--primary) / 0.35);
   }

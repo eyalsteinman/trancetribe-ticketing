@@ -6,9 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft } from "lucide-react";
+import { Wine } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import Footer from '@/components/ui/footer';
+import AppLayout from '@/components/ui/app-layout';
+import EmptyState from '@/components/ui/empty-state';
+import { Skeleton } from '@/components/ui/skeleton';
+
 import BuyTicket from "@/components/BuyTicket";
 
 interface BarTabItem {
@@ -115,6 +118,11 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
 
     if (error) {
       console.error("Error loading user bar tabs:", error.message);
+      toast({
+        title: "Could not load bar tabs",
+        description: "Please check your connection and try again.",
+        variant: "destructive"
+      });
       setLoading(false);
       return;
     }
@@ -124,12 +132,22 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
       const qrMap: Record<string, string> = {};
       for (const tab of data) {
         if (tab.barcode) {
-          qrMap[tab.id] = await QRCode.toDataURL(tab.barcode);
+          try {
+            qrMap[tab.id] = await QRCode.toDataURL(tab.barcode, { margin: 2, width: 320 });
+          } catch (qrError) {
+            console.error("Error generating bar tab QR code:", qrError);
+            toast({
+              title: "QR code could not be generated",
+              description: "Reopen this page to retry generating your bar tab QR code.",
+              variant: "destructive"
+            });
+          }
         }
       }
       setQrDataUrls(qrMap);
     }
     setLoading(false);
+
   };
 
   const deleteBarTab = async (barTabId: string) => {
@@ -165,18 +183,13 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
   const selectedBarTabItem = availableBarTabs.find(tab => tab.id === selectedBarTab);
 
   return (
-    <div className="relative min-h-screen p-4">
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={onBack}
-        aria-label="Back"
-        className="absolute top-4 left-4 z-50"
-      >
-        <ArrowLeft className="h-4 w-4" />
-      </Button>
+    <AppLayout
+      title="My Bar Tabs"
+      subtitle="Buy a tab and show its QR code at the bar"
+      onBack={onBack}
+      width="lg"
+    >
 
-      <h2 className="text-xl font-bold mb-4 text-center mt-12">My Bar Tabs</h2>
 
       {/* Production Selection */}
       <Card className="mb-6">
@@ -275,11 +288,21 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
         </Card>
       )}
 
-      {loading && <p className="text-center">Loading bar tabs...</p>}
+      {loading && (
+        <div className="space-y-4" aria-live="polite">
+          <Skeleton className="h-40 w-full rounded-xl" />
+          <p className="sr-only">Loading bar tabs</p>
+        </div>
+      )}
 
       {!loading && userBarTabs.length === 0 && (
-        <p className="text-center">No active bar tabs found.</p>
+        <EmptyState
+          icon={<Wine className="h-7 w-7" />}
+          title="No active bar tabs"
+          description="Pick a production above and buy a bar tab — your QR code appears here right after payment."
+        />
       )}
+
 
       <div className="grid gap-4">
         {userBarTabs.map((barTab) => {
@@ -341,11 +364,9 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
           );
         })}
       </div>
-
-      {/* Footer */}
-      <Footer />
-    </div>
+    </AppLayout>
   );
+
 };
 
 export default UserBarTab;

@@ -17,11 +17,13 @@ const BackButton = ({ onBack, className }: BackButtonProps) => {
       variant="outline"
       size="sm"
       onClick={onBack}
-      className={cn('gap-1.5', className)}
+      aria-label={t('back')}
+      className={cn('min-h-11 gap-1.5', className)}
     >
-      <ArrowLeft className="h-4 w-4" />
+      <ArrowLeft className="h-4 w-4" aria-hidden="true" />
       {t('back')}
     </Button>
+
   );
 };
 
