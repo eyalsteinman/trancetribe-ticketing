@@ -383,9 +383,11 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
   return (
     <div className="fixed inset-0 overflow-y-auto bg-background" style={{ position: 'relative' }}>
       {/* Animated background */}
-      <div className="auth-animated-bg" />
-      
-      <div className="min-h-screen w-full relative z-10 transition-colors duration-500 p-4 md:p-6 lg:p-8" style={{ position: 'relative' }}>
+      <div className="auth-animated-bg" aria-hidden="true" />
+
+      <OnboardingWalkthrough userId={user.id} />
+
+      <main className="min-h-dvh w-full relative z-10 transition-colors duration-500 p-4 md:p-6 lg:p-8" style={{ position: 'relative' }}>
       {/* Header - Desktop Responsive */}
       <div className="relative pt-2 pb-6 max-w-7xl mx-auto">
         <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-1">
@@ -394,6 +396,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
         {nickname && (
           <p className="text-lg md:text-xl lg:text-2xl text-foreground font-semibold">{nickname}!</p>
         )}
+
         <Button 
           variant="ghost" 
           size="icon"
