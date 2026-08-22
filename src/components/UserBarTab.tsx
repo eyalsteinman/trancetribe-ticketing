@@ -275,11 +275,21 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
         </Card>
       )}
 
-      {loading && <p className="text-center">Loading bar tabs...</p>}
+      {loading && (
+        <div className="space-y-4" aria-live="polite">
+          <Skeleton className="h-40 w-full rounded-xl" />
+          <p className="sr-only">Loading bar tabs</p>
+        </div>
+      )}
 
       {!loading && userBarTabs.length === 0 && (
-        <p className="text-center">No active bar tabs found.</p>
+        <EmptyState
+          icon={<Wine className="h-7 w-7" />}
+          title="No active bar tabs"
+          description="Pick a production above and buy a bar tab — your QR code appears here right after payment."
+        />
       )}
+
 
       <div className="grid gap-4">
         {userBarTabs.map((barTab) => {
