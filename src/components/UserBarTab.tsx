@@ -118,6 +118,11 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
 
     if (error) {
       console.error("Error loading user bar tabs:", error.message);
+      toast({
+        title: "Could not load bar tabs",
+        description: "Please check your connection and try again.",
+        variant: "destructive"
+      });
       setLoading(false);
       return;
     }
@@ -127,12 +132,22 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
       const qrMap: Record<string, string> = {};
       for (const tab of data) {
         if (tab.barcode) {
-          qrMap[tab.id] = await QRCode.toDataURL(tab.barcode);
+          try {
+            qrMap[tab.id] = await QRCode.toDataURL(tab.barcode, { margin: 2, width: 320 });
+          } catch (qrError) {
+            console.error("Error generating bar tab QR code:", qrError);
+            toast({
+              title: "QR code could not be generated",
+              description: "Reopen this page to retry generating your bar tab QR code.",
+              variant: "destructive"
+            });
+          }
         }
       }
       setQrDataUrls(qrMap);
     }
     setLoading(false);
+
   };
 
   const deleteBarTab = async (barTabId: string) => {
