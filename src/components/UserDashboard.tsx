@@ -38,6 +38,8 @@ import ViewTransition from './ui/view-transition';
 import ScrollToTop from './ui/scroll-to-top';
 import { useScrollMemory } from '@/hooks/useScrollMemory';
 import { useToastClearOnViewChange } from '@/hooks/useToastClearOnViewChange';
+import OnboardingWalkthrough from './OnboardingWalkthrough';
+
 
 interface UserDashboardProps {
   user: User;
