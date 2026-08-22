@@ -608,7 +608,8 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                          {qrCode.is_approved && !qrCode.is_scanned && (
                         <Button 
                           size="sm"
-                          className="w-full bg-success text-foreground hover:bg-success"
+                          aria-label={`Show QR code for ${qrCode.parties?.name ?? 'your ticket'}`}
+                          className="w-full min-h-11 bg-success text-foreground hover:bg-success"
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedQRCode(qrCode);
@@ -620,9 +621,10 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                       )}
                     </div>
                   </div>
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
+
           </div>
         )}
         
