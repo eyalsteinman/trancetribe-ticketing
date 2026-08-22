@@ -6,9 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft } from "lucide-react";
+import { Wine } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import Footer from '@/components/ui/footer';
+import AppLayout from '@/components/ui/app-layout';
+import EmptyState from '@/components/ui/empty-state';
+import { Skeleton } from '@/components/ui/skeleton';
+
 import BuyTicket from "@/components/BuyTicket";
 
 interface BarTabItem {
