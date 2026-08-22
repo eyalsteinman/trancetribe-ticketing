@@ -165,18 +165,13 @@ const UserBarTab: React.FC<UserBarTabProps> = ({ userId, onBack }) => {
   const selectedBarTabItem = availableBarTabs.find(tab => tab.id === selectedBarTab);
 
   return (
-    <div className="relative min-h-screen p-4">
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={onBack}
-        aria-label="Back"
-        className="absolute top-4 left-4 z-50"
-      >
-        <ArrowLeft className="h-4 w-4" />
-      </Button>
+    <AppLayout
+      title="My Bar Tabs"
+      subtitle="Buy a tab and show its QR code at the bar"
+      onBack={onBack}
+      width="lg"
+    >
 
-      <h2 className="text-xl font-bold mb-4 text-center mt-12">My Bar Tabs</h2>
 
       {/* Production Selection */}
       <Card className="mb-6">
