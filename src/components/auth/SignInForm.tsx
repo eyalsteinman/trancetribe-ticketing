@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import RtlInput from '@/components/RtlInput';
 import { supabase } from '@/integrations/supabase/client';
+import type { Provider } from '@supabase/supabase-js';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -11,8 +12,10 @@ export const SignInForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [pendingProvider, setPendingProvider] = useState<Provider | null>(null);
   const { toast } = useToast();
   const { t } = useLanguage();
+
 
   const handleSignIn = async () => {
     if (!email || !password) {
@@ -45,75 +48,48 @@ export const SignInForm = () => {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    setLoading(true);
+  const socialProviders: { id: Provider; label: string }[] = [
+    { id: 'google', label: 'Google' },
+    { id: 'facebook', label: 'Facebook' },
+    { id: 'apple', label: 'Apple' },
+    { id: 'twitter', label: 'X (Twitter)' },
+    { id: 'discord', label: 'Discord' },
+    { id: 'linkedin_oidc', label: 'LinkedIn' },
+    { id: 'azure', label: 'Microsoft' },
+    { id: 'spotify', label: 'Spotify' },
+  ];
+
+  const handleSocialLogin = async (provider: Provider, label: string) => {
+    setPendingProvider(provider);
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider,
         options: {
-          redirectTo: `${window.location.origin}/`
-        }
+          redirectTo: `${window.location.origin}/`,
+        },
       });
-      
+
       if (error) {
+        const notEnabled = /not enabled|unsupported provider/i.test(error.message);
         toast({
-          title: t('error'),
-          description: error.message,
-          variant: "destructive"
+          title: label,
+          description: notEnabled
+            ? `${label} sign-in is not switched on yet for this app.`
+            : error.message,
+          variant: 'destructive',
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
-        title: t('error'),
-        description: t('google_signin_failed'),
-        variant: "destructive"
+        title: label,
+        description: error?.message ?? t('error'),
+        variant: 'destructive',
       });
     } finally {
-      setLoading(false);
+      setPendingProvider(null);
     }
   };
 
-  const handleFacebookLogin = async () => {
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'facebook',
-        options: {
-          redirectTo: `${window.location.origin}/`
-        }
-      });
-      
-      if (error) {
-        toast({
-          title: t('error'),
-          description: error.message,
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
-      toast({
-        title: t('error'),
-        description: t('facebook_signin_failed'),
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleInstagramLogin = async () => {
-    toast({
-      title: "Instagram Login",
-      description: "Instagram login will be available soon",
-    });
-  };
-
-  const handleTikTokLogin = async () => {
-    toast({
-      title: "TikTok Login", 
-      description: "TikTok login will be available soon",
-    });
-  };
 
   return (
     <div className="space-y-4">
@@ -161,43 +137,23 @@ export const SignInForm = () => {
       </div>
 
       <div className="grid grid-cols-2 gap-3 rtl-grid">
-        <Button 
-          type="button"
-          variant="outline"
-          className="bg-transparent border-border text-foreground rounded-lg h-12 font-semibold text-base hover:bg-surface-2/60"
-          onClick={handleGoogleLogin}
-          disabled={loading}
-        >
-          {t('google')}
-        </Button>
-        <Button 
-          type="button"
-          variant="outline"
-          className="bg-transparent border-border text-foreground rounded-lg h-12 font-semibold text-base hover:bg-surface-2/60"
-          onClick={handleFacebookLogin}
-          disabled={loading}
-        >
-          {t('facebook')}
-        </Button>
-        <Button 
-          type="button"
-          variant="outline"
-          className="bg-transparent border-border text-foreground rounded-lg h-12 font-semibold text-base hover:bg-surface-2/60"
-          onClick={handleInstagramLogin}
-          disabled={loading}
-        >
-          Instagram
-        </Button>
-        <Button 
-          type="button"
-          variant="outline"
-          className="bg-transparent border-border text-foreground rounded-lg h-12 font-semibold text-base hover:bg-surface-2/60"
-          onClick={handleTikTokLogin}
-          disabled={loading}
-        >
-          TikTok
-        </Button>
+        {socialProviders.map(({ id, label }) => (
+          <Button
+            key={id}
+            type="button"
+            variant="outline"
+            className="w-full min-w-0 bg-transparent border-border text-foreground rounded-lg h-12 font-semibold text-sm sm:text-base hover:bg-surface-2/60 truncate"
+            onClick={() => handleSocialLogin(id, label)}
+            disabled={loading || pendingProvider !== null}
+            aria-label={`${t('sign_in')} — ${label}`}
+          >
+            <span className="truncate">
+              {pendingProvider === id ? t('processing') : label}
+            </span>
+          </Button>
+        ))}
       </div>
+
     </div>
   );
 };
