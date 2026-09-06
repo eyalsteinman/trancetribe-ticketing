@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import RtlInput from '@/components/RtlInput';
 import { supabase } from '@/integrations/supabase/client';
+import type { Provider } from '@supabase/supabase-js';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -11,8 +12,10 @@ export const SignInForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [pendingProvider, setPendingProvider] = useState<Provider | null>(null);
   const { toast } = useToast();
   const { t } = useLanguage();
+
 
   const handleSignIn = async () => {
     if (!email || !password) {
