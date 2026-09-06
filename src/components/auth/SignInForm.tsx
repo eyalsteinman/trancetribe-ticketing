@@ -134,43 +134,23 @@ export const SignInForm = () => {
       </div>
 
       <div className="grid grid-cols-2 gap-3 rtl-grid">
-        <Button 
-          type="button"
-          variant="outline"
-          className="bg-transparent border-border text-foreground rounded-lg h-12 font-semibold text-base hover:bg-surface-2/60"
-          onClick={handleGoogleLogin}
-          disabled={loading}
-        >
-          {t('google')}
-        </Button>
-        <Button 
-          type="button"
-          variant="outline"
-          className="bg-transparent border-border text-foreground rounded-lg h-12 font-semibold text-base hover:bg-surface-2/60"
-          onClick={handleFacebookLogin}
-          disabled={loading}
-        >
-          {t('facebook')}
-        </Button>
-        <Button 
-          type="button"
-          variant="outline"
-          className="bg-transparent border-border text-foreground rounded-lg h-12 font-semibold text-base hover:bg-surface-2/60"
-          onClick={handleInstagramLogin}
-          disabled={loading}
-        >
-          Instagram
-        </Button>
-        <Button 
-          type="button"
-          variant="outline"
-          className="bg-transparent border-border text-foreground rounded-lg h-12 font-semibold text-base hover:bg-surface-2/60"
-          onClick={handleTikTokLogin}
-          disabled={loading}
-        >
-          TikTok
-        </Button>
+        {socialProviders.map(({ id, label }) => (
+          <Button
+            key={id}
+            type="button"
+            variant="outline"
+            className="w-full min-w-0 bg-transparent border-border text-foreground rounded-lg h-12 font-semibold text-sm sm:text-base hover:bg-surface-2/60 truncate"
+            onClick={() => handleSocialLogin(id, label)}
+            disabled={loading || pendingProvider !== null}
+            aria-label={`${t('sign_in')} — ${label}`}
+          >
+            <span className="truncate">
+              {pendingProvider === id ? t('processing') : label}
+            </span>
+          </Button>
+        ))}
       </div>
+
     </div>
   );
 };
