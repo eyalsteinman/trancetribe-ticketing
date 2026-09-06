@@ -144,12 +144,26 @@
     @apply text-muted-foreground;
   }
 
+  /* Nothing may spill outside the screen on any device */
+  img, svg, video, canvas, iframe {
+    max-width: 100%;
+    height: auto;
+  }
 
+  h1, h2, h3, h4, h5, h6, p, span, li, label, td, th, button, a {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  table {
+    max-width: 100%;
+  }
 
   ::selection {
     background: hsl(var(--primary) / 0.35);
   }
 }
+
 
 @layer components {
   .container-section {
