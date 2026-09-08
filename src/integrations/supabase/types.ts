@@ -588,6 +588,79 @@ export type Database = {
           },
         ]
       }
+      party_reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          party_id: string
+          rating: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          party_id: string
+          rating: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          party_id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "party_reviews_party_id_fkey"
+            columns: ["party_id"]
+            isOneToOne: false
+            referencedRelation: "parties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      party_waitlist: {
+        Row: {
+          created_at: string
+          id: string
+          notified: boolean
+          party_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notified?: boolean
+          party_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notified?: boolean
+          party_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "party_waitlist_party_id_fkey"
+            columns: ["party_id"]
+            isOneToOne: false
+            referencedRelation: "parties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -739,6 +812,69 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      promo_codes: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string
+          discount_amount: number | null
+          discount_percent: number | null
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          max_uses: number | null
+          party_id: string | null
+          production_id: string | null
+          updated_at: string
+          used_count: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by: string
+          discount_amount?: number | null
+          discount_percent?: number | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number | null
+          party_id?: string | null
+          production_id?: string | null
+          updated_at?: string
+          used_count?: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string
+          discount_amount?: number | null
+          discount_percent?: number | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number | null
+          party_id?: string | null
+          production_id?: string | null
+          updated_at?: string
+          used_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promo_codes_party_id_fkey"
+            columns: ["party_id"]
+            isOneToOne: false
+            referencedRelation: "parties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "promo_codes_production_id_fkey"
+            columns: ["production_id"]
+            isOneToOne: false
+            referencedRelation: "productions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       qr_codes: {
         Row: {
