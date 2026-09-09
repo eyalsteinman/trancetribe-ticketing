@@ -10,6 +10,9 @@ import SocialNetworksDialog from './SocialNetworksDialog';
 import SocialNetworks from './SocialNetworks';
 import RtlText from './RtlText';
 import BuyTicket from './BuyTicket';
+import BuyTicketWithPromo from './BuyTicketWithPromo';
+import PartyWaitlist from './PartyWaitlist';
+import PartyReviews from './PartyReviews';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 interface Party {
