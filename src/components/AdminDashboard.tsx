@@ -31,6 +31,7 @@ import AdminGuestList from './AdminGuestList';
 import BarTabManager from './BarTabManager';
 import BarTabScanner from './BarTabScanner';
 import FAQContact from './FAQContact';
+import AdminPromoCodes from './AdminPromoCodes';
 import AdminMessageSender from './AdminMessageSender';
 import { useTheme } from '@/hooks/useDarkMode';
 import ViewTransition from './ui/view-transition';
