@@ -666,6 +666,12 @@ const AdminDashboard = ({ user, onManageSubAdmins, adminProfile }: AdminDashboar
     return <div className="animate-enter"><FAQContact user={user} onBack={() => setCurrentView('dashboard')} isAdmin={true} /></div>;
   }
 
+  if (currentView === 'promo-codes') {
+    return <div className="animate-enter"><AdminPromoCodes onBack={() => setCurrentView('dashboard')} /></div>;
+  }
+
+
+
   if (currentView === 'message') {
     return (
       <div className="animate-enter">
