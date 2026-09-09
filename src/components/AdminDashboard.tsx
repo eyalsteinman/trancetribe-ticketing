@@ -890,6 +890,7 @@ const AdminDashboard = ({ user, onManageSubAdmins, adminProfile }: AdminDashboar
             { id: 'bartab-scanner', title: 'Bartab Scanner', icon: <ScanBarcode className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('bar-tab-scanner' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'faq-contact', title: 'FAQ & Contact', icon: <Users className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('faq' as const); setTimeout(() => loadParties(), 100); } },
             { id: 'message-users', title: 'Message Users', icon: <MessageCircle className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('message' as const); setTimeout(() => loadParties(), 100); } },
+            { id: 'promo-codes', title: 'Promo Codes', icon: <TicketPercent className="h-8 w-8 mb-2" />, onClick: () => { setCurrentView('promo-codes' as const); } },
             ...(onManageSubAdmins ? [{ id: 'manage-sub-admins', title: 'Manage Sub-Admins', icon: <UserPlus className="h-8 w-8 mb-2" />, onClick: onManageSubAdmins }] : []),
           ];
           
