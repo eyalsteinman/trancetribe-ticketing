@@ -10,6 +10,9 @@ import SocialNetworksDialog from './SocialNetworksDialog';
 import SocialNetworks from './SocialNetworks';
 import RtlText from './RtlText';
 import BuyTicket from './BuyTicket';
+import BuyTicketWithPromo from './BuyTicketWithPromo';
+import PartyWaitlist from './PartyWaitlist';
+import PartyReviews from './PartyReviews';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 interface Party {
@@ -601,11 +604,12 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
                             </div>
                           </div>
                           {ticketType.price > 0 && !hasPaid ? (
-                            <BuyTicket
+                            <BuyTicketWithPromo
                               ticketAmount={ticketType.price}
                               currency="ILS"
                               adminId={party.created_by}
                               partyId={party.id}
+                              productionId={party.production_id}
                               ticketTypeId={ticketType.id}
                               className="w-full"
                             />
@@ -625,11 +629,12 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
                 ) : (
                   <div>
                     {!party.is_free && party.price && !hasPaid ? (
-                      <BuyTicket
+                      <BuyTicketWithPromo
                         ticketAmount={party.price}
                         currency="ILS"
                         adminId={party.created_by}
                         partyId={party.id}
+                        productionId={party.production_id}
                         className="w-full"
                       />
                     ) : (
@@ -665,6 +670,21 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
             Buy Tickets for Friends
           </Button>
         </div>
+
+        {/* Waiting list */}
+        {!userQR && (
+          <PartyWaitlist
+            partyId={party.id}
+            isSoldOut={
+              ticketTypes.length > 0 &&
+              ticketTypes.every((tt) => tt.quantity - tt.sold <= 0)
+            }
+          />
+        )}
+
+        {/* Ratings & reviews */}
+        <PartyReviews partyId={party.id} />
+
 
         {/* User's QR Code Container */}
         {userQR && (
