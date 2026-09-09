@@ -671,6 +671,21 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
           </Button>
         </div>
 
+        {/* Waiting list */}
+        {!userQR && (
+          <PartyWaitlist
+            partyId={party.id}
+            isSoldOut={
+              ticketTypes.length > 0 &&
+              ticketTypes.every((tt) => tt.quantity - tt.sold <= 0)
+            }
+          />
+        )}
+
+        {/* Ratings & reviews */}
+        <PartyReviews partyId={party.id} />
+
+
         {/* User's QR Code Container */}
         {userQR && (
           <Card>
