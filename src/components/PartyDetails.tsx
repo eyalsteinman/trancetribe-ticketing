@@ -629,11 +629,12 @@ const PartyDetails = ({ party, user, onBack }: PartyDetailsProps) => {
                 ) : (
                   <div>
                     {!party.is_free && party.price && !hasPaid ? (
-                      <BuyTicket
+                      <BuyTicketWithPromo
                         ticketAmount={party.price}
                         currency="ILS"
                         adminId={party.created_by}
                         partyId={party.id}
+                        productionId={party.production_id}
                         className="w-full"
                       />
                     ) : (
