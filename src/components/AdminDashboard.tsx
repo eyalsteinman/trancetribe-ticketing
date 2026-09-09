@@ -8,7 +8,7 @@ import { useBackground } from '@/contexts/BackgroundContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { User } from '@supabase/supabase-js';
 import { Badge } from '@/components/ui/badge';
-import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ScanBarcode, Wine, Cog, ArrowLeft, LogOut, MessageCircle, Calendar, Clock, UserPlus } from 'lucide-react';
+import { Camera, List, Plus, Edit, Users, User as UserIcon, UserCheck, Gamepad2, Building2, Settings2, ScanBarcode, Wine, Cog, ArrowLeft, LogOut, MessageCircle, Calendar, Clock, UserPlus, TicketPercent } from 'lucide-react';
 import Footer from '@/components/ui/footer';
 import PageHeader from '@/components/ui/page-header';
 import LanguageSelector from './LanguageSelector';
