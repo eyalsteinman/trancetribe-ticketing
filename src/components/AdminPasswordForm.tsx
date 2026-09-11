@@ -27,85 +27,32 @@ const AdminPasswordForm = ({ onSuccess, onBack, pendingAdminSignup }: AdminPassw
     }
 
     setLoading(true);
-    
+
     try {
-      // Check if the password is valid and not used
-      const { data: passwordData, error: passwordError } = await supabase
-        .from('admin_passwords')
-        .select('*')
-        .eq('admin_email', pendingAdminSignup.email)
-        .eq('unique_password', password)
-        .eq('is_used', false)
-        .gt('expires_at', new Date().toISOString())
-        .maybeSingle();
-
-      if (passwordError || !passwordData) {
-        toast({
-          title: "Access Denied",
-          description: "Invalid or expired admin password",
-          variant: "destructive"
-        });
-        setLoading(false);
-        return;
-      }
-
-      const allowedTiles = (passwordData as any).allowed_tiles || [];
-
-      // Create the admin account
-      const { data, error } = await supabase.auth.signUp({
-        email: pendingAdminSignup.email,
-        password: pendingAdminSignup.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            first_name: '',
-            last_name: '',
-            display_name: pendingAdminSignup.email.split('@')[0]
-          }
-        }
+      const { data, error } = await supabase.functions.invoke('verify-admin-password', {
+        body: {
+          email: pendingAdminSignup.email,
+          password: pendingAdminSignup.password,
+          uniquePassword: password,
+        },
       });
 
-      if (error) {
+      if (error || (data as any)?.error) {
         toast({
-          title: "Error",
-          description: error.message,
+          title: "Access Denied",
+          description: (data as any)?.error || "Invalid or expired admin password",
           variant: "destructive"
         });
         setLoading(false);
         return;
       }
 
-      if (data.user) {
-        // Mark password as used
-        await supabase
-          .from('admin_passwords')
-          .update({ is_used: true })
-          .eq('id', passwordData.id);
+      toast({
+        title: "Success",
+        description: "Admin account created successfully! You can now sign in.",
+      });
 
-        // Add admin role and profile
-        await supabase
-          .from('user_roles')
-          .insert({
-            user_id: data.user.id,
-            role: 'admin'
-          });
-
-        await supabase
-          .from('admin_profiles')
-          .insert({
-            user_id: data.user.id,
-            admin_level: 'level1',
-            created_by: passwordData.created_by,
-            allowed_tiles: allowedTiles
-          });
-
-        toast({
-          title: "Success",
-          description: "Admin account created successfully! Please check your email to confirm your account.",
-        });
-
-        onSuccess();
-      }
+      onSuccess();
     } catch (error) {
       toast({
         title: "Error",
@@ -116,6 +63,7 @@ const AdminPasswordForm = ({ onSuccess, onBack, pendingAdminSignup }: AdminPassw
       setLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">

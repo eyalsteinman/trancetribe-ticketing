@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
     let passwordData: any = null
     if (!passwordError && candidates) {
       for (const row of candidates) {
-        if (row.password_hash && await bcrypt.compare(uniquePassword, row.password_hash)) {
+        if (row.password_hash && bcrypt.compareSync(uniquePassword, row.password_hash)) {
           passwordData = row
           break
         }
