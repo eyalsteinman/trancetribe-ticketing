@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.53.0'
+import * as bcrypt from 'https://deno.land/x/bcrypt@v0.4.1/mod.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -20,24 +21,32 @@ Deno.serve(async (req) => {
       })
     }
 
-    // Use service role to verify the admin password server-side
+    // Use service role to verify the admin invite code server-side
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
       { auth: { autoRefreshToken: false, persistSession: false } }
     )
 
-    // Check if the password is valid, not used, and not expired
-    const { data: passwordData, error: passwordError } = await supabaseAdmin
+    // Fetch unused, unexpired invite rows for this email and compare hashes
+    const { data: candidates, error: passwordError } = await supabaseAdmin
       .from('admin_passwords')
       .select('*')
       .eq('admin_email', email)
-      .eq('unique_password', uniquePassword)
       .eq('is_used', false)
       .gt('expires_at', new Date().toISOString())
-      .maybeSingle()
 
-    if (passwordError || !passwordData) {
+    let passwordData: any = null
+    if (!passwordError && candidates) {
+      for (const row of candidates) {
+        if (row.password_hash && await bcrypt.compare(uniquePassword, row.password_hash)) {
+          passwordData = row
+          break
+        }
+      }
+    }
+
+    if (!passwordData) {
       console.log('Invalid admin password attempt for:', email)
       return new Response(JSON.stringify({ error: 'Invalid or expired admin password' }), {
         status: 403,
@@ -74,7 +83,7 @@ Deno.serve(async (req) => {
 
     const userId = newUser.user.id
 
-    // Mark password as used
+    // Mark invite code as used
     await supabaseAdmin
       .from('admin_passwords')
       .update({ is_used: true })
@@ -93,6 +102,7 @@ Deno.serve(async (req) => {
         admin_level: 'level1',
         created_by: passwordData.created_by,
         allowed_tiles: allowedTiles,
+        is_super_admin: false,
       })
 
     console.log('Admin account created successfully for:', email)

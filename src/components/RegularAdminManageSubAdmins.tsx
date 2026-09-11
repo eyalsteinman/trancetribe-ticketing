@@ -555,21 +555,12 @@ const RegularAdminManageSubAdmins = ({ user, onBack }: RegularAdminManageSubAdmi
                           </div>
                         </div>
                         <div className="bg-muted p-3 rounded-md">
-                          <p className="text-xs text-muted-foreground mb-2">Password:</p>
-                          <div className="flex items-center gap-2">
-                            <code className="flex-1 bg-background p-2 rounded text-sm font-mono break-all">
-                              {pending.unique_password}
-                            </code>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => copyPasswordToClipboard(pending.unique_password)}
-                              title="Copy to clipboard"
-                            >
-                              <Copy className="h-4 w-4" />
-                            </Button>
-                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            The code is stored securely and can only be shown once, right after it is
+                            created. Use Regenerate to create a new code you can copy and share.
+                          </p>
                         </div>
+
                         <p className="text-xs text-muted-foreground">
                           Permissions: {pending.allowed_tiles.join(', ')}
                         </p>
