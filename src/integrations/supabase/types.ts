@@ -92,6 +92,7 @@ export type Database = {
           expires_at: string | null
           id: string
           is_used: boolean | null
+          password_hash: string | null
           unique_password: string
         }
         Insert: {
@@ -102,6 +103,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_used?: boolean | null
+          password_hash?: string | null
           unique_password: string
         }
         Update: {
@@ -112,6 +114,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_used?: boolean | null
+          password_hash?: string | null
           unique_password?: string
         }
         Relationships: []
@@ -1184,6 +1187,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_allowed_tiles: { Args: { _user_id: string }; Returns: string[] }
       expire_old_offers: { Args: never; Returns: undefined }
       generate_personal_code: { Args: never; Returns: string }
       has_role: {

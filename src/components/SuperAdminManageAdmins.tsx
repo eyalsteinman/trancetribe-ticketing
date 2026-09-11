@@ -295,8 +295,9 @@ const SuperAdminManageAdmins = ({ user, onBack, onViewAdminDashboard }: SuperAdm
                     <div>
                       <div className="font-medium">{password.admin_email}</div>
                       <div className="text-sm text-muted-foreground">
-                        Password: <code className="bg-muted px-2 py-1 rounded">{password.unique_password}</code>
+                        Code stored securely — regenerate to issue a new one
                       </div>
+
                       <div className="text-xs text-muted-foreground">
                         Expires: {new Date(password.expires_at).toLocaleDateString()}
                       </div>
