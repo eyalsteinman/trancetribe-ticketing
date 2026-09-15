@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import RtlInput from '@/components/RtlInput';
 import { supabase } from '@/integrations/supabase/client';
@@ -48,7 +48,7 @@ export const SignInForm = () => {
     }
   };
 
-  const socialProviders: { id: Provider; label: string }[] = [
+  const allSocialProviders: { id: Provider; label: string }[] = [
     { id: 'google', label: 'Google' },
     { id: 'facebook', label: 'Facebook' },
     { id: 'apple', label: 'Apple' },
@@ -58,6 +58,35 @@ export const SignInForm = () => {
     { id: 'azure', label: 'Microsoft' },
     { id: 'spotify', label: 'Spotify' },
   ];
+
+  const [enabledProviders, setEnabledProviders] = useState<Provider[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/auth/v1/settings`, {
+          headers: { apikey: SUPABASE_ANON_KEY },
+        });
+        const json = await res.json();
+        const external = (json?.external ?? {}) as Record<string, boolean>;
+        if (cancelled) return;
+        setEnabledProviders(
+          allSocialProviders.map((p) => p.id).filter((id) => external[id] === true)
+        );
+      } catch {
+        if (!cancelled) setEnabledProviders([]);
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const socialProviders = enabledProviders
+    ? allSocialProviders.filter((p) => enabledProviders.includes(p.id))
+    : [];
 
   const handleSocialLogin = async (provider: Provider, label: string) => {
     setPendingProvider(provider);
