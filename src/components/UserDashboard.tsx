@@ -6,7 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useBackground } from '@/contexts/BackgroundContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { User } from '@supabase/supabase-js';
-import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut, Users, IdCard, Heart, Wine, Moon, Sun, MessageCircle, ArrowLeft, Mail, CalendarDays } from 'lucide-react';
+import { Calendar, UserIcon, Gamepad2, Crown, ShieldCheck, LogOut, Users, IdCard, Heart, Wine, Moon, Sun, MessageCircle, ArrowLeft, Mail, CalendarDays, Trophy } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { QRCodeSVG } from 'qrcode.react';
 import Footer from '@/components/ui/footer';
@@ -39,6 +39,7 @@ import ScrollToTop from './ui/scroll-to-top';
 import { useScrollMemory } from '@/hooks/useScrollMemory';
 import { useToastClearOnViewChange } from '@/hooks/useToastClearOnViewChange';
 import OnboardingWalkthrough from './OnboardingWalkthrough';
+import LoyaltyPoints from './LoyaltyPoints';
 
 
 interface UserDashboardProps {
@@ -46,7 +47,7 @@ interface UserDashboardProps {
 }
 
 const UserDashboard = ({ user }: UserDashboardProps) => {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance' | 'personal-code' | 'friends-codes' | 'bar-tab' | 'faq' | 'messages' | 'tribes' | 'direct-messages' | 'event-calendar'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'parties' | 'nickname' | 'games' | 'color-changer' | 'dot-circle' | 'exploder' | 'haya-ninja' | 'social' | 'vip' | 'vip-detail' | 'insurance' | 'personal-code' | 'friends-codes' | 'bar-tab' | 'faq' | 'messages' | 'tribes' | 'direct-messages' | 'event-calendar' | 'loyalty'>('dashboard');
   const [nickname, setNickname] = useState<string>('');
   const [userQRCodes, setUserQRCodes] = useState<any[]>([]);
   const [selectedProduction, setSelectedProduction] = useState<{id: string; name: string; logo_url: string | null; vip_description: string | null; vip_price: number | null; created_by: string} | null>(null);
@@ -342,6 +343,10 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
     );
   }
 
+  if (currentView === 'loyalty') {
+    return <ViewTransition viewKey={currentView}><LoyaltyPoints userId={user.id} onBack={() => setCurrentView('dashboard')} /></ViewTransition>;
+  }
+
   if (currentView === 'personal-code') {
     return <ViewTransition viewKey={currentView}><PersonalCode user={user} onBack={() => setCurrentView('dashboard')} /></ViewTransition>;
   }
@@ -442,6 +447,12 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
                   </div>
                 ),
                 onClick: () => setCurrentView('event-calendar' as const),
+              },
+              {
+                id: 'loyalty',
+                title: 'Tribe Level',
+                icon: <Trophy className="h-12 w-12" />,
+                onClick: () => setCurrentView('loyalty' as const),
               },
               {
                 id: 'nickname',
