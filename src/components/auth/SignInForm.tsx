@@ -65,9 +65,10 @@ export const SignInForm = () => {
     let cancelled = false;
     const load = async () => {
       try {
-        const res = await fetch(`${SUPABASE_URL}/auth/v1/settings`, {
-          headers: { apikey: SUPABASE_ANON_KEY },
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/auth/v1/settings`,
+          { headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY } }
+        );
         const json = await res.json();
         const external = (json?.external ?? {}) as Record<string, boolean>;
         if (cancelled) return;
