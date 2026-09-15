@@ -108,7 +108,7 @@ const LoyaltyPoints = ({ userId, onBack }: LoyaltyPointsProps) => {
               </div>
             ) : rows.length === 0 ? (
               <EmptyState
-                icon={Sparkles}
+                icon={<Sparkles className="h-10 w-10" />}
                 title="No points yet"
                 description="Attend an event and get your ticket scanned at the door to earn your first 100 points."
               />
