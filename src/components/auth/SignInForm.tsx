@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import RtlInput from '@/components/RtlInput';
 import { supabase } from '@/integrations/supabase/client';
@@ -48,7 +48,7 @@ export const SignInForm = () => {
     }
   };
 
-  const socialProviders: { id: Provider; label: string }[] = [
+  const allSocialProviders: { id: Provider; label: string }[] = [
     { id: 'google', label: 'Google' },
     { id: 'facebook', label: 'Facebook' },
     { id: 'apple', label: 'Apple' },
@@ -58,6 +58,36 @@ export const SignInForm = () => {
     { id: 'azure', label: 'Microsoft' },
     { id: 'spotify', label: 'Spotify' },
   ];
+
+  const [enabledProviders, setEnabledProviders] = useState<Provider[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/auth/v1/settings`,
+          { headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY } }
+        );
+        const json = await res.json();
+        const external = (json?.external ?? {}) as Record<string, boolean>;
+        if (cancelled) return;
+        setEnabledProviders(
+          allSocialProviders.map((p) => p.id).filter((id) => external[id] === true)
+        );
+      } catch {
+        if (!cancelled) setEnabledProviders([]);
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const socialProviders = enabledProviders
+    ? allSocialProviders.filter((p) => enabledProviders.includes(p.id))
+    : [];
 
   const handleSocialLogin = async (provider: Provider, label: string) => {
     setPendingProvider(provider);
@@ -125,34 +155,39 @@ export const SignInForm = () => {
         {loading ? t('processing') : t('sign_in')}
       </Button>
 
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-border" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-transparent px-3 text-muted-foreground">
-            {t('or_continue_with')}
-          </span>
-        </div>
-      </div>
+      {socialProviders.length > 0 && (
+        <>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-transparent px-3 text-muted-foreground">
+                {t('or_continue_with')}
+              </span>
+            </div>
+          </div>
 
-      <div className="grid grid-cols-2 gap-3 rtl-grid">
-        {socialProviders.map(({ id, label }) => (
-          <Button
-            key={id}
-            type="button"
-            variant="outline"
-            className="w-full min-w-0 bg-transparent border-border text-foreground rounded-lg h-12 font-semibold text-sm sm:text-base hover:bg-surface-2/60 truncate"
-            onClick={() => handleSocialLogin(id, label)}
-            disabled={loading || pendingProvider !== null}
-            aria-label={`${t('sign_in')} — ${label}`}
-          >
-            <span className="truncate">
-              {pendingProvider === id ? t('processing') : label}
-            </span>
-          </Button>
-        ))}
-      </div>
+          <div className="grid grid-cols-2 gap-3 rtl-grid">
+            {socialProviders.map(({ id, label }) => (
+              <Button
+                key={id}
+                type="button"
+                variant="outline"
+                className="w-full min-w-0 bg-transparent border-border text-foreground rounded-lg h-12 font-semibold text-sm sm:text-base hover:bg-surface-2/60 truncate"
+                onClick={() => handleSocialLogin(id, label)}
+                disabled={loading || pendingProvider !== null}
+                aria-label={`${t('sign_in')} — ${label}`}
+              >
+                <span className="truncate">
+                  {pendingProvider === id ? t('processing') : label}
+                </span>
+              </Button>
+            ))}
+          </div>
+        </>
+      )}
+
 
     </div>
   );
