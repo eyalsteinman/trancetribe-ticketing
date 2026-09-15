@@ -155,34 +155,39 @@ export const SignInForm = () => {
         {loading ? t('processing') : t('sign_in')}
       </Button>
 
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-border" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-transparent px-3 text-muted-foreground">
-            {t('or_continue_with')}
-          </span>
-        </div>
-      </div>
+      {socialProviders.length > 0 && (
+        <>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-border" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-transparent px-3 text-muted-foreground">
+                {t('or_continue_with')}
+              </span>
+            </div>
+          </div>
 
-      <div className="grid grid-cols-2 gap-3 rtl-grid">
-        {socialProviders.map(({ id, label }) => (
-          <Button
-            key={id}
-            type="button"
-            variant="outline"
-            className="w-full min-w-0 bg-transparent border-border text-foreground rounded-lg h-12 font-semibold text-sm sm:text-base hover:bg-surface-2/60 truncate"
-            onClick={() => handleSocialLogin(id, label)}
-            disabled={loading || pendingProvider !== null}
-            aria-label={`${t('sign_in')} — ${label}`}
-          >
-            <span className="truncate">
-              {pendingProvider === id ? t('processing') : label}
-            </span>
-          </Button>
-        ))}
-      </div>
+          <div className="grid grid-cols-2 gap-3 rtl-grid">
+            {socialProviders.map(({ id, label }) => (
+              <Button
+                key={id}
+                type="button"
+                variant="outline"
+                className="w-full min-w-0 bg-transparent border-border text-foreground rounded-lg h-12 font-semibold text-sm sm:text-base hover:bg-surface-2/60 truncate"
+                onClick={() => handleSocialLogin(id, label)}
+                disabled={loading || pendingProvider !== null}
+                aria-label={`${t('sign_in')} — ${label}`}
+              >
+                <span className="truncate">
+                  {pendingProvider === id ? t('processing') : label}
+                </span>
+              </Button>
+            ))}
+          </div>
+        </>
+      )}
+
 
     </div>
   );
